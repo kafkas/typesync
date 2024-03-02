@@ -7,6 +7,7 @@
     "format": "npm run format:js",
     "format-check": "npx prettier --check \"./**/*.(js|ts|json)\"",
     "format:js": "prettier --write \"./**/*.(js|ts|json)\"",
+    "generate": "ts-node client/generate.ts",
     "lint": "npx eslint . --ext .js,.ts"
   },
   "files": [

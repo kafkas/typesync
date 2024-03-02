@@ -1,9 +1,9 @@
 type GenerationPlatform = "ios" | "ts";
 
-interface TypeSyncGenerateOptions {
+export interface TypeSyncGenerateOptions {
   pathToSchema: string;
-  pathToOutput: string;
   platform: GenerationPlatform;
+  pathToOutput: string;
 }
 
 export interface TypeSync {
