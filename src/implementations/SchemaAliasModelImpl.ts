@@ -1,4 +1,5 @@
-import type { SchemaAliasModel, DefAliasModel } from '../interfaces';
+import type { DefAliasModel } from '../definition';
+import type { SchemaAliasModel } from '../interfaces';
 import { convertDefValueTypeToSchemaValueType } from './converters';
 
 class SchemaAliasModelImpl implements SchemaAliasModel {

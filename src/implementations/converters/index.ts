@@ -1,4 +1,5 @@
-import type { DefValueType, SchemaValueType } from '../../interfaces';
+import type { DefValueType } from '../../definition';
+import type { SchemaValueType } from '../../interfaces';
 
 export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType): SchemaValueType {
   switch (defValueType) {

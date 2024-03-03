@@ -1,4 +1,5 @@
-import type { SchemaModelField, DefModelField } from '../interfaces';
+import type { DefModelField } from '../definition';
+import type { SchemaModelField } from '../interfaces';
 import { convertDefValueTypeToSchemaValueType } from './converters';
 
 class SchemaModelFieldImpl implements SchemaModelField {

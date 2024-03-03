@@ -1,54 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import { z } from 'zod';
+import { definitionSchema } from '../definition';
 import type { Logger, DefinitionParser } from '../interfaces';
 import { extractErrorMessage } from '../util/extract-error-message';
 import { DefinitionNotValidYamlError, DefinitionNotValidError } from '../errors';
 import { createSchema } from './SchemaImpl';
-
-const defPrimitiveValueTypeSchema = z.enum(['string', 'boolean', 'int']);
-
-const defEnumValueTypeSchema = z.object({
-  type: z.literal('enum'),
-  items: z.array(
-    z.object({
-      label: z.string(),
-      value: z.string().or(z.number()),
-    })
-  ),
-});
-
-const defComplexValueTypeSchema = defEnumValueTypeSchema;
-
-const defValueTypeSchema = defPrimitiveValueTypeSchema.or(defComplexValueTypeSchema);
-
-const defModelFieldSchema = z
-  .object({
-    type: defValueTypeSchema,
-    optional: z.boolean().optional(),
-    docs: z.string().optional(),
-  })
-  .strict();
-
-const defDocumentModelSchema = z
-  .object({
-    type: z.literal('document'),
-    docs: z.string().optional(),
-    fields: z.record(defModelFieldSchema),
-  })
-  .strict();
-
-const defAliasModelSchema = z
-  .object({
-    type: z.literal('alias'),
-    docs: z.string().optional(),
-    value: defValueTypeSchema,
-  })
-  .strict();
-
-const defModelSchema = z.discriminatedUnion('type', [defDocumentModelSchema, defAliasModelSchema]);
-
-const definitionSchema = z.record(defModelSchema);
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger: Logger) {}

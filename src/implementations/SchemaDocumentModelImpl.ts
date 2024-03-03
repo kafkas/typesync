@@ -1,4 +1,5 @@
-import type { SchemaDocumentModel, SchemaModelField, DefDocumentModel } from '../interfaces';
+import type { DefDocumentModel } from '../definition';
+import type { SchemaDocumentModel, SchemaModelField } from '../interfaces';
 import { createSchemaModelField } from './SchemaModelFieldImpl';
 
 class SchemaDocumentModelImpl implements SchemaDocumentModel {

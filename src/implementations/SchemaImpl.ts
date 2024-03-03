@@ -1,4 +1,5 @@
-import type { Schema, Definition, SchemaModel } from '../interfaces';
+import type { Definition } from '../definition';
+import type { Schema, SchemaModel } from '../interfaces';
 import { createSchemaDocumentModel } from './SchemaDocumentModelImpl';
 import { createSchemaAliasModel } from './SchemaAliasModelImpl';
 
