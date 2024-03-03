@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { createTypeSync } from '../src';
 import { extractErrorMessage } from '../src/util/extract-error-message';
 
-const typesync = createTypeSync();
+const typesync = createTypeSync({ debug: true });
 
 void typesync
   .generate({
