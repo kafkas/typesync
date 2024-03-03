@@ -1,14 +1,18 @@
 models:
   Project:
+    docs: Represents a project within a workspace.
     fields:
       id:
         type: string
+        docs: The ID of the project.
       name:
         type: string
       completed:
         type: boolean
+        docs: Whether the project has been completed.
       order:
         type: int
       createdBy:
         type: string
+        docs: The ID of the user that created the project.
         optional: true
