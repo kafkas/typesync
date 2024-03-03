@@ -1,7 +1,7 @@
 import { writeFile } from '../util/fs';
 import type { GenerationPlatform, TypeSync, TypeSyncGenerateOptions } from '../api';
 import { SchemaParser } from './SchemaParser';
-import { IOSGenerator } from './generators/ios';
+import { SwiftGenerator } from './generators/swift';
 import { TypeScriptGenerator } from './generators/typescript';
 import { type GenerationOutput } from './GenerationOutput';
 
@@ -17,8 +17,8 @@ export class TypeSyncImpl implements TypeSync {
 
   private getGeneratorForPlatform(platform: GenerationPlatform) {
     switch (platform) {
-      case 'ios':
-        return new IOSGenerator();
+      case 'swift':
+        return new SwiftGenerator();
       case 'ts':
         return new TypeScriptGenerator();
     }

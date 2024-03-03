@@ -1,4 +1,4 @@
-export type GenerationPlatform = 'ios' | 'ts';
+export type GenerationPlatform = 'ts' | 'swift';
 
 export interface TypeSyncGenerateOptions {
   pathToSchema: string;
