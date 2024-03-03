@@ -1,4 +1,11 @@
-User:
-  id: string
-  name: string
-  surname: string
+models:
+  Project:
+    fields:
+      id:
+        type: stringg
+      name:
+        type: string
+      completed:
+        type: boolean
+      order:
+        type: int

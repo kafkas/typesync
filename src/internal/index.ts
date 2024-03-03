@@ -1,1 +1,0 @@
-export { TypeSyncImpl } from './TypeSyncImpl';
