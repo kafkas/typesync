@@ -10,6 +10,7 @@ export type SchemaModelFieldJson = {
 };
 
 export type SchemaModelJson = {
+  docs?: string;
   fields: Record<string, SchemaModelFieldJson>;
 };
 
@@ -25,6 +26,7 @@ export interface SchemaModelField {
 
 export interface SchemaModel {
   name: string;
+  docs: string | undefined;
   fields: SchemaModelField[];
 }
 

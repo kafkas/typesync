@@ -15,6 +15,7 @@ const fieldDefinitionSchema = z
 
 const modelSchema = z
   .object({
+    docs: z.string().optional(),
     fields: z.record(fieldDefinitionSchema),
   })
   .strict();

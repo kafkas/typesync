@@ -10,10 +10,25 @@ export class TSGeneratorImpl implements Generator {
     const builder = new StringBuilder();
     models.forEach(model => {
       const tsType = this.getTSTypeForModel(model);
+      const tsDoc = this.getTSDocForModel(model);
+      if (tsDoc !== undefined) {
+        builder.append(`${tsDoc}\n`);
+      }
       builder.append(`export interface ${model.name} ${tsType}\n`);
     });
 
     return createGenerationOutput(builder.toString());
+  }
+
+  /**
+   * Builds the TypeScript type for a given model as string.
+   */
+  private getTSDocForModel(model: SchemaModel) {
+    const { docs } = model;
+    if (docs === undefined) {
+      return undefined;
+    }
+    return `/**\n * ${docs}\n */`;
   }
 
   /**

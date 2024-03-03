@@ -11,6 +11,10 @@ class SchemaModelImpl implements SchemaModel {
     this.fields = this.getFields();
   }
 
+  public get docs() {
+    return this.modelJson.docs;
+  }
+
   private getFields() {
     return Object.entries(this.modelJson.fields).map(([fieldName, fieldJson]) => {
       return createSchemaModelField(fieldName, fieldJson);

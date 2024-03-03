@@ -1,5 +1,6 @@
 models:
   Project:
+    docs: Represents a project within a workspace.
     fields:
       id:
         type: string
