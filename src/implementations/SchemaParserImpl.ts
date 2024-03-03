@@ -1,14 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import { Schema } from './Schema';
+import type { SchemaParser } from '../interfaces';
 import { extractErrorMessage } from '../util/extract-error-message';
 import { SchemaNotValidYamlError } from '../errors';
+import { createSchema } from './SchemaImpl';
 
-export class SchemaParser {
-  public parseSchema(pathToSchema: string): Schema {
+class SchemaParserImpl implements SchemaParser {
+  public parseSchema(pathToSchema: string) {
     const parsed = this.parseSchemaYaml(pathToSchema);
     console.log('Parse Result:', parsed);
-    return new Schema();
+    return createSchema();
   }
 
   private parseSchemaYaml(pathToSchema: string): unknown {
@@ -20,4 +21,8 @@ export class SchemaParser {
       throw new SchemaNotValidYamlError(pathToSchema);
     }
   }
+}
+
+export function createSchemaParser(): SchemaParser {
+  return new SchemaParserImpl();
 }
