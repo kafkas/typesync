@@ -21,11 +21,7 @@ const modelSchema = z
   })
   .strict();
 
-const schemaFileSchema = z
-  .object({
-    models: z.record(modelSchema),
-  })
-  .strict();
+const schemaFileSchema = z.record(modelSchema);
 
 class SchemaParserImpl implements SchemaParser {
   public constructor(private readonly logger: Logger) {}

@@ -15,9 +15,7 @@ export type SchemaModelJson = {
   fields: Record<string, SchemaModelFieldJson>;
 };
 
-export type SchemaJson = {
-  models: Record<string, SchemaModelJson>;
-};
+export type SchemaJson = Record<string, SchemaModelJson>;
 
 export interface SchemaModelField {
   type: 'string' | 'boolean' | 'int';

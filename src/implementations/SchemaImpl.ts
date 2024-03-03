@@ -9,7 +9,7 @@ class SchemaImpl implements Schema {
   }
 
   private getModels() {
-    return Object.entries(this.schemaJson.models).map(([modelName, modelJson]) => {
+    return Object.entries(this.schemaJson).map(([modelName, modelJson]) => {
       return createSchemaModel(modelName, modelJson);
     });
   }
