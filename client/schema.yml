@@ -9,3 +9,6 @@ models:
         type: boolean
       order:
         type: int
+      createdBy:
+        type: string
+        optional: true

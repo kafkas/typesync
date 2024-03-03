@@ -6,6 +6,7 @@ export interface Logger {
 
 export type SchemaModelFieldJson = {
   type: 'string' | 'boolean' | 'int';
+  optional?: boolean;
 };
 
 export type SchemaModelJson = {
