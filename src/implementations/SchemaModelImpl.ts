@@ -11,6 +11,10 @@ class SchemaModelImpl implements SchemaModel {
     this.fields = this.getFields();
   }
 
+  public get type() {
+    return this.modelJson.type;
+  }
+
   public get docs() {
     return this.modelJson.docs;
   }

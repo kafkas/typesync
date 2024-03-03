@@ -16,6 +16,7 @@ const fieldDefinitionSchema = z
 
 const modelSchema = z
   .object({
+    type: z.enum(['document', 'alias']),
     docs: z.string().optional(),
     fields: z.record(fieldDefinitionSchema),
   })

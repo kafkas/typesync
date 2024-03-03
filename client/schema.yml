@@ -1,4 +1,5 @@
 Project:
+  type: document
   docs: Represents a project within a workspace.
   fields:
     id:
