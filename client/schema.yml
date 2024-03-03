@@ -1,4 +1,6 @@
-User:
-  id: string
-  name: string
-  surname: string
+models:
+  Project:
+    id: string
+    name: string
+    completed: boolean
+    order: int
