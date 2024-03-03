@@ -4,7 +4,8 @@ import { createGenerationOutput } from '../GenerationOutputImpl';
 class SwiftGeneratorImpl implements Generator {
   public async generate(schema: Schema) {
     // TODO: Implement
-    return createGenerationOutput();
+    const content = 'abc';
+    return createGenerationOutput(content);
   }
 }
 

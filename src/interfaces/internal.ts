@@ -17,7 +17,20 @@ export type SchemaJson = {
   models: Record<string, SchemaModelJson>;
 };
 
-export interface Schema {}
+export interface SchemaModelField {
+  type: 'string' | 'boolean' | 'int';
+  name: string;
+  optional: boolean;
+}
+
+export interface SchemaModel {
+  name: string;
+  fields: SchemaModelField[];
+}
+
+export interface Schema {
+  models: SchemaModel[];
+}
 
 export interface SchemaParser {
   parseSchema(pathToSchema: string): Schema;
