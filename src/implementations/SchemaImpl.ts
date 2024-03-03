@@ -1,7 +1,9 @@
-import type { Schema } from '../interfaces';
+import type { Schema, SchemaJson } from '../interfaces';
 
-class SchemaImpl implements Schema {}
+class SchemaImpl implements Schema {
+  public constructor(private readonly schemaJson: SchemaJson) {}
+}
 
-export function createSchema(): Schema {
-  return new SchemaImpl();
+export function createSchema(schemaJson: SchemaJson): Schema {
+  return new SchemaImpl(schemaJson);
 }

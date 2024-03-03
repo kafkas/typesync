@@ -4,6 +4,18 @@ export interface Logger {
   error(...args: any[]): void;
 }
 
+export type SchemaModelFieldJson = {
+  type: 'string' | 'boolean' | 'int';
+};
+
+export type SchemaModelJson = {
+  fields: Record<string, SchemaModelFieldJson>;
+};
+
+export type SchemaJson = {
+  models: Record<string, SchemaModelJson>;
+};
+
 export interface Schema {}
 
 export interface SchemaParser {

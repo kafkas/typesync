@@ -1,6 +1,11 @@
 models:
   Project:
-    id: string
-    name: string
-    completed: boolean
-    order: int
+    fields:
+      id:
+        type: stringg
+      name:
+        type: string
+      completed:
+        type: boolean
+      order:
+        type: int

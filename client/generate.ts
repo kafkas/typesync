@@ -14,5 +14,5 @@ void typesync
     console.log('Successfully generated models.');
   })
   .catch(e => {
-    console.error(`Unexpected error while generating models: ${extractErrorMessage(e)}`);
+    console.error(`Unexpected error while generating models. ${extractErrorMessage(e)}`);
   });
