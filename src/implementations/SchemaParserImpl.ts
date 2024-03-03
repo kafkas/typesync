@@ -10,6 +10,7 @@ const fieldDefinitionSchema = z
   .object({
     type: z.enum(['string', 'boolean', 'int']),
     optional: z.boolean().optional(),
+    docs: z.string().optional(),
   })
   .strict();
 

@@ -13,6 +13,10 @@ class SchemaModelFieldImpl implements SchemaModelField {
   public get optional() {
     return !!this.fieldJson.optional;
   }
+
+  public get docs() {
+    return this.fieldJson.docs;
+  }
 }
 
 export function createSchemaModelField(name: string, fieldJson: SchemaModelFieldJson): SchemaModelField {

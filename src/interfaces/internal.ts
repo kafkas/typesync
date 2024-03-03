@@ -7,6 +7,7 @@ export interface Logger {
 export type SchemaModelFieldJson = {
   type: 'string' | 'boolean' | 'int';
   optional?: boolean;
+  docs?: string;
 };
 
 export type SchemaModelJson = {
@@ -20,8 +21,9 @@ export type SchemaJson = {
 
 export interface SchemaModelField {
   type: 'string' | 'boolean' | 'int';
-  name: string;
   optional: boolean;
+  name: string;
+  docs: string | undefined;
 }
 
 export interface SchemaModel {
