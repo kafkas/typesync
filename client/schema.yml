@@ -2,10 +2,13 @@ models:
   Project:
     fields:
       id:
-        type: stringg
+        type: string
       name:
         type: string
       completed:
         type: boolean
       order:
         type: int
+      createdBy:
+        type: string
+        optional: true

@@ -1,12 +1,13 @@
 import type { GenerationOutput } from '../interfaces';
 
 class GenerationOutputImpl implements GenerationOutput {
+  public constructor(private readonly content: string) {}
+
   public toString() {
-    // TODO: Implement
-    return '';
+    return this.content;
   }
 }
 
-export function createGenerationOutput(): GenerationOutputImpl {
-  return new GenerationOutputImpl();
+export function createGenerationOutput(content: string): GenerationOutputImpl {
+  return new GenerationOutputImpl(content);
 }

@@ -6,17 +6,24 @@ import { extractErrorMessage } from '../util/extract-error-message';
 import { SchemaNotValidYamlError, SchemaNotValidError } from '../errors';
 import { createSchema } from './SchemaImpl';
 
-const fieldDefinitionSchema = z.object({
-  type: z.enum(['string', 'boolean', 'int']),
-});
+const fieldDefinitionSchema = z
+  .object({
+    type: z.enum(['string', 'boolean', 'int']),
+    optional: z.boolean().optional(),
+  })
+  .strict();
 
-const modelSchema = z.object({
-  fields: z.record(fieldDefinitionSchema),
-});
+const modelSchema = z
+  .object({
+    fields: z.record(fieldDefinitionSchema),
+  })
+  .strict();
 
-const schemaFileSchema = z.object({
-  models: z.record(modelSchema),
-});
+const schemaFileSchema = z
+  .object({
+    models: z.record(modelSchema),
+  })
+  .strict();
 
 class SchemaParserImpl implements SchemaParser {
   public constructor(private readonly logger: Logger) {}
