@@ -1,11 +1,39 @@
 import { writeFile } from '../util/fs';
-import type { GenerationPlatform, TypeSync, TypeSyncGenerateOptions } from '../api';
+import type { GenerationPlatform, TypeSync, TypeSyncConfig, TypeSyncGenerateOptions } from '../api';
 import { SchemaParser } from './SchemaParser';
 import { SwiftGenerator } from './generators/swift';
 import { TypeScriptGenerator } from './generators/typescript';
 import { type GenerationOutput } from './GenerationOutput';
 
+interface Logger {
+  info(...args: any[]): void;
+  warn(...args: any[]): void;
+  error(...args: any[]): void;
+}
+
+class LoggerImpl implements Logger {
+  public constructor(private readonly debug: boolean) {}
+
+  public info(...args: any[]): void {
+    if (this.debug) console.info(...args);
+  }
+
+  public error(...args: any[]): void {
+    if (this.debug) console.error(...args);
+  }
+
+  public warn(...args: any[]): void {
+    if (this.debug) console.warn(...args);
+  }
+}
+
 export class TypeSyncImpl implements TypeSync {
+  private readonly logger: Logger;
+
+  public constructor(private readonly config: TypeSyncConfig) {
+    this.logger = new LoggerImpl(config.debug);
+  }
+
   public async generate(opts: TypeSyncGenerateOptions): Promise<void> {
     const { pathToOutput, pathToSchema, platform } = opts;
     const parser = new SchemaParser();

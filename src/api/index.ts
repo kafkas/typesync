@@ -6,6 +6,10 @@ export interface TypeSyncGenerateOptions {
   pathToOutput: string;
 }
 
+export interface TypeSyncConfig {
+  debug: boolean;
+}
+
 export interface TypeSync {
   generate(opts: TypeSyncGenerateOptions): Promise<void>;
 }
