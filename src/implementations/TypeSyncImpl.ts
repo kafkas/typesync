@@ -21,7 +21,7 @@ class TypeSyncImpl implements TypeSync {
 
   public async generate(opts: TypeSyncGenerateOptions) {
     const { pathToOutput, pathToSchema, platform } = opts;
-    const parser = createSchemaParser();
+    const parser = createSchemaParser(this.logger);
     const schema = parser.parseSchema(pathToSchema);
     const generator = this.getGeneratorForPlatform(platform);
     const output = await generator.generate(schema);

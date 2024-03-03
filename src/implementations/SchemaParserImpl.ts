@@ -1,14 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import type { SchemaParser } from '../interfaces';
+import type { Logger, SchemaParser } from '../interfaces';
 import { extractErrorMessage } from '../util/extract-error-message';
 import { SchemaNotValidYamlError } from '../errors';
 import { createSchema } from './SchemaImpl';
 
 class SchemaParserImpl implements SchemaParser {
+  public constructor(private readonly logger: Logger) {}
+
   public parseSchema(pathToSchema: string) {
     const parsed = this.parseSchemaYaml(pathToSchema);
-    console.log('Parse Result:', parsed);
+    this.logger.info('Parse Result:', parsed);
     return createSchema();
   }
 
@@ -17,12 +19,12 @@ class SchemaParserImpl implements SchemaParser {
       const schemaYamlContent = readFileSync(pathToSchema).toString();
       return parseYaml(schemaYamlContent, { strict: true });
     } catch (e) {
-      console.error(extractErrorMessage(e));
+      this.logger.error(extractErrorMessage(e));
       throw new SchemaNotValidYamlError(pathToSchema);
     }
   }
 }
 
-export function createSchemaParser(): SchemaParser {
-  return new SchemaParserImpl();
+export function createSchemaParser(logger: Logger): SchemaParser {
+  return new SchemaParserImpl(logger);
 }
