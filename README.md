@@ -1,1 +1,3 @@
 # TypeSync
+
+TypeSync for Firestore.
