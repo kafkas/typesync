@@ -23,7 +23,7 @@ export class TSGeneratorImpl implements Generator {
         const tsDoc = this.buildTSDoc(model.docs);
         builder.append(`${tsDoc}\n`);
       }
-      builder.append(`export type ${model.name} = ${tsType}\n`);
+      builder.append(`export type ${model.name} = ${tsType};\n`);
     });
 
     documentModels.forEach(model => {
@@ -104,8 +104,10 @@ export class TSGeneratorImpl implements Generator {
         return 'boolean';
       case 'int':
         return 'number';
+      case 'alias':
+        return type.name;
       case 'enum':
-        return type.items.map(({ value }) => `${value}`).join(' | ');
+        return type.items.map(({ value }) => (typeof value === 'string' ? `'${value}'` : `${value}`)).join(' | ');
     }
   }
 }

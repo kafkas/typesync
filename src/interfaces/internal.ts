@@ -9,6 +9,10 @@ export type SchemaValueType =
       type: 'string' | 'boolean' | 'int';
     }
   | {
+      type: 'alias';
+      name: string;
+    }
+  | {
       type: 'enum';
       items: {
         label: string;

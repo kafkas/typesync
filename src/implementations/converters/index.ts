@@ -11,6 +11,10 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
       return { type: 'int' };
   }
 
+  if (typeof defValueType === 'string') {
+    return { type: 'alias', name: defValueType };
+  }
+
   switch (defValueType.type) {
     case 'enum': {
       return {

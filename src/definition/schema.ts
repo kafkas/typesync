@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-export const defPrimitiveValueTypeSchema = z.enum(['string', 'boolean', 'int']);
-
 export const defEnumValueTypeSchema = z.object({
   type: z.literal('enum'),
   items: z.array(
@@ -12,34 +10,37 @@ export const defEnumValueTypeSchema = z.object({
   ),
 });
 
-export const defComplexValueTypeSchema = defEnumValueTypeSchema;
+export const getDefValueTypeSchema = (aliasNames: string[]) =>
+  z.enum(['string', 'boolean', 'int', ...aliasNames]).or(defEnumValueTypeSchema);
 
-export const defValueTypeSchema = defPrimitiveValueTypeSchema.or(defComplexValueTypeSchema);
+export const getDefModelFieldSchema = (aliasNames: string[]) =>
+  z
+    .object({
+      type: getDefValueTypeSchema(aliasNames),
+      optional: z.boolean().optional(),
+      docs: z.string().optional(),
+    })
+    .strict();
 
-export const defModelFieldSchema = z
-  .object({
-    type: defValueTypeSchema,
-    optional: z.boolean().optional(),
-    docs: z.string().optional(),
-  })
-  .strict();
+export const getDefDocumentModelSchema = (aliasNames: string[]) =>
+  z
+    .object({
+      type: z.literal('document'),
+      docs: z.string().optional(),
+      fields: z.record(getDefModelFieldSchema(aliasNames)),
+    })
+    .strict();
 
-export const defDocumentModelSchema = z
-  .object({
-    type: z.literal('document'),
-    docs: z.string().optional(),
-    fields: z.record(defModelFieldSchema),
-  })
-  .strict();
+export const getDefAliasModelSchema = (aliasNames: string[]) =>
+  z
+    .object({
+      type: z.literal('alias'),
+      docs: z.string().optional(),
+      value: getDefValueTypeSchema(aliasNames),
+    })
+    .strict();
 
-export const defAliasModelSchema = z
-  .object({
-    type: z.literal('alias'),
-    docs: z.string().optional(),
-    value: defValueTypeSchema,
-  })
-  .strict();
+export const getDefModelSchema = (aliasNames: string[]) =>
+  z.discriminatedUnion('type', [getDefDocumentModelSchema(aliasNames), getDefAliasModelSchema(aliasNames)]);
 
-export const defModelSchema = z.discriminatedUnion('type', [defDocumentModelSchema, defAliasModelSchema]);
-
-export const definitionSchema = z.record(defModelSchema);
+export const getDefinitionSchema = (aliasNames: string[]) => z.record(getDefModelSchema(aliasNames));
