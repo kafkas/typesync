@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
-import { TypeSync, type TypeSyncGenerateOptions } from "./interface";
-import { writeFile } from "./util/fs";
+import { readFileSync } from 'node:fs';
+import { TypeSync, type TypeSyncGenerateOptions } from './interface';
+import { writeFile } from './util/fs';
 
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions): Promise<void> {

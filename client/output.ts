@@ -1,4 +1,3 @@
-User:
-  id: string
-  name: string
-  surname: string
+User: id: string;
+name: string;
+surname: string;

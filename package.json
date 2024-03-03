@@ -4,11 +4,10 @@
   "description": "Autogenerate Firestore models",
   "scripts": {
     "build": "tsc",
-    "format": "npm run format:js",
-    "format-check": "npx prettier --check \"./**/*.(js|ts|json)\"",
-    "format:js": "prettier --write \"./**/*.(js|ts|json)\"",
+    "format": "prettier --write \"(src|client)/**/*.(js|ts|json)\"",
+    "format-check": "prettier --check \"(src|client)/**/*.(js|ts|json)\"",
     "generate": "ts-node client/generate.ts",
-    "lint": "npx eslint . --ext .js,.ts"
+    "lint": "eslint src client --ext .ts"
   },
   "files": [
     "lib"
@@ -28,7 +27,6 @@
   "homepage": "https://github.com/kafkas/typesync#readme",
   "devDependencies": {
     "@proficient/ds": "^0.3.2",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",

@@ -1,4 +1,4 @@
-type GenerationPlatform = "ios" | "ts";
+type GenerationPlatform = 'ios' | 'ts';
 
 export interface TypeSyncGenerateOptions {
   pathToSchema: string;

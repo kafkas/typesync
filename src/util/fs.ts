@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync } from "node:fs";
-import { writeFile as _writeFile } from "node:fs/promises";
-import { dirname } from "path";
+import { existsSync, mkdirSync } from 'node:fs';
+import { writeFile as _writeFile } from 'node:fs/promises';
+import { dirname } from 'path';
 
 export async function writeFile(
   path: string,
