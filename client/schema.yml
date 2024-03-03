@@ -2,7 +2,7 @@ models:
   Project:
     fields:
       id:
-        type: stringg
+        type: string
       name:
         type: string
       completed:
