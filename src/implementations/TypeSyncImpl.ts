@@ -9,7 +9,7 @@ import type {
 } from '../interfaces';
 import { createSwiftGenerator } from './generators/SwiftGeneratorImpl';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
-import { createSchemaParser } from './SchemaParserImpl';
+import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
 
 class TypeSyncImpl implements TypeSync {
@@ -20,9 +20,9 @@ class TypeSyncImpl implements TypeSync {
   }
 
   public async generate(opts: TypeSyncGenerateOptions) {
-    const { pathToOutput, pathToSchema, platform } = opts;
-    const parser = createSchemaParser(this.logger);
-    const schema = parser.parseSchema(pathToSchema);
+    const { pathToDefinition, pathToOutput, platform } = opts;
+    const parser = createDefinitionParser(this.logger);
+    const schema = parser.parseDefinition(pathToDefinition);
     const generator = this.getGeneratorForPlatform(platform);
     const output = await generator.generate(schema);
     await this.writeOutputToPath(pathToOutput, output);

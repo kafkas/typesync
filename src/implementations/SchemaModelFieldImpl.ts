@@ -1,24 +1,26 @@
-import type { SchemaModelField, SchemaModelFieldJson } from '../interfaces';
+import type { DefModelField } from '../definition';
+import type { SchemaModelField } from '../interfaces';
+import { convertDefValueTypeToSchemaValueType } from './converters';
 
 class SchemaModelFieldImpl implements SchemaModelField {
   public constructor(
     public readonly name: string,
-    private readonly fieldJson: SchemaModelFieldJson
+    private readonly defModelField: DefModelField
   ) {}
 
   public get type() {
-    return this.fieldJson.type;
+    return convertDefValueTypeToSchemaValueType(this.defModelField.type);
   }
 
   public get optional() {
-    return !!this.fieldJson.optional;
+    return !!this.defModelField.optional;
   }
 
   public get docs() {
-    return this.fieldJson.docs;
+    return this.defModelField.docs;
   }
 }
 
-export function createSchemaModelField(name: string, fieldJson: SchemaModelFieldJson): SchemaModelField {
-  return new SchemaModelFieldImpl(name, fieldJson);
+export function createSchemaModelField(name: string, defModelField: DefModelField): SchemaModelField {
+  return new SchemaModelFieldImpl(name, defModelField);
 }

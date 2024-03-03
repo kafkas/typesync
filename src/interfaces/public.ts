@@ -1,7 +1,7 @@
 export type GenerationPlatform = 'ts' | 'swift';
 
 export interface TypeSyncGenerateOptions {
-  pathToSchema: string;
+  pathToDefinition: string;
   platform: GenerationPlatform;
   pathToOutput: string;
 }

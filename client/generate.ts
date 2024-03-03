@@ -6,7 +6,7 @@ const typesync = createTypeSync({ debug: true });
 
 void typesync
   .generate({
-    pathToSchema: resolve(__dirname, 'schema.yml'),
+    pathToDefinition: resolve(__dirname, 'definition.yml'),
     platform: 'ts',
     pathToOutput: resolve(__dirname, 'output.ts'),
   })

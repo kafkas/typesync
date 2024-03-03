@@ -1,6 +1,13 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { Generator, Schema, SchemaModel, SchemaModelField } from '../../interfaces';
+import type {
+  Generator,
+  Schema,
+  SchemaDocumentModel,
+  SchemaAliasModel,
+  SchemaModel,
+  SchemaValueType,
+} from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
 export class TSGeneratorImpl implements Generator {
@@ -8,8 +15,19 @@ export class TSGeneratorImpl implements Generator {
     const { models } = schema;
 
     const builder = new StringBuilder();
-    models.forEach(model => {
-      const tsType = this.getTSTypeForModel(model);
+    const { aliasModels, documentModels } = this.divideModelsByType(models);
+
+    aliasModels.forEach(model => {
+      const tsType = this.getTSTypeForAliasModel(model);
+      if (model.docs !== undefined) {
+        const tsDoc = this.buildTSDoc(model.docs);
+        builder.append(`${tsDoc}\n`);
+      }
+      builder.append(`export type ${model.name} = ${tsType};\n`);
+    });
+
+    documentModels.forEach(model => {
+      const tsType = this.getTSTypeForDocumentModel(model);
       if (model.docs !== undefined) {
         const tsDoc = this.buildTSDoc(model.docs);
         builder.append(`${tsDoc}\n`);
@@ -20,18 +38,42 @@ export class TSGeneratorImpl implements Generator {
     return createGenerationOutput(builder.toString());
   }
 
+  private divideModelsByType(models: SchemaModel[]) {
+    const aliasModels: SchemaAliasModel[] = [];
+    const documentModels: SchemaDocumentModel[] = [];
+    models.forEach(model => {
+      switch (model.type) {
+        case 'alias':
+          aliasModels.push(model);
+          break;
+        case 'document':
+          documentModels.push(model);
+          break;
+        // TODO: Handle default case properly
+      }
+    });
+    return { aliasModels, documentModels };
+  }
+
   /**
-   * Builds the TypeScript type for a given model as string.
+   * Builds the TypeScript type for a given alias model as string.
    */
-  private getTSTypeForModel(model: SchemaModel) {
+  private getTSTypeForAliasModel(model: SchemaAliasModel) {
+    return this.getTSTypeForSchemaValueType(model.value);
+  }
+
+  /**
+   * Builds the TypeScript type for a given document model as string.
+   */
+  private getTSTypeForDocumentModel(model: SchemaDocumentModel) {
     const { fields } = model;
     const builder = new StringBuilder();
 
     builder.append(`{\n`);
     fields.forEach(field => {
-      const tsType = this.getTSTypeForModelField(field);
+      const tsType = this.getTSTypeForSchemaValueType(field.type);
       if (field.docs !== undefined) {
-        // TODO: We probably need to compute indentation according to the current depth.
+        // TODO: We probably need to compute indentation according to current depth
         const tsDoc = this.buildTSDoc(field.docs, 2);
         builder.append(`${tsDoc}\n`);
       }
@@ -54,14 +96,18 @@ export class TSGeneratorImpl implements Generator {
   /**
    * Returns the TypeScript type for a given model as string.
    */
-  private getTSTypeForModelField(modelField: SchemaModelField) {
-    switch (modelField.type) {
+  private getTSTypeForSchemaValueType(type: SchemaValueType) {
+    switch (type.type) {
       case 'string':
         return 'string';
       case 'boolean':
         return 'boolean';
       case 'int':
         return 'number';
+      case 'alias':
+        return type.name;
+      case 'enum':
+        return type.items.map(({ value }) => (typeof value === 'string' ? `'${value}'` : `${value}`)).join(' | ');
     }
   }
 }

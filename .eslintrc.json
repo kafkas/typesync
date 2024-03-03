@@ -42,7 +42,7 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".json", ".js", ".ts"]
+        "extensions": [".json", ".ts"]
       }
     }
   }
