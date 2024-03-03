@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { Generator, Schema, SchemaModel, SchemaModelField } from '../../interfaces';
+import type { Generator, Schema, SchemaDocumentModel, SchemaModelField } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
 export class TSGeneratorImpl implements Generator {
@@ -9,12 +9,16 @@ export class TSGeneratorImpl implements Generator {
 
     const builder = new StringBuilder();
     models.forEach(model => {
-      const tsType = this.getTSTypeForModel(model);
-      if (model.docs !== undefined) {
-        const tsDoc = this.buildTSDoc(model.docs);
-        builder.append(`${tsDoc}\n`);
+      if (model.type === 'alias') {
+        // TODO: Implement
+      } else {
+        const tsType = this.getTSTypeForDocumentModel(model);
+        if (model.docs !== undefined) {
+          const tsDoc = this.buildTSDoc(model.docs);
+          builder.append(`${tsDoc}\n`);
+        }
+        builder.append(`export interface ${model.name} ${tsType}\n`);
       }
-      builder.append(`export interface ${model.name} ${tsType}\n`);
     });
 
     return createGenerationOutput(builder.toString());
@@ -23,7 +27,7 @@ export class TSGeneratorImpl implements Generator {
   /**
    * Builds the TypeScript type for a given model as string.
    */
-  private getTSTypeForModel(model: SchemaModel) {
+  private getTSTypeForDocumentModel(model: SchemaDocumentModel) {
     const { fields } = model;
     const builder = new StringBuilder();
 
@@ -55,13 +59,15 @@ export class TSGeneratorImpl implements Generator {
    * Returns the TypeScript type for a given model as string.
    */
   private getTSTypeForModelField(modelField: SchemaModelField) {
-    switch (modelField.type) {
+    switch (modelField.type.type) {
       case 'string':
         return 'string';
       case 'boolean':
         return 'boolean';
       case 'int':
         return 'number';
+      case 'enum':
+        return modelField.type.items.map(({ value }) => `${value}`).join(' | ');
     }
   }
 }

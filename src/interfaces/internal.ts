@@ -4,40 +4,47 @@ export interface Logger {
   error(...args: any[]): void;
 }
 
-export type SchemaModelFieldJson = {
-  type: 'string' | 'boolean' | 'int';
-  optional?: boolean;
-  docs?: string;
-};
-
-export type SchemaModelJson = {
-  type: 'document' | 'alias';
-  docs?: string;
-  fields: Record<string, SchemaModelFieldJson>;
-};
-
-export type SchemaJson = Record<string, SchemaModelJson>;
+export type SchemaValueType =
+  | {
+      type: 'string' | 'boolean' | 'int';
+    }
+  | {
+      type: 'enum';
+      items: {
+        label: string;
+        value: string | number;
+      }[];
+    };
 
 export interface SchemaModelField {
-  type: 'string' | 'boolean' | 'int';
+  type: SchemaValueType;
   optional: boolean;
   name: string;
   docs: string | undefined;
 }
 
-export interface SchemaModel {
-  type: 'document' | 'alias';
+export interface SchemaDocumentModel {
+  type: 'document';
   name: string;
   docs: string | undefined;
   fields: SchemaModelField[];
 }
 
+export interface SchemaAliasModel {
+  type: 'alias';
+  name: string;
+  docs: string | undefined;
+  value: SchemaValueType;
+}
+
+export type SchemaModel = SchemaDocumentModel | SchemaAliasModel;
+
 export interface Schema {
   models: SchemaModel[];
 }
 
-export interface SchemaParser {
-  parseSchema(pathToSchema: string): Schema;
+export interface DefinitionParser {
+  parseDefinition(pathToDefinition: string): Schema;
 }
 
 export interface GenerationOutput {
