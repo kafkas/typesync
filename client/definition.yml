@@ -16,3 +16,24 @@ Project:
       type: string
       docs: The ID of the user that created the project.
       optional: true
+    owner:
+      docs: The current owner of the project
+      type:
+        type: map
+        fields:
+          id:
+            type: string
+            docs: The ID of the current owner.
+          expiresAt:
+            docs: When the ownership expires
+            type: timestamp
+          credentials:
+            docs: Owner credentials
+            type:
+              type: map
+              fields:
+                email:
+                  type: string
+                  docs: The email of the user
+                passwordHash:
+                  type: string
