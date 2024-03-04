@@ -7,7 +7,7 @@ const typesync = createTypeSync({ debug: true });
 void typesync
   .generate({
     pathToDefinition: resolve(__dirname, 'definition.yml'),
-    platform: 'ts',
+    platform: 'ts:firebase-admin:11',
     pathToOutput: resolve(__dirname, 'output.ts'),
   })
   .then(() => {

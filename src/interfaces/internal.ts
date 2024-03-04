@@ -1,24 +1,38 @@
+import type { TSGenerationPlatform } from './public';
+
 export interface Logger {
   info(...args: any[]): void;
   warn(...args: any[]): void;
   error(...args: any[]): void;
 }
 
+export type SchemaPrimitiveValueType = {
+  type: 'string' | 'boolean' | 'int' | 'timestamp';
+};
+
+export type SchemaAliasValueType = {
+  type: 'alias';
+  name: string;
+};
+
+export type SchemaEnumValueType = {
+  type: 'enum';
+  items: {
+    label: string;
+    value: string | number;
+  }[];
+};
+
+export type SchemaMapValueType = {
+  type: 'map';
+  fields: SchemaModelField[];
+};
+
 export type SchemaValueType =
-  | {
-      type: 'string' | 'boolean' | 'int' | 'timestamp';
-    }
-  | {
-      type: 'alias';
-      name: string;
-    }
-  | {
-      type: 'enum';
-      items: {
-        label: string;
-        value: string | number;
-      }[];
-    };
+  | SchemaPrimitiveValueType
+  | SchemaAliasValueType
+  | SchemaEnumValueType
+  | SchemaMapValueType;
 
 export interface SchemaModelField {
   type: SchemaValueType;
@@ -49,6 +63,14 @@ export interface Schema {
 
 export interface DefinitionParser {
   parseDefinition(pathToDefinition: string): Schema;
+}
+
+export interface TSGeneratorConfig {
+  platform: TSGenerationPlatform;
+  /**
+   * The number of spaces for each indentation.
+   */
+  indentation: number;
 }
 
 export interface GenerationOutput {
