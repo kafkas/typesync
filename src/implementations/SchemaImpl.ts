@@ -1,11 +1,11 @@
 import type { definition } from '../definition';
-import type { Schema, SchemaModel } from '../interfaces';
+import type { schema } from '../interfaces';
 import { createSchemaDocumentModel } from './SchemaDocumentModelImpl';
 import { createSchemaAliasModel } from './SchemaAliasModelImpl';
 import { assertNever } from '../util/assert';
 
-class SchemaImpl implements Schema {
-  public readonly models: SchemaModel[];
+class SchemaImpl implements schema.Schema {
+  public readonly models: schema.Model[];
 
   public constructor(private readonly def: definition.Definition) {
     this.models = this.getModels();
@@ -25,6 +25,6 @@ class SchemaImpl implements Schema {
   }
 }
 
-export function createSchema(def: definition.Definition): Schema {
+export function createSchema(def: definition.Definition): schema.Schema {
   return new SchemaImpl(def);
 }

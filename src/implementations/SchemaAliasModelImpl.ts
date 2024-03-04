@@ -1,8 +1,8 @@
 import type { definition } from '../definition';
-import type { SchemaAliasModel } from '../interfaces';
+import type { schema } from '../interfaces';
 import { convertDefValueTypeToSchemaValueType } from './converters';
 
-class SchemaAliasModelImpl implements SchemaAliasModel {
+class SchemaAliasModelImpl implements schema.AliasModel {
   public constructor(
     public readonly name: string,
     private readonly defModel: definition.AliasModel
@@ -21,6 +21,6 @@ class SchemaAliasModelImpl implements SchemaAliasModel {
   }
 }
 
-export function createSchemaAliasModel(name: string, defModel: definition.AliasModel): SchemaAliasModel {
+export function createSchemaAliasModel(name: string, defModel: definition.AliasModel): schema.AliasModel {
   return new SchemaAliasModelImpl(name, defModel);
 }

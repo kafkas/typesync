@@ -1,11 +1,11 @@
 import type { definition } from '../../definition';
-import type { SchemaModelField, SchemaPrimitiveValueType, SchemaValueType } from '../../interfaces';
+import type { schema } from '../../interfaces';
 import { assertNever } from '../../util/assert';
 
 export function convertDefModelFieldToSchemaModelField(
   fieldName: string,
   defModelField: definition.ModelField
-): SchemaModelField {
+): schema.ModelField {
   return {
     type: convertDefValueTypeToSchemaValueType(defModelField.type),
     optional: !!defModelField.optional,
@@ -14,7 +14,7 @@ export function convertDefModelFieldToSchemaModelField(
   };
 }
 
-export function convertDefValueTypeToSchemaValueType(defValueType: definition.ValueType): SchemaValueType {
+export function convertDefValueTypeToSchemaValueType(defValueType: definition.ValueType): schema.ValueType {
   if (isDefPrimitiveValueType(defValueType)) {
     return convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(defValueType);
   }
@@ -68,7 +68,7 @@ function isDefPrimitiveValueType(candidate: unknown): candidate is definition.Pr
 
 export function convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(
   defValueType: definition.PrimitiveValueType
-): SchemaPrimitiveValueType {
+): schema.PrimitiveValueType {
   switch (defValueType) {
     case 'nil':
       return { type: 'nil' };
