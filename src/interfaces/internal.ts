@@ -4,21 +4,33 @@ export interface Logger {
   error(...args: any[]): void;
 }
 
+export type SchemaPrimitiveValueType = {
+  type: 'string' | 'boolean' | 'int' | 'timestamp';
+};
+
+export type SchemaAliasValueType = {
+  type: 'alias';
+  name: string;
+};
+
+export type SchemaEnumValueType = {
+  type: 'enum';
+  items: {
+    label: string;
+    value: string | number;
+  }[];
+};
+
+export type SchemaMapValueType = {
+  type: 'map';
+  fields: SchemaModelField[];
+};
+
 export type SchemaValueType =
-  | {
-      type: 'string' | 'boolean' | 'int' | 'timestamp';
-    }
-  | {
-      type: 'alias';
-      name: string;
-    }
-  | {
-      type: 'enum';
-      items: {
-        label: string;
-        value: string | number;
-      }[];
-    };
+  | SchemaPrimitiveValueType
+  | SchemaAliasValueType
+  | SchemaEnumValueType
+  | SchemaMapValueType;
 
 export interface SchemaModelField {
   type: SchemaValueType;
