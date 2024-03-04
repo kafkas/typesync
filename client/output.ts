@@ -30,5 +30,15 @@ export interface Project {
      * When the ownership expires
      */
     expiresAt: firestore.Timestamp;
+    /**
+     * Owner credentials
+     */
+    credentials: {
+      /**
+       * The email of the user
+       */
+      email: string;
+      passwordHash: string;
+    };
   };
 }

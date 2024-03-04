@@ -27,3 +27,13 @@ Project:
           expiresAt:
             docs: When the ownership expires
             type: timestamp
+          credentials:
+            docs: Owner credentials
+            type:
+              type: map
+              fields:
+                email:
+                  type: string
+                  docs: The email of the user
+                passwordHash:
+                  type: string
