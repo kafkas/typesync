@@ -17,7 +17,9 @@ Project:
       docs: The ID of the user that created the project.
       optional: true
     topic:
-      type: nil
+      type:
+        - nil
+        - string
       docs: The topic of the project
     owner:
       docs: The current owner of the project

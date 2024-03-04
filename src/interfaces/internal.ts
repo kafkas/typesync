@@ -28,11 +28,17 @@ export type SchemaMapValueType = {
   fields: SchemaModelField[];
 };
 
+export type SchemaUnionValueType = {
+  type: 'union';
+  members: SchemaValueType[];
+};
+
 export type SchemaValueType =
   | SchemaPrimitiveValueType
   | SchemaAliasValueType
   | SchemaEnumValueType
-  | SchemaMapValueType;
+  | SchemaMapValueType
+  | SchemaUnionValueType;
 
 export interface SchemaModelField {
   type: SchemaValueType;

@@ -23,6 +23,13 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
     return { type: 'alias', name: defValueType };
   }
 
+  if (Array.isArray(defValueType)) {
+    return {
+      type: 'union',
+      members: defValueType.map(convertDefValueTypeToSchemaValueType),
+    };
+  }
+
   switch (defValueType.type) {
     case 'enum': {
       return {

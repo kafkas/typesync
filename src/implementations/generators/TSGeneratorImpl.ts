@@ -10,6 +10,7 @@ import type {
   SchemaMapValueType,
   SchemaEnumValueType,
   TSGeneratorConfig,
+  SchemaUnionValueType,
 } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 import { assertNever } from '../../util/assert';
@@ -86,25 +87,16 @@ export class TSGeneratorImpl implements Generator {
     return { aliasModels, documentModels };
   }
 
-  /**
-   * Builds the TypeScript type for a given alias model as string.
-   */
   private getTSTypeForAliasModel(model: SchemaAliasModel, depth: number) {
     return this.getTSTypeForSchemaValueType(model.value, depth);
   }
 
-  /**
-   * Builds the TypeScript type for a given model as string.
-   */
   private buildTSDoc(docs: string, depth: number) {
     const spaceCount = this.config.indentation * depth;
     const spaces = new Array<string>(spaceCount).fill(' ').join('');
     return `${spaces}/**\n${spaces} * ${docs}\n${spaces} */`;
   }
 
-  /**
-   * Returns the TypeScript type for a given model as string.
-   */
   private getTSTypeForSchemaValueType(type: SchemaValueType, depth: number) {
     switch (type.type) {
       case 'nil':
@@ -123,14 +115,13 @@ export class TSGeneratorImpl implements Generator {
         return this.getTSTypeForSchemaEnumValueType(type);
       case 'map':
         return this.getTSTypeForSchemaMapValueType(type, depth);
+      case 'union':
+        return this.getTSTypeForSchemaUnionValueType(type, depth);
       default:
         assertNever(type);
     }
   }
 
-  /**
-   * Builds the TypeScript type for a given document model as string.
-   */
   private getTSTypeForSchemaEnumValueType(type: SchemaEnumValueType) {
     const { items } = type;
     return items
@@ -147,9 +138,6 @@ export class TSGeneratorImpl implements Generator {
       .join(' | ');
   }
 
-  /**
-   * Builds the TypeScript type for a given document model as string.
-   */
   private getTSTypeForSchemaMapValueType(type: SchemaMapValueType, depth: number) {
     const { fields } = type;
     const builder = new StringBuilder();
@@ -177,6 +165,14 @@ export class TSGeneratorImpl implements Generator {
     builder.append(`}`);
 
     return builder.toString();
+  }
+
+  private getTSTypeForSchemaUnionValueType(type: SchemaUnionValueType, depth: number) {
+    const tsTypes: string[] = type.members.map(memberValueType => {
+      return this.getTSTypeForSchemaValueType(memberValueType, depth);
+    });
+
+    return tsTypes.join(' | ');
   }
 }
 
