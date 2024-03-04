@@ -2,6 +2,7 @@ import type { Definition } from '../definition';
 import type { Schema, SchemaModel } from '../interfaces';
 import { createSchemaDocumentModel } from './SchemaDocumentModelImpl';
 import { createSchemaAliasModel } from './SchemaAliasModelImpl';
+import { assertNever } from '../util/assert';
 
 class SchemaImpl implements Schema {
   public readonly models: SchemaModel[];
@@ -17,6 +18,8 @@ class SchemaImpl implements Schema {
           return createSchemaDocumentModel(modelName, model);
         case 'alias':
           return createSchemaAliasModel(modelName, model);
+        default:
+          assertNever(model);
       }
     });
   }

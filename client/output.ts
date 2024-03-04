@@ -19,6 +19,10 @@ export interface Project {
    */
   createdBy?: string;
   /**
+   * The topic of the project
+   */
+  topic: null;
+  /**
    * The current owner of the project
    */
   owner: {

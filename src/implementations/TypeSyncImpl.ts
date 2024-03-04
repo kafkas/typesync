@@ -11,6 +11,7 @@ import { createSwiftGenerator } from './generators/SwiftGeneratorImpl';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
 import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
+import { assertNever } from '../util/assert';
 
 class TypeSyncImpl implements TypeSync {
   private readonly logger: Logger;
@@ -34,6 +35,8 @@ class TypeSyncImpl implements TypeSync {
         return createTSGenerator({ platform, indentation: 2 });
       case 'swift':
         return createSwiftGenerator();
+      default:
+        assertNever(platform);
     }
   }
 

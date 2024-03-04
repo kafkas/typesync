@@ -7,7 +7,7 @@ export interface Logger {
 }
 
 export type SchemaPrimitiveValueType = {
-  type: 'string' | 'boolean' | 'int' | 'timestamp';
+  type: 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
 };
 
 export type SchemaAliasValueType = {
