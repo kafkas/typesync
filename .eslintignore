@@ -1,2 +1,2 @@
 client/output.ts
-client-unchecked/output.ts
+client-unchecked/**/*

@@ -7,7 +7,6 @@ import type {
   TypeSyncConfig,
   TypeSyncGenerateOptions,
 } from '../interfaces';
-import { createSwiftGenerator } from './generators/SwiftGeneratorImpl';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
 import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
@@ -33,8 +32,6 @@ class TypeSyncImpl implements TypeSync {
     switch (platform) {
       case 'ts:firebase-admin:11':
         return createTSGenerator({ platform, indentation: 2 });
-      case 'swift':
-        return createSwiftGenerator();
       default:
         assertNever(platform);
     }

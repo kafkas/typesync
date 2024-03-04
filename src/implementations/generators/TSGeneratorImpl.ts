@@ -1,5 +1,5 @@
 import { StringBuilder } from '@proficient/ds';
-
+import { divideModelsByType } from '../../util/divide-models-by-type';
 import type { Generator, TSGeneratorConfig, schema } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 import { assertNever } from '../../util/assert';
@@ -25,7 +25,7 @@ export class TSGeneratorImpl implements Generator {
 
     builder.append(`${tsFirestoreImport}\n\n`);
 
-    const { aliasModels, documentModels } = this.divideModelsByType(models);
+    const { aliasModels, documentModels } = divideModelsByType(models);
 
     aliasModels.forEach(model => {
       const tsType = this.getTSTypeForAliasModel(model, 0);
@@ -58,32 +58,8 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private divideModelsByType(models: schema.Model[]) {
-    const aliasModels: schema.AliasModel[] = [];
-    const documentModels: schema.DocumentModel[] = [];
-    models.forEach(model => {
-      switch (model.type) {
-        case 'alias':
-          aliasModels.push(model);
-          break;
-        case 'document':
-          documentModels.push(model);
-          break;
-        default:
-          assertNever(model);
-      }
-    });
-    return { aliasModels, documentModels };
-  }
-
   private getTSTypeForAliasModel(model: schema.AliasModel, depth: number) {
     return this.getTSTypeForSchemaValueType(model.value, depth);
-  }
-
-  private buildTSDoc(docs: string, depth: number) {
-    const spaceCount = this.config.indentation * depth;
-    const spaces = new Array<string>(spaceCount).fill(' ').join('');
-    return `${spaces}/**\n${spaces} * ${docs}\n${spaces} */`;
   }
 
   private getTSTypeForSchemaValueType(type: schema.ValueType, depth: number) {
@@ -177,6 +153,12 @@ export class TSGeneratorImpl implements Generator {
     });
 
     return tsTypes.join(' | ');
+  }
+
+  private buildTSDoc(docs: string, depth: number) {
+    const spaceCount = this.config.indentation * depth;
+    const spaces = new Array<string>(spaceCount).fill(' ').join('');
+    return `${spaces}/**\n${spaces} * ${docs}\n${spaces} */`;
   }
 }
 
