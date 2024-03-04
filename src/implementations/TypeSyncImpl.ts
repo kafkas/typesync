@@ -30,10 +30,10 @@ class TypeSyncImpl implements TypeSync {
 
   private getGeneratorForPlatform(platform: GenerationPlatform) {
     switch (platform) {
+      case 'ts:firebase-admin:11':
+        return createTSGenerator(platform);
       case 'swift':
         return createSwiftGenerator();
-      case 'ts':
-        return createTSGenerator();
     }
   }
 

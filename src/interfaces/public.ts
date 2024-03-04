@@ -1,4 +1,8 @@
-export type GenerationPlatform = 'ts' | 'swift';
+export type TSGenerationPlatform = 'ts:firebase-admin:11';
+
+export type SwiftGenerationPlatform = 'swift';
+
+export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform;
 
 export interface TypeSyncGenerateOptions {
   pathToDefinition: string;
