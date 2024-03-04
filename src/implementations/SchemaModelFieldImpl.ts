@@ -1,11 +1,11 @@
-import type { DefModelField } from '../definition';
-import type { SchemaModelField } from '../interfaces';
+import type { definition } from '../definition';
+import type { schema } from '../interfaces';
 import { convertDefValueTypeToSchemaValueType } from './converters';
 
-class SchemaModelFieldImpl implements SchemaModelField {
+class SchemaModelFieldImpl implements schema.ModelField {
   public constructor(
     public readonly name: string,
-    private readonly defModelField: DefModelField
+    private readonly defModelField: definition.ModelField
   ) {}
 
   public get type() {
@@ -21,6 +21,6 @@ class SchemaModelFieldImpl implements SchemaModelField {
   }
 }
 
-export function createSchemaModelField(name: string, defModelField: DefModelField): SchemaModelField {
+export function createSchemaModelField(name: string, defModelField: definition.ModelField): schema.ModelField {
   return new SchemaModelFieldImpl(name, defModelField);
 }

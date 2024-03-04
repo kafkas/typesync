@@ -1,8 +1,8 @@
-import type { Generator, Schema } from '../../interfaces';
+import type { Generator, schema } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
 class SwiftGeneratorImpl implements Generator {
-  public async generate(schema: Schema) {
+  public async generate(s: schema.Schema) {
     // TODO: Implement
     const content = 'abc';
     return createGenerationOutput(content);

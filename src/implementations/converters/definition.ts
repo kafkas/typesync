@@ -1,11 +1,11 @@
-import type { DefModelField, DefPrimitiveValueType, DefValueType } from '../../definition';
-import type { SchemaModelField, SchemaPrimitiveValueType, SchemaValueType } from '../../interfaces';
+import type { definition } from '../../definition';
+import type { schema } from '../../interfaces';
 import { assertNever } from '../../util/assert';
 
 export function convertDefModelFieldToSchemaModelField(
   fieldName: string,
-  defModelField: DefModelField
-): SchemaModelField {
+  defModelField: definition.ModelField
+): schema.ModelField {
   return {
     type: convertDefValueTypeToSchemaValueType(defModelField.type),
     optional: !!defModelField.optional,
@@ -14,7 +14,7 @@ export function convertDefModelFieldToSchemaModelField(
   };
 }
 
-export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType): SchemaValueType {
+export function convertDefValueTypeToSchemaValueType(defValueType: definition.ValueType): schema.ValueType {
   if (isDefPrimitiveValueType(defValueType)) {
     return convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(defValueType);
   }
@@ -54,12 +54,12 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
   }
 }
 
-function isDefPrimitiveValueType(candidate: unknown): candidate is DefPrimitiveValueType {
+function isDefPrimitiveValueType(candidate: unknown): candidate is definition.PrimitiveValueType {
   if (typeof candidate !== 'string') {
     return false;
   }
   try {
-    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as DefPrimitiveValueType);
+    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as definition.PrimitiveValueType);
     return true;
   } catch {
     return false;
@@ -67,8 +67,8 @@ function isDefPrimitiveValueType(candidate: unknown): candidate is DefPrimitiveV
 }
 
 export function convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(
-  defValueType: DefPrimitiveValueType
-): SchemaPrimitiveValueType {
+  defValueType: definition.PrimitiveValueType
+): schema.PrimitiveValueType {
   switch (defValueType) {
     case 'nil':
       return { type: 'nil' };

@@ -1,13 +1,13 @@
-import type { DefDocumentModel } from '../definition';
-import type { SchemaDocumentModel, SchemaModelField } from '../interfaces';
+import type { definition } from '../definition';
+import type { schema } from '../interfaces';
 import { createSchemaModelField } from './SchemaModelFieldImpl';
 
-class SchemaDocumentModelImpl implements SchemaDocumentModel {
-  public readonly fields: SchemaModelField[];
+class SchemaDocumentModelImpl implements schema.DocumentModel {
+  public readonly fields: schema.ModelField[];
 
   public constructor(
     public readonly name: string,
-    private readonly defModel: DefDocumentModel
+    private readonly defModel: definition.DocumentModel
   ) {
     this.fields = this.getFields();
   }
@@ -27,6 +27,6 @@ class SchemaDocumentModelImpl implements SchemaDocumentModel {
   }
 }
 
-export function createSchemaDocumentModel(name: string, defModel: DefDocumentModel): SchemaDocumentModel {
+export function createSchemaDocumentModel(name: string, defModel: definition.DocumentModel): schema.DocumentModel {
   return new SchemaDocumentModelImpl(name, defModel);
 }

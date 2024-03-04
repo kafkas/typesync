@@ -1,5 +1,5 @@
 import type { TSGenerationPlatform } from './public';
-import type { Schema } from './schema';
+import type { schema } from './schema';
 
 export interface Logger {
   info(...args: any[]): void;
@@ -8,7 +8,7 @@ export interface Logger {
 }
 
 export interface DefinitionParser {
-  parseDefinition(pathToDefinition: string): Schema;
+  parseDefinition(pathToDefinition: string): schema.Schema;
 }
 
 export interface TSGeneratorConfig {
@@ -24,5 +24,5 @@ export interface GenerationOutput {
 }
 
 export interface Generator {
-  generate(schema: Schema): Promise<GenerationOutput>;
+  generate(s: schema.Schema): Promise<GenerationOutput>;
 }

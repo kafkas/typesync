@@ -1,18 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type {
-  Generator,
-  Schema,
-  SchemaDocumentModel,
-  SchemaAliasModel,
-  SchemaModel,
-  SchemaValueType,
-  SchemaMapValueType,
-  SchemaEnumValueType,
-  TSGeneratorConfig,
-  SchemaUnionValueType,
-  SchemaLiteralValueType,
-} from '../../interfaces';
+import type { Generator, TSGeneratorConfig, schema } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 import { assertNever } from '../../util/assert';
 
@@ -28,8 +16,8 @@ export class TSGeneratorImpl implements Generator {
 
   public constructor(private readonly config: TSGeneratorConfig) {}
 
-  public async generate(schema: Schema) {
-    const { models } = schema;
+  public async generate(s: schema.Schema) {
+    const { models } = s;
 
     const builder = new StringBuilder();
 
@@ -70,9 +58,9 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private divideModelsByType(models: SchemaModel[]) {
-    const aliasModels: SchemaAliasModel[] = [];
-    const documentModels: SchemaDocumentModel[] = [];
+  private divideModelsByType(models: schema.Model[]) {
+    const aliasModels: schema.AliasModel[] = [];
+    const documentModels: schema.DocumentModel[] = [];
     models.forEach(model => {
       switch (model.type) {
         case 'alias':
@@ -88,7 +76,7 @@ export class TSGeneratorImpl implements Generator {
     return { aliasModels, documentModels };
   }
 
-  private getTSTypeForAliasModel(model: SchemaAliasModel, depth: number) {
+  private getTSTypeForAliasModel(model: schema.AliasModel, depth: number) {
     return this.getTSTypeForSchemaValueType(model.value, depth);
   }
 
@@ -98,7 +86,7 @@ export class TSGeneratorImpl implements Generator {
     return `${spaces}/**\n${spaces} * ${docs}\n${spaces} */`;
   }
 
-  private getTSTypeForSchemaValueType(type: SchemaValueType, depth: number) {
+  private getTSTypeForSchemaValueType(type: schema.ValueType, depth: number) {
     switch (type.type) {
       case 'nil':
         return 'null';
@@ -125,7 +113,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForSchemaLiteralValueType(type: SchemaLiteralValueType) {
+  private getTSTypeForSchemaLiteralValueType(type: schema.LiteralValueType) {
     switch (typeof type.value) {
       case 'string':
         return `'${type.value}'`;
@@ -138,7 +126,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForSchemaEnumValueType(type: SchemaEnumValueType) {
+  private getTSTypeForSchemaEnumValueType(type: schema.EnumValueType) {
     const { items } = type;
     return items
       .map(({ value }) => {
@@ -154,7 +142,7 @@ export class TSGeneratorImpl implements Generator {
       .join(' | ');
   }
 
-  private getTSTypeForSchemaMapValueType(type: SchemaMapValueType, depth: number) {
+  private getTSTypeForSchemaMapValueType(type: schema.MapValueType, depth: number) {
     const { fields } = type;
     const builder = new StringBuilder();
 
@@ -183,7 +171,7 @@ export class TSGeneratorImpl implements Generator {
     return builder.toString();
   }
 
-  private getTSTypeForSchemaUnionValueType(type: SchemaUnionValueType, depth: number) {
+  private getTSTypeForSchemaUnionValueType(type: schema.UnionValueType, depth: number) {
     const tsTypes: string[] = type.members.map(memberValueType => {
       return this.getTSTypeForSchemaValueType(memberValueType, depth);
     });

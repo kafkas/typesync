@@ -1,2 +1,3 @@
-export * from './schema';
-export type * from './types';
+import * as definition from './namespace';
+
+export { definition };
