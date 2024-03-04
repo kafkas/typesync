@@ -9,6 +9,8 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
       return { type: 'boolean' };
     case 'int':
       return { type: 'int' };
+    case 'timestamp':
+      return { type: 'timestamp' };
   }
 
   if (typeof defValueType === 'string') {

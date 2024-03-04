@@ -104,6 +104,8 @@ export class TSGeneratorImpl implements Generator {
         return 'boolean';
       case 'int':
         return 'number';
+      case 'timestamp':
+        return 'firestore.Timestamp';
       case 'alias':
         return type.name;
       case 'enum':

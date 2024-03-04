@@ -6,7 +6,7 @@ export interface Logger {
 
 export type SchemaValueType =
   | {
-      type: 'string' | 'boolean' | 'int';
+      type: 'string' | 'boolean' | 'int' | 'timestamp';
     }
   | {
       type: 'alias';

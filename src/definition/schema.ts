@@ -11,7 +11,7 @@ export const defEnumValueTypeSchema = z.object({
 });
 
 export const getDefValueTypeSchema = (aliasNames: string[]) =>
-  z.enum(['string', 'boolean', 'int', ...aliasNames]).or(defEnumValueTypeSchema);
+  z.enum(['string', 'boolean', 'int', 'timestamp', ...aliasNames]).or(defEnumValueTypeSchema);
 
 export const getDefModelFieldSchema = (aliasNames: string[]) =>
   z
