@@ -12,6 +12,7 @@ import type {
   TSGeneratorConfig,
 } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
+import { assertNever } from '../../util/assert';
 
 export class TSGeneratorImpl implements Generator {
   private get firestore() {
@@ -74,7 +75,8 @@ export class TSGeneratorImpl implements Generator {
         case 'document':
           documentModels.push(model);
           break;
-        // TODO: Handle default case properly
+        default:
+          assertNever(model);
       }
     });
     return { aliasModels, documentModels };
