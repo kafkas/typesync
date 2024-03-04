@@ -1,5 +1,6 @@
-import type { DefModelField, DefValueType } from '../../definition';
-import type { SchemaModelField, SchemaValueType } from '../../interfaces';
+import type { DefModelField, DefPrimitiveValueType, DefValueType } from '../../definition';
+import type { SchemaModelField, SchemaPrimitiveValueType, SchemaValueType } from '../../interfaces';
+import { assertNever } from '../../util/assert';
 
 export function convertDefModelFieldToSchemaModelField(
   fieldName: string,
@@ -14,15 +15,8 @@ export function convertDefModelFieldToSchemaModelField(
 }
 
 export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType): SchemaValueType {
-  switch (defValueType) {
-    case 'string':
-      return { type: 'string' };
-    case 'boolean':
-      return { type: 'boolean' };
-    case 'int':
-      return { type: 'int' };
-    case 'timestamp':
-      return { type: 'timestamp' };
+  if (isDefPrimitiveValueType(defValueType)) {
+    return convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(defValueType);
   }
 
   if (typeof defValueType === 'string') {
@@ -43,5 +37,38 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
           convertDefModelFieldToSchemaModelField(fieldName, defModelField)
         ),
       };
+    default:
+      assertNever(defValueType);
+  }
+}
+
+function isDefPrimitiveValueType(candidate: unknown): candidate is DefPrimitiveValueType {
+  if (typeof candidate !== 'string') {
+    return false;
+  }
+  try {
+    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as DefPrimitiveValueType);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(
+  defValueType: DefPrimitiveValueType
+): SchemaPrimitiveValueType {
+  switch (defValueType) {
+    case 'nil':
+      return { type: 'nil' };
+    case 'string':
+      return { type: 'string' };
+    case 'boolean':
+      return { type: 'boolean' };
+    case 'int':
+      return { type: 'int' };
+    case 'timestamp':
+      return { type: 'timestamp' };
+    default:
+      assertNever(defValueType);
   }
 }

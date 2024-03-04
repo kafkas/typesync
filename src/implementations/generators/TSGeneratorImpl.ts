@@ -19,6 +19,8 @@ export class TSGeneratorImpl implements Generator {
     switch (this.config.platform) {
       case 'ts:firebase-admin:11':
         return 'firestore';
+      default:
+        assertNever(this.config.platform);
     }
   }
 
@@ -61,6 +63,8 @@ export class TSGeneratorImpl implements Generator {
     switch (this.config.platform) {
       case 'ts:firebase-admin:11':
         return `import { firestore } from 'firebase-admin';`;
+      default:
+        assertNever(this.config.platform);
     }
   }
 
@@ -103,6 +107,8 @@ export class TSGeneratorImpl implements Generator {
    */
   private getTSTypeForSchemaValueType(type: SchemaValueType, depth: number) {
     switch (type.type) {
+      case 'nil':
+        return 'null';
       case 'string':
         return 'string';
       case 'boolean':
@@ -117,6 +123,8 @@ export class TSGeneratorImpl implements Generator {
         return this.getTSTypeForSchemaEnumValueType(type);
       case 'map':
         return this.getTSTypeForSchemaMapValueType(type, depth);
+      default:
+        assertNever(type);
     }
   }
 
@@ -125,7 +133,18 @@ export class TSGeneratorImpl implements Generator {
    */
   private getTSTypeForSchemaEnumValueType(type: SchemaEnumValueType) {
     const { items } = type;
-    return items.map(({ value }) => (typeof value === 'string' ? `'${value}'` : `${value}`)).join(' | ');
+    return items
+      .map(({ value }) => {
+        switch (typeof value) {
+          case 'string':
+            return `'${value}'`;
+          case 'number':
+            return `${value}`;
+          default:
+            assertNever(value);
+        }
+      })
+      .join(' | ');
   }
 
   /**

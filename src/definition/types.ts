@@ -1,3 +1,5 @@
+export type DefPrimitiveValueType = 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
+
 export type DefEnumValueType = {
   type: 'enum';
   items: {

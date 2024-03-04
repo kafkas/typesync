@@ -21,7 +21,7 @@ export const getDefMapValueTypeSchema = (aliasNames: string[]) =>
 
 export const getDefValueTypeSchema = (aliasNames: string[]) =>
   z
-    .enum(['string', 'boolean', 'int', 'timestamp', ...aliasNames])
+    .enum(['nil', 'string', 'boolean', 'int', 'timestamp', ...aliasNames])
     .or(defEnumValueTypeSchema)
     .or(getDefMapValueTypeSchema(aliasNames));
 
