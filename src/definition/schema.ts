@@ -1,13 +1,5 @@
 import { z } from 'zod';
-import type {
-  DefAliasModel,
-  DefDocumentModel,
-  DefMapValueType,
-  DefModel,
-  DefModelField,
-  DefValueType,
-  Definition,
-} from './types';
+import type { DefModelField } from './types';
 
 export const defEnumValueTypeSchema = z.object({
   type: z.literal('enum'),
@@ -19,13 +11,15 @@ export const defEnumValueTypeSchema = z.object({
   ),
 });
 
-export const getDefMapValueTypeSchema = (aliasNames: string[]): z.ZodType<DefMapValueType> =>
-  z.object({
-    type: z.literal('map'),
-    fields: z.record(getDefModelFieldSchema(aliasNames)),
-  });
+export const getDefMapValueTypeSchema = (aliasNames: string[]) =>
+  z.lazy(() =>
+    z.object({
+      type: z.literal('map'),
+      fields: z.record(getDefModelFieldSchema(aliasNames)),
+    })
+  );
 
-export const getDefValueTypeSchema = (aliasNames: string[]): z.ZodType<DefValueType> =>
+export const getDefValueTypeSchema = (aliasNames: string[]) =>
   z
     .enum(['string', 'boolean', 'int', 'timestamp', ...aliasNames])
     .or(defEnumValueTypeSchema)
