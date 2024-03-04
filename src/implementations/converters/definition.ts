@@ -31,6 +31,11 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
   }
 
   switch (defValueType.type) {
+    case 'literal':
+      return {
+        type: 'literal',
+        value: defValueType.value,
+      };
     case 'enum': {
       return {
         type: 'enum',

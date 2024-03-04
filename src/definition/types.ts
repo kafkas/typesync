@@ -1,5 +1,10 @@
 export type DefPrimitiveValueType = 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
 
+export type DefLiteralValueType = {
+  type: 'literal';
+  value: string | number | boolean;
+};
+
 export type DefEnumValueType = {
   type: 'enum';
   items: {
@@ -15,7 +20,7 @@ export type DefMapValueType = {
 
 export type DefUnionValueType = DefValueType[];
 
-export type DefValueType = string | DefEnumValueType | DefMapValueType | DefUnionValueType;
+export type DefValueType = string | DefLiteralValueType | DefEnumValueType | DefMapValueType | DefUnionValueType;
 
 export type DefModelField = {
   type: DefValueType;

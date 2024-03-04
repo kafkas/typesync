@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import type { DefModelField, DefValueType } from './types';
 
+export const defLiteralValueTypeSchema = z.object({
+  type: z.literal('literal'),
+  value: z.string().or(z.number()).or(z.boolean()),
+});
+
 export const defEnumValueTypeSchema = z.object({
   type: z.literal('enum'),
   items: z.array(
@@ -29,6 +34,7 @@ export const getDefUnionValueTypeSchema = (aliasNames: string[]) =>
 export const getDefValueTypeSchema = (aliasNames: string[]): z.ZodType<DefValueType> =>
   z
     .enum(['nil', 'string', 'boolean', 'int', 'timestamp', ...aliasNames])
+    .or(defLiteralValueTypeSchema)
     .or(defEnumValueTypeSchema)
     .or(getDefMapValueTypeSchema(aliasNames))
     .or(getDefUnionValueTypeSchema(aliasNames));

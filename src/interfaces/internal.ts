@@ -15,6 +15,11 @@ export type SchemaAliasValueType = {
   name: string;
 };
 
+export type SchemaLiteralValueType = {
+  type: 'literal';
+  value: string | number | boolean;
+};
+
 export type SchemaEnumValueType = {
   type: 'enum';
   items: {
@@ -35,6 +40,7 @@ export type SchemaUnionValueType = {
 
 export type SchemaValueType =
   | SchemaPrimitiveValueType
+  | SchemaLiteralValueType
   | SchemaAliasValueType
   | SchemaEnumValueType
   | SchemaMapValueType
