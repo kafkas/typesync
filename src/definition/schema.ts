@@ -4,19 +4,23 @@ import type { DefModelField, DefValueType } from './types';
 export const defEnumValueTypeSchema = z.object({
   type: z.literal('enum'),
   items: z.array(
-    z.object({
-      label: z.string(),
-      value: z.string().or(z.number()),
-    })
+    z
+      .object({
+        label: z.string(),
+        value: z.string().or(z.number()),
+      })
+      .strict()
   ),
 });
 
 export const getDefMapValueTypeSchema = (aliasNames: string[]) =>
   z.lazy(() =>
-    z.object({
-      type: z.literal('map'),
-      fields: z.record(getDefModelFieldSchema(aliasNames)),
-    })
+    z
+      .object({
+        type: z.literal('map'),
+        fields: z.record(getDefModelFieldSchema(aliasNames)),
+      })
+      .strict()
   );
 
 export const getDefUnionValueTypeSchema = (aliasNames: string[]) =>
