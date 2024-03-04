@@ -7,14 +7,29 @@ import type {
   SchemaAliasModel,
   SchemaModel,
   SchemaValueType,
+  TSGenerationPlatform,
 } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
 export class TSGeneratorImpl implements Generator {
+  private get firestore() {
+    switch (this.platform) {
+      case 'ts:firebase-admin:11':
+        return 'firestore';
+    }
+  }
+
+  public constructor(private readonly platform: TSGenerationPlatform) {}
+
   public async generate(schema: Schema) {
     const { models } = schema;
 
     const builder = new StringBuilder();
+
+    const tsFirestoreImport = this.getImportFirestoreStatement();
+
+    builder.append(`${tsFirestoreImport}\n\n`);
+
     const { aliasModels, documentModels } = this.divideModelsByType(models);
 
     aliasModels.forEach(model => {
@@ -36,6 +51,13 @@ export class TSGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(builder.toString());
+  }
+
+  private getImportFirestoreStatement() {
+    switch (this.platform) {
+      case 'ts:firebase-admin:11':
+        return `import { firestore } from 'firebase-admin';`;
+    }
   }
 
   private divideModelsByType(models: SchemaModel[]) {
@@ -104,6 +126,8 @@ export class TSGeneratorImpl implements Generator {
         return 'boolean';
       case 'int':
         return 'number';
+      case 'timestamp':
+        return `${this.firestore}.Timestamp`;
       case 'alias':
         return type.name;
       case 'enum':
@@ -112,6 +136,6 @@ export class TSGeneratorImpl implements Generator {
   }
 }
 
-export function createTSGenerator(): Generator {
-  return new TSGeneratorImpl();
+export function createTSGenerator(platform: TSGenerationPlatform): Generator {
+  return new TSGeneratorImpl(platform);
 }
