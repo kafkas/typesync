@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import { getDefinitionSchema } from '../definition';
+import { definition } from '../definition';
 import type { Logger, DefinitionParser } from '../interfaces';
 import { extractErrorMessage } from '../util/extract-error-message';
 import { DefinitionNotValidYamlError, DefinitionNotValidError } from '../errors';
@@ -13,7 +13,7 @@ class DefinitionParserImpl implements DefinitionParser {
   public parseDefinition(pathToDefinition: string) {
     const definitionJson = this.parseYamlFileAsJson(pathToDefinition);
     const aliasNames = this.extractAliasModelNames(definitionJson);
-    const definitionSchema = getDefinitionSchema(aliasNames);
+    const definitionSchema = definition.schemas.definition(aliasNames);
     const parsedDefinition = this.parseDefinitionWithSchema(definitionJson, definitionSchema);
     return createSchema(parsedDefinition);
   }

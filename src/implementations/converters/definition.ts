@@ -1,10 +1,10 @@
-import type { DefModelField, DefPrimitiveValueType, DefValueType } from '../../definition';
+import type { definition } from '../../definition';
 import type { SchemaModelField, SchemaPrimitiveValueType, SchemaValueType } from '../../interfaces';
 import { assertNever } from '../../util/assert';
 
 export function convertDefModelFieldToSchemaModelField(
   fieldName: string,
-  defModelField: DefModelField
+  defModelField: definition.ModelField
 ): SchemaModelField {
   return {
     type: convertDefValueTypeToSchemaValueType(defModelField.type),
@@ -14,7 +14,7 @@ export function convertDefModelFieldToSchemaModelField(
   };
 }
 
-export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType): SchemaValueType {
+export function convertDefValueTypeToSchemaValueType(defValueType: definition.ValueType): SchemaValueType {
   if (isDefPrimitiveValueType(defValueType)) {
     return convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(defValueType);
   }
@@ -54,12 +54,12 @@ export function convertDefValueTypeToSchemaValueType(defValueType: DefValueType)
   }
 }
 
-function isDefPrimitiveValueType(candidate: unknown): candidate is DefPrimitiveValueType {
+function isDefPrimitiveValueType(candidate: unknown): candidate is definition.PrimitiveValueType {
   if (typeof candidate !== 'string') {
     return false;
   }
   try {
-    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as DefPrimitiveValueType);
+    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as definition.PrimitiveValueType);
     return true;
   } catch {
     return false;
@@ -67,7 +67,7 @@ function isDefPrimitiveValueType(candidate: unknown): candidate is DefPrimitiveV
 }
 
 export function convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(
-  defValueType: DefPrimitiveValueType
+  defValueType: definition.PrimitiveValueType
 ): SchemaPrimitiveValueType {
   switch (defValueType) {
     case 'nil':

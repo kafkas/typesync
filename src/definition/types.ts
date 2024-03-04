@@ -1,11 +1,11 @@
-export type DefPrimitiveValueType = 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
+export type PrimitiveValueType = 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
 
-export type DefLiteralValueType = {
+export type LiteralValueType = {
   type: 'literal';
   value: string | number | boolean;
 };
 
-export type DefEnumValueType = {
+export type EnumValueType = {
   type: 'enum';
   items: {
     label: string;
@@ -13,41 +13,41 @@ export type DefEnumValueType = {
   }[];
 };
 
-export type DefMapValueType = {
+export type MapValueType = {
   type: 'map';
-  fields: Record<string, DefModelField>;
+  fields: Record<string, ModelField>;
 };
 
-export type DefUnionValueType = DefValueType[];
+export type UnionValueType = ValueType[];
 
-export type DefAliasValueType = string;
+export type AliasValueType = string;
 
-export type DefValueType =
-  | DefPrimitiveValueType
-  | DefLiteralValueType
-  | DefEnumValueType
-  | DefMapValueType
-  | DefUnionValueType
-  | DefAliasValueType;
+export type ValueType =
+  | PrimitiveValueType
+  | LiteralValueType
+  | EnumValueType
+  | MapValueType
+  | UnionValueType
+  | AliasValueType;
 
-export type DefModelField = {
-  type: DefValueType;
+export type ModelField = {
+  type: ValueType;
   optional?: boolean;
   docs?: string;
 };
 
-export type DefDocumentModel = {
+export type DocumentModel = {
   type: 'document';
   docs?: string;
-  fields: Record<string, DefModelField>;
+  fields: Record<string, ModelField>;
 };
 
-export type DefAliasModel = {
+export type AliasModel = {
   type: 'alias';
   docs?: string;
-  value: DefValueType;
+  value: ValueType;
 };
 
-export type DefModel = DefDocumentModel | DefAliasModel;
+export type Model = DocumentModel | AliasModel;
 
-export type Definition = Record<string, DefModel>;
+export type Definition = Record<string, Model>;
