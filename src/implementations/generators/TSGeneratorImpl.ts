@@ -11,6 +11,7 @@ import type {
   SchemaEnumValueType,
   TSGeneratorConfig,
   SchemaUnionValueType,
+  SchemaLiteralValueType,
 } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 import { assertNever } from '../../util/assert';
@@ -109,16 +110,31 @@ export class TSGeneratorImpl implements Generator {
         return 'number';
       case 'timestamp':
         return `${this.firestore}.Timestamp`;
-      case 'alias':
-        return type.name;
+      case 'literal':
+        return this.getTSTypeForSchemaLiteralValueType(type);
       case 'enum':
         return this.getTSTypeForSchemaEnumValueType(type);
       case 'map':
         return this.getTSTypeForSchemaMapValueType(type, depth);
       case 'union':
         return this.getTSTypeForSchemaUnionValueType(type, depth);
+      case 'alias':
+        return type.name;
       default:
         assertNever(type);
+    }
+  }
+
+  private getTSTypeForSchemaLiteralValueType(type: SchemaLiteralValueType) {
+    switch (typeof type.value) {
+      case 'string':
+        return `'${type.value}'`;
+      case 'number':
+        return `${type.value}`;
+      case 'boolean':
+        return `${type.value}`;
+      default:
+        assertNever(type.value);
     }
   }
 

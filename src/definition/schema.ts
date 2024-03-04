@@ -1,33 +1,46 @@
 import { z } from 'zod';
 import type { DefModelField, DefValueType } from './types';
 
+export const defLiteralValueTypeSchema = z.object({
+  type: z.literal('literal'),
+  value: z.string().or(z.number()).or(z.boolean()),
+});
+
 export const defEnumValueTypeSchema = z.object({
   type: z.literal('enum'),
   items: z.array(
-    z.object({
-      label: z.string(),
-      value: z.string().or(z.number()),
-    })
+    z
+      .object({
+        label: z.string(),
+        value: z.string().or(z.number()),
+      })
+      .strict()
   ),
 });
 
 export const getDefMapValueTypeSchema = (aliasNames: string[]) =>
   z.lazy(() =>
-    z.object({
-      type: z.literal('map'),
-      fields: z.record(getDefModelFieldSchema(aliasNames)),
-    })
+    z
+      .object({
+        type: z.literal('map'),
+        fields: z.record(getDefModelFieldSchema(aliasNames)),
+      })
+      .strict()
   );
 
 export const getDefUnionValueTypeSchema = (aliasNames: string[]) =>
   z.lazy(() => z.array(getDefValueTypeSchema(aliasNames)));
 
+export const getDefAliasValueTypeSchema = (aliasNames: string[]) => z.enum([...aliasNames] as [string, ...string[]]);
+
 export const getDefValueTypeSchema = (aliasNames: string[]): z.ZodType<DefValueType> =>
   z
-    .enum(['nil', 'string', 'boolean', 'int', 'timestamp', ...aliasNames])
+    .enum(['nil', 'string', 'boolean', 'int', 'timestamp'])
+    .or(defLiteralValueTypeSchema)
     .or(defEnumValueTypeSchema)
     .or(getDefMapValueTypeSchema(aliasNames))
-    .or(getDefUnionValueTypeSchema(aliasNames));
+    .or(getDefUnionValueTypeSchema(aliasNames))
+    .or(getDefAliasValueTypeSchema(aliasNames));
 
 export const getDefModelFieldSchema = (aliasNames: string[]): z.ZodType<DefModelField> =>
   z
