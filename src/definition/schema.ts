@@ -31,13 +31,16 @@ export const getDefMapValueTypeSchema = (aliasNames: string[]) =>
 export const getDefUnionValueTypeSchema = (aliasNames: string[]) =>
   z.lazy(() => z.array(getDefValueTypeSchema(aliasNames)));
 
+export const getDefAliasValueTypeSchema = (aliasNames: string[]) => z.enum([...aliasNames] as [string, ...string[]]);
+
 export const getDefValueTypeSchema = (aliasNames: string[]): z.ZodType<DefValueType> =>
   z
-    .enum(['nil', 'string', 'boolean', 'int', 'timestamp', ...aliasNames])
+    .enum(['nil', 'string', 'boolean', 'int', 'timestamp'])
     .or(defLiteralValueTypeSchema)
     .or(defEnumValueTypeSchema)
     .or(getDefMapValueTypeSchema(aliasNames))
-    .or(getDefUnionValueTypeSchema(aliasNames));
+    .or(getDefUnionValueTypeSchema(aliasNames))
+    .or(getDefAliasValueTypeSchema(aliasNames));
 
 export const getDefModelFieldSchema = (aliasNames: string[]): z.ZodType<DefModelField> =>
   z

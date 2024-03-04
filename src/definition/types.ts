@@ -20,7 +20,15 @@ export type DefMapValueType = {
 
 export type DefUnionValueType = DefValueType[];
 
-export type DefValueType = string | DefLiteralValueType | DefEnumValueType | DefMapValueType | DefUnionValueType;
+export type DefAliasValueType = string;
+
+export type DefValueType =
+  | DefPrimitiveValueType
+  | DefLiteralValueType
+  | DefEnumValueType
+  | DefMapValueType
+  | DefUnionValueType
+  | DefAliasValueType;
 
 export type DefModelField = {
   type: DefValueType;

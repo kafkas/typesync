@@ -112,14 +112,14 @@ export class TSGeneratorImpl implements Generator {
         return `${this.firestore}.Timestamp`;
       case 'literal':
         return this.getTSTypeForSchemaLiteralValueType(type);
-      case 'alias':
-        return type.name;
       case 'enum':
         return this.getTSTypeForSchemaEnumValueType(type);
       case 'map':
         return this.getTSTypeForSchemaMapValueType(type, depth);
       case 'union':
         return this.getTSTypeForSchemaUnionValueType(type, depth);
+      case 'alias':
+        return type.name;
       default:
         assertNever(type);
     }
