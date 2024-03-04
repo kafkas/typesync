@@ -22,13 +22,13 @@ export interface Project {
    * The current owner of the project
    */
   owner: {
-  /**
-   * The ID of the current owner.
-   */
-  id: string;
-  /**
-   * When the ownership expires
-   */
-  expiresAt: firestore.Timestamp;
-};
+    /**
+     * The ID of the current owner.
+     */
+    id: string;
+    /**
+     * When the ownership expires
+     */
+    expiresAt: firestore.Timestamp;
+  };
 }

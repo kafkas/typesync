@@ -1,3 +1,5 @@
+import type { TSGenerationPlatform } from './public';
+
 export interface Logger {
   info(...args: any[]): void;
   warn(...args: any[]): void;
@@ -61,6 +63,14 @@ export interface Schema {
 
 export interface DefinitionParser {
   parseDefinition(pathToDefinition: string): Schema;
+}
+
+export interface TSGeneratorConfig {
+  platform: TSGenerationPlatform;
+  /**
+   * The number of spaces for each indentation.
+   */
+  indentation: number;
 }
 
 export interface GenerationOutput {
