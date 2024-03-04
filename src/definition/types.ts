@@ -13,7 +13,9 @@ export type DefMapValueType = {
   fields: Record<string, DefModelField>;
 };
 
-export type DefValueType = string | DefEnumValueType | DefMapValueType;
+export type DefUnionValueType = DefValueType[];
+
+export type DefValueType = string | DefEnumValueType | DefMapValueType | DefUnionValueType;
 
 export type DefModelField = {
   type: DefValueType;

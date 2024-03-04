@@ -21,7 +21,7 @@ export interface Project {
   /**
    * The topic of the project
    */
-  topic: null;
+  topic: null | string;
   /**
    * The current owner of the project
    */
