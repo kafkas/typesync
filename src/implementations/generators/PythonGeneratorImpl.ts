@@ -18,9 +18,26 @@ export class PythonGeneratorImpl implements Generator {
     const builder = new StringBuilder();
 
     builder.append(`import typing\n`);
+    builder.append(`import datetime\n`);
+    builder.append(`import enum\n`);
     builder.append(`import pydantic\n\n`);
 
-    const { documentModels } = divideModelsByType(models);
+    const { aliasModels, documentModels } = divideModelsByType(models);
+
+    aliasModels.forEach(model => {
+      // TODO: Add doc comment
+
+      if (model.value.type === 'enum') {
+        builder.append(`class ${model.name}(enum.Enum):\n`);
+        model.value.items.forEach(item => {
+          builder.append(
+            `${this.indent}${item.label} = ${typeof item.value === 'string' ? `"${item.value}"` : item.value}\n`
+          );
+        });
+      }
+    });
+
+    builder.append('\n');
 
     documentModels.forEach(model => {
       // TODO: Add doc comment
@@ -45,11 +62,9 @@ export class PythonGeneratorImpl implements Generator {
       case 'int':
         return 'int';
       case 'timestamp':
-        // TODO: Implement
-        return 'typing.Any';
+        return 'datetime.datetime';
       case 'literal':
-        // TODO: Implement
-        return 'typing.Any';
+        return this.getPyTypeForSchemaLiteralValueType(type);
       case 'enum':
         // TODO: Implement
         return 'typing.Any';
@@ -63,6 +78,20 @@ export class PythonGeneratorImpl implements Generator {
         return 'typing.Any';
       default:
         assertNever(type);
+    }
+  }
+
+  private getPyTypeForSchemaLiteralValueType(type: schema.LiteralValueType) {
+    switch (typeof type.value) {
+      case 'string':
+        return `typing.Literal["${type.value}"]`;
+      case 'number':
+        // TODO: Don't allow float literals in the spec
+        return `typing.Literal[${type.value}]`;
+      case 'boolean':
+        return `typing.Literal[${type.value ? 'True' : 'False'}]`;
+      default:
+        assertNever(type.value);
     }
   }
 

@@ -1,48 +1,34 @@
 import { firestore } from 'firebase-admin';
 
 /**
- * Represents a project within a workspace.
+ * Represents a user role
  */
-export interface Project {
-  /**
-   * The ID of the project.
-   */
-  id: string;
+export type UserRole = 'admin' | 'user' | 'guest';
+export type Address = {
+  street: string;
+  city: string;
+  zip_code: string;
+};
+export type Cat = {
+  type: 'cat';
   name: string;
-  /**
-   * Whether the project has been completed.
-   */
-  completed: boolean;
-  order: number;
-  /**
-   * The ID of the user that created the project.
-   */
-  createdBy?: string;
-  /**
-   * The topic of the project
-   */
-  topic: null | string;
-  /**
-   * The current owner of the project
-   */
-  owner: {
-    /**
-     * The ID of the current owner.
-     */
-    id: string;
-    /**
-     * When the ownership expires
-     */
-    expiresAt: firestore.Timestamp;
-    /**
-     * Owner credentials
-     */
-    credentials: {
-      /**
-       * The email of the user
-       */
-      email: string;
-      passwordHash: string;
-    };
-  };
+  lives_left: number;
+};
+export type Dog = {
+  type: 'dog';
+  name: string;
+  breed: string;
+};
+export type Pet = Cat | Dog;
+/**
+ * User profile model
+ */
+export interface UserProfile {
+  username: string;
+  age: number;
+  role: UserRole;
+  created_at?: firestore.Timestamp;
+  address: Address;
+  bio: null | string;
+  area_code: 34;
 }
