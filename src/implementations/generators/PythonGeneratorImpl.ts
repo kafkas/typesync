@@ -1,9 +1,10 @@
 import { StringBuilder } from '@proficient/ds';
-import { divideModelsByType } from '../../util/divide-models-by-type';
+
 import type { Generator, PythonGeneratorConfig, schema } from '../../interfaces';
-import { createGenerationOutput } from '../GenerationOutputImpl';
-import { space } from '../../util/space';
 import { assertNever } from '../../util/assert';
+import { divideModelsByType } from '../../util/divide-models-by-type';
+import { space } from '../../util/space';
+import { createGenerationOutput } from '../GenerationOutputImpl';
 
 export class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import type { ModelField, ValueType } from './types';
 
 export const primitiveValueType = z.enum(['nil', 'string', 'boolean', 'int', 'timestamp']);

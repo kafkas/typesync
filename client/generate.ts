@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+
 import { createTypeSync } from '../src';
 import { extractErrorMessage } from '../src/util/extract-error-message';
 

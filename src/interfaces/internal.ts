@@ -1,4 +1,4 @@
-import type { TSGenerationPlatform, PythonGenerationPlatform } from './public';
+import type { PythonGenerationPlatform, TSGenerationPlatform } from './public';
 import type { schema } from './schema';
 
 export interface Logger {
