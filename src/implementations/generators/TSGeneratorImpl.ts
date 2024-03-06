@@ -80,6 +80,8 @@ export class TSGeneratorImpl implements Generator {
         return this.getTSTypeForSchemaLiteralValueType(type);
       case 'enum':
         return this.getTSTypeForSchemaEnumValueType(type);
+      case 'tuple':
+        return this.getTSTypeForSchemaTupleValueType(type, depth);
       case 'list':
         return this.getTSTypeForSchemaListValueType(type, depth);
       case 'map':
@@ -120,6 +122,11 @@ export class TSGeneratorImpl implements Generator {
         }
       })
       .join(' | ');
+  }
+
+  private getTSTypeForSchemaTupleValueType(type: schema.TupleValueType, depth: number): string {
+    const tsTypes = type.values.map(v => this.getTSTypeForSchemaValueType(v, depth)).join(', ');
+    return `[${tsTypes}]`;
   }
 
   private getTSTypeForSchemaListValueType(type: schema.ListValueType, depth: number): string {

@@ -13,6 +13,11 @@ export type EnumValueType = {
   }[];
 };
 
+export type TupleValueType = {
+  type: 'tuple';
+  values: ValueType[];
+};
+
 export type ListValueType = {
   type: 'list';
   of: ValueType;
@@ -31,6 +36,7 @@ export type ValueType =
   | PrimitiveValueType
   | LiteralValueType
   | EnumValueType
+  | TupleValueType
   | ListValueType
   | MapValueType
   | UnionValueType
