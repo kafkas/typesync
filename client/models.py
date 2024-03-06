@@ -1,11 +1,11 @@
-from pydantic import BaseModel
-from typing import Any, Union
+import typing
+import pydantic
 
-class Project(BaseModel):
+class Project(pydantic.BaseModel):
     id: str
     name: str
     completed: bool
     order: int
     createdBy: str
-    topic: Union[None, str]
-    owner: Any
+    topic: typing.Union[None, str]
+    owner: typing.Any
