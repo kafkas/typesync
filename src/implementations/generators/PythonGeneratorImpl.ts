@@ -26,14 +26,26 @@ export class PythonGeneratorImpl implements Generator {
 
     aliasModels.forEach(model => {
       // TODO: Add doc comment
-
-      if (model.value.type === 'enum') {
+      if (
+        model.value.type === 'nil' ||
+        model.value.type === 'string' ||
+        model.value.type === 'boolean' ||
+        model.value.type === 'int' ||
+        model.value.type === 'timestamp' ||
+        model.value.type === 'alias'
+      ) {
+        const pyType = this.getPyTypeForSchemaValueType(model.value, 0);
+        builder.append(`${model.name} = ${pyType}\n\n`);
+      } else if (model.value.type === 'enum') {
         builder.append(`class ${model.name}(enum.Enum):\n`);
         model.value.items.forEach(item => {
           builder.append(
             `${this.indent}${item.label} = ${typeof item.value === 'string' ? `"${item.value}"` : item.value}\n`
           );
         });
+        builder.append(`\n`);
+      } else {
+        // TODO: Implement
       }
     });
 
@@ -74,8 +86,7 @@ export class PythonGeneratorImpl implements Generator {
       case 'union':
         return this.getPyTypeForSchemaUnionValueType(type, depth);
       case 'alias':
-        // TODO: Implement
-        return 'typing.Any';
+        return type.name;
       default:
         assertNever(type);
     }

@@ -1,5 +1,6 @@
 import { firestore } from 'firebase-admin';
 
+export type Username = string;
 /**
  * Represents a user role
  */

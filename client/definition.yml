@@ -1,3 +1,7 @@
+Username:
+  type: alias
+  value: string
+
 UserRole:
   type: alias
   docs: Represents a user role
@@ -62,7 +66,7 @@ UserProfile:
   docs: User profile model
   fields:
     username:
-      type: string
+      type: Username
     age:
       type: int
     role:
