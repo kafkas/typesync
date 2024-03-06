@@ -25,7 +25,7 @@ export type Pet = Cat | Dog;
  * User profile model
  */
 export interface UserProfile {
-  username: string;
+  username: Username;
   age: number;
   role: UserRole;
   created_at?: firestore.Timestamp;

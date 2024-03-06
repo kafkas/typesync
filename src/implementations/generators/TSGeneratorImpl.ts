@@ -131,17 +131,13 @@ export class TSGeneratorImpl implements Generator {
         builder.append(`${tsDoc}\n`);
       }
 
-      builder.append('  ');
-
-      const spaces = space(this.config.indentation * depth);
-      builder.append(spaces);
+      builder.append(space(this.config.indentation * (1 + depth)));
 
       const tsType = this.getTSTypeForSchemaValueType(field.type, depth + 1);
       builder.append(`${field.name}${field.optional ? '?' : ''}: ${tsType};\n`);
     });
 
-    const spaces = space(this.config.indentation * depth);
-    builder.append(spaces);
+    builder.append(space(this.config.indentation * depth));
     builder.append(`}`);
 
     return builder.toString();

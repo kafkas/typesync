@@ -9,11 +9,11 @@ void typesync
   .generate({
     pathToDefinition: resolve(__dirname, 'definition.yml'),
 
-    // platform: 'ts:firebase-admin:11',
-    // pathToOutput: resolve(__dirname, 'models.ts'),
+    platform: 'ts:firebase-admin:11',
+    pathToOutput: resolve(__dirname, 'models.ts'),
 
-    platform: 'py:firebase-admin:6',
-    pathToOutput: resolve(__dirname, 'models.py'),
+    // platform: 'py:firebase-admin:6',
+    // pathToOutput: resolve(__dirname, 'models.py'),
   })
   .then(() => {
     console.log('Successfully generated models.');
