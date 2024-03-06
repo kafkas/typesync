@@ -18,7 +18,7 @@ export class PythonGeneratorImpl implements Generator {
     const builder = new StringBuilder();
 
     builder.append(`from pydantic import BaseModel\n`);
-    builder.append(`from typing import Any\n\n`);
+    builder.append(`from typing import Any, Union\n\n`);
 
     const { documentModels } = divideModelsByType(models);
 
@@ -26,7 +26,7 @@ export class PythonGeneratorImpl implements Generator {
       // TODO: Add doc comment
       builder.append(`class ${model.name}(BaseModel):\n`);
       model.fields.forEach(field => {
-        const pyType = this.getTSTypeForSchemaValueType(field.type, 0);
+        const pyType = this.getPyTypeForSchemaValueType(field.type, 0);
         builder.append(`${this.indent}${field.name}: ${pyType}\n`);
       });
     });
@@ -34,11 +34,10 @@ export class PythonGeneratorImpl implements Generator {
     return createGenerationOutput(builder.toString());
   }
 
-  private getTSTypeForSchemaValueType(type: schema.ValueType, depth: number) {
+  private getPyTypeForSchemaValueType(type: schema.ValueType, depth: number) {
     switch (type.type) {
       case 'nil':
-        // TODO: Implement
-        return 'Any';
+        return 'None';
       case 'string':
         return 'str';
       case 'boolean':
@@ -58,14 +57,21 @@ export class PythonGeneratorImpl implements Generator {
         // TODO: Implement
         return 'Any';
       case 'union':
-        // TODO: Implement
-        return 'Any';
+        return this.getPyTypeForSchemaUnionValueType(type, depth);
       case 'alias':
         // TODO: Implement
         return 'Any';
       default:
         assertNever(type);
     }
+  }
+
+  private getPyTypeForSchemaUnionValueType(type: schema.UnionValueType, depth: number) {
+    const pyTypes: string[] = type.members.map(memberValueType => {
+      return this.getPyTypeForSchemaValueType(memberValueType, depth);
+    });
+
+    return `Union[${pyTypes.join(', ')}]`;
   }
 }
 

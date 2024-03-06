@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Union
 
 class Project(BaseModel):
     id: str
@@ -7,5 +7,5 @@ class Project(BaseModel):
     completed: bool
     order: int
     createdBy: str
-    topic: Any
+    topic: Union[None, str]
     owner: Any
