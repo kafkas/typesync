@@ -29,6 +29,7 @@ export interface UserProfile {
   age: number;
   role: UserRole;
   created_at?: firestore.Timestamp;
+  location: [number, number];
   address: Address;
   favorite_numbers: number[];
   pets: Pet[];

@@ -42,6 +42,11 @@ export function convertDefValueTypeToSchemaValueType(defValueType: definition.Va
         items: defValueType.items,
       };
     }
+    case 'tuple':
+      return {
+        type: 'tuple',
+        values: defValueType.values.map(convertDefValueTypeToSchemaValueType),
+      };
     case 'list':
       return {
         type: 'list',
