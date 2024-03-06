@@ -35,7 +35,7 @@ export class PythonGeneratorImpl implements Generator {
         model.value.type === 'timestamp' ||
         model.value.type === 'alias'
       ) {
-        const pyType = this.getPyTypeForSchemaValueType(model.value, 0);
+        const pyType = this.getPyTypeForValueType(model.value, 0);
         builder.append(`${model.name} = ${pyType}\n\n`);
       } else if (model.value.type === 'enum') {
         builder.append(`class ${model.name}(enum.Enum):\n`);
@@ -56,7 +56,7 @@ export class PythonGeneratorImpl implements Generator {
       // TODO: Add doc comment
       builder.append(`class ${model.name}(pydantic.BaseModel):\n`);
       model.fields.forEach(field => {
-        const pyType = this.getPyTypeForSchemaValueType(field.type, 0);
+        const pyType = this.getPyTypeForValueType(field.type, 0);
         builder.append(`${this.indent}${field.name}: ${pyType}\n`);
       });
     });
@@ -64,7 +64,7 @@ export class PythonGeneratorImpl implements Generator {
     return createGenerationOutput(builder.toString());
   }
 
-  private getPyTypeForSchemaValueType(type: schema.ValueType, depth: number) {
+  private getPyTypeForValueType(type: schema.ValueType, depth: number) {
     switch (type.type) {
       case 'nil':
         return 'None';
@@ -77,19 +77,19 @@ export class PythonGeneratorImpl implements Generator {
       case 'timestamp':
         return 'datetime.datetime';
       case 'literal':
-        return this.getPyTypeForSchemaLiteralValueType(type);
+        return this.getPyTypeForLiteralValueType(type);
       case 'enum':
         // TODO: Implement
         return 'typing.Any';
       case 'tuple':
-        return this.getPyTypeForSchemaTupleValueType(type, depth);
+        return this.getPyTypeForTupleValueType(type, depth);
       case 'list':
-        return this.getPyTypeForSchemaListValueType(type, depth);
+        return this.getPyTypeForListValueType(type, depth);
       case 'map':
         // TODO: Implement
         return 'typing.Any';
       case 'union':
-        return this.getPyTypeForSchemaUnionValueType(type, depth);
+        return this.getPyTypeForUnionValueType(type, depth);
       case 'alias':
         return type.name;
       default:
@@ -97,7 +97,7 @@ export class PythonGeneratorImpl implements Generator {
     }
   }
 
-  private getPyTypeForSchemaLiteralValueType(type: schema.LiteralValueType) {
+  private getPyTypeForLiteralValueType(type: schema.LiteralValueType) {
     switch (typeof type.value) {
       case 'string':
         return `typing.Literal["${type.value}"]`;
@@ -111,19 +111,19 @@ export class PythonGeneratorImpl implements Generator {
     }
   }
 
-  private getPyTypeForSchemaTupleValueType(type: schema.TupleValueType, depth: number): string {
-    const pyTypes = type.values.map(v => this.getPyTypeForSchemaValueType(v, depth)).join(', ');
+  private getPyTypeForTupleValueType(type: schema.TupleValueType, depth: number): string {
+    const pyTypes = type.values.map(v => this.getPyTypeForValueType(v, depth)).join(', ');
     return `tuple[${pyTypes}]`;
   }
 
-  private getPyTypeForSchemaListValueType(type: schema.ListValueType, depth: number): string {
-    const pyType = this.getPyTypeForSchemaValueType(type.of, depth);
+  private getPyTypeForListValueType(type: schema.ListValueType, depth: number): string {
+    const pyType = this.getPyTypeForValueType(type.of, depth);
     return `typing.List[${pyType}]`;
   }
 
-  private getPyTypeForSchemaUnionValueType(type: schema.UnionValueType, depth: number) {
+  private getPyTypeForUnionValueType(type: schema.UnionValueType, depth: number) {
     const pyTypes: string[] = type.members.map(memberValueType => {
-      return this.getPyTypeForSchemaValueType(memberValueType, depth);
+      return this.getPyTypeForValueType(memberValueType, depth);
     });
 
     return `typing.Union[${pyTypes.join(', ')}]`;

@@ -40,7 +40,7 @@ export class TSGeneratorImpl implements Generator {
 
     documentModels.forEach(model => {
       // A Firestore document can be considered a 'map' type
-      const tsType = this.getTSTypeForSchemaMapValueType({ type: 'map', fields: model.fields }, 0);
+      const tsType = this.getTSTypeForMapValueType({ type: 'map', fields: model.fields }, 0);
       if (model.docs !== undefined) {
         const tsDoc = this.buildTSDoc(model.docs, 0);
         builder.append(`${tsDoc}\n`);
@@ -61,10 +61,10 @@ export class TSGeneratorImpl implements Generator {
   }
 
   private getTSTypeForAliasModel(model: schema.AliasModel, depth: number) {
-    return this.getTSTypeForSchemaValueType(model.value, depth);
+    return this.getTSTypeForValueType(model.value, depth);
   }
 
-  private getTSTypeForSchemaValueType(type: schema.ValueType, depth: number) {
+  private getTSTypeForValueType(type: schema.ValueType, depth: number) {
     switch (type.type) {
       case 'nil':
         return 'null';
@@ -77,17 +77,17 @@ export class TSGeneratorImpl implements Generator {
       case 'timestamp':
         return `${this.firestore}.Timestamp`;
       case 'literal':
-        return this.getTSTypeForSchemaLiteralValueType(type);
+        return this.getTSTypeForLiteralValueType(type);
       case 'enum':
-        return this.getTSTypeForSchemaEnumValueType(type);
+        return this.getTSTypeForEnumValueType(type);
       case 'tuple':
-        return this.getTSTypeForSchemaTupleValueType(type, depth);
+        return this.getTSTypeForTupleValueType(type, depth);
       case 'list':
-        return this.getTSTypeForSchemaListValueType(type, depth);
+        return this.getTSTypeForListValueType(type, depth);
       case 'map':
-        return this.getTSTypeForSchemaMapValueType(type, depth);
+        return this.getTSTypeForMapValueType(type, depth);
       case 'union':
-        return this.getTSTypeForSchemaUnionValueType(type, depth);
+        return this.getTSTypeForUnionValueType(type, depth);
       case 'alias':
         return type.name;
       default:
@@ -95,7 +95,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForSchemaLiteralValueType(type: schema.LiteralValueType) {
+  private getTSTypeForLiteralValueType(type: schema.LiteralValueType) {
     switch (typeof type.value) {
       case 'string':
         return `'${type.value}'`;
@@ -108,7 +108,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForSchemaEnumValueType(type: schema.EnumValueType) {
+  private getTSTypeForEnumValueType(type: schema.EnumValueType) {
     const { items } = type;
     return items
       .map(({ value }) => {
@@ -124,17 +124,17 @@ export class TSGeneratorImpl implements Generator {
       .join(' | ');
   }
 
-  private getTSTypeForSchemaTupleValueType(type: schema.TupleValueType, depth: number): string {
-    const tsTypes = type.values.map(v => this.getTSTypeForSchemaValueType(v, depth)).join(', ');
+  private getTSTypeForTupleValueType(type: schema.TupleValueType, depth: number): string {
+    const tsTypes = type.values.map(v => this.getTSTypeForValueType(v, depth)).join(', ');
     return `[${tsTypes}]`;
   }
 
-  private getTSTypeForSchemaListValueType(type: schema.ListValueType, depth: number): string {
-    const tsType = this.getTSTypeForSchemaValueType(type.of, depth);
+  private getTSTypeForListValueType(type: schema.ListValueType, depth: number): string {
+    const tsType = this.getTSTypeForValueType(type.of, depth);
     return `${tsType}[]`;
   }
 
-  private getTSTypeForSchemaMapValueType(type: schema.MapValueType, depth: number) {
+  private getTSTypeForMapValueType(type: schema.MapValueType, depth: number) {
     const { fields } = type;
     const builder = new StringBuilder();
 
@@ -147,7 +147,7 @@ export class TSGeneratorImpl implements Generator {
 
       builder.append(space(this.config.indentation * (1 + depth)));
 
-      const tsType = this.getTSTypeForSchemaValueType(field.type, depth + 1);
+      const tsType = this.getTSTypeForValueType(field.type, depth + 1);
       builder.append(`${field.name}${field.optional ? '?' : ''}: ${tsType};\n`);
     });
 
@@ -157,9 +157,9 @@ export class TSGeneratorImpl implements Generator {
     return builder.toString();
   }
 
-  private getTSTypeForSchemaUnionValueType(type: schema.UnionValueType, depth: number) {
+  private getTSTypeForUnionValueType(type: schema.UnionValueType, depth: number) {
     const tsTypes: string[] = type.members.map(memberValueType => {
-      return this.getTSTypeForSchemaValueType(memberValueType, depth);
+      return this.getTSTypeForValueType(memberValueType, depth);
     });
 
     return tsTypes.join(' | ');
