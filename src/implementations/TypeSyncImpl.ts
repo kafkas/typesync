@@ -1,17 +1,17 @@
-import { writeFile } from '../util/fs';
-import { assertNever } from '../util/assert';
 import type {
-  GenerationPlatform,
   GenerationOutput,
-  TypeSync,
+  GenerationPlatform,
   Logger,
+  TypeSync,
   TypeSyncConfig,
   TypeSyncGenerateOptions,
 } from '../interfaces';
-import { createTSGenerator } from './generators/TSGeneratorImpl';
-import { createPythonGenerator } from './generators/PythonGeneratorImpl';
+import { assertNever } from '../util/assert';
+import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
+import { createPythonGenerator } from './generators/PythonGeneratorImpl';
+import { createTSGenerator } from './generators/TSGeneratorImpl';
 
 class TypeSyncImpl implements TypeSync {
   private readonly logger: Logger;

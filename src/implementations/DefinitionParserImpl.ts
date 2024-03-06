@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import { definition } from '../definition';
-import type { Logger, DefinitionParser } from '../interfaces';
-import { extractErrorMessage } from '../util/extract-error-message';
-import { DefinitionNotValidYamlError, DefinitionNotValidError } from '../errors';
-import { createSchema } from './SchemaImpl';
 import { z } from 'zod';
+
+import { definition } from '../definition';
+import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
+import type { DefinitionParser, Logger } from '../interfaces';
+import { extractErrorMessage } from '../util/extract-error-message';
+import { createSchema } from './SchemaImpl';
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger: Logger) {}

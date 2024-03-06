@@ -1,8 +1,8 @@
 import type { definition } from '../definition';
 import type { schema } from '../interfaces';
-import { createSchemaDocumentModel } from './SchemaDocumentModelImpl';
-import { createSchemaAliasModel } from './SchemaAliasModelImpl';
 import { assertNever } from '../util/assert';
+import { createSchemaAliasModel } from './SchemaAliasModelImpl';
+import { createSchemaDocumentModel } from './SchemaDocumentModelImpl';
 
 class SchemaImpl implements schema.Schema {
   public readonly models: schema.Model[];
