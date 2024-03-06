@@ -3,6 +3,7 @@ import { divideModelsByType } from '../../util/divide-models-by-type';
 import type { Generator, TSGeneratorConfig, schema } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 import { assertNever } from '../../util/assert';
+import { space } from '../../util/space';
 
 export class TSGeneratorImpl implements Generator {
   private get firestore() {
@@ -131,16 +132,14 @@ export class TSGeneratorImpl implements Generator {
 
       builder.append('  ');
 
-      const spaceCount = this.config.indentation * depth;
-      const spaces = new Array<string>(spaceCount).fill(' ').join('');
+      const spaces = space(this.config.indentation * depth);
       builder.append(spaces);
 
       const tsType = this.getTSTypeForSchemaValueType(field.type, depth + 1);
       builder.append(`${field.name}${field.optional ? '?' : ''}: ${tsType};\n`);
     });
 
-    const spaceCount = this.config.indentation * depth;
-    const spaces = new Array<string>(spaceCount).fill(' ').join('');
+    const spaces = space(this.config.indentation * depth);
     builder.append(spaces);
     builder.append(`}`);
 
@@ -156,8 +155,7 @@ export class TSGeneratorImpl implements Generator {
   }
 
   private buildTSDoc(docs: string, depth: number) {
-    const spaceCount = this.config.indentation * depth;
-    const spaces = new Array<string>(spaceCount).fill(' ').join('');
+    const spaces = space(this.config.indentation * depth);
     return `${spaces}/**\n${spaces} * ${docs}\n${spaces} */`;
   }
 }

@@ -2,14 +2,14 @@ import { StringBuilder } from '@proficient/ds';
 import { divideModelsByType } from '../../util/divide-models-by-type';
 import type { Generator, PythonGeneratorConfig, schema } from '../../interfaces';
 import { createGenerationOutput } from '../GenerationOutputImpl';
-import { getSpaces } from '../../util/get-spaces';
+import { space } from '../../util/space';
 import { assertNever } from '../../util/assert';
 
 export class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   private get indent() {
-    return getSpaces(this.config.indentation);
+    return space(this.config.indentation);
   }
 
   public async generate(s: schema.Schema) {
