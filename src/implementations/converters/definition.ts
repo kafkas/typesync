@@ -42,6 +42,11 @@ export function convertDefValueTypeToSchemaValueType(defValueType: definition.Va
         items: defValueType.items,
       };
     }
+    case 'list':
+      return {
+        type: 'list',
+        of: convertDefValueTypeToSchemaValueType(defValueType.of),
+      };
     case 'map':
       return {
         type: 'map',

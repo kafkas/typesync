@@ -21,6 +21,16 @@ export const enumValueType = z.object({
   ),
 });
 
+export const listValueType = (aliasNames: string[]) =>
+  z.lazy(() =>
+    z
+      .object({
+        type: z.literal('list'),
+        of: valueType(aliasNames),
+      })
+      .strict()
+  );
+
 export const mapValueType = (aliasNames: string[]) =>
   z.lazy(() =>
     z
@@ -39,6 +49,7 @@ export const valueType = (aliasNames: string[]): z.ZodType<ValueType> =>
   primitiveValueType
     .or(literalValueType)
     .or(enumValueType)
+    .or(listValueType(aliasNames))
     .or(mapValueType(aliasNames))
     .or(unionValueType(aliasNames))
     .or(aliasValueType(aliasNames));

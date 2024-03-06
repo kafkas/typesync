@@ -79,12 +79,14 @@ UserProfile:
     #   type: tuple
     address:
       type: Address
-    # TODO: Implement list
-    # favorite_numbers:
-    #   type: list
-    # TODO: Implement list
-    # pets:
-    #   type: list
+    favorite_numbers:
+      type:
+        type: list
+        of: int
+    pets:
+      type:
+        type: list
+        of: Pet
     bio:
       type:
         - nil

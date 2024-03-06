@@ -81,6 +81,8 @@ export class PythonGeneratorImpl implements Generator {
       case 'enum':
         // TODO: Implement
         return 'typing.Any';
+      case 'list':
+        return this.getPyTypeForSchemaListValueType(type, depth);
       case 'map':
         // TODO: Implement
         return 'typing.Any';
@@ -105,6 +107,11 @@ export class PythonGeneratorImpl implements Generator {
       default:
         assertNever(type.value);
     }
+  }
+
+  private getPyTypeForSchemaListValueType(type: schema.ListValueType, depth: number): string {
+    const pyType = this.getPyTypeForSchemaValueType(type.of, depth);
+    return `typing.List[${pyType}]`;
   }
 
   private getPyTypeForSchemaUnionValueType(type: schema.UnionValueType, depth: number) {

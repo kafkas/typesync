@@ -30,6 +30,8 @@ export interface UserProfile {
   role: UserRole;
   created_at?: firestore.Timestamp;
   address: Address;
+  favorite_numbers: number[];
+  pets: Pet[];
   bio: null | string;
   area_code: 34;
 }
