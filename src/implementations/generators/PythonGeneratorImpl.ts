@@ -18,6 +18,7 @@ export class PythonGeneratorImpl implements Generator {
     const builder = new StringBuilder();
 
     builder.append(`from pydantic import BaseModel\n`);
+    // TODO: Add the imports conditionally at the end with builder.insert(0)
     builder.append(`from typing import Any, Union\n\n`);
 
     const { documentModels } = divideModelsByType(models);
