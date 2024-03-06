@@ -1,6 +1,8 @@
 export type TSGenerationPlatform = 'ts:firebase-admin:11';
 
-export type GenerationPlatform = TSGenerationPlatform;
+export type PythonGenerationPlatform = 'py:firebase-admin:6';
+
+export type GenerationPlatform = TSGenerationPlatform | PythonGenerationPlatform;
 
 export interface TypeSyncGenerateOptions {
   pathToDefinition: string;

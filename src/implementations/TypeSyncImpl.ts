@@ -1,4 +1,5 @@
 import { writeFile } from '../util/fs';
+import { assertNever } from '../util/assert';
 import type {
   GenerationPlatform,
   GenerationOutput,
@@ -8,9 +9,9 @@ import type {
   TypeSyncGenerateOptions,
 } from '../interfaces';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
+import { createPythonGenerator } from './generators/PythonGeneratorImpl';
 import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
-import { assertNever } from '../util/assert';
 
 class TypeSyncImpl implements TypeSync {
   private readonly logger: Logger;
@@ -32,6 +33,8 @@ class TypeSyncImpl implements TypeSync {
     switch (platform) {
       case 'ts:firebase-admin:11':
         return createTSGenerator({ platform, indentation: 2 });
+      case 'py:firebase-admin:6':
+        return createPythonGenerator({ platform, indentation: 4 });
       default:
         assertNever(platform);
     }

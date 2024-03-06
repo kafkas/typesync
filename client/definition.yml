@@ -1,44 +1,95 @@
-Project:
+Username:
+  type: alias
+  value: string
+
+UserRole:
+  type: alias
+  docs: Represents a user role
+  value:
+    type: enum
+    items:
+      - label: ADMIN
+        value: admin
+      - label: USER
+        value: user
+      - label: GUEST
+        value: guest
+
+Address:
+  type: alias
+  value:
+    type: map
+    fields:
+      street:
+        type: string
+      city:
+        type: string
+      zip_code:
+        type: string
+
+Cat:
+  type: alias
+  value:
+    type: map
+    fields:
+      type:
+        type:
+          type: literal
+          value: cat
+      name:
+        type: string
+      lives_left:
+        type: int
+
+Dog:
+  type: alias
+  value:
+    type: map
+    fields:
+      type:
+        type:
+          type: literal
+          value: dog
+      name:
+        type: string
+      breed:
+        type: string
+
+Pet:
+  type: alias
+  value:
+    - Cat
+    - Dog
+
+UserProfile:
   type: document
-  docs: Represents a project within a workspace.
+  docs: User profile model
   fields:
-    id:
-      type: string
-      docs: The ID of the project.
-    name:
-      type: string
-    completed:
-      type: boolean
-      docs: Whether the project has been completed.
-    order:
+    username:
+      type: Username
+    age:
       type: int
-    createdBy:
-      type: string
-      docs: The ID of the user that created the project.
+    role:
+      type: UserRole
+    created_at:
+      type: timestamp
       optional: true
-    topic:
+    # TODO: Implement tuple
+    # location:
+    #   type: tuple
+    address:
+      type: Address
+    # TODO: Implement list
+    # favorite_numbers:
+    #   type: list
+    # TODO: Implement list
+    # pets:
+    #   type: list
+    bio:
       type:
         - nil
         - string
-      docs: The topic of the project
-    owner:
-      docs: The current owner of the project
+    area_code:
       type:
-        type: map
-        fields:
-          id:
-            type: string
-            docs: The ID of the current owner.
-          expiresAt:
-            docs: When the ownership expires
-            type: timestamp
-          credentials:
-            docs: Owner credentials
-            type:
-              type: map
-              fields:
-                email:
-                  type: string
-                  docs: The email of the user
-                passwordHash:
-                  type: string
+        type: literal
+        value: 34

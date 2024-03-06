@@ -1,4 +1,4 @@
-import type { TSGenerationPlatform } from './public';
+import type { TSGenerationPlatform, PythonGenerationPlatform } from './public';
 import type { schema } from './schema';
 
 export interface Logger {
@@ -13,6 +13,14 @@ export interface DefinitionParser {
 
 export interface TSGeneratorConfig {
   platform: TSGenerationPlatform;
+  /**
+   * The number of spaces for each indentation.
+   */
+  indentation: number;
+}
+
+export interface PythonGeneratorConfig {
+  platform: PythonGenerationPlatform;
   /**
    * The number of spaces for each indentation.
    */
