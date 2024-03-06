@@ -13,6 +13,11 @@ export type EnumValueType = {
   }[];
 };
 
+export type ListValueType = {
+  type: 'list';
+  of: ValueType;
+};
+
 export type MapValueType = {
   type: 'map';
   fields: Record<string, ModelField>;
@@ -26,6 +31,7 @@ export type ValueType =
   | PrimitiveValueType
   | LiteralValueType
   | EnumValueType
+  | ListValueType
   | MapValueType
   | UnionValueType
   | AliasValueType;
