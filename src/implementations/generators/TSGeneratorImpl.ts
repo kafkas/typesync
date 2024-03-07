@@ -46,7 +46,7 @@ export class TSGeneratorImpl implements Generator {
         const tsDoc = this.buildTSDoc(model.docs, 0);
         builder.append(`${tsDoc}\n`);
       }
-      builder.append(`export interface ${model.name} ${tsType}\n`);
+      builder.append(`export interface ${model.name} ${tsType}\n\n`);
     });
 
     return createGenerationOutput(builder.toString());
