@@ -13,10 +13,10 @@ import type {
 
 const PRIMITIVE_VALUE_MAPPING: Record<PrimitiveValueType, schema.PrimitiveValueType> = {
   nil: { type: 'nil' },
-  string: { type: 'nil' },
-  boolean: { type: 'nil' },
-  int: { type: 'nil' },
-  timestamp: { type: 'nil' },
+  string: { type: 'string' },
+  boolean: { type: 'boolean' },
+  int: { type: 'int' },
+  timestamp: { type: 'timestamp' },
 };
 
 /*
