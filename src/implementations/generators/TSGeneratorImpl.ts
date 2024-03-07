@@ -1,7 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
-import type { schema } from '../../schema';
+import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { divideModelsByType } from '../../util/divide-models-by-type';
 import { space } from '../../util/space';
@@ -66,17 +66,10 @@ export class TSGeneratorImpl implements Generator {
   }
 
   private getTSTypeForValueType(type: schema.ValueType, depth: number) {
+    if (schema.isPrimitiveValueType(type)) {
+      return this.getTSTypeForPrimitiveValueType(type);
+    }
     switch (type.type) {
-      case 'nil':
-        return 'null';
-      case 'string':
-        return 'string';
-      case 'boolean':
-        return 'boolean';
-      case 'int':
-        return 'number';
-      case 'timestamp':
-        return `${this.firestore}.Timestamp`;
       case 'literal':
         return this.getTSTypeForLiteralValueType(type);
       case 'enum':
@@ -93,6 +86,23 @@ export class TSGeneratorImpl implements Generator {
         return type.name;
       default:
         assertNever(type);
+    }
+  }
+
+  private getTSTypeForPrimitiveValueType(type: schema.PrimitiveValueType) {
+    switch (type.type) {
+      case 'nil':
+        return 'null';
+      case 'string':
+        return 'string';
+      case 'boolean':
+        return 'boolean';
+      case 'int':
+        return 'number';
+      case 'timestamp':
+        return `${this.firestore}.Timestamp`;
+      default:
+        assertNever(type.type);
     }
   }
 

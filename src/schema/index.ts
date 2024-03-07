@@ -1,3 +1,3 @@
-import type * as schema from './types';
+import * as schema from './namespace';
 
-export type { schema };
+export { schema };

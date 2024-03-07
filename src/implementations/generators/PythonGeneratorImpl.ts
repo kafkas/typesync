@@ -1,7 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 
 import type { Generator, PythonGeneratorConfig } from '../../interfaces';
-import type { schema } from '../../schema';
+import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { divideModelsByType } from '../../util/divide-models-by-type';
 import { space } from '../../util/space';
@@ -66,17 +66,10 @@ export class PythonGeneratorImpl implements Generator {
   }
 
   private getPyTypeForValueType(type: schema.ValueType, depth: number) {
+    if (schema.isPrimitiveValueType(type)) {
+      return this.getPyTypeForPrimitiveValueType(type);
+    }
     switch (type.type) {
-      case 'nil':
-        return 'None';
-      case 'string':
-        return 'str';
-      case 'boolean':
-        return 'bool';
-      case 'int':
-        return 'int';
-      case 'timestamp':
-        return 'datetime.datetime';
       case 'literal':
         return this.getPyTypeForLiteralValueType(type);
       case 'enum':
@@ -95,6 +88,23 @@ export class PythonGeneratorImpl implements Generator {
         return type.name;
       default:
         assertNever(type);
+    }
+  }
+
+  private getPyTypeForPrimitiveValueType(type: schema.PrimitiveValueType) {
+    switch (type.type) {
+      case 'nil':
+        return 'None';
+      case 'string':
+        return 'str';
+      case 'boolean':
+        return 'bool';
+      case 'int':
+        return 'int';
+      case 'timestamp':
+        return 'datetime.datetime';
+      default:
+        assertNever(type.type);
     }
   }
 
