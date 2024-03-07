@@ -1,6 +1,5 @@
-import type { definition } from '../definition';
+import { definition } from '../definition';
 import type { schema } from '../schema';
-import { convertDefValueTypeToSchemaValueType } from './converters';
 
 class SchemaModelFieldImpl implements schema.ModelField {
   public constructor(
@@ -9,7 +8,7 @@ class SchemaModelFieldImpl implements schema.ModelField {
   ) {}
 
   public get type() {
-    return convertDefValueTypeToSchemaValueType(this.defModelField.type);
+    return definition.convertValueTypeToSchema(this.defModelField.type);
   }
 
   public get optional() {

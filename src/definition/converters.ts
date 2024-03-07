@@ -1,22 +1,19 @@
-import type { definition } from '../../definition';
-import type { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
+import type { schema } from '../schema';
+import { assertNever } from '../util/assert';
+import type { ModelField, PrimitiveValueType, ValueType } from './types';
 
-export function convertDefModelFieldToSchemaModelField(
-  fieldName: string,
-  defModelField: definition.ModelField
-): schema.ModelField {
+export function convertModelFieldToSchema(fieldName: string, defModelField: ModelField): schema.ModelField {
   return {
-    type: convertDefValueTypeToSchemaValueType(defModelField.type),
+    type: convertValueTypeToSchema(defModelField.type),
     optional: !!defModelField.optional,
     docs: defModelField.docs,
     name: fieldName,
   };
 }
 
-export function convertDefValueTypeToSchemaValueType(defValueType: definition.ValueType): schema.ValueType {
-  if (isDefPrimitiveValueType(defValueType)) {
-    return convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(defValueType);
+export function convertValueTypeToSchema(defValueType: ValueType): schema.ValueType {
+  if (isPrimitiveValueType(defValueType)) {
+    return convertPrimitiveValueTypeToSchema(defValueType);
   }
 
   if (typeof defValueType === 'string') {
@@ -26,7 +23,7 @@ export function convertDefValueTypeToSchemaValueType(defValueType: definition.Va
   if (Array.isArray(defValueType)) {
     return {
       type: 'union',
-      members: defValueType.map(convertDefValueTypeToSchemaValueType),
+      members: defValueType.map(convertValueTypeToSchema),
     };
   }
 
@@ -45,18 +42,18 @@ export function convertDefValueTypeToSchemaValueType(defValueType: definition.Va
     case 'tuple':
       return {
         type: 'tuple',
-        values: defValueType.values.map(convertDefValueTypeToSchemaValueType),
+        values: defValueType.values.map(convertValueTypeToSchema),
       };
     case 'list':
       return {
         type: 'list',
-        of: convertDefValueTypeToSchemaValueType(defValueType.of),
+        of: convertValueTypeToSchema(defValueType.of),
       };
     case 'map':
       return {
         type: 'map',
         fields: Object.entries(defValueType.fields).map(([fieldName, defModelField]) =>
-          convertDefModelFieldToSchemaModelField(fieldName, defModelField)
+          convertModelFieldToSchema(fieldName, defModelField)
         ),
       };
     default:
@@ -64,21 +61,19 @@ export function convertDefValueTypeToSchemaValueType(defValueType: definition.Va
   }
 }
 
-function isDefPrimitiveValueType(candidate: unknown): candidate is definition.PrimitiveValueType {
+function isPrimitiveValueType(candidate: unknown): candidate is PrimitiveValueType {
   if (typeof candidate !== 'string') {
     return false;
   }
   try {
-    convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(candidate as definition.PrimitiveValueType);
+    convertPrimitiveValueTypeToSchema(candidate as PrimitiveValueType);
     return true;
   } catch {
     return false;
   }
 }
 
-export function convertDefPrimitiveValueTypeToSchemaPrimitiveValueType(
-  defValueType: definition.PrimitiveValueType
-): schema.PrimitiveValueType {
+export function convertPrimitiveValueTypeToSchema(defValueType: PrimitiveValueType): schema.PrimitiveValueType {
   switch (defValueType) {
     case 'nil':
       return { type: 'nil' };
