@@ -1,11 +1,5 @@
-import type {
-  GenerationOutput,
-  GenerationPlatform,
-  Logger,
-  TypeSync,
-  TypeSyncConfig,
-  TypeSyncGenerateOptions,
-} from '../interfaces';
+import type { GenerationPlatform, TypeSync, TypeSyncConfig, TypeSyncGenerateOptions } from '../api';
+import type { GenerationOutput, Logger } from '../interfaces';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './DefinitionParserImpl';

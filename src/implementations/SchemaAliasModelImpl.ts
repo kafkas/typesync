@@ -1,6 +1,5 @@
-import type { definition } from '../definition';
-import type { schema } from '../interfaces';
-import { convertDefValueTypeToSchemaValueType } from './converters';
+import { definition } from '../definition';
+import type { schema } from '../schema';
 
 class SchemaAliasModelImpl implements schema.AliasModel {
   public constructor(
@@ -17,7 +16,7 @@ class SchemaAliasModelImpl implements schema.AliasModel {
   }
 
   public get value() {
-    return convertDefValueTypeToSchemaValueType(this.defModel.value);
+    return definition.convertValueTypeToSchema(this.defModel.value);
   }
 }
 
