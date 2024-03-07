@@ -1,5 +1,5 @@
 import type { definition } from '../definition';
-import type { schema } from '../interfaces';
+import type { schema } from '../schema';
 import { createSchemaModelField } from './SchemaModelFieldImpl';
 
 class SchemaDocumentModelImpl implements schema.DocumentModel {

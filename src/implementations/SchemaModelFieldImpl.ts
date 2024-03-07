@@ -1,5 +1,5 @@
 import type { definition } from '../definition';
-import type { schema } from '../interfaces';
+import type { schema } from '../schema';
 import { convertDefValueTypeToSchemaValueType } from './converters';
 
 class SchemaModelFieldImpl implements schema.ModelField {

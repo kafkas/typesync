@@ -1,4 +1,4 @@
-import type { schema } from '../interfaces';
+import type { schema } from '../schema';
 import { assertNever } from './assert';
 
 export function divideModelsByType(models: schema.Model[]) {

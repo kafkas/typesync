@@ -1,6 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { Generator, PythonGeneratorConfig, schema } from '../../interfaces';
+import type { Generator, PythonGeneratorConfig } from '../../interfaces';
+import type { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { divideModelsByType } from '../../util/divide-models-by-type';
 import { space } from '../../util/space';
