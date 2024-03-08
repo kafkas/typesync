@@ -1,7 +1,20 @@
+from __future__ import annotations
+
 import typing
 import datetime
 import enum
 import pydantic
+
+class TypeSyncUndefined:
+    _instance = None
+
+    def __init__(self):
+        if TypeSyncUndefined._instance is not None:
+            raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Use UNDEFINED instead.")
+        else:
+            TypeSyncUndefined._instance = self
+
+UNDEFINED = TypeSyncUndefined()
 
 Username = str
 

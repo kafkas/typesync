@@ -4,6 +4,7 @@ import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { divideModelsByType } from '../../util/divide-models-by-type';
+import { multiply } from '../../util/multiply-str';
 import { space } from '../../util/space';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
@@ -19,10 +20,8 @@ export class PythonGeneratorImpl implements Generator {
 
     const builder = new StringBuilder();
 
-    builder.append(`import typing\n`);
-    builder.append(`import datetime\n`);
-    builder.append(`import enum\n`);
-    builder.append(`import pydantic\n\n`);
+    builder.append(`${this.getImportStatements()}\n\n`);
+    builder.append(`${this.getStaticDeclarations()}\n`);
 
     const { aliasModels, documentModels } = divideModelsByType(models);
 
@@ -63,6 +62,31 @@ export class PythonGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(builder.toString());
+  }
+
+  private getImportStatements() {
+    const builder = new StringBuilder();
+    builder.append(`from __future__ import annotations\n\n`);
+    builder.append(`import typing\n`);
+    builder.append(`import datetime\n`);
+    builder.append(`import enum\n`);
+    builder.append(`import pydantic`);
+    return builder.toString();
+  }
+
+  private getStaticDeclarations() {
+    const builder = new StringBuilder();
+    builder.append(`class TypeSyncUndefined:\n`);
+    builder.append(`${this.indent}_instance = None\n\n`);
+    builder.append(`${this.indent}def __init__(self):\n`);
+    builder.append(`${multiply(this.indent, 2)}if TypeSyncUndefined._instance is not None:\n`);
+    builder.append(
+      `${multiply(this.indent, 3)}raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Use UNDEFINED instead.")\n`
+    );
+    builder.append(`${multiply(this.indent, 2)}else:\n`);
+    builder.append(`${multiply(this.indent, 3)}TypeSyncUndefined._instance = self\n\n`);
+    builder.append(`UNDEFINED = TypeSyncUndefined()\n`);
+    return builder.toString();
   }
 
   private getPyTypeForValueType(type: schema.ValueType, depth: number) {
