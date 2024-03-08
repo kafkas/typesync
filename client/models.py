@@ -25,6 +25,22 @@ class UserRole(enum.Enum):
     USER = "user"
     GUEST = "guest"
 
+class Address(pydantic.BaseModel):
+    street: str
+    city: str
+    zip_code: str
+
+class Cat(pydantic.BaseModel):
+    type: typing.Literal["cat"]
+    name: str
+    lives_left: int
+
+class Dog(pydantic.BaseModel):
+    type: typing.Literal["dog"]
+    name: str
+    breed: str
+
+Pet = typing.Union[Cat, Dog]
 
 class UserProfile(pydantic.BaseModel):
     username: Username

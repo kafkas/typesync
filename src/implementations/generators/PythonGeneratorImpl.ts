@@ -28,17 +28,8 @@ export class PythonGeneratorImpl implements Generator {
 
     aliasModels.forEach(model => {
       // TODO: Add doc comment
-      if (
-        model.value.type === 'nil' ||
-        model.value.type === 'string' ||
-        model.value.type === 'boolean' ||
-        model.value.type === 'int' ||
-        model.value.type === 'timestamp' ||
-        model.value.type === 'alias'
-      ) {
-        const pyType = this.getPyTypeForValueType(model.value, 0);
-        builder.append(`${model.name} = ${pyType}\n\n`);
-      } else if (model.value.type === 'enum') {
+
+      if (model.value.type === 'enum') {
         builder.append(`class ${model.name}(enum.Enum):\n`);
         model.value.items.forEach(item => {
           builder.append(
@@ -46,12 +37,18 @@ export class PythonGeneratorImpl implements Generator {
           );
         });
         builder.append(`\n`);
+      } else if (model.value.type === 'map') {
+        builder.append(`class ${model.name}(pydantic.BaseModel):\n`);
+        model.value.fields.forEach(field => {
+          const pyType = this.getPyTypeForValueType(field.type, 0);
+          builder.append(`${this.indent}${field.name}: ${pyType}\n`);
+        });
+        builder.append('\n');
       } else {
-        // TODO: Implement
+        const pyType = this.getPyTypeForValueType(model.value, 0);
+        builder.append(`${model.name} = ${pyType}\n\n`);
       }
     });
-
-    builder.append('\n');
 
     documentModels.forEach(model => {
       // TODO: Add doc comment
