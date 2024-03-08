@@ -14,6 +14,7 @@ class UserRole(enum.Enum):
 class UserProfile(pydantic.BaseModel):
     username: Username
     age: int
+    is_active: bool
     role: UserRole
     created_at: datetime.datetime
     location: tuple[int, int]

@@ -8,9 +8,7 @@ export interface TypeSyncGenerateOptions {
   pathToDefinition: string;
   platform: GenerationPlatform;
   pathToOutput: string;
-}
-
-export interface TypeSyncConfig {
+  indentation: number;
   debug: boolean;
 }
 

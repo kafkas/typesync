@@ -69,6 +69,8 @@ UserProfile:
       type: Username
     age:
       type: int
+    is_active:
+      type: boolean
     role:
       type: UserRole
     created_at:

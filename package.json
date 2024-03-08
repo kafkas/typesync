@@ -6,7 +6,8 @@
     "build": "tsc",
     "format": "prettier --write \"(src|client)/**/*.(js|ts|json)\"",
     "format-check": "prettier --check \"(src|client)/**/*.(js|ts|json)\"",
-    "generate": "ts-node client/generate.ts",
+    "generate-py": "ts-node client/generate-py.ts",
+    "generate-ts": "ts-node client/generate-ts.ts",
     "lint": "eslint src client --ext .ts"
   },
   "files": [

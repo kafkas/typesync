@@ -1,5 +1,5 @@
-import type { GenerationPlatform, TypeSync, TypeSyncConfig, TypeSyncGenerateOptions } from '../api';
-import type { GenerationOutput, Logger } from '../interfaces';
+import type { TypeSync, TypeSyncGenerateOptions } from '../api';
+import type { GenerationOutput } from '../interfaces';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './DefinitionParserImpl';
@@ -8,27 +8,23 @@ import { createPythonGenerator } from './generators/PythonGeneratorImpl';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
 
 class TypeSyncImpl implements TypeSync {
-  private readonly logger: Logger;
-
-  public constructor(private readonly config: TypeSyncConfig) {
-    this.logger = createLogger(config.debug);
-  }
-
   public async generate(opts: TypeSyncGenerateOptions) {
-    const { pathToDefinition, pathToOutput, platform } = opts;
-    const parser = createDefinitionParser(this.logger);
+    const { pathToDefinition, pathToOutput, debug } = opts;
+    const logger = createLogger(debug);
+    const parser = createDefinitionParser(logger);
     const schema = parser.parseDefinition(pathToDefinition);
-    const generator = this.getGeneratorForPlatform(platform);
+    const generator = this.createGenerator(opts);
     const output = await generator.generate(schema);
     await this.writeOutputToPath(pathToOutput, output);
   }
 
-  private getGeneratorForPlatform(platform: GenerationPlatform) {
+  private createGenerator(opts: TypeSyncGenerateOptions) {
+    const { platform, indentation } = opts;
     switch (platform) {
       case 'ts:firebase-admin:11':
-        return createTSGenerator({ platform, indentation: 2 });
+        return createTSGenerator({ platform, indentation });
       case 'py:firebase-admin:6':
-        return createPythonGenerator({ platform, indentation: 4 });
+        return createPythonGenerator({ platform, indentation });
       default:
         assertNever(platform);
     }
@@ -40,6 +36,6 @@ class TypeSyncImpl implements TypeSync {
   }
 }
 
-export function createTypeSync(config: TypeSyncConfig): TypeSync {
-  return new TypeSyncImpl(config);
+export function createTypeSync(): TypeSync {
+  return new TypeSyncImpl();
 }
