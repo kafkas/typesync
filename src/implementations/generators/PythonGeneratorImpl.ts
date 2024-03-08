@@ -11,10 +11,6 @@ import { createGenerationOutput } from '../GenerationOutputImpl';
 export class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
-  private get indent() {
-    return space(this.config.indentation);
-  }
-
   public async generate(s: schema.Schema) {
     const { models } = s;
 
@@ -33,7 +29,7 @@ export class PythonGeneratorImpl implements Generator {
         builder.append(`class ${model.name}(enum.Enum):\n`);
         model.value.items.forEach(item => {
           builder.append(
-            `${this.indent}${item.label} = ${typeof item.value === 'string' ? `"${item.value}"` : item.value}\n`
+            `${this.indent(1)}${item.label} = ${typeof item.value === 'string' ? `"${item.value}"` : item.value}\n`
           );
         });
         builder.append(`\n`);
@@ -41,7 +37,7 @@ export class PythonGeneratorImpl implements Generator {
         builder.append(`class ${model.name}(pydantic.BaseModel):\n`);
         model.value.fields.forEach(field => {
           const pyType = this.getPyTypeForValueType(field.type, 0);
-          builder.append(`${this.indent}${field.name}: ${pyType}\n`);
+          builder.append(`${this.indent(1)}${field.name}: ${pyType}\n`);
         });
         builder.append('\n');
       } else {
@@ -54,9 +50,34 @@ export class PythonGeneratorImpl implements Generator {
       // TODO: Add doc comment
       builder.append(`class ${model.name}(pydantic.BaseModel):\n`);
       model.fields.forEach(field => {
-        const pyType = this.getPyTypeForValueType(field.type, 0);
-        builder.append(`${this.indent}${field.name}: ${pyType}\n`);
+        if (field.optional) {
+          if (field.type.type === 'union') {
+            // TODO: If already union, then need to handle this case specially
+            // Need to add UNDEFINED to existing union
+            const pyType = this.getPyTypeForUnionValueType(field.type, 0, 'TypeSyncUndefined');
+            // Feels like we need a PythonUnion object here instead of string
+            // Then we can mutate it to add an UNDEFINED
+            builder.append(`${this.indent(1)}${field.name}: ${pyType} = UNDEFINED \n`);
+          } else {
+            const aux: schema.UnionValueType = { type: 'union', members: [field.type] };
+            const pyType = this.getPyTypeForUnionValueType(aux, 0, 'TypeSyncUndefined');
+            builder.append(`${this.indent(1)}${field.name}: ${pyType} = UNDEFINED \n`);
+          }
+        } else {
+          const pyType = this.getPyTypeForValueType(field.type, 0);
+          builder.append(`${this.indent(1)}${field.name}: ${pyType}\n`);
+        }
       });
+      builder.append('\n');
+      builder.append(`${this.indent(1)}def __setattr__(self, name: str, value: typing.Any) -> None:\n`);
+      // TODO: For every optional that is not nullable prevent assignment to None
+      builder.append(`${this.indent(2)}super().__setattr__(name, value)\n\n`);
+      builder.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
+      // TODO: Remove every optional field set to UNDEFINED
+      builder.append(`${this.indent(2)}model_dict = super().model_dump(**kwargs)\n`);
+      builder.append(`${this.indent(2)}return model_dict\n\n`);
+      builder.append(`${this.indent(1)}class Config:\n`);
+      builder.append(`${this.indent(2)}use_enum_values = True\n`);
     });
 
     return createGenerationOutput(builder.toString());
@@ -75,14 +96,14 @@ export class PythonGeneratorImpl implements Generator {
   private getStaticDeclarations() {
     const builder = new StringBuilder();
     builder.append(`class TypeSyncUndefined:\n`);
-    builder.append(`${this.indent}_instance = None\n\n`);
-    builder.append(`${this.indent}def __init__(self):\n`);
-    builder.append(`${multiply(this.indent, 2)}if TypeSyncUndefined._instance is not None:\n`);
+    builder.append(`${this.indent(1)}_instance = None\n\n`);
+    builder.append(`${this.indent(1)}def __init__(self):\n`);
+    builder.append(`${this.indent(2)}if TypeSyncUndefined._instance is not None:\n`);
     builder.append(
-      `${multiply(this.indent, 3)}raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Use UNDEFINED instead.")\n`
+      `${this.indent(3)}raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Use UNDEFINED instead.")\n`
     );
-    builder.append(`${multiply(this.indent, 2)}else:\n`);
-    builder.append(`${multiply(this.indent, 3)}TypeSyncUndefined._instance = self\n\n`);
+    builder.append(`${this.indent(2)}else:\n`);
+    builder.append(`${this.indent(3)}TypeSyncUndefined._instance = self\n\n`);
     builder.append(`UNDEFINED = TypeSyncUndefined()\n`);
     return builder.toString();
   }
@@ -154,12 +175,18 @@ export class PythonGeneratorImpl implements Generator {
     return `typing.List[${pyType}]`;
   }
 
-  private getPyTypeForUnionValueType(type: schema.UnionValueType, depth: number) {
+  private getPyTypeForUnionValueType(type: schema.UnionValueType, depth: number, ...extraTypes: string[]) {
     const pyTypes: string[] = type.members.map(memberValueType => {
       return this.getPyTypeForValueType(memberValueType, depth);
     });
 
+    pyTypes.unshift(...extraTypes);
+
     return `typing.Union[${pyTypes.join(', ')}]`;
+  }
+
+  private indent(count: number) {
+    return multiply(space(this.config.indentation), count);
   }
 }
 

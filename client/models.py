@@ -47,10 +47,20 @@ class UserProfile(pydantic.BaseModel):
     age: int
     is_active: bool
     role: UserRole
-    created_at: datetime.datetime
+    created_at: typing.Union[TypeSyncUndefined, datetime.datetime] = UNDEFINED 
     location: tuple[int, int]
     address: Address
     favorite_numbers: typing.List[int]
     pets: typing.List[Pet]
     bio: typing.Union[None, str]
     area_code: typing.Literal[34]
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        super().__setattr__(name, value)
+
+    def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        model_dict = super().model_dump(**kwargs)
+        return model_dict
+
+    class Config:
+        use_enum_values = True
