@@ -22,6 +22,7 @@ export class PythonGeneratorImpl implements Generator {
 
     builder.append(`${this.getImportStatements()}\n\n`);
     builder.append(`${this.getStaticDeclarations()}\n`);
+    builder.append(`# Model Definitions\n\n`);
 
     const { aliasModels, documentModels } = divideModelsByType(models);
 

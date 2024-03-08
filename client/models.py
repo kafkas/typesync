@@ -16,6 +16,8 @@ class TypeSyncUndefined:
 
 UNDEFINED = TypeSyncUndefined()
 
+# Model Definitions
+
 Username = str
 
 class UserRole(enum.Enum):
