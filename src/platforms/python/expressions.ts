@@ -14,7 +14,7 @@ export interface Expression {
   content: string;
 }
 
-export function forPrimitiveValueType(pyType: PrimitiveValueType): Expression {
+export function fromPrimitiveValueType(pyType: PrimitiveValueType): Expression {
   switch (pyType.type) {
     case 'undefined':
       return { content: 'TypeSyncUndefined' };
@@ -33,7 +33,7 @@ export function forPrimitiveValueType(pyType: PrimitiveValueType): Expression {
   }
 }
 
-export function forLiteralValueType(pyType: LiteralValueType): Expression {
+export function fromLiteralValueType(pyType: LiteralValueType): Expression {
   switch (typeof pyType.value) {
     case 'string':
       return { content: `typing.Literal["${pyType.value}"]` };
@@ -47,46 +47,46 @@ export function forLiteralValueType(pyType: LiteralValueType): Expression {
   }
 }
 
-export function forTupleValueType(pyType: TupleValueType): Expression {
+export function fromTupleValueType(pyType: TupleValueType): Expression {
   const commaSeparateExpressions = pyType.values
-    .map(forExpressibleValueType)
+    .map(fromExpressibleValueType)
     .map(exp => exp.content)
     .join(', ');
   return { content: `tuple[${commaSeparateExpressions}]` };
 }
 
-export function forListValueType(pyType: ListValueType): Expression {
-  const expression = forExpressibleValueType(pyType.of);
+export function fromListValueType(pyType: ListValueType): Expression {
+  const expression = fromExpressibleValueType(pyType.of);
   return { content: `typing.list[${expression.content}]` };
 }
 
-export function forUnionValueType(pyType: UnionValueType): Expression {
+export function fromUnionValueType(pyType: UnionValueType): Expression {
   const commaSeparateExpressions = pyType.members
-    .map(forExpressibleValueType)
+    .map(fromExpressibleValueType)
     .map(exp => exp.content)
     .join(', ');
   return { content: `typing.Union[${commaSeparateExpressions}]` };
 }
 
-export function forAliasValueType(pyType: AliasValueType): Expression {
+export function fromAliasValueType(pyType: AliasValueType): Expression {
   return { content: pyType.name };
 }
 
-export function forExpressibleValueType(pyType: ExpressibleValueType): Expression {
+export function fromExpressibleValueType(pyType: ExpressibleValueType): Expression {
   if (isPrimitiveValueType(pyType)) {
-    return forPrimitiveValueType(pyType);
+    return fromPrimitiveValueType(pyType);
   }
   switch (pyType.type) {
     case 'literal':
-      return forLiteralValueType(pyType);
+      return fromLiteralValueType(pyType);
     case 'tuple':
-      return forTupleValueType(pyType);
+      return fromTupleValueType(pyType);
     case 'list':
-      return forListValueType(pyType);
+      return fromListValueType(pyType);
     case 'union':
-      return forUnionValueType(pyType);
+      return fromUnionValueType(pyType);
     case 'alias':
-      return forAliasValueType(pyType);
+      return fromAliasValueType(pyType);
     default:
       assertNever(pyType);
   }

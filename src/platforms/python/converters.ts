@@ -11,7 +11,6 @@ import {
   MapValueType,
   ModelField,
   NoneValueType,
-  PrimitiveValueType,
   StringValueType,
   TupleValueType,
   UnionValueType,
@@ -22,7 +21,7 @@ import {
  * Converters
  */
 
-export function fromPrimitiveValueType(vt: schema.PrimitiveValueType): PrimitiveValueType {
+export function fromPrimitiveValueType(vt: schema.PrimitiveValueType) {
   switch (vt.type) {
     case 'nil':
       return new NoneValueType();
