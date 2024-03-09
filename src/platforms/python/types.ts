@@ -100,7 +100,7 @@ export class EnumValueType {
 
   public constructor(
     public readonly name: string,
-    private readonly items: EnumItem[]
+    public readonly items: EnumItem[]
   ) {}
 }
 
@@ -108,11 +108,8 @@ export class TupleValueType {
   public readonly type = 'tuple';
 
   public toString(indentation: number) {
-    // TODO: Implement
-    // const pyTypes = this.values.map(v => this.getPyTypeForValueType(v, depth)).join(', ');
-    // return `tuple[${pyTypes}]`;
-
-    return 'typing.Any';
+    const pyTypes = this.values.map((v): string => v.toString(indentation)).join(', ');
+    return `tuple[${pyTypes}]`;
   }
 
   public constructor(private readonly values: ValueType[]) {}
@@ -122,11 +119,8 @@ export class ListValueType {
   public readonly type = 'list';
 
   public toString(indentation: number) {
-    // TODO: Implement
-    // const pyType = this.getPyTypeForValueType(type.of, depth);
-    // return `typing.List[${pyType}]`;
-
-    return 'typing.Any';
+    const pyType: string = this.of.toString(indentation);
+    return `typing.List[${pyType}]`;
   }
 
   public constructor(private readonly of: ValueType) {}
@@ -137,28 +131,27 @@ export class MapValueType {
 
   public toString(indentation: number) {
     // TODO: Implement
-
     return 'typing.Any';
   }
 
-  public constructor(private readonly fields: ModelField[]) {}
+  public constructor(public readonly fields: ModelField[]) {}
 }
 
 export class UnionValueType {
   public readonly type = 'union';
 
   public toString(indentation: number) {
-    // TODO: Implement
-
-    // const pyTypes: string[] = type.members.map(memberValueType => {
-    //   return this.getPyTypeForValueType(memberValueType, depth);
-    // });
-    // return `typing.Union[${pyTypes.join(', ')}]`;
-
-    return 'typing.Any';
+    const pyTypes: string[] = this.members.map(vt => {
+      return vt.toString(indentation);
+    });
+    return `typing.Union[${pyTypes.join(', ')}]`;
   }
 
   public constructor(private readonly members: ValueType[]) {}
+
+  public addMember(member: ValueType) {
+    this.members.push(member);
+  }
 }
 
 export class AliasValueType {

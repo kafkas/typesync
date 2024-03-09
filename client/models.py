@@ -47,7 +47,7 @@ class UserProfile(pydantic.BaseModel):
     age: int
     is_active: bool
     role: UserRole
-    created_at: typing.Union[TypeSyncUndefined, datetime.datetime] = UNDEFINED 
+    created_at: typing.Union[datetime.datetime, TypeSyncUndefined] = UNDEFINED
     location: tuple[int, int]
     address: Address
     favorite_numbers: typing.List[int]
