@@ -36,44 +36,24 @@ export class LiteralValueType {
   public constructor(public readonly value: string | number | boolean) {}
 }
 
-interface EnumItem {
-  label: string;
-  value: string | number;
-}
-
-export class EnumValueType {
-  public readonly type = 'enum';
-
-  public constructor(
-    public readonly name: string,
-    public readonly items: EnumItem[]
-  ) {}
-}
-
 export class TupleValueType {
   public readonly type = 'tuple';
 
-  public constructor(public readonly values: ExpressibleValueType[]) {}
+  public constructor(public readonly values: ValueType[]) {}
 }
 
 export class ListValueType {
   public readonly type = 'list';
 
-  public constructor(public readonly of: ExpressibleValueType) {}
-}
-
-export class MapValueType {
-  public readonly type = 'map';
-
-  public constructor(public readonly fields: ModelField[]) {}
+  public constructor(public readonly of: ValueType) {}
 }
 
 export class UnionValueType {
   public readonly type = 'union';
 
-  public constructor(public readonly members: ExpressibleValueType[]) {}
+  public constructor(public readonly members: ValueType[]) {}
 
-  public addMember(member: ExpressibleValueType) {
+  public addMember(member: ValueType) {
     this.members.push(member);
   }
 }
@@ -84,7 +64,7 @@ export class AliasValueType {
   public constructor(public readonly name: string) {}
 }
 
-export type ExpressibleValueType =
+export type ValueType =
   | PrimitiveValueType
   | LiteralValueType
   | TupleValueType
@@ -92,10 +72,8 @@ export type ExpressibleValueType =
   | UnionValueType
   | AliasValueType;
 
-export type ValueType = ExpressibleValueType | EnumValueType | MapValueType;
-
 export interface ModelField {
-  type: ExpressibleValueType;
+  type: ValueType;
   optional: boolean;
   name: string;
   docs: string | undefined;

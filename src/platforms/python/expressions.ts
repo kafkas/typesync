@@ -2,7 +2,7 @@ import { assertNever } from '../../util/assert';
 import { isPrimitiveValueType } from './guards';
 import {
   AliasValueType,
-  ExpressibleValueType,
+  ValueType,
   ListValueType,
   LiteralValueType,
   PrimitiveValueType,
@@ -49,20 +49,20 @@ export function fromLiteralValueType(pyType: LiteralValueType): Expression {
 
 export function fromTupleValueType(pyType: TupleValueType): Expression {
   const commaSeparateExpressions = pyType.values
-    .map(fromExpressibleValueType)
+    .map(fromValueType)
     .map(exp => exp.content)
     .join(', ');
   return { content: `tuple[${commaSeparateExpressions}]` };
 }
 
 export function fromListValueType(pyType: ListValueType): Expression {
-  const expression = fromExpressibleValueType(pyType.of);
+  const expression = fromValueType(pyType.of);
   return { content: `typing.list[${expression.content}]` };
 }
 
 export function fromUnionValueType(pyType: UnionValueType): Expression {
   const commaSeparateExpressions = pyType.members
-    .map(fromExpressibleValueType)
+    .map(fromValueType)
     .map(exp => exp.content)
     .join(', ');
   return { content: `typing.Union[${commaSeparateExpressions}]` };
@@ -72,7 +72,7 @@ export function fromAliasValueType(pyType: AliasValueType): Expression {
   return { content: pyType.name };
 }
 
-export function fromExpressibleValueType(pyType: ExpressibleValueType): Expression {
+export function fromValueType(pyType: ValueType): Expression {
   if (isPrimitiveValueType(pyType)) {
     return fromPrimitiveValueType(pyType);
   }

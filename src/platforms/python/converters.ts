@@ -4,12 +4,9 @@ import {
   AliasValueType,
   BooleanValueType,
   DatetimeValueType,
-  EnumValueType,
   IntValueType,
   ListValueType,
   LiteralValueType,
-  MapValueType,
-  ModelField,
   NoneValueType,
   StringValueType,
   TupleValueType,
@@ -42,51 +39,35 @@ export function fromLiteralValueType(vt: schema.LiteralValueType): LiteralValueT
   return new LiteralValueType(vt.value);
 }
 
-export function fromEnumValueType(vt: schema.EnumValueType): EnumValueType {
-  // TODO: Implement
-  const name = 'Placeholder';
-  return new EnumValueType(name, vt.items);
-}
-
 export function fromTupleValueType(vt: schema.TupleValueType): TupleValueType {
-  return new TupleValueType(vt.values.map(fromValueType));
+  return new TupleValueType(vt.values.map(fromExpressibleValueType));
 }
 
 export function fromListValueType(vt: schema.ListValueType): ListValueType {
-  return new ListValueType(fromValueType(vt.of));
-}
-
-export function fromMapValueType(vt: schema.MapValueType): MapValueType {
-  return new MapValueType(vt.fields.map(fromModelField));
-}
-
-function fromModelField(field: schema.ModelField): ModelField {
-  return { ...field, type: fromValueType(field.type) };
+  return new ListValueType(fromExpressibleValueType(vt.of));
 }
 
 export function fromUnionValueType(vt: schema.UnionValueType): UnionValueType {
-  return new UnionValueType(vt.members.map(fromValueType));
+  return new UnionValueType(vt.members.map(fromExpressibleValueType));
 }
 
 export function fromAliasValueType(vt: schema.AliasValueType): AliasValueType {
   return new AliasValueType(vt.name);
 }
 
-export function fromValueType(vt: schema.ValueType): ValueType {
+export type ExpressibleSchemaValueType = Exclude<schema.ValueType, schema.EnumValueType | schema.MapValueType>;
+
+export function fromExpressibleValueType(vt: ExpressibleSchemaValueType): ValueType {
   if (schema.isPrimitiveValueType(vt)) {
     return fromPrimitiveValueType(vt);
   }
   switch (vt.type) {
     case 'literal':
       return fromLiteralValueType(vt);
-    case 'enum':
-      return fromEnumValueType(vt);
     case 'tuple':
       return fromTupleValueType(vt);
     case 'list':
       return fromListValueType(vt);
-    case 'map':
-      return fromMapValueType(vt);
     case 'union':
       return fromUnionValueType(vt);
     case 'alias':

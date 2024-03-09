@@ -26,16 +26,15 @@ export class PythonGeneratorImpl implements Generator {
     aliasModels.forEach(model => {
       // TODO: Add doc comment
       if (model.value.type === 'enum') {
-        const pyType = python.fromEnumValueType(model.value);
-        const declaration = this.generateClassDeclarationForEnum(model.name, pyType);
+        const declaration = this.generateClassDeclarationForEnum(model.name, model.value);
         b.append(declaration);
       } else if (model.value.type === 'map') {
-        const pyType = python.fromMapValueType(model.value);
-        const declaration = this.generateClassDeclarationForMap(model.name, pyType);
+        const declaration = this.generateClassDeclarationForMap(model.name, model.value);
         b.append(declaration);
       } else {
-        const pyType = python.fromValueType(model.value);
-        b.append(`${model.name} = {expression}\n\n`);
+        const pyType = python.fromExpressibleValueType(model.value);
+        const expression = python.expressions.fromValueType(pyType);
+        b.append(`${model.name} = ${expression.content}\n\n`);
       }
     });
 
@@ -47,18 +46,18 @@ export class PythonGeneratorImpl implements Generator {
           if (field.type.type === 'union') {
             const pyType = python.fromUnionValueType(field.type);
             pyType.addMember(python.UNDEFINED);
-            const exp = python.expressions.forUnionValueType(pyType);
+            const exp = python.expressions.fromUnionValueType(pyType);
             b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
           } else {
             const pyType = python.fromUnionValueType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
-            const exp = python.expressions.forUnionValueType(pyType);
+            const exp = python.expressions.fromUnionValueType(pyType);
             b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
           }
         } else {
-          const pyType = python.fromValueType(field.type);
-          const exp = python.expressions.forExpressibleValueType(pyType);
-          b.append(`${this.indent(1)}${field.name}: {expression}\n`);
+          const pyType = python.fromExpressibleValueType(field.type);
+          const expression = python.expressions.fromValueType(pyType);
+          b.append(`${this.indent(1)}${field.name}: ${expression.content}\n`);
         }
       });
       b.append('\n');
@@ -101,7 +100,7 @@ export class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private generateClassDeclarationForEnum(name: string, pyType: python.EnumValueType) {
+  private generateClassDeclarationForEnum(name: string, pyType: schema.EnumValueType) {
     const b = new StringBuilder();
     b.append(`class ${name}(enum.Enum):\n`);
     pyType.items.forEach(item => {
@@ -122,11 +121,14 @@ export class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private generateClassDeclarationForMap(name: string, pyType: python.MapValueType) {
+  private generateClassDeclarationForMap(name: string, vt: schema.MapValueType) {
     const b = new StringBuilder();
     b.append(`class ${name}(pydantic.BaseModel):\n`);
-    pyType.fields.forEach(field => {
-      b.append(`${this.indent(1)}${field.name}: {expression}\n`);
+    vt.fields.forEach(field => {
+      // TODO: Getting this expression is not possible is the inner types may not be "expressible"
+      // TODO: Process and edit the schema to make all nested fields expressible and generate enums and maps where needed
+      const expression = '';
+      b.append(`${this.indent(1)}${field.name}: ${expression}\n`);
     });
     b.append('\n');
     return b.toString();
