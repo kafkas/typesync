@@ -3,6 +3,7 @@ import { StringBuilder } from '@proficient/ds';
 import type { Generator, PythonGeneratorConfig } from '../../../interfaces';
 import { python } from '../../../platforms/python';
 import { schema } from '../../../schema';
+import { assertNever } from '../../../util/assert';
 import { divideModelsByType } from '../../../util/divide-models-by-type';
 import { multiply } from '../../../util/multiply-str';
 import { space } from '../../../util/space';
@@ -13,7 +14,6 @@ export class PythonGeneratorImpl implements Generator {
 
   public async generate(s: schema.Schema) {
     const { models } = s;
-    const { indentation } = this.config;
 
     const b = new StringBuilder();
 
@@ -35,7 +35,7 @@ export class PythonGeneratorImpl implements Generator {
         b.append(declaration);
       } else {
         const pyType = python.fromValueType(model.value);
-        b.append(`${model.name} = ${pyType.toString(indentation)}\n\n`);
+        b.append(`${model.name} = ${this.expressValueType(pyType)}\n\n`);
       }
     });
 
@@ -47,15 +47,15 @@ export class PythonGeneratorImpl implements Generator {
           if (field.type.type === 'union') {
             const pyType = python.fromUnionValueType(field.type);
             pyType.addMember(python.UNDEFINED);
-            b.append(`${this.indent(1)}${field.name}: ${pyType.toString(indentation)} = UNDEFINED\n`);
+            b.append(`${this.indent(1)}${field.name}: ${this.expressUnionValueType(pyType)} = UNDEFINED\n`);
           } else {
             const pyType = python.fromUnionValueType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
-            b.append(`${this.indent(1)}${field.name}: ${pyType.toString(indentation)} = UNDEFINED\n`);
+            b.append(`${this.indent(1)}${field.name}: ${this.expressUnionValueType(pyType)} = UNDEFINED\n`);
           }
         } else {
           const pyType = python.fromValueType(field.type);
-          b.append(`${this.indent(1)}${field.name}: ${pyType.toString(indentation)}\n`);
+          b.append(`${this.indent(1)}${field.name}: ${this.expressValueType(pyType)}\n`);
         }
       });
       b.append('\n');
@@ -98,22 +98,81 @@ export class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
+  private expressPrimitiveValueType(pyType: python.PrimitiveValueType): string {
+    switch (pyType.type) {
+      case 'undefined':
+        return 'TypeSyncUndefined';
+      case 'none':
+        return 'None';
+      case 'string':
+        return 'str';
+      case 'bool':
+        return 'bool';
+      case 'datetime':
+        return 'datetime.datetime';
+      case 'int':
+        return 'int';
+      default:
+        assertNever(pyType);
+    }
+  }
+
+  private expressLiteralValueType(pyType: python.LiteralValueType) {
+    switch (typeof pyType.value) {
+      case 'string':
+        return `typing.Literal["${pyType.value}"]`;
+      case 'number':
+        // TODO: Don't allow float literals in the spec
+        return `typing.Literal[${pyType.value}]`;
+      case 'boolean':
+        return `typing.Literal[${pyType.value ? 'True' : 'False'}]`;
+      default:
+        assertNever(pyType.value);
+    }
+  }
+
+  private expressTupleValueType(pyType: python.TupleValueType) {
+    return '';
+  }
+
+  private expressListValueType(pyType: python.ListValueType) {
+    return '';
+  }
+
+  private expressUnionValueType(pyType: python.UnionValueType) {
+    return '';
+  }
+
+  private expressValueType(pyType: python.ValueType) {
+    return '';
+  }
+
   private generateClassDeclarationForEnum(name: string, pyType: python.EnumValueType) {
     const b = new StringBuilder();
     b.append(`class ${name}(enum.Enum):\n`);
     pyType.items.forEach(item => {
-      b.append(`${this.indent(1)}${item.label} = ${typeof item.value === 'string' ? `"${item.value}"` : item.value}\n`);
+      b.append(`${this.indent(1)}${item.label} = `);
+      const valueAsString = (() => {
+        switch (typeof item.value) {
+          case 'string':
+            return `"${item.value}"`;
+          case 'number':
+            return `${item.value}`;
+          default:
+            assertNever(item.value);
+        }
+      })();
+      b.append(`${valueAsString}\n`);
     });
     b.append(`\n`);
     return b.toString();
   }
 
   private generateClassDeclarationForMap(name: string, pyType: python.MapValueType) {
-    const { indentation } = this.config;
     const b = new StringBuilder();
     b.append(`class ${name}(pydantic.BaseModel):\n`);
     pyType.fields.forEach(field => {
-      b.append(`${this.indent(1)}${field.name}: ${field.type.toString(indentation)}\n`);
+      b.append(`${this.indent(1)}${field.name}: ${this.expressValueType(field.type)}\n`);
     });
     b.append('\n');
     return b.toString();

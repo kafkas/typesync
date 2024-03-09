@@ -2,17 +2,17 @@ import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import {
   AliasValueType,
-  BooleanType,
-  DatetimeType,
+  BooleanValueType,
+  DatetimeValueType,
   EnumValueType,
-  IntType,
+  IntValueType,
   ListValueType,
   LiteralValueType,
   MapValueType,
   ModelField,
-  NoneType,
+  NoneValueType,
   PrimitiveValueType,
-  StringType,
+  StringValueType,
   TupleValueType,
   UnionValueType,
   ValueType,
@@ -25,15 +25,15 @@ import {
 export function fromPrimitiveValueType(vt: schema.PrimitiveValueType): PrimitiveValueType {
   switch (vt.type) {
     case 'nil':
-      return new NoneType();
+      return new NoneValueType();
     case 'string':
-      return new StringType();
+      return new StringValueType();
     case 'boolean':
-      return new BooleanType();
+      return new BooleanValueType();
     case 'int':
-      return new IntType();
+      return new IntValueType();
     case 'timestamp':
-      return new DatetimeType();
+      return new DatetimeValueType();
     default:
       assertNever(vt.type);
   }
