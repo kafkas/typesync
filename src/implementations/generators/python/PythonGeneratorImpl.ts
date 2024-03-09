@@ -35,7 +35,7 @@ export class PythonGeneratorImpl implements Generator {
         b.append(declaration);
       } else {
         const pyType = python.fromValueType(model.value);
-        b.append(`${model.name} = ${this.expressValueType(pyType)}\n\n`);
+        b.append(`${model.name} = {expression}\n\n`);
       }
     });
 
@@ -47,15 +47,18 @@ export class PythonGeneratorImpl implements Generator {
           if (field.type.type === 'union') {
             const pyType = python.fromUnionValueType(field.type);
             pyType.addMember(python.UNDEFINED);
-            b.append(`${this.indent(1)}${field.name}: ${this.expressUnionValueType(pyType)} = UNDEFINED\n`);
+            const exp = python.expressions.forUnionValueType(pyType);
+            b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
           } else {
             const pyType = python.fromUnionValueType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
-            b.append(`${this.indent(1)}${field.name}: ${this.expressUnionValueType(pyType)} = UNDEFINED\n`);
+            const exp = python.expressions.forUnionValueType(pyType);
+            b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
           }
         } else {
           const pyType = python.fromValueType(field.type);
-          b.append(`${this.indent(1)}${field.name}: ${this.expressValueType(pyType)}\n`);
+          const exp = python.expressions.forExpressibleValueType(pyType);
+          b.append(`${this.indent(1)}${field.name}: {expression}\n`);
         }
       });
       b.append('\n');
@@ -98,55 +101,6 @@ export class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private expressPrimitiveValueType(pyType: python.PrimitiveValueType): string {
-    switch (pyType.type) {
-      case 'undefined':
-        return 'TypeSyncUndefined';
-      case 'none':
-        return 'None';
-      case 'string':
-        return 'str';
-      case 'bool':
-        return 'bool';
-      case 'datetime':
-        return 'datetime.datetime';
-      case 'int':
-        return 'int';
-      default:
-        assertNever(pyType);
-    }
-  }
-
-  private expressLiteralValueType(pyType: python.LiteralValueType) {
-    switch (typeof pyType.value) {
-      case 'string':
-        return `typing.Literal["${pyType.value}"]`;
-      case 'number':
-        // TODO: Don't allow float literals in the spec
-        return `typing.Literal[${pyType.value}]`;
-      case 'boolean':
-        return `typing.Literal[${pyType.value ? 'True' : 'False'}]`;
-      default:
-        assertNever(pyType.value);
-    }
-  }
-
-  private expressTupleValueType(pyType: python.TupleValueType) {
-    return '';
-  }
-
-  private expressListValueType(pyType: python.ListValueType) {
-    return '';
-  }
-
-  private expressUnionValueType(pyType: python.UnionValueType) {
-    return '';
-  }
-
-  private expressValueType(pyType: python.ValueType) {
-    return '';
-  }
-
   private generateClassDeclarationForEnum(name: string, pyType: python.EnumValueType) {
     const b = new StringBuilder();
     b.append(`class ${name}(enum.Enum):\n`);
@@ -172,7 +126,7 @@ export class PythonGeneratorImpl implements Generator {
     const b = new StringBuilder();
     b.append(`class ${name}(pydantic.BaseModel):\n`);
     pyType.fields.forEach(field => {
-      b.append(`${this.indent(1)}${field.name}: ${this.expressValueType(field.type)}\n`);
+      b.append(`${this.indent(1)}${field.name}: {expression}\n`);
     });
     b.append('\n');
     return b.toString();

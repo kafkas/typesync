@@ -53,13 +53,13 @@ export class EnumValueType {
 export class TupleValueType {
   public readonly type = 'tuple';
 
-  public constructor(public readonly values: ValueType[]) {}
+  public constructor(public readonly values: ExpressibleValueType[]) {}
 }
 
 export class ListValueType {
   public readonly type = 'list';
 
-  public constructor(private readonly of: ValueType) {}
+  public constructor(public readonly of: ExpressibleValueType) {}
 }
 
 export class MapValueType {
@@ -71,9 +71,9 @@ export class MapValueType {
 export class UnionValueType {
   public readonly type = 'union';
 
-  public constructor(private readonly members: ValueType[]) {}
+  public constructor(public readonly members: ExpressibleValueType[]) {}
 
-  public addMember(member: ValueType) {
+  public addMember(member: ExpressibleValueType) {
     this.members.push(member);
   }
 }
@@ -84,18 +84,18 @@ export class AliasValueType {
   public constructor(public readonly name: string) {}
 }
 
-export type ValueType =
+export type ExpressibleValueType =
   | PrimitiveValueType
   | LiteralValueType
-  | EnumValueType
   | TupleValueType
   | ListValueType
-  | MapValueType
   | UnionValueType
   | AliasValueType;
 
+export type ValueType = ExpressibleValueType | EnumValueType | MapValueType;
+
 export interface ModelField {
-  type: ValueType;
+  type: ExpressibleValueType;
   optional: boolean;
   name: string;
   docs: string | undefined;
