@@ -4,7 +4,6 @@ import type { Generator, PythonGeneratorConfig } from '../../../interfaces';
 import { python } from '../../../platforms/python';
 import { schema } from '../../../schema';
 import { assertNever } from '../../../util/assert';
-import { divideModelsByType } from '../../../util/divide-models-by-type';
 import { multiply } from '../../../util/multiply-str';
 import { space } from '../../../util/space';
 import { createGenerationOutput } from '../../GenerationOutputImpl';
@@ -13,7 +12,8 @@ export class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {
-    const { models } = s;
+    const processedSchema = this.processSchema(s);
+    const { models } = processedSchema;
 
     const b = new StringBuilder();
 
@@ -21,7 +21,7 @@ export class PythonGeneratorImpl implements Generator {
     b.append(`${this.generateStaticDeclarations()}\n`);
     b.append(`# Model Definitions\n\n`);
 
-    const { aliasModels, documentModels } = divideModelsByType(models);
+    const { aliasModels, documentModels } = this.divideModelsByType(models);
 
     aliasModels.forEach(model => {
       // TODO: Add doc comment
@@ -44,12 +44,12 @@ export class PythonGeneratorImpl implements Generator {
       model.fields.forEach(field => {
         if (field.optional) {
           if (field.type.type === 'union') {
-            const pyType = python.fromUnionValueType(field.type);
+            const pyType = python.fromExpressibleUnionValueType(field.type);
             pyType.addMember(python.UNDEFINED);
             const exp = python.expressions.fromUnionValueType(pyType);
             b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
           } else {
-            const pyType = python.fromUnionValueType({ type: 'union', members: [field.type] });
+            const pyType = python.fromExpressibleUnionValueType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
             const exp = python.expressions.fromUnionValueType(pyType);
             b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
@@ -73,6 +73,29 @@ export class PythonGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(b.toString());
+  }
+
+  private divideModelsByType(models: python.ExpressibleModel[]) {
+    const aliasModels: python.ExpressibleAliasModel[] = [];
+    const documentModels: python.ExpressibleDocumentModel[] = [];
+    models.forEach(model => {
+      switch (model.type) {
+        case 'alias':
+          aliasModels.push(model);
+          break;
+        case 'document':
+          documentModels.push(model);
+          break;
+        default:
+          assertNever(model);
+      }
+    });
+    return { aliasModels, documentModels };
+  }
+
+  private processSchema(s: schema.Schema): python.ExpressibleSchema {
+    // TODO: Implement
+    return { models: [] };
   }
 
   private generateImportStatements() {

@@ -42,8 +42,24 @@ export interface ExpressibleDocumentModel extends schema.DocumentModel {
   fields: ExpressibleModelField[];
 }
 
+export interface FlatMapValueType extends schema.MapValueType {
+  fields: FlatMapModelFieldValueType[];
+}
+
+export interface FlatMapModelFieldValueType extends schema.ModelField {
+  type: schema.ValueType;
+}
+
 export interface ExpressibleAliasModel extends schema.AliasModel {
-  value: ExpressibleValueType;
+  value:
+    | schema.PrimitiveValueType
+    | schema.LiteralValueType
+    | schema.EnumValueType
+    | ExpressibleTupleValueType
+    | ExpressibleListValueType
+    | FlatMapValueType
+    | ExpressibleUnionValueType
+    | schema.AliasValueType;
 }
 
 export type ExpressibleModel = ExpressibleDocumentModel | ExpressibleAliasModel;

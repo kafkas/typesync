@@ -3,7 +3,6 @@ import { StringBuilder } from '@proficient/ds';
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
-import { divideModelsByType } from '../../util/divide-models-by-type';
 import { space } from '../../util/space';
 import { createGenerationOutput } from '../GenerationOutputImpl';
 
@@ -28,7 +27,7 @@ export class TSGeneratorImpl implements Generator {
 
     builder.append(`${tsFirestoreImport}\n\n`);
 
-    const { aliasModels, documentModels } = divideModelsByType(models);
+    const { aliasModels, documentModels } = this.divideModelsByType(models);
 
     aliasModels.forEach(model => {
       const tsType = this.getTSTypeForAliasModel(model, 0);
@@ -53,6 +52,24 @@ export class TSGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(builder.toString());
+  }
+
+  private divideModelsByType(models: schema.Model[]) {
+    const aliasModels: schema.AliasModel[] = [];
+    const documentModels: schema.DocumentModel[] = [];
+    models.forEach(model => {
+      switch (model.type) {
+        case 'alias':
+          aliasModels.push(model);
+          break;
+        case 'document':
+          documentModels.push(model);
+          break;
+        default:
+          assertNever(model);
+      }
+    });
+    return { aliasModels, documentModels };
   }
 
   private getImportFirestoreStatement() {
