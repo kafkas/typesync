@@ -4,7 +4,7 @@ import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './DefinitionParserImpl';
 import { createLogger } from './LoggerImpl';
-import { createPythonGenerator } from './generators/PythonGeneratorImpl';
+import { createPythonGenerator } from './generators/python';
 import { createTSGenerator } from './generators/TSGeneratorImpl';
 
 class TypeSyncImpl implements TypeSync {

@@ -1,12 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { Generator, PythonGeneratorConfig } from '../../interfaces';
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
-import { divideModelsByType } from '../../util/divide-models-by-type';
-import { multiply } from '../../util/multiply-str';
-import { space } from '../../util/space';
-import { createGenerationOutput } from '../GenerationOutputImpl';
+import type { Generator, PythonGeneratorConfig } from '../../../interfaces';
+import { schema } from '../../../schema';
+import { assertNever } from '../../../util/assert';
+import { divideModelsByType } from '../../../util/divide-models-by-type';
+import { multiply } from '../../../util/multiply-str';
+import { space } from '../../../util/space';
+import { createGenerationOutput } from '../../GenerationOutputImpl';
 
 export class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
