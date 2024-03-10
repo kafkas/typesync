@@ -1,7 +1,7 @@
-import { definition } from '../definition';
-import type { schema } from '../schema';
+import { definition } from '../../definition';
+import type { schema } from '../../schema';
 
-class SchemaAliasModelImpl implements schema.AliasModel {
+export class AliasModelImpl implements schema.AliasModel {
   public constructor(
     public readonly name: string,
     private readonly defModel: definition.AliasModel
@@ -18,8 +18,4 @@ class SchemaAliasModelImpl implements schema.AliasModel {
   public get value() {
     return definition.convertTypeToSchema(this.defModel.value);
   }
-}
-
-export function createSchemaAliasModel(name: string, defModel: definition.AliasModel): schema.AliasModel {
-  return new SchemaAliasModelImpl(name, defModel);
 }

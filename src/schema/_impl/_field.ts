@@ -1,7 +1,7 @@
-import { definition } from '../definition';
-import type { schema } from '../schema';
+import { definition } from '../../definition';
+import type { schema } from '../../schema';
 
-class SchemaModelFieldImpl implements schema.types.Field {
+export class FieldImpl implements schema.types.Field {
   public constructor(
     public readonly name: string,
     private readonly defModelField: definition.types.Field
@@ -18,8 +18,4 @@ class SchemaModelFieldImpl implements schema.types.Field {
   public get docs() {
     return this.defModelField.docs;
   }
-}
-
-export function createSchemaModelField(name: string, defModelField: definition.types.Field): schema.types.Field {
-  return new SchemaModelFieldImpl(name, defModelField);
 }
