@@ -1,30 +1,23 @@
 import type { schema } from '../schema';
 import { assertNever } from '../util/assert';
+import { isPrimitiveType } from './guards';
 import type { types } from './types';
 
-const PRIMITIVE_VALUE_MAPPING: Record<types.Primitive, schema.types.Primitive> = {
-  nil: { type: 'nil' },
-  string: { type: 'string' },
-  boolean: { type: 'boolean' },
-  int: { type: 'int' },
-  timestamp: { type: 'timestamp' },
-};
-
-/*
- * Type Guards
- */
-
-export function isPrimitiveType(candidate: unknown): candidate is types.Primitive {
-  if (typeof candidate !== 'string') return false;
-  return PRIMITIVE_VALUE_MAPPING[candidate as types.Primitive] !== undefined;
-}
-
-/*
- * Converters
- */
-
 export function convertPrimitiveTypeToSchema(vt: types.Primitive): schema.types.Primitive {
-  return PRIMITIVE_VALUE_MAPPING[vt];
+  switch (vt) {
+    case 'nil':
+      return { type: 'nil' };
+    case 'string':
+      return { type: 'string' };
+    case 'boolean':
+      return { type: 'boolean' };
+    case 'int':
+      return { type: 'int' };
+    case 'timestamp':
+      return { type: 'timestamp' };
+    default:
+      assertNever(vt);
+  }
 }
 
 export function convertLiteralTypeToSchema(vt: types.Literal): schema.types.Literal {
