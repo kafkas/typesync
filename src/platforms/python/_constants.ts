@@ -1,4 +1,4 @@
-import { NoneType, StringType, UndefinedType } from './types';
+import { NoneType, StringType, UndefinedType } from './_types';
 
 export const UNDEFINED = new UndefinedType();
 

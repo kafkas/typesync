@@ -1,4 +1,4 @@
-import type { python } from '../../platforms/python';
+import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 
@@ -8,7 +8,7 @@ import { assertNever } from '../../util/assert';
  *
  * @returns A new schema object.
  */
-export function processSchema(s: schema.Schema): python.ExpressibleSchema {
+export function processSchema(s: schema.Schema): python.schema.ExpressibleSchema {
   // TODO: Deep clone the schema
 
   const aliasModelsByName = new Map<string, schema.AliasModel>();

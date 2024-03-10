@@ -1,4 +1,4 @@
-import type { PrimitiveType, Type } from './types';
+import type { PrimitiveType, Type } from './_types';
 
 export function isPrimitiveType(pyType: Type): pyType is PrimitiveType {
   switch (pyType.type) {

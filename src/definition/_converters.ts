@@ -1,6 +1,6 @@
 import type { schema } from '../schema';
 import { assertNever } from '../util/assert';
-import { isPrimitiveType } from './guards';
+import { isPrimitiveType } from './_guards';
 import type { types } from './types';
 
 export function convertPrimitiveTypeToSchema(vt: types.Primitive): schema.types.Primitive {
