@@ -32,8 +32,7 @@ class PythonGeneratorImpl implements Generator {
         const declaration = this.generateClassDeclarationForMap(model.name, model.value);
         b.append(declaration);
       } else {
-        const pyType = python.fromExpressibleValueType(model.value);
-        const expression = python.expressions.fromValueType(pyType);
+        const { expression } = python.fromExpressibleValueType(model.value);
         b.append(`${model.name} = ${expression.content}\n\n`);
       }
     });
@@ -46,17 +45,17 @@ class PythonGeneratorImpl implements Generator {
           if (field.type.type === 'union') {
             const pyType = python.fromExpressibleUnionValueType(field.type);
             pyType.addMember(python.UNDEFINED);
-            const exp = python.expressions.fromUnionValueType(pyType);
-            b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
+            const { expression } = pyType;
+            b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           } else {
             const pyType = python.fromExpressibleUnionValueType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
-            const exp = python.expressions.fromUnionValueType(pyType);
-            b.append(`${this.indent(1)}${field.name}: ${exp.content} = UNDEFINED\n`);
+            const { expression } = pyType;
+            b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           }
         } else {
           const pyType = python.fromExpressibleValueType(field.type);
-          const expression = python.expressions.fromValueType(pyType);
+          const { expression } = pyType;
           b.append(`${this.indent(1)}${field.name}: ${expression.content}\n`);
         }
       });
