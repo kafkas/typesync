@@ -1,52 +1,52 @@
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import {
-  AliasValueType,
-  BooleanValueType,
-  DatetimeValueType,
-  IntValueType,
-  ListValueType,
-  LiteralValueType,
-  NoneValueType,
-  StringValueType,
-  TupleValueType,
-  UnionValueType,
-  ValueType,
+  AliasType,
+  BooleanType,
+  DatetimeType,
+  IntType,
+  ListType,
+  LiteralType,
+  NoneType,
+  StringType,
+  TupleType,
+  Type,
+  UnionType,
 } from './types';
 
-export interface ExpressibleTupleValueType extends schema.types.Tuple {
-  values: ExpressibleValueType[];
+export interface ExpressibleTupleType extends schema.types.Tuple {
+  values: ExpressibleType[];
 }
 
-export interface ExpressibleListValueType extends schema.types.List {
-  of: ExpressibleValueType;
+export interface ExpressibleListType extends schema.types.List {
+  of: ExpressibleType;
 }
 
-export interface ExpressibleUnionValueType extends schema.types.Union {
-  members: ExpressibleValueType[];
+export interface ExpressibleUnionType extends schema.types.Union {
+  members: ExpressibleType[];
 }
 
-export type ExpressibleValueType =
+export type ExpressibleType =
   | schema.types.Primitive
   | schema.types.Literal
-  | ExpressibleTupleValueType
-  | ExpressibleListValueType
-  | ExpressibleUnionValueType
+  | ExpressibleTupleType
+  | ExpressibleListType
+  | ExpressibleUnionType
   | schema.types.Alias;
 
-export interface ExpressibleModelField extends schema.types.Field {
-  type: ExpressibleValueType;
+export interface ExpressibleFieldType extends schema.types.Field {
+  type: ExpressibleType;
 }
 
 export interface ExpressibleDocumentModel extends schema.DocumentModel {
-  fields: ExpressibleModelField[];
+  fields: ExpressibleFieldType[];
 }
 
-export interface FlatMapValueType extends schema.types.Map {
-  fields: FlatMapModelFieldValueType[];
+interface FlatMapType extends schema.types.Map {
+  fields: FlatMapModelFieldType[];
 }
 
-export interface FlatMapModelFieldValueType extends schema.types.Field {
+export interface FlatMapModelFieldType extends schema.types.Field {
   type: schema.types.Type;
 }
 
@@ -55,10 +55,10 @@ export interface ExpressibleAliasModel extends schema.AliasModel {
     | schema.types.Primitive
     | schema.types.Literal
     | schema.types.Enum
-    | ExpressibleTupleValueType
-    | ExpressibleListValueType
-    | FlatMapValueType
-    | ExpressibleUnionValueType
+    | ExpressibleTupleType
+    | ExpressibleListType
+    | FlatMapType
+    | ExpressibleUnionType
     | schema.types.Alias;
 }
 
@@ -72,58 +72,58 @@ export interface ExpressibleSchema {
  * Converters
  */
 
-export function fromPrimitiveValueType(vt: schema.types.Primitive) {
+export function fromPrimitiveType(vt: schema.types.Primitive) {
   switch (vt.type) {
     case 'nil':
-      return new NoneValueType();
+      return new NoneType();
     case 'string':
-      return new StringValueType();
+      return new StringType();
     case 'boolean':
-      return new BooleanValueType();
+      return new BooleanType();
     case 'int':
-      return new IntValueType();
+      return new IntType();
     case 'timestamp':
-      return new DatetimeValueType();
+      return new DatetimeType();
     default:
       assertNever(vt.type);
   }
 }
 
-export function fromLiteralValueType(vt: schema.types.Literal): LiteralValueType {
-  return new LiteralValueType(vt.value);
+export function fromLiteralType(vt: schema.types.Literal): LiteralType {
+  return new LiteralType(vt.value);
 }
 
-export function fromExpressibleTupleValueType(vt: ExpressibleTupleValueType): TupleValueType {
-  return new TupleValueType(vt.values.map(fromExpressibleValueType));
+export function fromExpressibleTupleType(vt: ExpressibleTupleType): TupleType {
+  return new TupleType(vt.values.map(fromExpressibleType));
 }
 
-export function fromExpressibleListValueType(vt: ExpressibleListValueType): ListValueType {
-  return new ListValueType(fromExpressibleValueType(vt.of));
+export function fromExpressibleListType(vt: ExpressibleListType): ListType {
+  return new ListType(fromExpressibleType(vt.of));
 }
 
-export function fromExpressibleUnionValueType(vt: ExpressibleUnionValueType): UnionValueType {
-  return new UnionValueType(vt.members.map(fromExpressibleValueType));
+export function fromExpressibleUnionType(vt: ExpressibleUnionType): UnionType {
+  return new UnionType(vt.members.map(fromExpressibleType));
 }
 
-export function fromExpressibleAliasValueType(vt: schema.types.Alias): AliasValueType {
-  return new AliasValueType(vt.name);
+export function fromExpressibleAliasType(vt: schema.types.Alias): AliasType {
+  return new AliasType(vt.name);
 }
 
-export function fromExpressibleValueType(vt: ExpressibleValueType): ValueType {
-  if (schema.isPrimitiveValueType(vt)) {
-    return fromPrimitiveValueType(vt);
+export function fromExpressibleType(vt: ExpressibleType): Type {
+  if (schema.isPrimitiveType(vt)) {
+    return fromPrimitiveType(vt);
   }
   switch (vt.type) {
     case 'literal':
-      return fromLiteralValueType(vt);
+      return fromLiteralType(vt);
     case 'tuple':
-      return fromExpressibleTupleValueType(vt);
+      return fromExpressibleTupleType(vt);
     case 'list':
-      return fromExpressibleListValueType(vt);
+      return fromExpressibleListType(vt);
     case 'union':
-      return fromExpressibleUnionValueType(vt);
+      return fromExpressibleUnionType(vt);
     case 'alias':
-      return fromExpressibleAliasValueType(vt);
+      return fromExpressibleAliasType(vt);
     default:
       assertNever(vt);
   }
