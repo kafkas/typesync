@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-import type { ModelField, ValueType } from './types';
+import type { types } from './types';
 
-export const primitiveValueType = z.enum(['nil', 'string', 'boolean', 'int', 'timestamp']);
+export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'timestamp']);
 
-export const literalValueType = z.object({
+export const literalType = z.object({
   type: z.literal('literal'),
   value: z.string().or(z.number()).or(z.boolean()),
 });
 
-export const enumValueType = z.object({
+export const enumType = z.object({
   type: z.literal('enum'),
   items: z.array(
     z
@@ -21,54 +21,54 @@ export const enumValueType = z.object({
   ),
 });
 
-export const tupleValueType = (aliasNames: string[]) =>
+export const tupleType = (aliasNames: string[]) =>
   z.lazy(() =>
     z
       .object({
         type: z.literal('tuple'),
-        values: z.array(valueType(aliasNames)),
+        values: z.array(type(aliasNames)),
       })
       .strict()
   );
 
-export const listValueType = (aliasNames: string[]) =>
+export const listType = (aliasNames: string[]) =>
   z.lazy(() =>
     z
       .object({
         type: z.literal('list'),
-        of: valueType(aliasNames),
+        of: type(aliasNames),
       })
       .strict()
   );
 
-export const mapValueType = (aliasNames: string[]) =>
+export const mapType = (aliasNames: string[]) =>
   z.lazy(() =>
     z
       .object({
         type: z.literal('map'),
-        fields: z.record(modelField(aliasNames)),
+        fields: z.record(field(aliasNames)),
       })
       .strict()
   );
 
-export const unionValueType = (aliasNames: string[]) => z.lazy(() => z.array(valueType(aliasNames)));
+export const unionType = (aliasNames: string[]) => z.lazy(() => z.array(type(aliasNames)));
 
-export const aliasValueType = (aliasNames: string[]) => z.enum([...aliasNames] as [string, ...string[]]);
+export const aliasType = (aliasNames: string[]) => z.enum([...aliasNames] as [string, ...string[]]);
 
-export const valueType = (aliasNames: string[]): z.ZodType<ValueType> =>
-  primitiveValueType
-    .or(literalValueType)
-    .or(enumValueType)
-    .or(tupleValueType(aliasNames))
-    .or(listValueType(aliasNames))
-    .or(mapValueType(aliasNames))
-    .or(unionValueType(aliasNames))
-    .or(aliasValueType(aliasNames));
+export const type = (aliasNames: string[]): z.ZodType<types.Type> =>
+  primitiveType
+    .or(literalType)
+    .or(enumType)
+    .or(tupleType(aliasNames))
+    .or(listType(aliasNames))
+    .or(mapType(aliasNames))
+    .or(unionType(aliasNames))
+    .or(aliasType(aliasNames));
 
-export const modelField = (aliasNames: string[]): z.ZodType<ModelField> =>
+export const field = (aliasNames: string[]): z.ZodType<types.Field> =>
   z
     .object({
-      type: valueType(aliasNames),
+      type: type(aliasNames),
       optional: z.boolean().optional(),
       docs: z.string().optional(),
     })
@@ -79,7 +79,7 @@ export const documentModel = (aliasNames: string[]) =>
     .object({
       type: z.literal('document'),
       docs: z.string().optional(),
-      fields: z.record(modelField(aliasNames)),
+      fields: z.record(field(aliasNames)),
     })
     .strict();
 
@@ -88,7 +88,7 @@ export const aliasModel = (aliasNames: string[]) =>
     .object({
       type: z.literal('alias'),
       docs: z.string().optional(),
-      value: valueType(aliasNames),
+      value: type(aliasNames),
     })
     .strict();
 

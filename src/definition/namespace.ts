@@ -1,5 +1,4 @@
-import * as schemas from './schemas';
-
-export { schemas };
 export * from './converters';
-export type * from './types';
+export * from './models';
+export * as schemas from './schemas';
+export type { types } from './types';

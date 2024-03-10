@@ -4,11 +4,11 @@ import type { schema } from '../schema';
 class SchemaModelFieldImpl implements schema.types.Field {
   public constructor(
     public readonly name: string,
-    private readonly defModelField: definition.ModelField
+    private readonly defModelField: definition.types.Field
   ) {}
 
   public get type() {
-    return definition.convertValueTypeToSchema(this.defModelField.type);
+    return definition.convertTypeToSchema(this.defModelField.type);
   }
 
   public get optional() {
@@ -20,6 +20,6 @@ class SchemaModelFieldImpl implements schema.types.Field {
   }
 }
 
-export function createSchemaModelField(name: string, defModelField: definition.ModelField): schema.types.Field {
+export function createSchemaModelField(name: string, defModelField: definition.types.Field): schema.types.Field {
   return new SchemaModelFieldImpl(name, defModelField);
 }

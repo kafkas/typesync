@@ -1,17 +1,8 @@
 import type { schema } from '../schema';
 import { assertNever } from '../util/assert';
-import type {
-  EnumValueType,
-  ListValueType,
-  LiteralValueType,
-  MapValueType,
-  ModelField,
-  PrimitiveValueType,
-  TupleValueType,
-  ValueType,
-} from './types';
+import type { types } from './types';
 
-const PRIMITIVE_VALUE_MAPPING: Record<PrimitiveValueType, schema.types.Primitive> = {
+const PRIMITIVE_VALUE_MAPPING: Record<types.Primitive, schema.types.Primitive> = {
   nil: { type: 'nil' },
   string: { type: 'string' },
   boolean: { type: 'boolean' },
@@ -23,66 +14,66 @@ const PRIMITIVE_VALUE_MAPPING: Record<PrimitiveValueType, schema.types.Primitive
  * Type Guards
  */
 
-export function isPrimitiveValueType(candidate: unknown): candidate is PrimitiveValueType {
+export function isPrimitiveType(candidate: unknown): candidate is types.Primitive {
   if (typeof candidate !== 'string') return false;
-  return PRIMITIVE_VALUE_MAPPING[candidate as PrimitiveValueType] !== undefined;
+  return PRIMITIVE_VALUE_MAPPING[candidate as types.Primitive] !== undefined;
 }
 
 /*
  * Converters
  */
 
-export function convertPrimitiveValueTypeToSchema(vt: PrimitiveValueType): schema.types.Primitive {
+export function convertPrimitiveTypeToSchema(vt: types.Primitive): schema.types.Primitive {
   return PRIMITIVE_VALUE_MAPPING[vt];
 }
 
-export function convertLiteralValueTypeToSchema(vt: LiteralValueType): schema.types.Literal {
+export function convertLiteralTypeToSchema(vt: types.Literal): schema.types.Literal {
   return {
     type: 'literal',
     value: vt.value,
   };
 }
 
-export function convertEnumValueTypeToSchema(vt: EnumValueType): schema.types.Enum {
+export function convertEnumTypeToSchema(vt: types.Enum): schema.types.Enum {
   return {
     type: 'enum',
     items: vt.items,
   };
 }
 
-export function convertTupleValueTypeToSchema(vt: TupleValueType): schema.types.Tuple {
+export function convertTupleTypeToSchema(vt: types.Tuple): schema.types.Tuple {
   return {
     type: 'tuple',
-    values: vt.values.map(convertValueTypeToSchema),
+    values: vt.values.map(convertTypeToSchema),
   };
 }
 
-export function convertListValueTypeToSchema(vt: ListValueType): schema.types.List {
+export function convertListTypeToSchema(vt: types.List): schema.types.List {
   return {
     type: 'list',
-    of: convertValueTypeToSchema(vt.of),
+    of: convertTypeToSchema(vt.of),
   };
 }
 
-export function convertMapValueTypeToSchema(vt: MapValueType): schema.types.Map {
+export function convertMapTypeToSchema(vt: types.Map): schema.types.Map {
   return {
     type: 'map',
-    fields: Object.entries(vt.fields).map(([fieldName, field]) => convertModelFieldToSchema(fieldName, field)),
+    fields: Object.entries(vt.fields).map(([fieldName, field]) => convertFieldToSchema(fieldName, field)),
   };
 }
 
-function convertModelFieldToSchema(fieldName: string, field: ModelField): schema.types.Field {
+function convertFieldToSchema(fieldName: string, field: types.Field): schema.types.Field {
   return {
-    type: convertValueTypeToSchema(field.type),
+    type: convertTypeToSchema(field.type),
     optional: !!field.optional,
     docs: field.docs,
     name: fieldName,
   };
 }
 
-export function convertValueTypeToSchema(vt: ValueType): schema.types.Type {
-  if (isPrimitiveValueType(vt)) {
-    return convertPrimitiveValueTypeToSchema(vt);
+export function convertTypeToSchema(vt: types.Type): schema.types.Type {
+  if (isPrimitiveType(vt)) {
+    return convertPrimitiveTypeToSchema(vt);
   }
 
   if (typeof vt === 'string') {
@@ -92,21 +83,21 @@ export function convertValueTypeToSchema(vt: ValueType): schema.types.Type {
   if (Array.isArray(vt)) {
     return {
       type: 'union',
-      members: vt.map(convertValueTypeToSchema),
+      members: vt.map(convertTypeToSchema),
     };
   }
 
   switch (vt.type) {
     case 'literal':
-      return convertLiteralValueTypeToSchema(vt);
+      return convertLiteralTypeToSchema(vt);
     case 'enum':
-      return convertEnumValueTypeToSchema(vt);
+      return convertEnumTypeToSchema(vt);
     case 'tuple':
-      return convertTupleValueTypeToSchema(vt);
+      return convertTupleTypeToSchema(vt);
     case 'list':
-      return convertListValueTypeToSchema(vt);
+      return convertListTypeToSchema(vt);
     case 'map':
-      return convertMapValueTypeToSchema(vt);
+      return convertMapTypeToSchema(vt);
     default:
       assertNever(vt);
   }

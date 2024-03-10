@@ -1,3 +1,1 @@
-import * as definition from './namespace';
-
-export { definition };
+export * as definition from './namespace';

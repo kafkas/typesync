@@ -16,7 +16,7 @@ class SchemaAliasModelImpl implements schema.AliasModel {
   }
 
   public get value() {
-    return definition.convertValueTypeToSchema(this.defModel.value);
+    return definition.convertTypeToSchema(this.defModel.value);
   }
 }
 

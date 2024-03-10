@@ -1,3 +1,1 @@
-import * as schema from './namespace';
-
-export { schema };
+export * as schema from './namespace';
