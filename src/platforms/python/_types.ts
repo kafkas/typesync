@@ -9,7 +9,7 @@ interface PythonType {
   expression: Expression;
 }
 
-export class UndefinedValueType implements PythonType {
+export class UndefinedType implements PythonType {
   public readonly type = 'undefined';
 
   public readonly expression: Expression = {
@@ -17,7 +17,7 @@ export class UndefinedValueType implements PythonType {
   };
 }
 
-export class NoneValueType implements PythonType {
+export class NoneType implements PythonType {
   public readonly type = 'none';
 
   public readonly expression: Expression = {
@@ -25,7 +25,7 @@ export class NoneValueType implements PythonType {
   };
 }
 
-export class StringValueType implements PythonType {
+export class StringType implements PythonType {
   public readonly type = 'string';
 
   public readonly expression: Expression = {
@@ -33,7 +33,7 @@ export class StringValueType implements PythonType {
   };
 }
 
-export class BooleanValueType implements PythonType {
+export class BooleanType implements PythonType {
   public readonly type = 'bool';
 
   public readonly expression: Expression = {
@@ -41,7 +41,7 @@ export class BooleanValueType implements PythonType {
   };
 }
 
-export class IntValueType implements PythonType {
+export class IntType implements PythonType {
   public readonly type = 'int';
 
   public readonly expression: Expression = {
@@ -49,7 +49,7 @@ export class IntValueType implements PythonType {
   };
 }
 
-export class DatetimeValueType implements PythonType {
+export class DatetimeType implements PythonType {
   public readonly type = 'datetime';
 
   public readonly expression: Expression = {
@@ -57,15 +57,9 @@ export class DatetimeValueType implements PythonType {
   };
 }
 
-export type PrimitiveValueType =
-  | NoneValueType
-  | UndefinedValueType
-  | StringValueType
-  | BooleanValueType
-  | IntValueType
-  | DatetimeValueType;
+export type PrimitiveType = NoneType | UndefinedType | StringType | BooleanType | IntType | DatetimeType;
 
-export class LiteralValueType implements PythonType {
+export class LiteralType implements PythonType {
   public readonly type = 'literal';
 
   public get expression(): Expression {
@@ -85,7 +79,7 @@ export class LiteralValueType implements PythonType {
   public constructor(public readonly value: string | number | boolean) {}
 }
 
-export class TupleValueType implements PythonType {
+export class TupleType implements PythonType {
   public readonly type = 'tuple';
 
   public get expression(): Expression {
@@ -93,10 +87,10 @@ export class TupleValueType implements PythonType {
     return { content: `tuple[${commaSeparateExpressions}]` };
   }
 
-  public constructor(public readonly values: ValueType[]) {}
+  public constructor(public readonly values: Type[]) {}
 }
 
-export class ListValueType implements PythonType {
+export class ListType implements PythonType {
   public readonly type = 'list';
 
   public get expression(): Expression {
@@ -104,10 +98,10 @@ export class ListValueType implements PythonType {
     return { content: `typing.list[${expression.content}]` };
   }
 
-  public constructor(public readonly of: ValueType) {}
+  public constructor(public readonly of: Type) {}
 }
 
-export class UnionValueType implements PythonType {
+export class UnionType implements PythonType {
   public readonly type = 'union';
 
   public get expression(): Expression {
@@ -115,14 +109,14 @@ export class UnionValueType implements PythonType {
     return { content: `typing.Union[${commaSeparateExpressions}]` };
   }
 
-  public constructor(public readonly members: ValueType[]) {}
+  public constructor(public readonly members: Type[]) {}
 
-  public addMember(member: ValueType) {
+  public addMember(member: Type) {
     this.members.push(member);
   }
 }
 
-export class AliasValueType implements PythonType {
+export class AliasType implements PythonType {
   public readonly type = 'alias';
 
   public get expression(): Expression {
@@ -132,16 +126,10 @@ export class AliasValueType implements PythonType {
   public constructor(public readonly name: string) {}
 }
 
-export type ValueType =
-  | PrimitiveValueType
-  | LiteralValueType
-  | TupleValueType
-  | ListValueType
-  | UnionValueType
-  | AliasValueType;
+export type Type = PrimitiveType | LiteralType | TupleType | ListType | UnionType | AliasType;
 
 export interface ModelField {
-  type: ValueType;
+  type: Type;
   optional: boolean;
   name: string;
   docs: string | undefined;

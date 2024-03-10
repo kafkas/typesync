@@ -1,6 +1,6 @@
-import type { PrimitiveValueType, ValueType } from './types';
+import type { PrimitiveType, Type } from './_types';
 
-export function isPrimitiveValueType(pyType: ValueType): pyType is PrimitiveValueType {
+export function isPrimitiveType(pyType: Type): pyType is PrimitiveType {
   switch (pyType.type) {
     case 'undefined':
     case 'none':

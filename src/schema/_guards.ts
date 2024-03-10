@@ -1,6 +1,6 @@
-import type { Primitive, Type } from './types';
+import type { types } from './types';
 
-export function isPrimitiveValueType(t: Type): t is Primitive {
+export function isPrimitiveType(t: types.Type): t is types.Primitive {
   switch (t.type) {
     case 'nil':
     case 'string':

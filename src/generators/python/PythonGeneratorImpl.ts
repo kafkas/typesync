@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { createGenerationOutput } from '../../implementations/GenerationOutputImpl';
+import { createGenerationOutput } from '../../components';
 import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
@@ -33,7 +33,7 @@ class PythonGeneratorImpl implements Generator {
         const declaration = this.generateClassDeclarationForMap(model.name, model.value);
         b.append(declaration);
       } else {
-        const { expression } = python.fromExpressibleValueType(model.value);
+        const { expression } = python.schema.fromExpressibleType(model.value);
         b.append(`${model.name} = ${expression.content}\n\n`);
       }
     });
@@ -44,18 +44,18 @@ class PythonGeneratorImpl implements Generator {
       model.fields.forEach(field => {
         if (field.optional) {
           if (field.type.type === 'union') {
-            const pyType = python.fromExpressibleUnionValueType(field.type);
+            const pyType = python.schema.fromExpressibleUnionType(field.type);
             pyType.addMember(python.UNDEFINED);
             const { expression } = pyType;
             b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           } else {
-            const pyType = python.fromExpressibleUnionValueType({ type: 'union', members: [field.type] });
+            const pyType = python.schema.fromExpressibleUnionType({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
             const { expression } = pyType;
             b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           }
         } else {
-          const pyType = python.fromExpressibleValueType(field.type);
+          const pyType = python.schema.fromExpressibleType(field.type);
           const { expression } = pyType;
           b.append(`${this.indent(1)}${field.name}: ${expression.content}\n`);
         }
@@ -75,9 +75,9 @@ class PythonGeneratorImpl implements Generator {
     return createGenerationOutput(b.toString());
   }
 
-  private divideModelsByType(models: python.ExpressibleModel[]) {
-    const aliasModels: python.ExpressibleAliasModel[] = [];
-    const documentModels: python.ExpressibleDocumentModel[] = [];
+  private divideModelsByType(models: python.schema.ExpressibleModel[]) {
+    const aliasModels: python.schema.ExpressibleAliasModel[] = [];
+    const documentModels: python.schema.ExpressibleDocumentModel[] = [];
     models.forEach(model => {
       switch (model.type) {
         case 'alias':

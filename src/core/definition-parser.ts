@@ -5,18 +5,18 @@ import { z } from 'zod';
 import { definition } from '../definition';
 import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
 import type { DefinitionParser, Logger } from '../interfaces';
+import { schema } from '../schema';
 import { extractErrorMessage } from '../util/extract-error-message';
-import { createSchema } from './SchemaImpl';
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger: Logger) {}
 
-  public parseDefinition(pathToDefinition: string) {
+  public parseDefinition(pathToDefinition: string): schema.Schema {
     const definitionJson = this.parseYamlFileAsJson(pathToDefinition);
     const aliasNames = this.extractAliasModelNames(definitionJson);
     const definitionSchema = definition.schemas.definition(aliasNames);
     const parsedDefinition = this.parseDefinitionWithSchema(definitionJson, definitionSchema);
-    return createSchema(parsedDefinition);
+    return schema.createFromDefinition(parsedDefinition);
   }
 
   private parseYamlFileAsJson(pathToFile: string): unknown {
@@ -41,8 +41,8 @@ class DefinitionParserImpl implements DefinitionParser {
       .map(([name]) => name);
   }
 
-  private parseDefinitionWithSchema<T>(content: unknown, schema: z.Schema<T>) {
-    const parseRes = schema.safeParse(content);
+  private parseDefinitionWithSchema<T>(content: unknown, zodSchema: z.Schema<T>) {
+    const parseRes = zodSchema.safeParse(content);
 
     if (!parseRes.success) {
       const { error } = parseRes;
