@@ -25,7 +25,7 @@ export type Dog = {
   breed: string;
 };
 
-export type Pet = Cat | Dog;
+export type Pet = [Cat | Dog];
 
 /**
  * User profile model
@@ -40,6 +40,6 @@ export interface UserProfile {
   address: Address;
   favorite_numbers: number[];
   pets: Pet[];
-  bio: null | string;
+  bio: [null | string];
   area_code: 34;
 }

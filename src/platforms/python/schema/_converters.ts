@@ -15,8 +15,8 @@ import {
 } from '../_types';
 import { ExpressibleListType, ExpressibleTupleType, ExpressibleType, ExpressibleUnionType } from './_expressibles';
 
-export function fromPrimitiveType(vt: schema.types.Primitive) {
-  switch (vt.type) {
+export function fromPrimitiveType(t: schema.types.Primitive) {
+  switch (t.type) {
     case 'nil':
       return new NoneType();
     case 'string':
@@ -28,46 +28,46 @@ export function fromPrimitiveType(vt: schema.types.Primitive) {
     case 'timestamp':
       return new DatetimeType();
     default:
-      assertNever(vt.type);
+      assertNever(t.type);
   }
 }
 
-export function fromLiteralType(vt: schema.types.Literal): LiteralType {
-  return new LiteralType(vt.value);
+export function fromLiteralType(t: schema.types.Literal): LiteralType {
+  return new LiteralType(t.value);
 }
 
-export function fromExpressibleTupleType(vt: ExpressibleTupleType): TupleType {
-  return new TupleType(vt.values.map(fromExpressibleType));
+export function fromExpressibleTupleType(t: ExpressibleTupleType): TupleType {
+  return new TupleType(t.values.map(fromExpressibleType));
 }
 
-export function fromExpressibleListType(vt: ExpressibleListType): ListType {
-  return new ListType(fromExpressibleType(vt.of));
+export function fromExpressibleListType(t: ExpressibleListType): ListType {
+  return new ListType(fromExpressibleType(t.of));
 }
 
-export function fromExpressibleUnionType(vt: ExpressibleUnionType): UnionType {
-  return new UnionType(vt.members.map(fromExpressibleType));
+export function fromExpressibleUnionType(t: ExpressibleUnionType): UnionType {
+  return new UnionType(t.members.map(fromExpressibleType));
 }
 
-export function fromExpressibleAliasType(vt: schema.types.Alias): AliasType {
-  return new AliasType(vt.name);
+export function fromExpressibleAliasType(t: schema.types.Alias): AliasType {
+  return new AliasType(t.name);
 }
 
-export function fromExpressibleType(vt: ExpressibleType): Type {
-  if (schema.isPrimitiveType(vt)) {
-    return fromPrimitiveType(vt);
+export function fromExpressibleType(t: ExpressibleType): Type {
+  if (schema.isPrimitiveType(t)) {
+    return fromPrimitiveType(t);
   }
-  switch (vt.type) {
+  switch (t.type) {
     case 'literal':
-      return fromLiteralType(vt);
+      return fromLiteralType(t);
     case 'tuple':
-      return fromExpressibleTupleType(vt);
+      return fromExpressibleTupleType(t);
     case 'list':
-      return fromExpressibleListType(vt);
+      return fromExpressibleListType(t);
     case 'union':
-      return fromExpressibleUnionType(vt);
+      return fromExpressibleUnionType(t);
     case 'alias':
-      return fromExpressibleAliasType(vt);
+      return fromExpressibleAliasType(t);
     default:
-      assertNever(vt);
+      assertNever(t);
   }
 }
