@@ -1,44 +1,44 @@
-export type PrimitiveValueType = {
+export interface PrimitiveValueType {
   type: 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
-};
+}
 
-export type LiteralValueType = {
+export interface LiteralValueType {
   type: 'literal';
   value: string | number | boolean;
-};
+}
 
-export type EnumValueType = {
+export interface EnumValueType {
   type: 'enum';
   items: {
     label: string;
     value: string | number;
   }[];
-};
+}
 
-export type TupleValueType = {
+export interface TupleValueType {
   type: 'tuple';
   values: ValueType[];
-};
+}
 
-export type ListValueType = {
+export interface ListValueType {
   type: 'list';
   of: ValueType;
-};
+}
 
-export type MapValueType = {
+export interface MapValueType {
   type: 'map';
   fields: ModelField[];
-};
+}
 
-export type UnionValueType = {
+export interface UnionValueType {
   type: 'union';
   members: ValueType[];
-};
+}
 
-export type AliasValueType = {
+export interface AliasValueType {
   type: 'alias';
   name: string;
-};
+}
 
 export type ValueType =
   | PrimitiveValueType

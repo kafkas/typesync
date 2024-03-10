@@ -7,12 +7,13 @@ import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { multiply } from '../../util/multiply-str';
 import { space } from '../../util/space';
+import { processSchema } from './process-schema';
 
 class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {
-    const processedSchema = this.processSchema(s);
+    const processedSchema = processSchema(s);
     const { models } = processedSchema;
 
     const b = new StringBuilder();
@@ -90,11 +91,6 @@ class PythonGeneratorImpl implements Generator {
       }
     });
     return { aliasModels, documentModels };
-  }
-
-  private processSchema(s: schema.Schema): python.ExpressibleSchema {
-    // TODO: Implement
-    return { models: [] };
   }
 
   private generateImportStatements() {
