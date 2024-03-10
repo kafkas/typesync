@@ -14,27 +14,27 @@ import {
   ValueType,
 } from './types';
 
-export interface ExpressibleTupleValueType extends schema.TupleValueType {
+export interface ExpressibleTupleValueType extends schema.types.Tuple {
   values: ExpressibleValueType[];
 }
 
-export interface ExpressibleListValueType extends schema.ListValueType {
+export interface ExpressibleListValueType extends schema.types.List {
   of: ExpressibleValueType;
 }
 
-export interface ExpressibleUnionValueType extends schema.UnionValueType {
+export interface ExpressibleUnionValueType extends schema.types.Union {
   members: ExpressibleValueType[];
 }
 
 export type ExpressibleValueType =
-  | schema.PrimitiveValueType
-  | schema.LiteralValueType
+  | schema.types.Primitive
+  | schema.types.Literal
   | ExpressibleTupleValueType
   | ExpressibleListValueType
   | ExpressibleUnionValueType
-  | schema.AliasValueType;
+  | schema.types.Alias;
 
-export interface ExpressibleModelField extends schema.ModelField {
+export interface ExpressibleModelField extends schema.types.Field {
   type: ExpressibleValueType;
 }
 
@@ -42,24 +42,24 @@ export interface ExpressibleDocumentModel extends schema.DocumentModel {
   fields: ExpressibleModelField[];
 }
 
-export interface FlatMapValueType extends schema.MapValueType {
+export interface FlatMapValueType extends schema.types.Map {
   fields: FlatMapModelFieldValueType[];
 }
 
-export interface FlatMapModelFieldValueType extends schema.ModelField {
-  type: schema.ValueType;
+export interface FlatMapModelFieldValueType extends schema.types.Field {
+  type: schema.types.Type;
 }
 
 export interface ExpressibleAliasModel extends schema.AliasModel {
   value:
-    | schema.PrimitiveValueType
-    | schema.LiteralValueType
-    | schema.EnumValueType
+    | schema.types.Primitive
+    | schema.types.Literal
+    | schema.types.Enum
     | ExpressibleTupleValueType
     | ExpressibleListValueType
     | FlatMapValueType
     | ExpressibleUnionValueType
-    | schema.AliasValueType;
+    | schema.types.Alias;
 }
 
 export type ExpressibleModel = ExpressibleDocumentModel | ExpressibleAliasModel;
@@ -72,7 +72,7 @@ export interface ExpressibleSchema {
  * Converters
  */
 
-export function fromPrimitiveValueType(vt: schema.PrimitiveValueType) {
+export function fromPrimitiveValueType(vt: schema.types.Primitive) {
   switch (vt.type) {
     case 'nil':
       return new NoneValueType();
@@ -89,7 +89,7 @@ export function fromPrimitiveValueType(vt: schema.PrimitiveValueType) {
   }
 }
 
-export function fromLiteralValueType(vt: schema.LiteralValueType): LiteralValueType {
+export function fromLiteralValueType(vt: schema.types.Literal): LiteralValueType {
   return new LiteralValueType(vt.value);
 }
 
@@ -105,7 +105,7 @@ export function fromExpressibleUnionValueType(vt: ExpressibleUnionValueType): Un
   return new UnionValueType(vt.members.map(fromExpressibleValueType));
 }
 
-export function fromExpressibleAliasValueType(vt: schema.AliasValueType): AliasValueType {
+export function fromExpressibleAliasValueType(vt: schema.types.Alias): AliasValueType {
   return new AliasValueType(vt.name);
 }
 

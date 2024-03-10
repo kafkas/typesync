@@ -118,7 +118,7 @@ class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private generateClassDeclarationForEnum(name: string, pyType: schema.EnumValueType) {
+  private generateClassDeclarationForEnum(name: string, pyType: schema.types.Enum) {
     const b = new StringBuilder();
     b.append(`class ${name}(enum.Enum):\n`);
     pyType.items.forEach(item => {
@@ -139,7 +139,7 @@ class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private generateClassDeclarationForMap(name: string, vt: schema.MapValueType) {
+  private generateClassDeclarationForMap(name: string, vt: schema.types.Map) {
     const b = new StringBuilder();
     b.append(`class ${name}(pydantic.BaseModel):\n`);
     vt.fields.forEach(field => {

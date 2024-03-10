@@ -11,7 +11,7 @@ import type {
   ValueType,
 } from './types';
 
-const PRIMITIVE_VALUE_MAPPING: Record<PrimitiveValueType, schema.PrimitiveValueType> = {
+const PRIMITIVE_VALUE_MAPPING: Record<PrimitiveValueType, schema.types.Primitive> = {
   nil: { type: 'nil' },
   string: { type: 'string' },
   boolean: { type: 'boolean' },
@@ -32,46 +32,46 @@ export function isPrimitiveValueType(candidate: unknown): candidate is Primitive
  * Converters
  */
 
-export function convertPrimitiveValueTypeToSchema(vt: PrimitiveValueType): schema.PrimitiveValueType {
+export function convertPrimitiveValueTypeToSchema(vt: PrimitiveValueType): schema.types.Primitive {
   return PRIMITIVE_VALUE_MAPPING[vt];
 }
 
-export function convertLiteralValueTypeToSchema(vt: LiteralValueType): schema.LiteralValueType {
+export function convertLiteralValueTypeToSchema(vt: LiteralValueType): schema.types.Literal {
   return {
     type: 'literal',
     value: vt.value,
   };
 }
 
-export function convertEnumValueTypeToSchema(vt: EnumValueType): schema.EnumValueType {
+export function convertEnumValueTypeToSchema(vt: EnumValueType): schema.types.Enum {
   return {
     type: 'enum',
     items: vt.items,
   };
 }
 
-export function convertTupleValueTypeToSchema(vt: TupleValueType): schema.TupleValueType {
+export function convertTupleValueTypeToSchema(vt: TupleValueType): schema.types.Tuple {
   return {
     type: 'tuple',
     values: vt.values.map(convertValueTypeToSchema),
   };
 }
 
-export function convertListValueTypeToSchema(vt: ListValueType): schema.ListValueType {
+export function convertListValueTypeToSchema(vt: ListValueType): schema.types.List {
   return {
     type: 'list',
     of: convertValueTypeToSchema(vt.of),
   };
 }
 
-export function convertMapValueTypeToSchema(vt: MapValueType): schema.MapValueType {
+export function convertMapValueTypeToSchema(vt: MapValueType): schema.types.Map {
   return {
     type: 'map',
     fields: Object.entries(vt.fields).map(([fieldName, field]) => convertModelFieldToSchema(fieldName, field)),
   };
 }
 
-function convertModelFieldToSchema(fieldName: string, field: ModelField): schema.ModelField {
+function convertModelFieldToSchema(fieldName: string, field: ModelField): schema.types.Field {
   return {
     type: convertValueTypeToSchema(field.type),
     optional: !!field.optional,
@@ -80,7 +80,7 @@ function convertModelFieldToSchema(fieldName: string, field: ModelField): schema
   };
 }
 
-export function convertValueTypeToSchema(vt: ValueType): schema.ValueType {
+export function convertValueTypeToSchema(vt: ValueType): schema.types.Type {
   if (isPrimitiveValueType(vt)) {
     return convertPrimitiveValueTypeToSchema(vt);
   }

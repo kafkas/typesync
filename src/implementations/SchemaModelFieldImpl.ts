@@ -1,7 +1,7 @@
 import { definition } from '../definition';
 import type { schema } from '../schema';
 
-class SchemaModelFieldImpl implements schema.ModelField {
+class SchemaModelFieldImpl implements schema.types.Field {
   public constructor(
     public readonly name: string,
     private readonly defModelField: definition.ModelField
@@ -20,6 +20,6 @@ class SchemaModelFieldImpl implements schema.ModelField {
   }
 }
 
-export function createSchemaModelField(name: string, defModelField: definition.ModelField): schema.ModelField {
+export function createSchemaModelField(name: string, defModelField: definition.ModelField): schema.types.Field {
   return new SchemaModelFieldImpl(name, defModelField);
 }
