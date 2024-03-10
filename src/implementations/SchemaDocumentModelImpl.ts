@@ -3,7 +3,7 @@ import type { schema } from '../schema';
 import { createSchemaModelField } from './SchemaModelFieldImpl';
 
 class SchemaDocumentModelImpl implements schema.DocumentModel {
-  public readonly fields: schema.ModelField[];
+  public readonly fields: schema.types.Field[];
 
   public constructor(
     public readonly name: string,

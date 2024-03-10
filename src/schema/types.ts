@@ -1,78 +1,50 @@
-export type PrimitiveValueType = {
+export interface Primitive {
   type: 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
-};
+}
 
-export type LiteralValueType = {
+export interface Literal {
   type: 'literal';
   value: string | number | boolean;
-};
+}
 
-export type EnumValueType = {
+export interface Enum {
   type: 'enum';
   items: {
     label: string;
     value: string | number;
   }[];
-};
+}
 
-export type TupleValueType = {
+export interface Tuple {
   type: 'tuple';
-  values: ValueType[];
-};
+  values: Type[];
+}
 
-export type ListValueType = {
+export interface List {
   type: 'list';
-  of: ValueType;
-};
+  of: Type;
+}
 
-export type MapValueType = {
+export interface Map {
   type: 'map';
-  fields: ModelField[];
-};
+  fields: Field[];
+}
 
-export type UnionValueType = {
-  type: 'union';
-  members: ValueType[];
-};
-
-export type AliasValueType = {
-  type: 'alias';
-  name: string;
-};
-
-export type ValueType =
-  | PrimitiveValueType
-  | LiteralValueType
-  | EnumValueType
-  | TupleValueType
-  | ListValueType
-  | MapValueType
-  | UnionValueType
-  | AliasValueType;
-
-export interface ModelField {
-  type: ValueType;
+export interface Field {
+  type: Type;
   optional: boolean;
   name: string;
   docs: string | undefined;
 }
 
-export interface DocumentModel {
-  type: 'document';
-  name: string;
-  docs: string | undefined;
-  fields: ModelField[];
+export interface Union {
+  type: 'union';
+  members: Type[];
 }
 
-export interface AliasModel {
+export interface Alias {
   type: 'alias';
   name: string;
-  docs: string | undefined;
-  value: ValueType;
 }
 
-export type Model = DocumentModel | AliasModel;
-
-export interface Schema {
-  models: Model[];
-}
+export type Type = Primitive | Literal | Enum | Tuple | List | Map | Union | Alias;

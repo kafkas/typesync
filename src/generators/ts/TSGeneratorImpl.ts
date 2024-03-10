@@ -1,13 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
+import { createGenerationOutput } from '../../implementations/GenerationOutputImpl';
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
-import { divideModelsByType } from '../../util/divide-models-by-type';
 import { space } from '../../util/space';
-import { createGenerationOutput } from '../GenerationOutputImpl';
 
-export class TSGeneratorImpl implements Generator {
+class TSGeneratorImpl implements Generator {
   private get firestore() {
     switch (this.config.platform) {
       case 'ts:firebase-admin:11':
@@ -28,7 +27,7 @@ export class TSGeneratorImpl implements Generator {
 
     builder.append(`${tsFirestoreImport}\n\n`);
 
-    const { aliasModels, documentModels } = divideModelsByType(models);
+    const { aliasModels, documentModels } = this.divideModelsByType(models);
 
     aliasModels.forEach(model => {
       const tsType = this.getTSTypeForAliasModel(model, 0);
@@ -55,6 +54,24 @@ export class TSGeneratorImpl implements Generator {
     return createGenerationOutput(builder.toString());
   }
 
+  private divideModelsByType(models: schema.Model[]) {
+    const aliasModels: schema.AliasModel[] = [];
+    const documentModels: schema.DocumentModel[] = [];
+    models.forEach(model => {
+      switch (model.type) {
+        case 'alias':
+          aliasModels.push(model);
+          break;
+        case 'document':
+          documentModels.push(model);
+          break;
+        default:
+          assertNever(model);
+      }
+    });
+    return { aliasModels, documentModels };
+  }
+
   private getImportFirestoreStatement() {
     switch (this.config.platform) {
       case 'ts:firebase-admin:11':
@@ -68,7 +85,7 @@ export class TSGeneratorImpl implements Generator {
     return this.getTSTypeForValueType(model.value, depth);
   }
 
-  private getTSTypeForValueType(type: schema.ValueType, depth: number) {
+  private getTSTypeForValueType(type: schema.types.Type, depth: number) {
     if (schema.isPrimitiveValueType(type)) {
       return this.getTSTypeForPrimitiveValueType(type);
     }
@@ -92,7 +109,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForPrimitiveValueType(type: schema.PrimitiveValueType) {
+  private getTSTypeForPrimitiveValueType(type: schema.types.Primitive) {
     switch (type.type) {
       case 'nil':
         return 'null';
@@ -109,7 +126,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForLiteralValueType(type: schema.LiteralValueType) {
+  private getTSTypeForLiteralValueType(type: schema.types.Literal) {
     switch (typeof type.value) {
       case 'string':
         return `'${type.value}'`;
@@ -122,7 +139,7 @@ export class TSGeneratorImpl implements Generator {
     }
   }
 
-  private getTSTypeForEnumValueType(type: schema.EnumValueType) {
+  private getTSTypeForEnumValueType(type: schema.types.Enum) {
     const { items } = type;
     return items
       .map(({ value }) => {
@@ -138,17 +155,17 @@ export class TSGeneratorImpl implements Generator {
       .join(' | ');
   }
 
-  private getTSTypeForTupleValueType(type: schema.TupleValueType, depth: number): string {
+  private getTSTypeForTupleValueType(type: schema.types.Tuple, depth: number): string {
     const tsTypes = type.values.map(v => this.getTSTypeForValueType(v, depth)).join(', ');
     return `[${tsTypes}]`;
   }
 
-  private getTSTypeForListValueType(type: schema.ListValueType, depth: number): string {
+  private getTSTypeForListValueType(type: schema.types.List, depth: number): string {
     const tsType = this.getTSTypeForValueType(type.of, depth);
     return `${tsType}[]`;
   }
 
-  private getTSTypeForMapValueType(type: schema.MapValueType, depth: number) {
+  private getTSTypeForMapValueType(type: schema.types.Map, depth: number) {
     const { fields } = type;
     const builder = new StringBuilder();
 
@@ -171,7 +188,7 @@ export class TSGeneratorImpl implements Generator {
     return builder.toString();
   }
 
-  private getTSTypeForUnionValueType(type: schema.UnionValueType, depth: number) {
+  private getTSTypeForUnionValueType(type: schema.types.Union, depth: number) {
     const tsTypes: string[] = type.members.map(memberValueType => {
       return this.getTSTypeForValueType(memberValueType, depth);
     });
