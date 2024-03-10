@@ -4,8 +4,8 @@ import { createTSGenerator } from '../generators/ts';
 import type { GenerationOutput } from '../interfaces';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
-import { createDefinitionParser } from './DefinitionParserImpl';
-import { createLogger } from './LoggerImpl';
+import { createDefinitionParser } from './definition-parser';
+import { createLogger } from './logger';
 
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions) {

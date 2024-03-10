@@ -1,2 +1,2 @@
-export { createTypeSync } from './implementations/TypeSyncImpl';
+export { createTypeSync } from './core/typesync';
 export type * from './api';

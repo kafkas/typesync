@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { createGenerationOutput } from '../../implementations/GenerationOutputImpl';
+import { createGenerationOutput } from '../../components';
 import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
