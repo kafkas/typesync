@@ -46,7 +46,7 @@ class DefinitionParserImpl implements DefinitionParser {
 
     if (!parseRes.success) {
       const { error } = parseRes;
-      const issue = error.issues[0];
+      const [issue] = error.issues;
       if (issue) {
         const { message } = issue;
         const path = issue.path.join('.');
