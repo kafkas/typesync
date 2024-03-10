@@ -1,17 +1,17 @@
-import type { Field, Type } from './types';
+import type { types } from './types';
 
 export interface DocumentModel {
   type: 'document';
   name: string;
   docs: string | undefined;
-  fields: Field[];
+  fields: types.Field[];
 }
 
 export interface AliasModel {
   type: 'alias';
   name: string;
   docs: string | undefined;
-  value: Type;
+  value: types.Type;
 }
 
 export type Model = DocumentModel | AliasModel;
