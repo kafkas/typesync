@@ -1,14 +1,14 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { Generator, PythonGeneratorConfig } from '../../../interfaces';
-import { python } from '../../../platforms/python';
-import { schema } from '../../../schema';
-import { assertNever } from '../../../util/assert';
-import { multiply } from '../../../util/multiply-str';
-import { space } from '../../../util/space';
-import { createGenerationOutput } from '../../GenerationOutputImpl';
+import { createGenerationOutput } from '../../implementations/GenerationOutputImpl';
+import type { Generator, PythonGeneratorConfig } from '../../interfaces';
+import { python } from '../../platforms/python';
+import { schema } from '../../schema';
+import { assertNever } from '../../util/assert';
+import { multiply } from '../../util/multiply-str';
+import { space } from '../../util/space';
 
-export class PythonGeneratorImpl implements Generator {
+class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {

@@ -1,12 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
+import { createGenerationOutput } from '../../implementations/GenerationOutputImpl';
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { space } from '../../util/space';
-import { createGenerationOutput } from '../GenerationOutputImpl';
 
-export class TSGeneratorImpl implements Generator {
+class TSGeneratorImpl implements Generator {
   private get firestore() {
     switch (this.config.platform) {
       case 'ts:firebase-admin:11':

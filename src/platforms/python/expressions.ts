@@ -2,12 +2,12 @@ import { assertNever } from '../../util/assert';
 import { isPrimitiveValueType } from './guards';
 import {
   AliasValueType,
-  ValueType,
   ListValueType,
   LiteralValueType,
   PrimitiveValueType,
   TupleValueType,
   UnionValueType,
+  ValueType,
 } from './types';
 
 export interface Expression {
