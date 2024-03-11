@@ -9,7 +9,8 @@
     "generate-py": "ts-node client/generate-py.ts",
     "generate-ts": "ts-node client/generate-ts.ts",
     "lint": "eslint src client --ext .ts",
-    "test": "jest"
+    "test": "jest",
+    "test:local": "jest --verbose"
   },
   "files": [
     "lib"

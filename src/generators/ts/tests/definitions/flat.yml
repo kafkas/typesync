@@ -1,0 +1,102 @@
+Username:
+  type: alias
+  value: string
+
+UserRole:
+  type: alias
+  docs: Represents a user role
+  value:
+    type: enum
+    items:
+      - label: ADMIN
+        value: admin
+      - label: USER
+        value: user
+      - label: GUEST
+        value: guest
+
+Address:
+  type: alias
+  value:
+    type: map
+    fields:
+      street:
+        type: string
+      city:
+        type: string
+      zip_code:
+        type: string
+
+Cat:
+  type: alias
+  value:
+    type: map
+    fields:
+      type:
+        type:
+          type: literal
+          value: cat
+      name:
+        type: string
+      lives_left:
+        type: int
+
+Dog:
+  type: alias
+  value:
+    type: map
+    fields:
+      type:
+        type:
+          type: literal
+          value: dog
+      name:
+        type: string
+      breed:
+        type: string
+
+Pet:
+  type: alias
+  value:
+    - Cat
+    - Dog
+
+UserProfile:
+  type: document
+  docs: User profile model
+  fields:
+    username:
+      type: Username
+    age:
+      type: int
+    is_active:
+      type: boolean
+    role:
+      type: UserRole
+    created_at:
+      type: timestamp
+      optional: true
+    location:
+      type:
+        type: tuple
+        values:
+          - int
+          - int
+    address:
+      type: Address
+    favorite_numbers:
+      type:
+        type: list
+        of: int
+    pets:
+      type:
+        type: list
+        of: Pet
+    bio:
+      type:
+        - nil
+        - string
+    area_code:
+      type:
+        type: literal
+        value: 34
