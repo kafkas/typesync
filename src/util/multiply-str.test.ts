@@ -38,9 +38,5 @@ describe('multiply-str', () => {
     testWith('a', 2, 'aa');
     testWith('ab', 2, 'abab');
     testWith('abc', 3, 'abcabcabc');
-
-    it('should fail', () => {
-      expect(false).toBe(true);
-    });
   });
 });
