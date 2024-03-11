@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "."
+  },
+  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"]
+}

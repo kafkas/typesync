@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "description": "Autogenerate Firestore models",
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "yarn run build:test && yarn build:src",
+    "build:src": "rm -rf lib && tsc -p tsconfig.build.json",
+    "build:test": "tsc -p tsconfig.test.json",
     "format": "prettier --write \"src/**/*.(js|ts|json)\"",
     "format-check": "prettier --check \"src/**/*.(js|ts|json)\"",
     "lint": "eslint src --ext .ts",
     "test": "jest",
-    "test:local": "jest --verbose"
+    "test-local": "jest --verbose"
   },
   "files": [
     "lib"
