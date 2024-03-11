@@ -3,12 +3,10 @@
   "version": "0.0.0",
   "description": "Autogenerate Firestore models",
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write \"(src|client)/**/*.(js|ts|json)\"",
-    "format-check": "prettier --check \"(src|client)/**/*.(js|ts|json)\"",
-    "generate-py": "ts-node client/generate-py.ts",
-    "generate-ts": "ts-node client/generate-ts.ts",
-    "lint": "eslint src client --ext .ts",
+    "build": "rm -rf lib && tsc",
+    "format": "prettier --write \"src/**/*.(js|ts|json)\"",
+    "format-check": "prettier --check \"src/**/*.(js|ts|json)\"",
+    "lint": "eslint src --ext .ts",
     "test": "jest",
     "test:local": "jest --verbose"
   },

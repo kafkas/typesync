@@ -11,5 +11,5 @@
     "strict": true,
     "target": "es2017"
   },
-  "exclude": ["client*/", "jest.config.global.ts", "jest.config.ts"]
+  "exclude": ["jest.config.global.ts", "jest.config.ts"]
 }
