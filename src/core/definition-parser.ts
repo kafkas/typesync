@@ -9,7 +9,7 @@ import { schema } from '../schema';
 import { extractErrorMessage } from '../util/extract-error-message';
 
 class DefinitionParserImpl implements DefinitionParser {
-  public constructor(private readonly logger: Logger) {}
+  public constructor(private readonly logger?: Logger) {}
 
   public parseDefinition(pathToDefinition: string): schema.Schema {
     const definitionJson = this.parseYamlFileAsJson(pathToDefinition);
@@ -24,7 +24,7 @@ class DefinitionParserImpl implements DefinitionParser {
       const yamlContent = readFileSync(pathToFile).toString();
       return parseYaml(yamlContent, { strict: true });
     } catch (e) {
-      this.logger.error(extractErrorMessage(e));
+      this.logger?.error(extractErrorMessage(e));
       throw new DefinitionNotValidYamlError(pathToFile);
     }
   }
@@ -60,6 +60,6 @@ class DefinitionParserImpl implements DefinitionParser {
   }
 }
 
-export function createDefinitionParser(logger: Logger): DefinitionParser {
+export function createDefinitionParser(logger?: Logger): DefinitionParser {
   return new DefinitionParserImpl(logger);
 }

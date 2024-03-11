@@ -32,9 +32,20 @@ jobs:
           name: Run Prettier checks
           command: yarn run format-check
 
+  test:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Run rests
+          command: yarn test
+
 workflows:
   ts_check:
     jobs:
       - build
       - lint:
+          requires: [build]
+      - test:
           requires: [build]
