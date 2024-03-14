@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash';
+
 import type { schema } from '../../schema';
 
 export class DocumentModelImpl implements schema.DocumentModel {
@@ -12,4 +14,8 @@ export class DocumentModelImpl implements schema.DocumentModel {
     public readonly docs: string | undefined,
     private readonly fieldsById: Record<string, schema.types.Field>
   ) {}
+
+  public clone() {
+    return new DocumentModelImpl(this.name, this.docs, cloneDeep(this.fieldsById));
+  }
 }
