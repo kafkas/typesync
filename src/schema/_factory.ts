@@ -1,3 +1,4 @@
+import { schema } from '.';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
 import { AliasModelImpl } from './_impl/_alias-model';
@@ -32,4 +33,26 @@ export function createFromDefinition(def: definition.Definition): Schema {
     })
   );
   return new SchemaImpl(modelsById);
+}
+
+interface CreateAliasModelParams {
+  name: string;
+  docs: string | undefined;
+  value: schema.types.Type;
+}
+
+export function createAliasModel(params: CreateAliasModelParams) {
+  const { name, docs, value } = params;
+  return new AliasModelImpl(name, docs, value);
+}
+
+interface CreateDocumentModelParams {
+  name: string;
+  docs: string | undefined;
+  fieldsById: Record<string, schema.types.Field>;
+}
+
+export function createDocumentModel(params: CreateDocumentModelParams) {
+  const { name, docs, fieldsById } = params;
+  return new DocumentModelImpl(name, docs, fieldsById);
 }
