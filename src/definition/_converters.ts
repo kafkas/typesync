@@ -55,7 +55,7 @@ export function convertMapTypeToSchema(vt: types.Map): schema.types.Map {
   };
 }
 
-function convertFieldToSchema(fieldName: string, field: types.Field): schema.types.Field {
+export function convertFieldToSchema(fieldName: string, field: types.Field): schema.types.Field {
   return {
     type: convertTypeToSchema(field.type),
     optional: !!field.optional,
