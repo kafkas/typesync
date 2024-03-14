@@ -1,4 +1,4 @@
-import { schema } from '.';
+import type { schema } from '.';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
 import { AliasModelImpl } from './_impl/_alias-model';
