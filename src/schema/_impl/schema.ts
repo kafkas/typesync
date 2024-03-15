@@ -6,4 +6,11 @@ export class SchemaImpl implements schema.Schema {
   }
 
   public constructor(private readonly modelsById: Record<string, schema.Model>) {}
+
+  public clone() {
+    const modelsById = Object.fromEntries(
+      Object.entries(this.modelsById).map(([modelName, model]): [string, schema.Model] => [modelName, model.clone()])
+    );
+    return new SchemaImpl(modelsById);
+  }
 }
