@@ -4,13 +4,12 @@ import { assertNever } from '../util/assert';
 import { AliasModelImpl } from './_impl/_alias-model';
 import { DocumentModelImpl } from './_impl/_document-model';
 import { SchemaImpl } from './_impl/schema';
-import type { Schema } from './_models';
 
-export function create(): Schema {
+export function create(): schema.Schema {
   return new SchemaImpl(new Map(), new Map());
 }
 
-export function createFromDefinition(def: definition.Definition): Schema {
+export function createFromDefinition(def: definition.Definition): schema.Schema {
   const aliasModelsById = new Map<string, schema.AliasModel>();
   const documentModelsById = new Map<string, schema.DocumentModel>();
 
@@ -45,7 +44,7 @@ interface CreateAliasModelParams {
   value: schema.types.Type;
 }
 
-export function createAliasModel(params: CreateAliasModelParams) {
+export function createAliasModel(params: CreateAliasModelParams): schema.AliasModel {
   const { name, docs, value } = params;
   return new AliasModelImpl(name, docs, value);
 }
@@ -56,7 +55,7 @@ interface CreateDocumentModelParams {
   fieldsById: Record<string, schema.types.Field>;
 }
 
-export function createDocumentModel(params: CreateDocumentModelParams) {
+export function createDocumentModel(params: CreateDocumentModelParams): schema.DocumentModel {
   const { name, docs, fieldsById } = params;
   return new DocumentModelImpl(name, docs, fieldsById);
 }
