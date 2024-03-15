@@ -158,7 +158,7 @@ export class UnionType implements TSType {
 
   public get expression(): Expression {
     const separatedExpressions = this.members.map(vt => vt.expression.content).join(' | ');
-    return { content: `[${separatedExpressions}]` };
+    return { content: `${separatedExpressions}` };
   }
 
   public constructor(public readonly members: Type[]) {}
