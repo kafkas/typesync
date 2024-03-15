@@ -7,7 +7,7 @@ import { schema } from '../../schema';
  *
  * @returns A new schema object.
  */
-export function processSchema(s: schema.Schema): python.schema.ExpressibleSchema {
+export function flattenSchema(s: schema.Schema): python.schema.ExpressibleSchema {
   // 1st pass (shallow traversal): add all models to the maps
 
   // 2nd pass (deep traversal): Create a schema tree, traverse it and mutate the nodes to create new alias models where necessary

@@ -1,31 +1,31 @@
 import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
 import { schema } from '../../../schema';
 import { deepFreeze } from '../../deep-freeze';
-import { processSchema } from '../process-schema';
+import { flattenSchema } from '../flatten-schema';
 
-describe('process-schema', () => {
+describe('flatten-schema', () => {
   it('does not mutate input schema', () => {
     const inputSchema = loadSchemaForTestDefinition('flat');
 
     deepFreeze(inputSchema);
 
     expect(() => {
-      processSchema(inputSchema);
+      flattenSchema(inputSchema);
     }).not.toThrow();
   });
 
   it('returns a new schema', () => {
     const inputSchema = loadSchemaForTestDefinition('flat');
-    const processedSchema = processSchema(inputSchema);
+    const flattenedSchema = flattenSchema(inputSchema);
 
-    expect(processedSchema).not.toBe(inputSchema);
+    expect(flattenedSchema).not.toBe(inputSchema);
   });
 
   it(`does nothing when the schema is "flat"`, () => {
     const inputSchema = loadSchemaForTestDefinition('flat');
-    const processedSchema = processSchema(inputSchema);
+    const flattenedSchema = flattenSchema(inputSchema);
 
-    expect(processedSchema).toEqual(inputSchema);
+    expect(flattenedSchema).toEqual(inputSchema);
   });
 
   it(`flattens the schema by creating new aliases`, () => {
@@ -74,7 +74,7 @@ describe('process-schema', () => {
       return s;
     })();
 
-    const expectedProcessedSchema = (() => {
+    const expectedFlattenedSchema = (() => {
       const s = schema.create();
       const aliasModel = schema.createAliasModel({
         name: 'UserCredentials',
@@ -109,8 +109,8 @@ describe('process-schema', () => {
       return s;
     })();
 
-    const processedSchema = processSchema(inputSchema);
+    const flattenedSchema = flattenSchema(inputSchema);
 
-    expect(processedSchema).toEqual(expectedProcessedSchema);
+    expect(flattenedSchema).toEqual(expectedFlattenedSchema);
   });
 });

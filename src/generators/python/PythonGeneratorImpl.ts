@@ -5,16 +5,16 @@ import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
+import { flattenSchema } from '../../util/flatten-schema';
 import { multiply } from '../../util/multiply-str';
-import { processSchema } from '../../util/process-schema';
 import { space } from '../../util/space';
 
 class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {
-    const processedSchema = processSchema(s);
-    const { models } = processedSchema;
+    const flattenedSchema = flattenSchema(s);
+    const { models } = flattenedSchema;
 
     const b = new StringBuilder();
 
