@@ -6,8 +6,8 @@ import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import { multiply } from '../../util/multiply-str';
+import { processSchema } from '../../util/process-schema';
 import { space } from '../../util/space';
-import { processSchema } from './process-schema';
 
 class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}

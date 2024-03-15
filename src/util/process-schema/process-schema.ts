@@ -9,12 +9,11 @@ import { assertNever } from '../../util/assert';
  * @returns A new schema object.
  */
 export function processSchema(s: schema.Schema): python.schema.ExpressibleSchema {
-  const clone = s.clone();
   const aliasModelsByName = new Map<string, schema.AliasModel>();
   const documentModelsByName = new Map<string, schema.DocumentModel>();
 
   // 1st pass (shallow traversal): add all models to the maps
-  clone.models.forEach(model => {
+  s.models.forEach(model => {
     switch (model.type) {
       case 'alias':
         aliasModelsByName.set(model.name, model);
@@ -27,7 +26,9 @@ export function processSchema(s: schema.Schema): python.schema.ExpressibleSchema
     }
   });
 
-  // 2nd pass (deep traversal): create new alias models where necessary
+  // 2nd pass (deep traversal): Create a schema tree, traverse it and mutate the nodes to create new alias models where necessary
+  const clone = s.clone();
+
   // TODO: Implement
 
   return { models: [] };
