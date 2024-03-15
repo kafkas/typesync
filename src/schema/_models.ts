@@ -19,6 +19,11 @@ export interface AliasModel {
 export type Model = DocumentModel | AliasModel;
 
 export interface Schema {
-  models: Model[];
+  aliasModels: AliasModel[];
+  documentModels: DocumentModel[];
   clone(): Schema;
+  addModels(...models: Model[]): void;
+  addModel(model: Model): void;
+  addAliasModel(model: AliasModel): void;
+  addDocumentModel(model: DocumentModel): void;
 }

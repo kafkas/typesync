@@ -68,7 +68,9 @@ describe('process-schema', () => {
           },
         },
       });
-      s.models.push(userModel);
+
+      s.addModel(userModel);
+
       return s;
     })();
 
@@ -79,9 +81,6 @@ describe('process-schema', () => {
         docs: credentialsDocs,
         value: credentialsMapType,
       });
-
-      // TODO: Use something like s.addModel() instead
-      s.models.push(aliasModel);
 
       const userModel = schema.createDocumentModel({
         name: 'User',
@@ -105,8 +104,7 @@ describe('process-schema', () => {
         },
       });
 
-      // TODO: Use something like s.addModel() instead
-      s.models.push(userModel);
+      s.addModels(aliasModel, userModel);
 
       return s;
     })();
