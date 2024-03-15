@@ -1,4 +1,4 @@
-import { getSchemaForTestDefinition } from '../../../../test/util/get-schema-for-test-definition';
+import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
 import { createPythonGenerator } from '../PythonGeneratorImpl';
 
 describe('PythonGeneratorImpl', () => {
@@ -7,7 +7,7 @@ describe('PythonGeneratorImpl', () => {
       indentation: 4,
       platform: 'py:firebase-admin:6',
     });
-    const schema = getSchemaForTestDefinition('flat');
+    const schema = loadSchemaForTestDefinition('flat');
     const output = await generator.generate(schema);
     expect(output.toString()).toMatchSnapshot();
   });

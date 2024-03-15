@@ -1,4 +1,4 @@
-import { getSchemaForTestDefinition } from '../../../../test/util/get-schema-for-test-definition';
+import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
 import { createTSGenerator } from '../TSGeneratorImpl';
 
 describe('TSGeneratorImpl', () => {
@@ -7,7 +7,7 @@ describe('TSGeneratorImpl', () => {
       indentation: 4,
       platform: 'ts:firebase-admin:11',
     });
-    const schema = getSchemaForTestDefinition('flat');
+    const schema = loadSchemaForTestDefinition('flat');
     const output = await generator.generate(schema);
     expect(output.toString()).toMatchSnapshot();
   });
