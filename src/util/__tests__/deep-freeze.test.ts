@@ -36,7 +36,7 @@ describe('deep-freeze', () => {
   it('freezes arrays', () => {
     const users = [{ name: 'A' }, { name: 'B' }];
 
-    deepFreeze(users as any);
+    deepFreeze(users);
 
     expect(() => {
       users.push({ name: 'C' });
@@ -48,7 +48,7 @@ describe('deep-freeze', () => {
     const userB = { name: 'B' };
     const users = [userA, userB];
 
-    deepFreeze(users as any);
+    deepFreeze(users);
 
     expect(() => {
       userA.name = 'D';
