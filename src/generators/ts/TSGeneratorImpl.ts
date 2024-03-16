@@ -37,8 +37,8 @@ class TSGeneratorImpl implements Generator {
     });
 
     documentModels.forEach((model, modelIndex) => {
-      // A Firestore document can be considered a 'map' type
-      const tsType = ts.schema.fromMapType({ type: 'map', fields: model.fields });
+      // A Firestore document can be considered an 'object' type
+      const tsType = ts.schema.fromObjectType({ type: 'object', fields: model.fields });
       if (model.docs !== undefined) {
         const tsDoc = this.buildTSDoc(model.docs);
         builder.append(`${tsDoc}\n`);

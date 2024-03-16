@@ -22,8 +22,8 @@ interface FlattenListTypeResult {
   extractedAliasModels: python.schema.ExpressibleAliasModel[];
 }
 
-interface FlattenMapTypeResult {
-  flattenedType: python.schema.FlatMapType;
+interface FlattenObjectTypeResult {
+  flattenedType: python.schema.FlatObjectType;
   extractedAliasModels: python.schema.ExpressibleAliasModel[];
 }
 
@@ -39,7 +39,7 @@ interface FlattenTypeResult {
 
 /**
  * Traverses a given schema and creates a new clone ensuring that all the schema types within it
- * are expressible. Converts inline map and enum definitions to alias models where necessary.
+ * are expressible. Converts inline object and enum definitions to alias models where necessary.
  *
  * @returns A new schema object.
  */
@@ -74,8 +74,8 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
         });
         return { flattenedModel: flattenedModel as python.schema.ExpressibleAliasModel, extractedAliasModels };
       }
-      case 'map': {
-        const { flattenedType, extractedAliasModels } = flattenMapType(aliasModel.value);
+      case 'object': {
+        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value);
         const flattenedModel = schema.createAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -98,7 +98,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
   }
 
   function flattenDocumentModel(documentModel: schema.DocumentModel): FlattenDocumentModelResult {
-    const res = flattenMapType({ type: 'map', fields: documentModel.fields });
+    const res = flattenObjectType({ type: 'object', fields: documentModel.fields });
 
     const flattenedModel = schema.createDocumentModel({
       name: documentModel.name,
@@ -128,13 +128,13 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
-  function flattenMapType(mapType: schema.types.Map): FlattenMapTypeResult {
-    const resultForFields = mapType.fields.map(originalField => ({
+  function flattenObjectType(objectType: schema.types.Object): FlattenObjectTypeResult {
+    const resultForFields = objectType.fields.map(originalField => ({
       ...flattenType(originalField.type),
       originalField,
     }));
-    const flattenedType: python.schema.FlatMapType = {
-      type: 'map',
+    const flattenedType: python.schema.FlatObjectType = {
+      type: 'object',
       fields: resultForFields.map(r => ({ ...r.originalField, type: r.flattenedType })),
     };
     const extractedAliasModels = resultForFields.map(r => r.extractedAliasModels).flat(1);
@@ -177,9 +177,9 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
         return flattenTupleType(type);
       case 'list':
         return flattenListType(type);
-      case 'map': {
+      case 'object': {
         // TODO: Implement
-        const result = flattenMapType(type);
+        const result = flattenObjectType(type);
         const name = 'Placeholder';
         const docs = undefined;
         const aliasModel = schema.createAliasModel({

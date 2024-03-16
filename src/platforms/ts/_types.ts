@@ -122,8 +122,8 @@ export class ListType implements TSType {
   public constructor(public readonly of: Type) {}
 }
 
-export class MapType implements TSType {
-  public readonly type = 'map';
+export class ObjectType implements TSType {
+  public readonly type = 'object';
 
   public get expression(): Expression {
     const { fields } = this;
@@ -178,7 +178,7 @@ export class AliasType implements TSType {
   public constructor(public readonly name: string) {}
 }
 
-export type Type = PrimitiveType | LiteralType | EnumType | TupleType | ListType | MapType | UnionType | AliasType;
+export type Type = PrimitiveType | LiteralType | EnumType | TupleType | ListType | ObjectType | UnionType | AliasType;
 
 export interface ModelField {
   type: Type;

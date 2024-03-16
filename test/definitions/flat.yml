@@ -18,7 +18,7 @@ UserRole:
 Address:
   type: alias
   value:
-    type: map
+    type: object
     fields:
       street:
         type: string
@@ -30,7 +30,7 @@ Address:
 Cat:
   type: alias
   value:
-    type: map
+    type: object
     fields:
       type:
         type:
@@ -44,7 +44,7 @@ Cat:
 Dog:
   type: alias
   value:
-    type: map
+    type: object
     fields:
       type:
         type:

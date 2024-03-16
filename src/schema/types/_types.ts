@@ -25,8 +25,8 @@ export interface List {
   of: Type;
 }
 
-export interface Map {
-  type: 'map';
+export interface Object {
+  type: 'object';
   fields: Field[];
 }
 
@@ -47,4 +47,4 @@ export interface Alias {
   name: string;
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Map | Union | Alias;
+export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;

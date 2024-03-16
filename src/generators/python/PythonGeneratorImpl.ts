@@ -27,8 +27,8 @@ class PythonGeneratorImpl implements Generator {
       if (model.value.type === 'enum') {
         const declaration = this.generateClassDeclarationForEnum(model.name, model.value);
         b.append(declaration);
-      } else if (model.value.type === 'map') {
-        const declaration = this.generateClassDeclarationForMap(model.name, model.value);
+      } else if (model.value.type === 'object') {
+        const declaration = this.generateClassDeclarationForObject(model.name, model.value);
         b.append(declaration);
       } else {
         const { expression } = python.schema.fromExpressibleType(model.value);
@@ -119,7 +119,7 @@ class PythonGeneratorImpl implements Generator {
     return b.toString();
   }
 
-  private generateClassDeclarationForMap(name: string, vt: schema.types.Map) {
+  private generateClassDeclarationForObject(name: string, vt: schema.types.Object) {
     const b = new StringBuilder();
     b.append(`class ${name}(pydantic.BaseModel):\n`);
     vt.fields.forEach(field => {
