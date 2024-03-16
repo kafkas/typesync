@@ -4,35 +4,38 @@ import { assertNever } from '../util/assert';
 import { AliasModelImpl } from './_impl/_alias-model';
 import { DocumentModelImpl } from './_impl/_document-model';
 import { SchemaImpl } from './_impl/schema';
-import type { Model, Schema } from './_models';
 
-export function create(): Schema {
-  return new SchemaImpl({});
+export function create(): schema.Schema {
+  return new SchemaImpl(new Map(), new Map());
 }
 
-export function createFromDefinition(def: definition.Definition): Schema {
-  const modelsById = Object.fromEntries(
-    Object.entries(def).map(([modelName, defModel]): [string, Model] => {
-      switch (defModel.type) {
-        case 'document': {
-          const fieldsById = Object.fromEntries(
-            Object.entries(defModel.fields).map(([fieldName, defField]) => {
-              return [fieldName, definition.convertFieldToSchema(fieldName, defField)];
-            })
-          );
-          return [modelName, new DocumentModelImpl(modelName, defModel.docs, fieldsById)];
-        }
-        case 'alias':
-          return [
-            modelName,
-            new AliasModelImpl(modelName, defModel.docs, definition.convertTypeToSchema(defModel.value)),
-          ];
-        default:
-          assertNever(defModel);
+export function createFromDefinition(def: definition.Definition): schema.Schema {
+  const aliasModelsById = new Map<string, schema.AliasModel>();
+  const documentModelsById = new Map<string, schema.DocumentModel>();
+
+  Object.entries(def).forEach(([modelName, defModel]) => {
+    switch (defModel.type) {
+      case 'alias': {
+        const aliasModel = new AliasModelImpl(modelName, defModel.docs, definition.convertTypeToSchema(defModel.value));
+        aliasModelsById.set(modelName, aliasModel);
+        break;
       }
-    })
-  );
-  return new SchemaImpl(modelsById);
+      case 'document': {
+        const fieldsById = Object.fromEntries(
+          Object.entries(defModel.fields).map(([fieldName, defField]) => {
+            return [fieldName, definition.convertFieldToSchema(fieldName, defField)];
+          })
+        );
+        const documentModel = new DocumentModelImpl(modelName, defModel.docs, fieldsById);
+        documentModelsById.set(modelName, documentModel);
+        break;
+      }
+      default:
+        assertNever(defModel);
+    }
+  });
+
+  return new SchemaImpl(aliasModelsById, documentModelsById);
 }
 
 interface CreateAliasModelParams {
@@ -41,7 +44,7 @@ interface CreateAliasModelParams {
   value: schema.types.Type;
 }
 
-export function createAliasModel(params: CreateAliasModelParams) {
+export function createAliasModel(params: CreateAliasModelParams): schema.AliasModel {
   const { name, docs, value } = params;
   return new AliasModelImpl(name, docs, value);
 }
@@ -52,7 +55,7 @@ interface CreateDocumentModelParams {
   fieldsById: Record<string, schema.types.Field>;
 }
 
-export function createDocumentModel(params: CreateDocumentModelParams) {
+export function createDocumentModel(params: CreateDocumentModelParams): schema.DocumentModel {
   const { name, docs, fieldsById } = params;
   return new DocumentModelImpl(name, docs, fieldsById);
 }

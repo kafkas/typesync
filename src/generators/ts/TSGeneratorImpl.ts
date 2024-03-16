@@ -19,15 +19,13 @@ class TSGeneratorImpl implements Generator {
   public constructor(private readonly config: TSGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {
-    const { models } = s;
-
     const builder = new StringBuilder();
 
     const tsFirestoreImport = this.getImportFirestoreStatement();
 
     builder.append(`${tsFirestoreImport}\n\n`);
 
-    const { aliasModels, documentModels } = this.divideModelsByType(models);
+    const { aliasModels, documentModels } = s;
 
     aliasModels.forEach(model => {
       const tsType = ts.schema.fromType(model.value);
@@ -52,24 +50,6 @@ class TSGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(builder.toString());
-  }
-
-  private divideModelsByType(models: schema.Model[]) {
-    const aliasModels: schema.AliasModel[] = [];
-    const documentModels: schema.DocumentModel[] = [];
-    models.forEach(model => {
-      switch (model.type) {
-        case 'alias':
-          aliasModels.push(model);
-          break;
-        case 'document':
-          documentModels.push(model);
-          break;
-        default:
-          assertNever(model);
-      }
-    });
-    return { aliasModels, documentModels };
   }
 
   private getImportFirestoreStatement() {

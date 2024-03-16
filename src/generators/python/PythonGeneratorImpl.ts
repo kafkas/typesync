@@ -5,24 +5,22 @@ import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
+import { flattenSchema } from '../../util/flatten-schema';
 import { multiply } from '../../util/multiply-str';
 import { space } from '../../util/space';
-import { processSchema } from './process-schema';
 
 class PythonGeneratorImpl implements Generator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public async generate(s: schema.Schema) {
-    const processedSchema = processSchema(s);
-    const { models } = processedSchema;
+    const flattenedSchema = flattenSchema(s);
+    const { aliasModels, documentModels } = flattenedSchema;
 
     const b = new StringBuilder();
 
     b.append(`${this.generateImportStatements()}\n\n`);
     b.append(`${this.generateStaticDeclarations()}\n`);
     b.append(`# Model Definitions\n\n`);
-
-    const { aliasModels, documentModels } = this.divideModelsByType(models);
 
     aliasModels.forEach(model => {
       // TODO: Add doc comment
@@ -73,24 +71,6 @@ class PythonGeneratorImpl implements Generator {
     });
 
     return createGenerationOutput(b.toString());
-  }
-
-  private divideModelsByType(models: python.schema.ExpressibleModel[]) {
-    const aliasModels: python.schema.ExpressibleAliasModel[] = [];
-    const documentModels: python.schema.ExpressibleDocumentModel[] = [];
-    models.forEach(model => {
-      switch (model.type) {
-        case 'alias':
-          aliasModels.push(model);
-          break;
-        case 'document':
-          documentModels.push(model);
-          break;
-        default:
-          assertNever(model);
-      }
-    });
-    return { aliasModels, documentModels };
   }
 
   private generateImportStatements() {
