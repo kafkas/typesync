@@ -1,6 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 
 import { createGenerationOutput } from '../../components';
+import { converters } from '../../converters';
 import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
@@ -31,7 +32,7 @@ class PythonGeneratorImpl implements Generator {
         const declaration = this.generateClassDeclarationForObject(model.name, model.value);
         b.append(declaration);
       } else {
-        const { expression } = python.schema.fromExpressibleType(model.value);
+        const { expression } = converters.schema.expressibleTypeToPython(model.value);
         b.append(`${model.name} = ${expression.content}\n\n`);
       }
     });
@@ -42,18 +43,18 @@ class PythonGeneratorImpl implements Generator {
       model.fields.forEach(field => {
         if (field.optional) {
           if (field.type.type === 'union') {
-            const pyType = python.schema.fromExpressibleUnionType(field.type);
+            const pyType = converters.schema.expressibleUnionTypeToPython(field.type);
             pyType.addMember(python.UNDEFINED);
             const { expression } = pyType;
             b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           } else {
-            const pyType = python.schema.fromExpressibleUnionType({ type: 'union', members: [field.type] });
+            const pyType = converters.schema.expressibleUnionTypeToPython({ type: 'union', members: [field.type] });
             pyType.addMember(python.UNDEFINED);
             const { expression } = pyType;
             b.append(`${this.indent(1)}${field.name}: ${expression.content} = UNDEFINED\n`);
           }
         } else {
-          const pyType = python.schema.fromExpressibleType(field.type);
+          const pyType = converters.schema.expressibleTypeToPython(field.type);
           const { expression } = pyType;
           b.append(`${this.indent(1)}${field.name}: ${expression.content}\n`);
         }

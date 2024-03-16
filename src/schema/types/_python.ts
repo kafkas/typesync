@@ -1,4 +1,4 @@
-import { schema } from '../../../schema';
+import type { schema } from '../../schema';
 
 export interface ExpressibleTupleType extends schema.types.Tuple {
   values: ExpressibleType[];
