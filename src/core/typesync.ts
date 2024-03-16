@@ -2,6 +2,7 @@ import type { TypeSync, TypeSyncGenerateOptions } from '../api';
 import { createPythonGenerator } from '../generators/python';
 import { createTSGenerator } from '../generators/ts';
 import type { GenerationOutput } from '../interfaces';
+import { schema } from '../schema';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './definition-parser';
@@ -12,9 +13,10 @@ class TypeSyncImpl implements TypeSync {
     const { pathToDefinition, pathToOutput, debug } = opts;
     const logger = createLogger(debug);
     const parser = createDefinitionParser(logger);
-    const schema = parser.parseDefinition(pathToDefinition);
+    const def = parser.parseDefinition(pathToDefinition);
+    const s = schema.createFromDefinition(def);
     const generator = this.createGenerator(opts);
-    const output = await generator.generate(schema);
+    const output = await generator.generate(s);
     await this.writeOutputToPath(pathToOutput, output);
   }
 

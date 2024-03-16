@@ -1,4 +1,5 @@
 import type { PythonGenerationPlatform, TSGenerationPlatform } from '../api';
+import { definition } from '../definition';
 import type { schema } from '../schema';
 
 export interface Logger {
@@ -8,7 +9,7 @@ export interface Logger {
 }
 
 export interface DefinitionParser {
-  parseDefinition(pathToDefinition: string): schema.Schema;
+  parseDefinition(pathToDefinition: string): definition.Definition;
 }
 
 export interface TSGeneratorConfig {
