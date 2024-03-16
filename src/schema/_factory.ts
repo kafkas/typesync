@@ -1,4 +1,5 @@
 import type { schema } from '.';
+import { converters } from '../converters';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
 import { AliasModelImpl } from './_impl/_alias-model';
@@ -16,14 +17,16 @@ export function createFromDefinition(def: definition.Definition): schema.Schema 
   Object.entries(def).forEach(([modelName, defModel]) => {
     switch (defModel.type) {
       case 'alias': {
-        const aliasModel = new AliasModelImpl(modelName, defModel.docs, definition.convertTypeToSchema(defModel.value));
+        const schemaType = converters.definition.typeToSchema(defModel.value);
+        const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
         aliasModelsById.set(modelName, aliasModel);
         break;
       }
       case 'document': {
         const fieldsById = Object.fromEntries(
           Object.entries(defModel.fields).map(([fieldName, defField]) => {
-            return [fieldName, definition.convertFieldToSchema(fieldName, defField)];
+            const schemaField = converters.definition.fieldToSchema(fieldName, defField);
+            return [fieldName, schemaField];
           })
         );
         const documentModel = new DocumentModelImpl(modelName, defModel.docs, fieldsById);
