@@ -14,7 +14,7 @@ class TypeSyncImpl implements TypeSync {
     const logger = createLogger(debug);
     const parser = createDefinitionParser(logger);
     const def = parser.parseDefinition(pathToDefinition);
-    const s = schema.createFromDefinition(def);
+    const s = schema.createSchema(def);
     const generator = this.createGenerator(opts);
     const output = await generator.generate(s);
     await this.writeOutputToPath(pathToOutput, output);

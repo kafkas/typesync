@@ -196,7 +196,7 @@ export function flattenSchema(prevSchema: schema.Schema): schema.types.python.Ex
     }
   }
 
-  const newSchema = schema.create() as schema.types.python.ExpressibleSchema;
+  const newSchema = schema.createSchema() as schema.types.python.ExpressibleSchema;
   const prevSchemaClone = prevSchema.clone();
   const { aliasModels, documentModels } = prevSchemaClone;
 
