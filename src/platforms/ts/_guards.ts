@@ -13,7 +13,7 @@ export function isPrimitiveType(t: Type): t is PrimitiveType {
     case 'enum':
     case 'tuple':
     case 'list':
-    case 'map':
+    case 'object':
     case 'union':
     case 'alias':
       return false;

@@ -7,9 +7,9 @@ import {
   FieldType,
   ListType,
   LiteralType,
-  MapType,
   NullType,
   NumberType,
+  ObjectType,
   StringType,
   TimestampType,
   TupleType,
@@ -50,8 +50,8 @@ export function fromListType(t: schema.types.List): ListType {
   return new ListType(fromType(t.of));
 }
 
-export function fromMapType(t: schema.types.Map): MapType {
-  return new MapType(t.fields.map(fromFieldType));
+export function fromObjectType(t: schema.types.Object): ObjectType {
+  return new ObjectType(t.fields.map(fromFieldType));
 }
 
 export function fromFieldType(t: schema.types.Field): FieldType {
@@ -79,8 +79,8 @@ export function fromType(t: schema.types.Type): Type {
       return fromTupleType(t);
     case 'list':
       return fromListType(t);
-    case 'map':
-      return fromMapType(t);
+    case 'object':
+      return fromObjectType(t);
     case 'union':
       return fromUnionType(t);
     case 'alias':

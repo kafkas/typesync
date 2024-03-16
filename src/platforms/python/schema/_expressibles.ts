@@ -28,11 +28,11 @@ export interface ExpressibleDocumentModel extends schema.DocumentModel {
   fields: ExpressibleFieldType[];
 }
 
-export interface FlatMapType extends schema.types.Map {
-  fields: FlatMapModelFieldType[];
+export interface FlatObjectType extends schema.types.Object {
+  fields: FlatObjectModelFieldType[];
 }
 
-export interface FlatMapModelFieldType extends schema.types.Field {
+export interface FlatObjectModelFieldType extends schema.types.Field {
   type: schema.types.Type;
 }
 
@@ -43,7 +43,7 @@ export interface ExpressibleAliasModel extends schema.AliasModel {
     | schema.types.Enum
     | ExpressibleTupleType
     | ExpressibleListType
-    | FlatMapType
+    | FlatObjectType
     | ExpressibleUnionType
     | schema.types.Alias;
 }

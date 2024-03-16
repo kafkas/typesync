@@ -48,9 +48,9 @@ export function convertListTypeToSchema(vt: types.List): schema.types.List {
   };
 }
 
-export function convertMapTypeToSchema(vt: types.Map): schema.types.Map {
+export function convertObjectTypeToSchema(vt: types.Object): schema.types.Object {
   return {
-    type: 'map',
+    type: 'object',
     fields: Object.entries(vt.fields).map(([fieldName, field]) => convertFieldToSchema(fieldName, field)),
   };
 }
@@ -89,8 +89,8 @@ export function convertTypeToSchema(vt: types.Type): schema.types.Type {
       return convertTupleTypeToSchema(vt);
     case 'list':
       return convertListTypeToSchema(vt);
-    case 'map':
-      return convertMapTypeToSchema(vt);
+    case 'object':
+      return convertObjectTypeToSchema(vt);
     default:
       assertNever(vt);
   }

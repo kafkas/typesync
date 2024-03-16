@@ -29,9 +29,9 @@ describe('flatten-schema', () => {
   });
 
   it(`flattens the schema by creating new aliases`, () => {
-    const credentialsDocs = 'A map that represents user credentials';
-    const credentialsMapType: schema.types.Map = {
-      type: 'map',
+    const credentialsDocs = 'An object that represents user credentials';
+    const credentialsObjectType: schema.types.Object = {
+      type: 'object',
       fields: [
         {
           type: { type: 'string' },
@@ -62,7 +62,7 @@ describe('flatten-schema', () => {
           },
           credentials: {
             name: 'credentials',
-            type: credentialsMapType,
+            type: credentialsObjectType,
             docs: credentialsDocs,
             optional: false,
           },
@@ -81,7 +81,7 @@ describe('flatten-schema', () => {
         name: 'Placeholder',
         docs: undefined,
         // docs: credentialsDocs,
-        value: credentialsMapType,
+        value: credentialsObjectType,
       });
 
       const userModel = schema.createDocumentModel({
