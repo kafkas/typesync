@@ -1,8 +1,8 @@
 import { StringBuilder } from '@proficient/ds';
 
 import { createGenerationOutput } from '../../components';
+import { converters } from '../../converters';
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
-import { ts } from '../../platforms/ts';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 
@@ -28,7 +28,7 @@ class TSGeneratorImpl implements Generator {
     const { aliasModels, documentModels } = s;
 
     aliasModels.forEach(model => {
-      const tsType = ts.schema.fromType(model.value);
+      const tsType = converters.schema.typeToTS(model.value);
       if (model.docs !== undefined) {
         const tsDoc = this.buildTSDoc(model.docs);
         builder.append(`${tsDoc}\n`);
@@ -38,7 +38,7 @@ class TSGeneratorImpl implements Generator {
 
     documentModels.forEach((model, modelIndex) => {
       // A Firestore document can be considered an 'object' type
-      const tsType = ts.schema.fromObjectType({ type: 'object', fields: model.fields });
+      const tsType = converters.schema.objectTypeToTS({ type: 'object', fields: model.fields });
       if (model.docs !== undefined) {
         const tsDoc = this.buildTSDoc(model.docs);
         builder.append(`${tsDoc}\n`);
