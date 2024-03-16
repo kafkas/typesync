@@ -1,5 +1,3 @@
-import { random } from 'lodash';
-
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../assert';
@@ -165,7 +163,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
         return { flattenedType: type, extractedAliasModels: [] };
       case 'enum': {
         // TODO: Implement
-        const name = 'Bla' + random(1, 1_000_000, false);
+        const name = 'Placeholder';
         const docs = undefined;
         const aliasModel = schema.createAliasModel({
           name,
@@ -182,7 +180,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
       case 'map': {
         // TODO: Implement
         const result = flattenMapType(type);
-        const name = 'Bla' + random(1, 1_000_000, false);
+        const name = 'Placeholder';
         const docs = undefined;
         const aliasModel = schema.createAliasModel({
           name,
