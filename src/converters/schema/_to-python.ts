@@ -23,15 +23,15 @@ export function literalTypeToPython(t: schema.types.Literal) {
   return new python.LiteralType(t.value);
 }
 
-export function expressibleTupleTypeToPython(t: schema.types.python.ExpressibleTupleType) {
+export function expressibleTupleTypeToPython(t: schema.python.ExpressibleTupleType) {
   return new python.TupleType(t.values.map(expressibleTypeToPython));
 }
 
-export function expressibleListTypeToPython(t: schema.types.python.ExpressibleListType) {
+export function expressibleListTypeToPython(t: schema.python.ExpressibleListType) {
   return new python.ListType(expressibleTypeToPython(t.of));
 }
 
-export function expressibleUnionTypeToPython(t: schema.types.python.ExpressibleUnionType) {
+export function expressibleUnionTypeToPython(t: schema.python.ExpressibleUnionType) {
   return new python.UnionType(t.members.map(expressibleTypeToPython));
 }
 
@@ -39,7 +39,7 @@ export function expressibleAliasTypeToPython(t: schema.types.Alias) {
   return new python.AliasType(t.name);
 }
 
-export function expressibleTypeToPython(t: schema.types.python.ExpressibleType): python.Type {
+export function expressibleTypeToPython(t: schema.python.ExpressibleType): python.Type {
   if (schema.isPrimitiveType(t)) {
     return expressibleTypeToPython(t);
   }
