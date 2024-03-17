@@ -20,7 +20,7 @@ class PythonGeneratorImpl implements PythonGenerator {
 
     documentModels.forEach(model => {
       // TODO: Implement
-      const pythonType: python.Alias = { type: 'alias', name: 'Placeholder' };
+      const pythonType: python.ObjectClass = { type: 'object-class' };
       declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
     });
 

@@ -11,13 +11,13 @@ export interface PythonAliasDeclaration {
 export interface PythonEnumClassDeclaration {
   type: 'enum-class';
   modelName: string;
-  modelType: python.Type;
+  modelType: python.EnumClass;
 }
 
 export interface PythonPydanticClassDeclaration {
   type: 'pydantic-class';
   modelName: string;
-  modelType: python.Type;
+  modelType: python.ObjectClass;
 }
 
 export type PythonDeclaration = PythonAliasDeclaration | PythonEnumClassDeclaration | PythonPydanticClassDeclaration;
