@@ -2,6 +2,7 @@ import { StringBuilder } from '@proficient/ds';
 
 import { generation } from '../generation';
 import { TSGeneration } from '../generation/_types';
+import { ts } from '../platforms/ts';
 import { assertNever } from '../util/assert';
 import type { RenderedFile, TSRenderer, TSRendererConfig } from './_types';
 
@@ -25,11 +26,11 @@ class TSRendererImpl implements TSRenderer {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;
-        return `export type ${modelName} = ${modelType.expression.content};`;
+        return `export type ${modelName} = ${ts.expressionForType(modelType)};`;
       }
       case 'interface': {
         const { modelName, modelType } = declaration;
-        return `export interface ${modelName} ${modelType.expression.content}`;
+        return `export interface ${modelName} ${ts.expressionForType(modelType)}`;
       }
       default:
         assertNever(declaration);

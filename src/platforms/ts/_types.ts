@@ -1,188 +1,68 @@
-import { StringBuilder } from '@proficient/ds';
-
-import { assertNever } from '../../util/assert';
-
-export interface Expression {
-  content: string;
+export interface Null {
+  readonly type: 'null';
 }
 
-interface TSType {
-  type: string;
-  expression: Expression;
+export interface String {
+  readonly type: 'string';
 }
 
-export class NullType implements TSType {
-  public readonly type = 'null';
-
-  public readonly expression: Expression = {
-    content: 'null',
-  };
+export interface Boolean {
+  readonly type: 'boolean';
 }
 
-export class StringType implements TSType {
-  public readonly type = 'string';
-
-  public readonly expression: Expression = {
-    content: 'string',
-  };
+export interface Number {
+  readonly type: 'number';
 }
 
-export class BooleanType implements TSType {
-  public readonly type = 'boolean';
-
-  public readonly expression: Expression = {
-    content: 'boolean',
-  };
+export interface Timestamp {
+  readonly type: 'timestamp';
 }
 
-export class NumberType implements TSType {
-  public readonly type = 'number';
+export type Primitive = Null | String | Boolean | Number | Timestamp;
 
-  public readonly expression: Expression = {
-    content: 'number',
-  };
+export interface Literal {
+  readonly type: 'literal';
+  readonly value: string | number | boolean;
 }
 
-export class TimestampType implements TSType {
-  public readonly type = 'timestamp';
-
-  public readonly expression: Expression = {
-    content: 'firestore.Timestamp',
-  };
+export interface Enum {
+  readonly type: 'enum';
+  readonly items: {
+    label: string;
+    value: string | number;
+  }[];
 }
 
-export type PrimitiveType = NullType | StringType | BooleanType | NumberType | TimestampType;
-
-export class LiteralType implements TSType {
-  public readonly type = 'literal';
-
-  public get expression(): Expression {
-    switch (typeof this.value) {
-      case 'string':
-        return { content: `'${this.value}'` };
-      case 'number':
-        return { content: `${this.value}` };
-      case 'boolean':
-        return { content: `${this.value}` };
-      default:
-        assertNever(this.value);
-    }
-  }
-
-  public constructor(public readonly value: string | number | boolean) {}
+export interface Tuple {
+  readonly type: 'tuple';
+  readonly values: Type[];
 }
 
-export class EnumType implements TSType {
-  public readonly type = 'enum';
-
-  public get expression(): Expression {
-    const { items } = this;
-    const content = items
-      .map(({ value }) => {
-        switch (typeof value) {
-          case 'string':
-            return `'${value}'`;
-          case 'number':
-            return `${value}`;
-          default:
-            assertNever(value);
-        }
-      })
-      .join(' | ');
-    return { content };
-  }
-
-  public constructor(
-    public readonly items: {
-      label: string;
-      value: string | number;
-    }[]
-  ) {}
+export interface List {
+  readonly type: 'list';
+  readonly of: Type;
 }
 
-export class TupleType implements TSType {
-  public readonly type = 'tuple';
-
-  public get expression(): Expression {
-    const commaSeparatedExpressions = this.values.map(vt => vt.expression.content).join(', ');
-    return { content: `[${commaSeparatedExpressions}]` };
-  }
-
-  public constructor(public readonly values: Type[]) {}
+export interface Object {
+  readonly type: 'object';
+  readonly fields: Field[];
 }
 
-export class ListType implements TSType {
-  public readonly type = 'list';
-
-  public get expression(): Expression {
-    const expression = this.of.expression;
-    return { content: `${expression.content}[]` };
-  }
-
-  public constructor(public readonly of: Type) {}
+export interface Field {
+  readonly type: Type;
+  readonly optional: boolean;
+  readonly name: string;
+  readonly docs: string | undefined;
 }
 
-export class ObjectType implements TSType {
-  public readonly type = 'object';
-
-  public get expression(): Expression {
-    const { fields } = this;
-    const builder = new StringBuilder();
-
-    builder.append(`{\n`);
-    fields.forEach(field => {
-      if (field.docs !== undefined) {
-        // TODO: Add docs
-      }
-      const { expression } = field.type;
-      builder.append(`${field.name}${field.optional ? '?' : ''}: ${expression.content};\n`);
-    });
-    builder.append(`}`);
-    return { content: builder.toString() };
-  }
-
-  public constructor(public readonly fields: FieldType[]) {}
+export interface Union {
+  readonly type: 'union';
+  readonly members: Type[];
 }
 
-export class FieldType {
-  public constructor(
-    public readonly type: Type,
-    public readonly optional: boolean,
-    public readonly name: string,
-    public readonly docs: string | undefined
-  ) {}
+export interface Alias {
+  readonly type: 'alias';
+  readonly name: string;
 }
 
-export class UnionType implements TSType {
-  public readonly type = 'union';
-
-  public get expression(): Expression {
-    const separatedExpressions = this.members.map(vt => vt.expression.content).join(' | ');
-    return { content: `${separatedExpressions}` };
-  }
-
-  public constructor(public readonly members: Type[]) {}
-
-  public addMember(member: Type) {
-    this.members.push(member);
-  }
-}
-
-export class AliasType implements TSType {
-  public readonly type = 'alias';
-
-  public get expression(): Expression {
-    return { content: this.name };
-  }
-
-  public constructor(public readonly name: string) {}
-}
-
-export type Type = PrimitiveType | LiteralType | EnumType | TupleType | ListType | ObjectType | UnionType | AliasType;
-
-export interface ModelField {
-  type: Type;
-  optional: boolean;
-  name: string;
-  docs: string | undefined;
-}
+export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;

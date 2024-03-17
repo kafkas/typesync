@@ -2,53 +2,53 @@ import { ts } from '../../platforms/ts';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 
-export function primitiveTypeToTS(t: schema.types.Primitive) {
+export function primitiveTypeToTS(t: schema.types.Primitive): ts.Primitive {
   switch (t.type) {
     case 'nil':
-      return new ts.NullType();
+      return { type: 'null' };
     case 'string':
-      return new ts.StringType();
+      return { type: 'string' };
     case 'boolean':
-      return new ts.BooleanType();
+      return { type: 'boolean' };
     case 'int':
-      return new ts.NumberType();
+      return { type: 'number' };
     case 'timestamp':
-      return new ts.TimestampType();
+      return { type: 'timestamp' };
     default:
       assertNever(t.type);
   }
 }
 
-export function literalTypeToTS(t: schema.types.Literal) {
-  return new ts.LiteralType(t.value);
+export function literalTypeToTS(t: schema.types.Literal): ts.Literal {
+  return { type: 'literal', value: t.value };
 }
 
-export function enumTypeToTS(t: schema.types.Enum) {
-  return new ts.EnumType(t.items);
+export function enumTypeToTS(t: schema.types.Enum): ts.Enum {
+  return { type: 'enum', items: t.items };
 }
 
-export function tupleTypeToTS(t: schema.types.Tuple) {
-  return new ts.TupleType(t.values.map(typeToTS));
+export function tupleTypeToTS(t: schema.types.Tuple): ts.Tuple {
+  return { type: 'tuple', values: t.values.map(typeToTS) };
 }
 
-export function listTypeToTS(t: schema.types.List) {
-  return new ts.ListType(typeToTS(t.of));
+export function listTypeToTS(t: schema.types.List): ts.List {
+  return { type: 'list', of: typeToTS(t.of) };
 }
 
-export function objectTypeToTS(t: schema.types.Object) {
-  return new ts.ObjectType(t.fields.map(fieldTypeToTS));
+export function objectTypeToTS(t: schema.types.Object): ts.Object {
+  return { type: 'object', fields: t.fields.map(fieldTypeToTS) };
 }
 
-export function fieldTypeToTS(t: schema.types.Field) {
-  return new ts.FieldType(typeToTS(t.type), t.optional, t.name, t.docs);
+export function fieldTypeToTS(t: schema.types.Field): ts.Field {
+  return { type: typeToTS(t.type), optional: t.optional, name: t.name, docs: t.docs };
 }
 
-export function unionTypeToTS(t: schema.types.Union) {
-  return new ts.UnionType(t.members.map(typeToTS));
+export function unionTypeToTS(t: schema.types.Union): ts.Type {
+  return { type: 'union', members: t.members.map(typeToTS) };
 }
 
-export function aliasTypeToTS(t: schema.types.Alias) {
-  return new ts.AliasType(t.name);
+export function aliasTypeToTS(t: schema.types.Alias): ts.Type {
+  return { type: 'alias', name: t.name };
 }
 
 export function typeToTS(t: schema.types.Type): ts.Type {

@@ -10,7 +10,7 @@ export interface TSAliasDeclaration {
 export interface TSInterfaceDeclaration {
   type: 'interface';
   modelName: string;
-  modelType: ts.ObjectType;
+  modelType: ts.Object;
 }
 
 export type TSDeclaration = TSAliasDeclaration | TSInterfaceDeclaration;
