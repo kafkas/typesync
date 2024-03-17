@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { createGenerationOutput } from '../../components';
+import { createGeneration } from '../../components';
 import { converters } from '../../converters';
 import type { Generator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
@@ -71,7 +71,7 @@ class PythonGeneratorImpl implements Generator {
       b.append(`${this.indent(2)}use_enum_values = True\n`);
     });
 
-    return createGenerationOutput(b.toString());
+    return createGeneration(b.toString());
   }
 
   private generateImportStatements() {

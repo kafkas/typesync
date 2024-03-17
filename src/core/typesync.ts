@@ -1,7 +1,7 @@
 import type { TypeSync, TypeSyncGenerateOptions } from '../api';
 import { createPythonGenerator } from '../generators/python';
 import { createTSGenerator } from '../generators/ts';
-import type { GenerationOutput } from '../interfaces';
+import type { Generation } from '../interfaces';
 import { schema } from '../schema';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
@@ -32,7 +32,7 @@ class TypeSyncImpl implements TypeSync {
     }
   }
 
-  private async writeOutputToPath(path: string, output: GenerationOutput) {
+  private async writeOutputToPath(path: string, output: Generation) {
     const outputAsString = output.toString();
     await writeFile(path, outputAsString);
   }

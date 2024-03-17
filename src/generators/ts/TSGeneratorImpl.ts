@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { createGenerationOutput } from '../../components';
+import { createGeneration } from '../../components';
 import { converters } from '../../converters';
 import type { Generator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
@@ -49,7 +49,7 @@ class TSGeneratorImpl implements Generator {
       }
     });
 
-    return createGenerationOutput(builder.toString());
+    return createGeneration(builder.toString());
   }
 
   private getImportFirestoreStatement() {

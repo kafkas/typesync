@@ -1,1 +1,1 @@
-export { createGenerationOutput } from './generation-output';
+export { createGeneration } from './generation';

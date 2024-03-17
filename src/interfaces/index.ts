@@ -28,10 +28,10 @@ export interface PythonGeneratorConfig {
   indentation: number;
 }
 
-export interface GenerationOutput {
+export interface Generation {
   toString(): string;
 }
 
 export interface Generator {
-  generate(s: schema.Schema): Promise<GenerationOutput>;
+  generate(s: schema.Schema): Promise<Generation>;
 }
