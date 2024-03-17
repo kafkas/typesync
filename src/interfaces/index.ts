@@ -1,5 +1,6 @@
 import type { PythonGenerationPlatform, TSGenerationPlatform } from '../api';
-import { definition } from '../definition';
+import type { definition } from '../definition';
+import type { generation } from '../generation';
 import type { schema } from '../schema';
 
 export interface Logger {
@@ -28,10 +29,6 @@ export interface PythonGeneratorConfig {
   indentation: number;
 }
 
-export interface Generation {
-  toString(): string;
-}
-
 export interface Generator {
-  generate(s: schema.Schema): Promise<Generation>;
+  generate(s: schema.Schema): Promise<generation.Generation>;
 }

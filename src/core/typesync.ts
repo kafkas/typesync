@@ -1,7 +1,7 @@
 import type { TypeSync, TypeSyncGenerateOptions } from '../api';
+import { generation } from '../generation';
 import { createPythonGenerator } from '../generators/python';
 import { createTSGenerator } from '../generators/ts';
-import type { Generation } from '../interfaces';
 import { schema } from '../schema';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
@@ -11,13 +11,13 @@ import { createLogger } from './logger';
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions) {
     const { pathToDefinition, pathToOutput, debug } = opts;
+    const generator = this.createGenerator(opts);
     const logger = createLogger(debug);
     const parser = createDefinitionParser(logger);
     const def = parser.parseDefinition(pathToDefinition);
     const s = schema.createSchema(def);
-    const generator = this.createGenerator(opts);
-    const output = await generator.generate(s);
-    await this.writeOutputToPath(pathToOutput, output);
+    const g = await generator.generate(s);
+    await this.writeGenerationToPath(pathToOutput, g);
   }
 
   private createGenerator(opts: TypeSyncGenerateOptions) {
@@ -32,8 +32,8 @@ class TypeSyncImpl implements TypeSync {
     }
   }
 
-  private async writeOutputToPath(path: string, output: Generation) {
-    const outputAsString = output.toString();
+  private async writeGenerationToPath(path: string, g: generation.Generation) {
+    const outputAsString = g.toString();
     await writeFile(path, outputAsString);
   }
 }

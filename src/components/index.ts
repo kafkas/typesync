@@ -1,1 +1,0 @@
-export { createGeneration } from './generation';
