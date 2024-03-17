@@ -37,4 +37,6 @@ export interface PythonGenerator {
   generate(s: schema.Schema): generation.PythonGeneration;
 }
 
-export type Generator = TSGenerator | PythonGenerator;
+export interface Generator {
+  generate(s: schema.Schema): generation.Generation;
+}

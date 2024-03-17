@@ -7,7 +7,7 @@ export type GenerationPlatform = TSGenerationPlatform | PythonGenerationPlatform
 export interface TypeSyncGenerateOptions {
   pathToDefinition: string;
   platform: GenerationPlatform;
-  pathToOutput: string;
+  pathToOutputDir: string;
   indentation: number;
   debug: boolean;
 }

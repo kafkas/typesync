@@ -6,8 +6,6 @@ import { assertNever } from '../util/assert';
 import type { RenderedFile, TSRenderer, TSRendererConfig } from './_types';
 
 class TSRendererImpl implements TSRenderer {
-  public readonly type = 'ts';
-
   public constructor(private readonly config: TSRendererConfig) {}
 
   public render(g: TSGeneration): RenderedFile[] {
