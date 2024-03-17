@@ -4,6 +4,7 @@ import type { generation } from '../generation';
 export interface PythonRendererConfig {
   rootFileName: string;
   platform: PythonGenerationPlatform;
+  indentation: number;
 }
 
 export interface TSRendererConfig {

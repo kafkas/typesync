@@ -1,3 +1,4 @@
+import { python } from '../platforms/python';
 import { ts } from '../platforms/ts';
 
 export interface TSAliasDeclaration {
@@ -14,13 +15,34 @@ export interface TSInterfaceDeclaration {
 
 export type TSDeclaration = TSAliasDeclaration | TSInterfaceDeclaration;
 
-export interface PythonGeneration {
-  type: 'python';
-}
-
 export interface TSGeneration {
   type: 'ts';
   declarations: TSDeclaration[];
+}
+
+export interface PythonAliasDeclaration {
+  type: 'alias';
+  modelName: string;
+  modelType: python.Type;
+}
+
+export interface PythonEnumClassDeclaration {
+  type: 'enum-class';
+  modelName: string;
+  modelType: python.Type;
+}
+
+export interface PythonPydanticClassDeclaration {
+  type: 'pydantic-class';
+  modelName: string;
+  modelType: python.Type;
+}
+
+export type PythonDeclaration = PythonAliasDeclaration | PythonEnumClassDeclaration | PythonPydanticClassDeclaration;
+
+export interface PythonGeneration {
+  type: 'python';
+  declarations: PythonDeclaration[];
 }
 
 export type Generation = PythonGeneration | TSGeneration;

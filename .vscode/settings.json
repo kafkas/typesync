@@ -2,6 +2,7 @@
   "cSpell.words": [
     "datetime",
     "expressibles",
+    "pydantic",
     "typesync"
   ]
 }
