@@ -1,11 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { PythonDeclaration, PythonGeneration } from '../generators/python';
-import { python } from '../platforms/python';
-import { assertNever } from '../util/assert';
-import { multiply } from '../util/multiply-str';
-import { space } from '../util/space';
-import { PythonRenderer, PythonRendererConfig, RenderedFile } from './_types';
+import type { PythonDeclaration, PythonGeneration } from '../../generators/python';
+import { python } from '../../platforms/python';
+import { assertNever } from '../../util/assert';
+import { multiply } from '../../util/multiply-str';
+import { space } from '../../util/space';
+import type { RenderedFile } from '../_types';
+import type { PythonRenderer, PythonRendererConfig } from './_types';
 
 class PythonRendererImpl implements PythonRenderer {
   public readonly type = 'python';
@@ -76,6 +77,6 @@ class PythonRendererImpl implements PythonRenderer {
   }
 }
 
-export function create(config: PythonRendererConfig): PythonRenderer {
+export function createPythonRenderer(config: PythonRendererConfig): PythonRenderer {
   return new PythonRendererImpl(config);
 }
