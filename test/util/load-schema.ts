@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 
 import { createDefinitionParser } from '../../src/core/definition-parser';
+import { schema } from '../../src/schema';
 
 export function loadSchemaForTestDefinition(definitionName: string) {
   const pathToDefinition = resolve(__dirname, `../definitions/${definitionName}.yml`);
@@ -9,5 +10,6 @@ export function loadSchemaForTestDefinition(definitionName: string) {
 
 export function loadSchemaForDefinition(pathToDefinition: string) {
   const parser = createDefinitionParser();
-  return parser.parseDefinition(pathToDefinition);
+  const definition = parser.parseDefinition(pathToDefinition);
+  return schema.createSchema(definition);
 }
