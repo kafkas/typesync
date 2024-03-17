@@ -67,7 +67,6 @@ export class LiteralType implements PythonType {
       case 'string':
         return { content: `typing.Literal["${this.value}"]` };
       case 'number':
-        // TODO: Don't allow float literals in the spec
         return { content: `typing.Literal[${this.value}]` };
       case 'boolean':
         return { content: `typing.Literal[${this.value ? 'True' : 'False'}]` };
