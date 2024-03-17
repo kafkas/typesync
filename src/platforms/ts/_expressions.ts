@@ -1,28 +1,44 @@
 import { StringBuilder } from '@proficient/ds';
 
 import { assertNever } from '../../util/assert';
-import { isPrimitiveType } from './_guards';
-import type { Alias, Enum, List, Literal, Object, Primitive, Tuple, Type, Union } from './_types';
+import type {
+  Alias,
+  Boolean,
+  Enum,
+  List,
+  Literal,
+  Null,
+  Number,
+  Object,
+  String,
+  Timestamp,
+  Tuple,
+  Type,
+  Union,
+} from './_types';
 
 export interface Expression {
   content: string;
 }
 
-export function expressionForPrimitiveType(t: Primitive): Expression {
-  switch (t.type) {
-    case 'null':
-      return { content: 'null' };
-    case 'string':
-      return { content: 'string' };
-    case 'boolean':
-      return { content: 'boolean' };
-    case 'number':
-      return { content: 'number' };
-    case 'timestamp':
-      return { content: 'firestore.Timestamp' };
-    default:
-      assertNever(t);
-  }
+export function expressionForNullType(_t: Null): Expression {
+  return { content: 'null' };
+}
+
+export function expressionForStringType(_t: String): Expression {
+  return { content: 'string' };
+}
+
+export function expressionForBooleanType(_t: Boolean): Expression {
+  return { content: 'boolean' };
+}
+
+export function expressionForNumberType(_t: Number): Expression {
+  return { content: 'number' };
+}
+
+export function expressionForTimestampType(_t: Timestamp): Expression {
+  return { content: 'firestore.Timestamp' };
 }
 
 export function expressionForLiteralType(t: Literal): Expression {
@@ -91,10 +107,17 @@ export function expressionForAliasType(t: Alias): Expression {
 }
 
 export function expressionForType(t: Type): Expression {
-  if (isPrimitiveType(t)) {
-    return expressionForPrimitiveType(t);
-  }
   switch (t.type) {
+    case 'null':
+      return expressionForNullType(t);
+    case 'string':
+      return expressionForStringType(t);
+    case 'boolean':
+      return expressionForBooleanType(t);
+    case 'number':
+      return expressionForNumberType(t);
+    case 'timestamp':
+      return expressionForTimestampType(t);
     case 'literal':
       return expressionForLiteralType(t);
     case 'enum':
