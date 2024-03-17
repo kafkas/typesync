@@ -2,9 +2,38 @@ import type { schema } from '.';
 import { converters } from '../converters';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
-import { AliasModelImpl } from './_impl/_alias-model';
-import { DocumentModelImpl } from './_impl/_document-model';
-import { SchemaImpl } from './_impl/schema';
+import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract';
+import {
+  AliasModel as AliasModelGeneric,
+  DocumentModel as DocumentModelGeneric,
+  Schema as SchemaGeneric,
+} from './generic';
+import type { types } from './types';
+
+export type AliasModel = AliasModelGeneric<types.Type>;
+
+export type DocumentModel = DocumentModelGeneric<types.Type, types.Field>;
+
+export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
+
+class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
+  public clone() {
+    const { aliasModelsById, documentModelsById } = this.cloneMaps();
+    return new SchemaImpl(aliasModelsById, documentModelsById);
+  }
+}
+
+class AliasModelImpl extends AbstractAliasModel<types.Type> implements AliasModel {
+  public clone() {
+    return new AliasModelImpl(this.name, this.docs, this.cloneValue());
+  }
+}
+
+class DocumentModelImpl extends AbstractDocumentModel<types.Field> implements DocumentModel {
+  public clone() {
+    return new DocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
+  }
+}
 
 export function createSchema(def?: definition.Definition): schema.Schema {
   const aliasModelsById = new Map<string, schema.AliasModel>();

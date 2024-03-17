@@ -1,7 +1,7 @@
 import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
 import { schema } from '../../../schema';
-import { deepFreeze } from '../../deep-freeze';
-import { flattenSchema } from '../flatten-schema';
+import { deepFreeze } from '../../../util/deep-freeze';
+import { flattenSchema } from '../_flatten-schema';
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {

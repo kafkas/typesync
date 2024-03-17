@@ -1,6 +1,7 @@
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
+import { FlatListType, FlatTupleType, FlatType, FlatUnionType } from './_schema';
 
 export function nilTypeToPython(_t: schema.types.Nil): python.None {
   return { type: 'none' };
@@ -26,23 +27,23 @@ export function literalTypeToPython(t: schema.types.Literal): python.Literal {
   return { type: 'literal', value: t.value };
 }
 
-export function expressibleTupleTypeToPython(t: schema.python.ExpressibleTupleType): python.Tuple {
-  return { type: 'tuple', values: t.values.map(expressibleTypeToPython) };
+export function flatTupleTypeToPython(t: FlatTupleType): python.Tuple {
+  return { type: 'tuple', values: t.values.map(flatTypeToPython) };
 }
 
-export function expressibleListTypeToPython(t: schema.python.ExpressibleListType): python.List {
-  return { type: 'list', of: expressibleTypeToPython(t.of) };
+export function flatListTypeToPython(t: FlatListType): python.List {
+  return { type: 'list', of: flatTypeToPython(t.of) };
 }
 
-export function expressibleUnionTypeToPython(t: schema.python.ExpressibleUnionType): python.Union {
-  return { type: 'union', members: t.members.map(expressibleTypeToPython) };
+export function flatUnionTypeToPython(t: FlatUnionType): python.Union {
+  return { type: 'union', members: t.members.map(flatTypeToPython) };
 }
 
-export function expressibleAliasTypeToPython(t: schema.types.Alias): python.Alias {
+export function flatAliasTypeToPython(t: schema.types.Alias): python.Alias {
   return { type: 'alias', name: t.name };
 }
 
-export function expressibleTypeToPython(t: schema.python.ExpressibleType): python.Type {
+export function flatTypeToPython(t: FlatType): python.Type {
   switch (t.type) {
     case 'nil':
       return nilTypeToPython(t);
@@ -57,13 +58,13 @@ export function expressibleTypeToPython(t: schema.python.ExpressibleType): pytho
     case 'literal':
       return literalTypeToPython(t);
     case 'tuple':
-      return expressibleTupleTypeToPython(t);
+      return flatTupleTypeToPython(t);
     case 'list':
-      return expressibleListTypeToPython(t);
+      return flatListTypeToPython(t);
     case 'union':
-      return expressibleUnionTypeToPython(t);
+      return flatUnionTypeToPython(t);
     case 'alias':
-      return expressibleAliasTypeToPython(t);
+      return flatAliasTypeToPython(t);
     default:
       assertNever(t);
   }

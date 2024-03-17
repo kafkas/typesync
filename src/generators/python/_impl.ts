@@ -1,6 +1,6 @@
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
-import { flattenSchema } from '../../util/flatten-schema';
+import { flattenSchema } from './_flatten-schema';
 import type { PythonDeclaration, PythonGeneration, PythonGenerator, PythonGeneratorConfig } from './_types';
 
 class PythonGeneratorImpl implements PythonGenerator {

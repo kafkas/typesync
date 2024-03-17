@@ -1,3 +1,5 @@
+import type { FieldType, ListType, ObjectType, TupleType, UnionType } from '../generic';
+
 export interface Nil {
   type: 'nil';
 }
@@ -33,32 +35,15 @@ export interface Enum {
   }[];
 }
 
-export interface Tuple {
-  type: 'tuple';
-  values: Type[];
-}
+export type Tuple = TupleType<Type>;
 
-export interface List {
-  type: 'list';
-  of: Type;
-}
+export type List = ListType<Type>;
 
-export interface Object {
-  type: 'object';
-  fields: Field[];
-}
+export type Object = ObjectType<Type>;
 
-export interface Field {
-  type: Type;
-  optional: boolean;
-  name: string;
-  docs: string | undefined;
-}
+export type Field = FieldType<Type>;
 
-export interface Union {
-  type: 'union';
-  members: Type[];
-}
+export type Union = UnionType<Type>;
 
 export interface Alias {
   type: 'alias';
