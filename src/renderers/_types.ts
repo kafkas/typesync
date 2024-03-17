@@ -1,7 +1,5 @@
 import type { Generation } from '../generators';
 
-// export type RendererConfig = PythonRendererConfig | TSRendererConfig;
-
 export interface RenderedFile {
   /**
    * The relative path to the file.
