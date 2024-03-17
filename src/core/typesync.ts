@@ -1,22 +1,21 @@
 import { resolve } from 'path';
 
 import type { TypeSync, TypeSyncGenerateOptions } from '../api';
-import { InvalidIndentationOption, InvalidOutputDirOption } from '../errors';
+import { InvalidIndentationOption } from '../errors';
 import { createPythonGenerator } from '../generators/python';
 import { createTSGenerator } from '../generators/ts';
-import { Generator, Logger } from '../interfaces';
+import { Generator } from '../interfaces';
 import { renderers } from '../renderers';
 import { schema } from '../schema';
 import { assertNever } from '../util/assert';
-import { extractErrorMessage } from '../util/extract-error-message';
-import { validateEmptyDir, writeFile } from '../util/fs';
+import { writeFile } from '../util/fs';
 import { createDefinitionParser } from './definition-parser';
 import { createLogger } from './logger';
 
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions) {
     const logger = createLogger(opts.debug);
-    this.validateOpts(logger, opts);
+    this.validateOpts(opts);
 
     const { pathToDefinition, pathToOutputDir } = opts;
     const generator = this.createGenerator(opts);
@@ -31,14 +30,8 @@ class TypeSyncImpl implements TypeSync {
     await this.writeRenderedFiles(pathToOutputDir, files);
   }
 
-  private validateOpts(logger: Logger, opts: TypeSyncGenerateOptions) {
-    const { pathToOutputDir, indentation } = opts;
-    try {
-      validateEmptyDir(pathToOutputDir);
-    } catch (e) {
-      logger.error(extractErrorMessage(e));
-      throw new InvalidOutputDirOption(pathToOutputDir);
-    }
+  private validateOpts(opts: TypeSyncGenerateOptions) {
+    const { indentation } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
     }
