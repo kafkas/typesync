@@ -5,17 +5,14 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
   "declarations": [
     {
       "modelName": "Username",
-      "modelType": StringType {
-        "expression": {
-          "content": "string",
-        },
+      "modelType": {
         "type": "string",
       },
       "type": "alias",
     },
     {
       "modelName": "UserRole",
-      "modelType": EnumType {
+      "modelType": {
         "items": [
           {
             "label": "ADMIN",
@@ -36,38 +33,29 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     },
     {
       "modelName": "Address",
-      "modelType": ObjectType {
+      "modelType": {
         "fields": [
-          FieldType {
+          {
             "docs": undefined,
             "name": "street",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "city",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "zip_code",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
@@ -78,36 +66,30 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     },
     {
       "modelName": "Cat",
-      "modelType": ObjectType {
+      "modelType": {
         "fields": [
-          FieldType {
+          {
             "docs": undefined,
             "name": "type",
             "optional": false,
-            "type": LiteralType {
+            "type": {
               "type": "literal",
               "value": "cat",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "name",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "lives_left",
             "optional": false,
-            "type": NumberType {
-              "expression": {
-                "content": "number",
-              },
+            "type": {
               "type": "number",
             },
           },
@@ -118,36 +100,30 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     },
     {
       "modelName": "Dog",
-      "modelType": ObjectType {
+      "modelType": {
         "fields": [
-          FieldType {
+          {
             "docs": undefined,
             "name": "type",
             "optional": false,
-            "type": LiteralType {
+            "type": {
               "type": "literal",
               "value": "dog",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "name",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "breed",
             "optional": false,
-            "type": StringType {
-              "expression": {
-                "content": "string",
-              },
+            "type": {
               "type": "string",
             },
           },
@@ -158,13 +134,13 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     },
     {
       "modelName": "Pet",
-      "modelType": UnionType {
+      "modelType": {
         "members": [
-          AliasType {
+          {
             "name": "Cat",
             "type": "alias",
           },
-          AliasType {
+          {
             "name": "Dog",
             "type": "alias",
           },
@@ -175,143 +151,119 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     },
     {
       "modelName": "UserProfile",
-      "modelType": ObjectType {
+      "modelType": {
         "fields": [
-          FieldType {
+          {
             "docs": undefined,
             "name": "username",
             "optional": false,
-            "type": AliasType {
+            "type": {
               "name": "Username",
               "type": "alias",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "age",
             "optional": false,
-            "type": NumberType {
-              "expression": {
-                "content": "number",
-              },
+            "type": {
               "type": "number",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "is_active",
             "optional": false,
-            "type": BooleanType {
-              "expression": {
-                "content": "boolean",
-              },
+            "type": {
               "type": "boolean",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "role",
             "optional": false,
-            "type": AliasType {
+            "type": {
               "name": "UserRole",
               "type": "alias",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "created_at",
             "optional": true,
-            "type": TimestampType {
-              "expression": {
-                "content": "firestore.Timestamp",
-              },
+            "type": {
               "type": "timestamp",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "location",
             "optional": false,
-            "type": TupleType {
+            "type": {
               "type": "tuple",
               "values": [
-                NumberType {
-                  "expression": {
-                    "content": "number",
-                  },
+                {
                   "type": "number",
                 },
-                NumberType {
-                  "expression": {
-                    "content": "number",
-                  },
+                {
                   "type": "number",
                 },
               ],
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "address",
             "optional": false,
-            "type": AliasType {
+            "type": {
               "name": "Address",
               "type": "alias",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "favorite_numbers",
             "optional": false,
-            "type": ListType {
-              "of": NumberType {
-                "expression": {
-                  "content": "number",
-                },
+            "type": {
+              "of": {
                 "type": "number",
               },
               "type": "list",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "pets",
             "optional": false,
-            "type": ListType {
-              "of": AliasType {
+            "type": {
+              "of": {
                 "name": "Pet",
                 "type": "alias",
               },
               "type": "list",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "bio",
             "optional": false,
-            "type": UnionType {
+            "type": {
               "members": [
-                NullType {
-                  "expression": {
-                    "content": "null",
-                  },
+                {
                   "type": "null",
                 },
-                StringType {
-                  "expression": {
-                    "content": "string",
-                  },
+                {
                   "type": "string",
                 },
               ],
               "type": "union",
             },
           },
-          FieldType {
+          {
             "docs": undefined,
             "name": "area_code",
             "optional": false,
-            "type": LiteralType {
+            "type": {
               "type": "literal",
               "value": 34,
             },

@@ -2,6 +2,64 @@
 
 exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1`] = `
 {
+  "declarations": [
+    {
+      "modelName": "Username",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "UserRole",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Address",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Cat",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Dog",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Pet",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "UserProfile",
+      "modelType": {
+        "name": "Placeholder",
+        "type": "alias",
+      },
+      "type": "pydantic-class",
+    },
+  ],
   "type": "python",
 }
 `;
