@@ -2,6 +2,7 @@ import { StringBuilder } from '@proficient/ds';
 
 import { type generation } from '../generation';
 import { PythonGeneration } from '../generation/_types';
+import { python } from '../platforms/python';
 import { assertNever } from '../util/assert';
 import { multiply } from '../util/multiply-str';
 import { space } from '../util/space';
@@ -55,7 +56,8 @@ class PythonRendererImpl implements PythonRenderer {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;
-        return `${modelName} = ${modelType.expression.content};`;
+        const expression = python.expressionForType(modelType);
+        return `${modelName} = ${expression.content};`;
       }
       case 'enum-class': {
         // TODO: Implement

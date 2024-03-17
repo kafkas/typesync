@@ -15,13 +15,13 @@ class PythonGeneratorImpl implements PythonGenerator {
 
     aliasModels.forEach(model => {
       // TODO: Implement
-      const pythonType = new python.AliasType('Placeholder');
+      const pythonType: python.Alias = { type: 'alias', name: 'Placeholder' };
       declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
     });
 
     documentModels.forEach(model => {
       // TODO: Implement
-      const pythonType = new python.AliasType('Placeholder');
+      const pythonType: python.Alias = { type: 'alias', name: 'Placeholder' };
       declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
     });
 

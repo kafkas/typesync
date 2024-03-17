@@ -2,48 +2,58 @@ import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 
-export function primitiveTypeToPython(t: schema.types.Primitive) {
-  switch (t.type) {
-    case 'nil':
-      return new python.NoneType();
-    case 'string':
-      return new python.StringType();
-    case 'boolean':
-      return new python.BooleanType();
-    case 'int':
-      return new python.IntType();
-    case 'timestamp':
-      return new python.DatetimeType();
-    default:
-      assertNever(t);
-  }
+export function nilTypeToPython(_t: schema.types.Nil): python.None {
+  return { type: 'none' };
 }
 
-export function literalTypeToPython(t: schema.types.Literal) {
-  return new python.LiteralType(t.value);
+export function stringTypeToPython(_t: schema.types.String): python.Str {
+  return { type: 'str' };
 }
 
-export function expressibleTupleTypeToPython(t: schema.python.ExpressibleTupleType) {
-  return new python.TupleType(t.values.map(expressibleTypeToPython));
+export function booleanTypeToPython(_t: schema.types.Boolean): python.Bool {
+  return { type: 'bool' };
 }
 
-export function expressibleListTypeToPython(t: schema.python.ExpressibleListType) {
-  return new python.ListType(expressibleTypeToPython(t.of));
+export function integerTypeToPython(_t: schema.types.Integer): python.Int {
+  return { type: 'int' };
 }
 
-export function expressibleUnionTypeToPython(t: schema.python.ExpressibleUnionType) {
-  return new python.UnionType(t.members.map(expressibleTypeToPython));
+export function timestampTypeToPython(_t: schema.types.Timestamp): python.Datetime {
+  return { type: 'datetime' };
 }
 
-export function expressibleAliasTypeToPython(t: schema.types.Alias) {
-  return new python.AliasType(t.name);
+export function literalTypeToPython(t: schema.types.Literal): python.Literal {
+  return { type: 'literal', value: t.value };
+}
+
+export function expressibleTupleTypeToPython(t: schema.python.ExpressibleTupleType): python.Tuple {
+  return { type: 'tuple', values: t.values.map(expressibleTypeToPython) };
+}
+
+export function expressibleListTypeToPython(t: schema.python.ExpressibleListType): python.List {
+  return { type: 'list', of: expressibleTypeToPython(t.of) };
+}
+
+export function expressibleUnionTypeToPython(t: schema.python.ExpressibleUnionType): python.Union {
+  return { type: 'union', members: t.members.map(expressibleTypeToPython) };
+}
+
+export function expressibleAliasTypeToPython(t: schema.types.Alias): python.Alias {
+  return { type: 'alias', name: t.name };
 }
 
 export function expressibleTypeToPython(t: schema.python.ExpressibleType): python.Type {
-  if (schema.isPrimitiveType(t)) {
-    return primitiveTypeToPython(t);
-  }
   switch (t.type) {
+    case 'nil':
+      return nilTypeToPython(t);
+    case 'string':
+      return stringTypeToPython(t);
+    case 'boolean':
+      return booleanTypeToPython(t);
+    case 'int':
+      return integerTypeToPython(t);
+    case 'timestamp':
+      return timestampTypeToPython(t);
     case 'literal':
       return literalTypeToPython(t);
     case 'tuple':
