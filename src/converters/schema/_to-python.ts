@@ -41,7 +41,7 @@ export function expressibleAliasTypeToPython(t: schema.types.Alias) {
 
 export function expressibleTypeToPython(t: schema.python.ExpressibleType): python.Type {
   if (schema.isPrimitiveType(t)) {
-    return expressibleTypeToPython(t);
+    return primitiveTypeToPython(t);
   }
   switch (t.type) {
     case 'literal':
