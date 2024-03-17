@@ -1,5 +1,7 @@
 import type { PythonGenerationPlatform, TSGenerationPlatform } from '../api';
-import type { generation } from '../generation';
+import type { Generation } from '../generators';
+import type { PythonGeneration } from '../generators/python';
+import type { TSGeneration } from '../generators/ts';
 
 export interface PythonRendererConfig {
   rootFileName: string;
@@ -15,11 +17,11 @@ export interface TSRendererConfig {
 export type RendererConfig = PythonRendererConfig | TSRendererConfig;
 
 export interface PythonRenderer {
-  render(g: generation.PythonGeneration): RenderedFile[];
+  render(g: PythonGeneration): RenderedFile[];
 }
 
 export interface TSRenderer {
-  render(g: generation.TSGeneration): RenderedFile[];
+  render(g: TSGeneration): RenderedFile[];
 }
 
 export interface RenderedFile {
@@ -35,5 +37,5 @@ export interface RenderedFile {
 }
 
 export interface Renderer {
-  render(g: generation.Generation): RenderedFile[];
+  render(g: Generation): RenderedFile[];
 }

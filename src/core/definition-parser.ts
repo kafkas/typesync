@@ -4,8 +4,12 @@ import { z } from 'zod';
 
 import { definition } from '../definition';
 import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
-import type { DefinitionParser, Logger } from '../interfaces';
 import { extractErrorMessage } from '../util/extract-error-message';
+import type { Logger } from './logger';
+
+export interface DefinitionParser {
+  parseDefinition(pathToDefinition: string): definition.Definition;
+}
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger?: Logger) {}

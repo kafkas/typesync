@@ -1,7 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { type generation } from '../generation';
-import { PythonGeneration } from '../generation/_types';
+import type { PythonDeclaration, PythonGeneration } from '../generators/python';
 import { python } from '../platforms/python';
 import { assertNever } from '../util/assert';
 import { multiply } from '../util/multiply-str';
@@ -52,7 +51,7 @@ class PythonRendererImpl implements PythonRenderer {
     return b.toString();
   }
 
-  private renderDeclaration(declaration: generation.PythonDeclaration) {
+  private renderDeclaration(declaration: PythonDeclaration) {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;

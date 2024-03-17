@@ -2,9 +2,9 @@ import { resolve } from 'path';
 
 import type { TypeSync, TypeSyncGenerateOptions } from '../api';
 import { InvalidIndentationOption } from '../errors';
+import { type Generator } from '../generators';
 import { createPythonGenerator } from '../generators/python';
 import { createTSGenerator } from '../generators/ts';
-import { Generator } from '../interfaces';
 import { renderers } from '../renderers';
 import { schema } from '../schema';
 import { assertNever } from '../util/assert';

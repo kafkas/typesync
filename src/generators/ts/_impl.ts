@@ -1,14 +1,13 @@
 import { converters } from '../../converters';
-import { generation } from '../../generation';
-import type { TSGenerator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
+import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types';
 
 class TSGeneratorImpl implements TSGenerator {
   public constructor(private readonly config: TSGeneratorConfig) {}
 
-  public generate(s: schema.Schema): generation.TSGeneration {
+  public generate(s: schema.Schema): TSGeneration {
     const { aliasModels, documentModels } = s;
-    const declarations: generation.TSDeclaration[] = [];
+    const declarations: TSDeclaration[] = [];
 
     aliasModels.forEach(model => {
       const tsType = converters.schema.typeToTS(model.value);

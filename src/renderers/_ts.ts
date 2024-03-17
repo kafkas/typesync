@@ -1,7 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { generation } from '../generation';
-import { TSGeneration } from '../generation/_types';
+import type { TSDeclaration, TSGeneration } from '../generators/ts';
 import { ts } from '../platforms/ts';
 import { assertNever } from '../util/assert';
 import type { RenderedFile, TSRenderer, TSRendererConfig } from './_types';
@@ -22,7 +21,7 @@ class TSRendererImpl implements TSRenderer {
     return [{ relativePath: this.config.rootFileName, content: builder.toString() }];
   }
 
-  private renderDeclaration(declaration: generation.TSDeclaration) {
+  private renderDeclaration(declaration: TSDeclaration) {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;

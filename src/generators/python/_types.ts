@@ -1,24 +1,6 @@
-import { python } from '../platforms/python';
-import { ts } from '../platforms/ts';
-
-export interface TSAliasDeclaration {
-  type: 'alias';
-  modelName: string;
-  modelType: ts.Type;
-}
-
-export interface TSInterfaceDeclaration {
-  type: 'interface';
-  modelName: string;
-  modelType: ts.Object;
-}
-
-export type TSDeclaration = TSAliasDeclaration | TSInterfaceDeclaration;
-
-export interface TSGeneration {
-  type: 'ts';
-  declarations: TSDeclaration[];
-}
+import type { PythonGenerationPlatform } from '../../api';
+import type { python } from '../../platforms/python';
+import type { schema } from '../../schema';
 
 export interface PythonAliasDeclaration {
   type: 'alias';
@@ -45,4 +27,14 @@ export interface PythonGeneration {
   declarations: PythonDeclaration[];
 }
 
-export type Generation = PythonGeneration | TSGeneration;
+export interface PythonGeneratorConfig {
+  platform: PythonGenerationPlatform;
+  /**
+   * The number of spaces for each indentation.
+   */
+  indentation: number;
+}
+
+export interface PythonGenerator {
+  generate(s: schema.Schema): PythonGeneration;
+}
