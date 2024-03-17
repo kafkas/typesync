@@ -5,5 +5,5 @@
     "rootDir": "src",
     "sourceMap": true
   },
-  "exclude": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*", "test/**/*"]
+  "exclude": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*", "test/**/*", "playground/**/*"]
 }
