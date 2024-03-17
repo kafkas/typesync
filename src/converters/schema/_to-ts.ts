@@ -2,21 +2,24 @@ import { ts } from '../../platforms/ts';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 
-export function primitiveTypeToTS(t: schema.types.Primitive): ts.Primitive {
-  switch (t.type) {
-    case 'nil':
-      return { type: 'null' };
-    case 'string':
-      return { type: 'string' };
-    case 'boolean':
-      return { type: 'boolean' };
-    case 'int':
-      return { type: 'number' };
-    case 'timestamp':
-      return { type: 'timestamp' };
-    default:
-      assertNever(t.type);
-  }
+export function nilTypeToTS(_t: schema.types.Nil): ts.Null {
+  return { type: 'null' };
+}
+
+export function stringTypeToTS(_t: schema.types.String): ts.String {
+  return { type: 'string' };
+}
+
+export function booleanTypeToTS(_t: schema.types.Boolean): ts.Boolean {
+  return { type: 'boolean' };
+}
+
+export function integerTypeToTS(_t: schema.types.Integer): ts.Number {
+  return { type: 'number' };
+}
+
+export function timestampTypeToTS(_t: schema.types.Timestamp): ts.Timestamp {
+  return { type: 'timestamp' };
 }
 
 export function literalTypeToTS(t: schema.types.Literal): ts.Literal {
@@ -43,19 +46,26 @@ export function fieldTypeToTS(t: schema.types.Field): ts.Field {
   return { type: typeToTS(t.type), optional: t.optional, name: t.name, docs: t.docs };
 }
 
-export function unionTypeToTS(t: schema.types.Union): ts.Type {
+export function unionTypeToTS(t: schema.types.Union): ts.Union {
   return { type: 'union', members: t.members.map(typeToTS) };
 }
 
-export function aliasTypeToTS(t: schema.types.Alias): ts.Type {
+export function aliasTypeToTS(t: schema.types.Alias): ts.Alias {
   return { type: 'alias', name: t.name };
 }
 
 export function typeToTS(t: schema.types.Type): ts.Type {
-  if (schema.isPrimitiveType(t)) {
-    return primitiveTypeToTS(t);
-  }
   switch (t.type) {
+    case 'nil':
+      return nilTypeToTS(t);
+    case 'string':
+      return stringTypeToTS(t);
+    case 'boolean':
+      return booleanTypeToTS(t);
+    case 'int':
+      return integerTypeToTS(t);
+    case 'timestamp':
+      return timestampTypeToTS(t);
     case 'literal':
       return literalTypeToTS(t);
     case 'enum':

@@ -15,7 +15,7 @@ export function primitiveTypeToPython(t: schema.types.Primitive) {
     case 'timestamp':
       return new python.DatetimeType();
     default:
-      assertNever(t.type);
+      assertNever(t);
   }
 }
 
