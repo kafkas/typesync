@@ -29,6 +29,12 @@ export interface PythonGeneratorConfig {
   indentation: number;
 }
 
-export interface Generator {
-  generate(s: schema.Schema): Promise<generation.Generation>;
+export interface TSGenerator {
+  generate(s: schema.Schema): generation.TSGeneration;
 }
+
+export interface PythonGenerator {
+  generate(s: schema.Schema): generation.PythonGeneration;
+}
+
+export type Generator = TSGenerator | PythonGenerator;

@@ -1,7 +1,8 @@
 import { StringBuilder } from '@proficient/ds';
 
 import { converters } from '../../converters';
-import type { Generator, PythonGeneratorConfig } from '../../interfaces';
+import type { generation } from '../../generation';
+import type { PythonGenerator, PythonGeneratorConfig } from '../../interfaces';
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
@@ -9,10 +10,10 @@ import { flattenSchema } from '../../util/flatten-schema';
 import { multiply } from '../../util/multiply-str';
 import { space } from '../../util/space';
 
-class PythonGeneratorImpl implements Generator {
+class PythonGeneratorImpl implements PythonGenerator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
-  public async generate(s: schema.Schema) {
+  public generate(s: schema.Schema): generation.PythonGeneration {
     const flattenedSchema = flattenSchema(s);
     const { aliasModels, documentModels } = flattenedSchema;
 
@@ -70,7 +71,7 @@ class PythonGeneratorImpl implements Generator {
       b.append(`${this.indent(2)}use_enum_values = True\n`);
     });
 
-    return createGeneration(b.toString());
+    return { type: 'python' };
   }
 
   private generateImportStatements() {
@@ -137,6 +138,6 @@ class PythonGeneratorImpl implements Generator {
   }
 }
 
-export function createPythonGenerator(config: PythonGeneratorConfig): Generator {
+export function createPythonGenerator(config: PythonGeneratorConfig): PythonGenerator {
   return new PythonGeneratorImpl(config);
 }

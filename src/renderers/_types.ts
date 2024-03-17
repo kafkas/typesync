@@ -1,6 +1,7 @@
+import type { PythonGenerationPlatform, TSGenerationPlatform } from '../api';
 import type { generation } from '../generation';
 
-interface File {
+export interface RenderedFile {
   /**
    * The relative path to the file.
    */
@@ -12,14 +13,26 @@ interface File {
   content: string;
 }
 
+export interface PythonRendererConfig {
+  rootFileName: string;
+  platform: PythonGenerationPlatform;
+}
+
+export interface TSRendererConfig {
+  rootFileName: string;
+  platform: TSGenerationPlatform;
+}
+
+export type RendererConfig = PythonRendererConfig | TSRendererConfig;
+
 export interface PythonRenderer {
   type: 'python';
-  render(g: generation.PythonGeneration): File[];
+  render(g: generation.PythonGeneration): RenderedFile[];
 }
 
 export interface TSRenderer {
   type: 'ts';
-  render(g: generation.TSGeneration): File[];
+  render(g: generation.TSGeneration): RenderedFile[];
 }
 
-export type Generation = PythonRenderer | TSRenderer;
+export type Renderer = PythonRenderer | TSRenderer;

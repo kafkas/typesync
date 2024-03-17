@@ -1,71 +1,30 @@
-import { StringBuilder } from '@proficient/ds';
-
-import { createGeneration } from '../../components';
 import { converters } from '../../converters';
-import type { Generator, TSGeneratorConfig } from '../../interfaces';
+import { generation } from '../../generation';
+import type { TSGenerator, TSGeneratorConfig } from '../../interfaces';
 import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
 
-class TSGeneratorImpl implements Generator {
-  private get firestore() {
-    switch (this.config.platform) {
-      case 'ts:firebase-admin:11':
-        return 'firestore';
-      default:
-        assertNever(this.config.platform);
-    }
-  }
-
+class TSGeneratorImpl implements TSGenerator {
   public constructor(private readonly config: TSGeneratorConfig) {}
 
-  public async generate(s: schema.Schema) {
-    const builder = new StringBuilder();
-
-    const tsFirestoreImport = this.getImportFirestoreStatement();
-
-    builder.append(`${tsFirestoreImport}\n\n`);
-
+  public generate(s: schema.Schema): generation.TSGeneration {
     const { aliasModels, documentModels } = s;
+    const declarations: generation.TSDeclaration[] = [];
 
     aliasModels.forEach(model => {
       const tsType = converters.schema.typeToTS(model.value);
-      if (model.docs !== undefined) {
-        const tsDoc = this.buildTSDoc(model.docs);
-        builder.append(`${tsDoc}\n`);
-      }
-      builder.append(`export type ${model.name} = ${tsType.expression.content};\n\n`);
+      declarations.push({ type: 'alias', modelName: model.name, modelType: tsType });
     });
 
-    documentModels.forEach((model, modelIndex) => {
+    documentModels.forEach(model => {
       // A Firestore document can be considered an 'object' type
       const tsType = converters.schema.objectTypeToTS({ type: 'object', fields: model.fields });
-      if (model.docs !== undefined) {
-        const tsDoc = this.buildTSDoc(model.docs);
-        builder.append(`${tsDoc}\n`);
-      }
-      builder.append(`export interface ${model.name} ${tsType.expression.content}\n`);
-      if (modelIndex < documentModels.length - 1) {
-        builder.append('\n');
-      }
+      declarations.push({ type: 'interface', modelName: model.name, modelType: tsType });
     });
 
-    return createGeneration(builder.toString());
-  }
-
-  private getImportFirestoreStatement() {
-    switch (this.config.platform) {
-      case 'ts:firebase-admin:11':
-        return `import { firestore } from 'firebase-admin';`;
-      default:
-        assertNever(this.config.platform);
-    }
-  }
-
-  private buildTSDoc(docs: string) {
-    return `/**\n * ${docs}\n */`;
+    return { type: 'ts', declarations };
   }
 }
 
-export function createTSGenerator(config: TSGeneratorConfig): Generator {
+export function createTSGenerator(config: TSGeneratorConfig): TSGenerator {
   return new TSGeneratorImpl(config);
 }
