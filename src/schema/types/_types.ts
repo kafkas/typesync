@@ -1,6 +1,24 @@
-export interface Primitive {
-  type: 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
+export interface Nil {
+  type: 'nil';
 }
+
+export interface String {
+  type: 'string';
+}
+
+export interface Boolean {
+  type: 'boolean';
+}
+
+export interface Integer {
+  type: 'int';
+}
+
+export interface Timestamp {
+  type: 'timestamp';
+}
+
+export type Primitive = Nil | String | Boolean | Integer | Timestamp;
 
 export interface Literal {
   type: 'literal';

@@ -4,19 +4,21 @@ import { z } from 'zod';
 
 import { definition } from '../definition';
 import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
-import type { DefinitionParser, Logger } from '../interfaces';
-import { schema } from '../schema';
 import { extractErrorMessage } from '../util/extract-error-message';
+import type { Logger } from './logger';
+
+export interface DefinitionParser {
+  parseDefinition(pathToDefinition: string): definition.Definition;
+}
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger?: Logger) {}
 
-  public parseDefinition(pathToDefinition: string): schema.Schema {
+  public parseDefinition(pathToDefinition: string) {
     const definitionJson = this.parseYamlFileAsJson(pathToDefinition);
     const aliasNames = this.extractAliasModelNames(definitionJson);
     const definitionSchema = definition.schemas.definition(aliasNames);
-    const parsedDefinition = this.parseDefinitionWithSchema(definitionJson, definitionSchema);
-    return schema.createFromDefinition(parsedDefinition);
+    return this.parseDefinitionWithSchema(definitionJson, definitionSchema);
   }
 
   private parseYamlFileAsJson(pathToFile: string): unknown {

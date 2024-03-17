@@ -1,7 +1,7 @@
 import { assertNever } from '../../util/assert';
-import type { PrimitiveType, Type } from './_types';
+import type { Primitive, Type } from './_types';
 
-export function isPrimitiveType(t: Type): t is PrimitiveType {
+export function isPrimitiveType(t: Type): t is Primitive {
   switch (t.type) {
     case 'null':
     case 'string':

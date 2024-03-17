@@ -4,5 +4,6 @@
     "noEmit": true,
     "rootDir": "."
   },
-  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"]
+  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"],
+  "exclude": ["playground/**/*"]
 }

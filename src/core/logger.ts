@@ -1,4 +1,8 @@
-import type { Logger } from '../interfaces';
+export interface Logger {
+  info(...args: any[]): void;
+  warn(...args: any[]): void;
+  error(...args: any[]): void;
+}
 
 class LoggerImpl implements Logger {
   public constructor(private readonly debug: boolean) {}

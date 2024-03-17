@@ -6,7 +6,7 @@ export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'timesta
 
 export const literalType = z.object({
   type: z.literal('literal'),
-  value: z.string().or(z.number()).or(z.boolean()),
+  value: z.string().or(z.number().int()).or(z.boolean()),
 });
 
 export const enumType = z.object({

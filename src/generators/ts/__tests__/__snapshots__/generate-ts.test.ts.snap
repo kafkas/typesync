@@ -1,50 +1,279 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TSGeneratorImpl generates the correct output for flat schema 1`] = `
-"import { firestore } from 'firebase-admin';
-
-export type Username = string;
-
-/**
- * Represents a user role
- */
-export type UserRole = 'admin' | 'user' | 'guest';
-
-export type Address = {
-street: string;
-city: string;
-zip_code: string;
-};
-
-export type Cat = {
-type: 'cat';
-name: string;
-lives_left: number;
-};
-
-export type Dog = {
-type: 'dog';
-name: string;
-breed: string;
-};
-
-export type Pet = Cat | Dog;
-
-/**
- * User profile model
- */
-export interface UserProfile {
-username: Username;
-age: number;
-is_active: boolean;
-role: UserRole;
-created_at?: firestore.Timestamp;
-location: [number, number];
-address: Address;
-favorite_numbers: number[];
-pets: Pet[];
-bio: null | string;
-area_code: 34;
+exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] = `
+{
+  "declarations": [
+    {
+      "modelName": "Username",
+      "modelType": {
+        "type": "string",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "UserRole",
+      "modelType": {
+        "items": [
+          {
+            "label": "ADMIN",
+            "value": "admin",
+          },
+          {
+            "label": "USER",
+            "value": "user",
+          },
+          {
+            "label": "GUEST",
+            "value": "guest",
+          },
+        ],
+        "type": "enum",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Address",
+      "modelType": {
+        "fields": [
+          {
+            "docs": undefined,
+            "name": "street",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "city",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "zip_code",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+        ],
+        "type": "object",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Cat",
+      "modelType": {
+        "fields": [
+          {
+            "docs": undefined,
+            "name": "type",
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": "cat",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "name",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "lives_left",
+            "optional": false,
+            "type": {
+              "type": "number",
+            },
+          },
+        ],
+        "type": "object",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Dog",
+      "modelType": {
+        "fields": [
+          {
+            "docs": undefined,
+            "name": "type",
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": "dog",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "name",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "breed",
+            "optional": false,
+            "type": {
+              "type": "string",
+            },
+          },
+        ],
+        "type": "object",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "Pet",
+      "modelType": {
+        "members": [
+          {
+            "name": "Cat",
+            "type": "alias",
+          },
+          {
+            "name": "Dog",
+            "type": "alias",
+          },
+        ],
+        "type": "union",
+      },
+      "type": "alias",
+    },
+    {
+      "modelName": "UserProfile",
+      "modelType": {
+        "fields": [
+          {
+            "docs": undefined,
+            "name": "username",
+            "optional": false,
+            "type": {
+              "name": "Username",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "age",
+            "optional": false,
+            "type": {
+              "type": "number",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "is_active",
+            "optional": false,
+            "type": {
+              "type": "boolean",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "role",
+            "optional": false,
+            "type": {
+              "name": "UserRole",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "created_at",
+            "optional": true,
+            "type": {
+              "type": "timestamp",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "location",
+            "optional": false,
+            "type": {
+              "type": "tuple",
+              "values": [
+                {
+                  "type": "number",
+                },
+                {
+                  "type": "number",
+                },
+              ],
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "address",
+            "optional": false,
+            "type": {
+              "name": "Address",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "favorite_numbers",
+            "optional": false,
+            "type": {
+              "of": {
+                "type": "number",
+              },
+              "type": "list",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "pets",
+            "optional": false,
+            "type": {
+              "of": {
+                "name": "Pet",
+                "type": "alias",
+              },
+              "type": "list",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "bio",
+            "optional": false,
+            "type": {
+              "members": [
+                {
+                  "type": "null",
+                },
+                {
+                  "type": "string",
+                },
+              ],
+              "type": "union",
+            },
+          },
+          {
+            "docs": undefined,
+            "name": "area_code",
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": 34,
+            },
+          },
+        ],
+        "type": "object",
+      },
+      "type": "interface",
+    },
+  ],
+  "type": "ts",
 }
-"
 `;

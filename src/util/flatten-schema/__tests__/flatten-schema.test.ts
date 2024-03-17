@@ -49,7 +49,7 @@ describe('flatten-schema', () => {
     };
 
     const inputSchema = (() => {
-      const s = schema.create();
+      const s = schema.createSchema();
       const userModel = schema.createDocumentModel({
         name: 'User',
         docs: undefined,
@@ -75,7 +75,7 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = schema.create();
+      const s = schema.createSchema();
       const aliasModel = schema.createAliasModel({
         // TODO: Implement these
         name: 'Placeholder',

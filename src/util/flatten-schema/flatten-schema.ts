@@ -1,40 +1,39 @@
-import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../assert';
 
 interface FlattenAliasModelResult {
-  flattenedModel: python.schema.ExpressibleAliasModel;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedModel: schema.python.ExpressibleAliasModel;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenDocumentModelResult {
-  flattenedModel: python.schema.ExpressibleDocumentModel;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedModel: schema.python.ExpressibleDocumentModel;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenTupleTypeResult {
-  flattenedType: python.schema.ExpressibleTupleType;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedType: schema.python.ExpressibleTupleType;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenListTypeResult {
-  flattenedType: python.schema.ExpressibleListType;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedType: schema.python.ExpressibleListType;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenObjectTypeResult {
-  flattenedType: python.schema.FlatObjectType;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedType: schema.python.FlatObjectType;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenUnionTypeResult {
-  flattenedType: python.schema.ExpressibleUnionType;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedType: schema.python.ExpressibleUnionType;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 interface FlattenTypeResult {
-  flattenedType: python.schema.ExpressibleType;
-  extractedAliasModels: python.schema.ExpressibleAliasModel[];
+  flattenedType: schema.python.ExpressibleType;
+  extractedAliasModels: schema.python.ExpressibleAliasModel[];
 }
 
 /**
@@ -43,7 +42,7 @@ interface FlattenTypeResult {
  *
  * @returns A new schema object.
  */
-export function flattenSchema(prevSchema: schema.Schema): python.schema.ExpressibleSchema {
+export function flattenSchema(prevSchema: schema.Schema): schema.python.ExpressibleSchema {
   function flattenAliasModel(aliasModel: schema.AliasModel): FlattenAliasModelResult {
     switch (aliasModel.value.type) {
       case 'nil':
@@ -54,7 +53,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
       case 'literal':
       case 'enum':
       case 'alias': {
-        return { flattenedModel: aliasModel as python.schema.ExpressibleAliasModel, extractedAliasModels: [] };
+        return { flattenedModel: aliasModel as schema.python.ExpressibleAliasModel, extractedAliasModels: [] };
       }
       case 'tuple': {
         const { flattenedType, extractedAliasModels } = flattenTupleType(aliasModel.value);
@@ -63,7 +62,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           docs: aliasModel.docs,
           value: flattenedType,
         });
-        return { flattenedModel: flattenedModel as python.schema.ExpressibleAliasModel, extractedAliasModels };
+        return { flattenedModel: flattenedModel as schema.python.ExpressibleAliasModel, extractedAliasModels };
       }
       case 'list': {
         const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.value);
@@ -72,7 +71,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           docs: aliasModel.docs,
           value: flattenedType,
         });
-        return { flattenedModel: flattenedModel as python.schema.ExpressibleAliasModel, extractedAliasModels };
+        return { flattenedModel: flattenedModel as schema.python.ExpressibleAliasModel, extractedAliasModels };
       }
       case 'object': {
         const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value);
@@ -81,7 +80,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           docs: aliasModel.docs,
           value: flattenedType,
         });
-        return { flattenedModel: flattenedModel as python.schema.ExpressibleAliasModel, extractedAliasModels };
+        return { flattenedModel: flattenedModel as schema.python.ExpressibleAliasModel, extractedAliasModels };
       }
       case 'union': {
         const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.value);
@@ -90,7 +89,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           docs: aliasModel.docs,
           value: flattenedType,
         });
-        return { flattenedModel: flattenedModel as python.schema.ExpressibleAliasModel, extractedAliasModels };
+        return { flattenedModel: flattenedModel as schema.python.ExpressibleAliasModel, extractedAliasModels };
       }
       default:
         assertNever(aliasModel.value);
@@ -104,14 +103,14 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
       name: documentModel.name,
       docs: documentModel.docs,
       fieldsById: Object.fromEntries(res.flattenedType.fields.map(field => [field.name, field])),
-    }) as python.schema.ExpressibleDocumentModel;
+    }) as schema.python.ExpressibleDocumentModel;
 
     return { flattenedModel, extractedAliasModels: res.extractedAliasModels };
   }
 
   function flattenTupleType(tupleType: schema.types.Tuple): FlattenTupleTypeResult {
     const resultsForValues = tupleType.values.map(flattenType);
-    const flattenedType: python.schema.ExpressibleTupleType = {
+    const flattenedType: schema.python.ExpressibleTupleType = {
       type: 'tuple',
       values: resultsForValues.map(res => res.flattenedType),
     };
@@ -121,7 +120,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
 
   function flattenListType(listType: schema.types.List): FlattenListTypeResult {
     const resultForOf = flattenType(listType.of);
-    const flattenedType: python.schema.ExpressibleListType = {
+    const flattenedType: schema.python.ExpressibleListType = {
       type: 'list',
       of: resultForOf.flattenedType,
     };
@@ -133,7 +132,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
       ...flattenType(originalField.type),
       originalField,
     }));
-    const flattenedType: python.schema.FlatObjectType = {
+    const flattenedType: schema.python.FlatObjectType = {
       type: 'object',
       fields: resultForFields.map(r => ({ ...r.originalField, type: r.flattenedType })),
     };
@@ -143,7 +142,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
 
   function flattenUnionType(unionType: schema.types.Union): FlattenUnionTypeResult {
     const resultsForMembers = unionType.members.map(flattenType);
-    const flattenedType: python.schema.ExpressibleUnionType = {
+    const flattenedType: schema.python.ExpressibleUnionType = {
       type: 'union',
       members: resultsForMembers.map(res => res.flattenedType),
     };
@@ -169,7 +168,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           name,
           docs,
           value: type,
-        }) as python.schema.ExpressibleAliasModel;
+        }) as schema.python.ExpressibleAliasModel;
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [aliasModel] };
       }
@@ -186,7 +185,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
           name,
           docs,
           value: result.flattenedType,
-        }) as python.schema.ExpressibleAliasModel;
+        }) as schema.python.ExpressibleAliasModel;
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
@@ -197,7 +196,7 @@ export function flattenSchema(prevSchema: schema.Schema): python.schema.Expressi
     }
   }
 
-  const newSchema = schema.create() as python.schema.ExpressibleSchema;
+  const newSchema = schema.createSchema() as schema.python.ExpressibleSchema;
   const prevSchemaClone = prevSchema.clone();
   const { aliasModels, documentModels } = prevSchemaClone;
 

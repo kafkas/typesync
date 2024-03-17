@@ -1,7 +1,7 @@
-import { NoneType, StringType, UndefinedType } from './_types';
+import { None, Str, Undefined } from './_types';
 
-export const UNDEFINED = new UndefinedType();
+export const UNDEFINED: Undefined = { type: 'undefined' };
 
-export const NONE = new NoneType();
+export const NONE: None = { type: 'none' };
 
-export const STRING = new StringType();
+export const STRING: Str = { type: 'str' };
