@@ -34,7 +34,7 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     {
       "modelName": "Address",
       "modelType": {
-        "fields": [
+        "properties": [
           {
             "docs": undefined,
             "name": "street",
@@ -67,7 +67,7 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     {
       "modelName": "Cat",
       "modelType": {
-        "fields": [
+        "properties": [
           {
             "docs": undefined,
             "name": "type",
@@ -101,7 +101,7 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     {
       "modelName": "Dog",
       "modelType": {
-        "fields": [
+        "properties": [
           {
             "docs": undefined,
             "name": "type",
@@ -152,7 +152,7 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
     {
       "modelName": "UserProfile",
       "modelType": {
-        "fields": [
+        "properties": [
           {
             "docs": undefined,
             "name": "username",
