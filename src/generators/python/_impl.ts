@@ -15,11 +15,20 @@ class PythonGeneratorImpl implements PythonGenerator {
 
     aliasModels.forEach(model => {
       if (model.value.type === 'object') {
-        // TODO: Implement
-        const pythonType: python.ObjectClass = { type: 'object-class' };
+        const pythonType: python.ObjectClass = {
+          type: 'object-class',
+          attributes: model.value.fields.map(f => ({
+            type: flatTypeToPython(f.type),
+            docs: f.docs,
+            optional: f.optional,
+          })),
+        };
         declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
       } else if (model.value.type === 'enum') {
-        const pythonType: python.EnumClass = { type: 'enum-class', items: model.value.items };
+        const pythonType: python.EnumClass = {
+          type: 'enum-class',
+          attributes: model.value.items.map(item => ({ key: item.label, value: item.value })),
+        };
         declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType });
       } else {
         const pythonType = flatTypeToPython(model.value);
@@ -28,8 +37,15 @@ class PythonGeneratorImpl implements PythonGenerator {
     });
 
     documentModels.forEach(model => {
-      // TODO: Implement
-      const pythonType: python.ObjectClass = { type: 'object-class' };
+      // A Firestore document can be considered an 'object' type
+      const pythonType: python.ObjectClass = {
+        type: 'object-class',
+        attributes: model.fields.map(f => ({
+          type: flatTypeToPython(f.type),
+          docs: f.docs,
+          optional: f.optional,
+        })),
+      };
       declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
     });
 

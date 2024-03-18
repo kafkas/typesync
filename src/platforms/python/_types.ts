@@ -29,15 +29,6 @@ export interface Literal {
   readonly value: string | number | boolean;
 }
 
-// TODO: Should this be a type?
-export interface EnumClass {
-  readonly type: 'enum-class';
-  readonly items: {
-    label: string;
-    value: string | number;
-  }[];
-}
-
 export interface Tuple {
   readonly type: 'tuple';
   readonly values: Type[];
@@ -46,11 +37,6 @@ export interface Tuple {
 export interface List {
   readonly type: 'list';
   readonly of: Type;
-}
-
-// TODO: Should this be a type?
-export interface ObjectClass {
-  readonly type: 'object-class';
 }
 
 export interface Union {
@@ -64,3 +50,24 @@ export interface Alias {
 }
 
 export type Type = Primitive | Literal | Tuple | List | Union | Alias;
+
+export interface EnumClass {
+  readonly type: 'enum-class';
+  readonly attributes: EnumClassAttribute[];
+}
+
+export interface EnumClassAttribute {
+  key: string;
+  value: string | number;
+}
+
+export interface ObjectClass {
+  readonly type: 'object-class';
+  readonly attributes: ObjectClassAttribute[];
+}
+
+export interface ObjectClassAttribute {
+  type: Type;
+  optional?: boolean;
+  docs?: string;
+}
