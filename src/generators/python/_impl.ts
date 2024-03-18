@@ -18,6 +18,7 @@ class PythonGeneratorImpl implements PythonGenerator {
         const pythonType: python.ObjectClass = {
           type: 'object-class',
           attributes: model.value.fields.map(f => ({
+            name: f.name,
             type: flatTypeToPython(f.type),
             docs: f.docs,
             optional: f.optional,
@@ -41,6 +42,7 @@ class PythonGeneratorImpl implements PythonGenerator {
       const pythonType: python.ObjectClass = {
         type: 'object-class',
         attributes: model.fields.map(f => ({
+          name: f.name,
           type: flatTypeToPython(f.type),
           docs: f.docs,
           optional: f.optional,
