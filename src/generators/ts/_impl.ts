@@ -1,5 +1,5 @@
-import { converters } from '../../converters';
 import { schema } from '../../schema';
+import { objectTypeToTS, typeToTS } from './_converters';
 import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types';
 
 class TSGeneratorImpl implements TSGenerator {
@@ -10,13 +10,13 @@ class TSGeneratorImpl implements TSGenerator {
     const declarations: TSDeclaration[] = [];
 
     aliasModels.forEach(model => {
-      const tsType = converters.schema.typeToTS(model.value);
+      const tsType = typeToTS(model.value);
       declarations.push({ type: 'alias', modelName: model.name, modelType: tsType });
     });
 
     documentModels.forEach(model => {
       // A Firestore document can be considered an 'object' type
-      const tsType = converters.schema.objectTypeToTS({ type: 'object', fields: model.fields });
+      const tsType = objectTypeToTS({ type: 'object', fields: model.fields });
       declarations.push({ type: 'interface', modelName: model.name, modelType: tsType });
     });
 
