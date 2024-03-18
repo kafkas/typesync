@@ -45,10 +45,10 @@ export interface List {
 
 export interface Object {
   readonly type: 'object';
-  readonly fields: ObjectField[];
+  readonly properties: ObjectProperty[];
 }
 
-export interface ObjectField {
+export interface ObjectProperty {
   readonly type: Type;
   readonly optional: boolean;
   readonly name: string;

@@ -82,16 +82,16 @@ export function expressionForListType(t: List): Expression {
 }
 
 export function expressionForObjectType(t: Object): Expression {
-  const { fields } = t;
+  const { properties } = t;
   const builder = new StringBuilder();
 
   builder.append(`{\n`);
-  fields.forEach(field => {
-    if (field.docs !== undefined) {
+  properties.forEach(prop => {
+    if (prop.docs !== undefined) {
       // TODO: Add docs
     }
-    const expression = expressionForType(field.type);
-    builder.append(`${field.name}${field.optional ? '?' : ''}: ${expression.content};\n`);
+    const expression = expressionForType(prop.type);
+    builder.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);
   });
   builder.append(`}`);
   return { content: builder.toString() };
