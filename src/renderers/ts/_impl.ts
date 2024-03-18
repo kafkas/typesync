@@ -19,7 +19,12 @@ class TSRendererImpl implements TSRenderer {
       builder.append(`${this.renderDeclaration(declaration)};\n\n`);
     });
 
-    return [{ relativePath: this.config.rootFileName, content: builder.toString() }];
+    const renderedFile: RenderedFile = {
+      relativePath: this.config.rootFileName,
+      content: builder.toString(),
+    };
+
+    return [renderedFile];
   }
 
   private renderDeclaration(declaration: TSDeclaration) {

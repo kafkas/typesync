@@ -1,6 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { PythonDeclaration, PythonGeneration } from '../../generators/python';
+import type {
+  PythonAliasDeclaration,
+  PythonDeclaration,
+  PythonEnumClassDeclaration,
+  PythonGeneration,
+  PythonPydanticClassDeclaration,
+} from '../../generators/python';
 import { python } from '../../platforms/python';
 import { assertNever } from '../../util/assert';
 import { multiply } from '../../util/multiply-str';
@@ -14,17 +20,22 @@ class PythonRendererImpl implements PythonRenderer {
   public constructor(private readonly config: PythonRendererConfig) {}
 
   public render(g: PythonGeneration): RenderedFile[] {
-    const b = new StringBuilder();
+    const builder = new StringBuilder();
 
-    b.append(`${this.generateImportStatements()}\n\n`);
-    b.append(`${this.generateStaticDeclarations()}\n`);
-    b.append(`# Model Definitions\n\n`);
+    builder.append(`${this.generateImportStatements()}\n\n`);
+    builder.append(`${this.generateStaticDeclarations()}\n`);
+    builder.append(`# Model Definitions\n\n`);
 
     g.declarations.forEach(declaration => {
-      b.append(`${this.renderDeclaration(declaration)};\n\n`);
+      builder.append(`${this.renderDeclaration(declaration)};\n\n`);
     });
 
-    return [];
+    const renderedFile: RenderedFile = {
+      relativePath: this.config.rootFileName,
+      content: builder.toString(),
+    };
+
+    return [renderedFile];
   }
 
   private generateStaticDeclarations() {
@@ -54,22 +65,34 @@ class PythonRendererImpl implements PythonRenderer {
 
   private renderDeclaration(declaration: PythonDeclaration) {
     switch (declaration.type) {
-      case 'alias': {
-        const { modelName, modelType } = declaration;
-        const expression = python.expressionForType(modelType);
-        return `${modelName} = ${expression.content};`;
-      }
-      case 'enum-class': {
-        // TODO: Implement
-        return `TODO`;
-      }
+      case 'alias':
+        return this.renderAliasDeclaration(declaration);
+      case 'enum-class':
+        return this.renderEnumClassDeclaration(declaration);
       case 'pydantic-class': {
-        // TODO: Implement
-        return `TODO`;
+        return this.renderPydanticClassDeclaration(declaration);
       }
       default:
         assertNever(declaration);
     }
+  }
+
+  private renderAliasDeclaration(declaration: PythonAliasDeclaration) {
+    const { modelName, modelType } = declaration;
+    const expression = python.expressionForType(modelType);
+    return `${modelName} = ${expression.content};`;
+  }
+
+  private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
+    const { modelName, modelType } = declaration;
+    // TODO:
+    return ``;
+  }
+
+  private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
+    const { modelName, modelType } = declaration;
+    // TODO:
+    return ``;
   }
 
   private indent(count: number) {
