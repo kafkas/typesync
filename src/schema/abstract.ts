@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 
 import { assertNever } from '../util/assert';
-import type { AliasModel, DocumentModel, FieldType } from './generic';
+import type { AliasModel, DocumentModel, ObjectFieldType } from './generic';
 
 export abstract class AbstractAliasModel<T> {
   public readonly type = 'alias';
@@ -17,7 +17,7 @@ export abstract class AbstractAliasModel<T> {
   }
 }
 
-export abstract class AbstractDocumentModel<F extends FieldType<unknown>> {
+export abstract class AbstractDocumentModel<F extends ObjectFieldType<unknown>> {
   public readonly type = 'document';
 
   public get fields() {
@@ -37,7 +37,7 @@ export abstract class AbstractDocumentModel<F extends FieldType<unknown>> {
 
 export abstract class AbstractSchema<
   A extends AliasModel<unknown>,
-  D extends DocumentModel<unknown, FieldType<unknown>>,
+  D extends DocumentModel<unknown, ObjectFieldType<unknown>>,
 > {
   public get aliasModels() {
     return Array.from(this.aliasModelsById.values());

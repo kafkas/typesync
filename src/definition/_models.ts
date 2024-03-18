@@ -3,7 +3,7 @@ import type { types } from './types';
 export interface DocumentModel {
   type: 'document';
   docs?: string;
-  fields: Record<string, types.Field>;
+  fields: Record<string, types.ObjectField>;
 }
 
 export interface AliasModel {

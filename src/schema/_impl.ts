@@ -11,7 +11,7 @@ import type { types } from './types';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 
-export type DocumentModel = DocumentModelGeneric<types.Type, types.Field>;
+export type DocumentModel = DocumentModelGeneric<types.Type, types.ObjectField>;
 
 export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
 
@@ -28,7 +28,7 @@ class AliasModelImpl extends AbstractAliasModel<types.Type> implements AliasMode
   }
 }
 
-class DocumentModelImpl extends AbstractDocumentModel<types.Field> implements DocumentModel {
+class DocumentModelImpl extends AbstractDocumentModel<types.ObjectField> implements DocumentModel {
   public clone() {
     return new DocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
   }
@@ -81,7 +81,7 @@ export function createAliasModel(params: CreateAliasModelParams): schema.AliasMo
 interface CreateDocumentModelParams {
   name: string;
   docs: string | undefined;
-  fieldsById: Record<string, schema.types.Field>;
+  fieldsById: Record<string, schema.types.ObjectField>;
 }
 
 export function createDocumentModel(params: CreateDocumentModelParams): schema.DocumentModel {

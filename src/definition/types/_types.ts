@@ -25,10 +25,10 @@ export interface List {
 
 export interface Object {
   type: 'object';
-  fields: Record<string, Field>;
+  fields: Record<string, ObjectField>;
 }
 
-export interface Field {
+export interface ObjectField {
   type: Type;
   optional?: boolean;
   docs?: string;

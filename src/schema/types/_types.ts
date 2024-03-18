@@ -1,4 +1,4 @@
-import type { FieldType, ListType, ObjectType, TupleType, UnionType } from '../generic';
+import type { ListType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic';
 
 export interface Nil {
   type: 'nil';
@@ -41,7 +41,7 @@ export type List = ListType<Type>;
 
 export type Object = ObjectType<Type>;
 
-export type Field = FieldType<Type>;
+export type ObjectField = ObjectFieldType<Type>;
 
 export type Union = UnionType<Type>;
 

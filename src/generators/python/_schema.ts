@@ -3,8 +3,8 @@ import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../..
 import type {
   AliasModel,
   DocumentModel,
-  FieldType,
   ListType,
+  ObjectFieldType,
   ObjectType,
   Schema,
   TupleType,
@@ -22,10 +22,10 @@ export type FlatType =
 export type FlatTupleType = TupleType<FlatType>;
 export type FlatListType = ListType<FlatType>;
 export type FlatObjectType = ObjectType<FlatType>;
-export type FlatFieldType = FieldType<FlatType>;
+export type FlatObjectFieldType = ObjectFieldType<FlatType>;
 export type FlatUnionType = UnionType<FlatType>;
 export type FlatAliasModel = AliasModel<FlatType | FlatObjectType | schema.types.Enum>;
-export type FlatDocumentModel = DocumentModel<FlatType, FlatFieldType>;
+export type FlatDocumentModel = DocumentModel<FlatType, FlatObjectFieldType>;
 export type FlatModel = FlatAliasModel | FlatDocumentModel;
 export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
 
@@ -45,7 +45,7 @@ class FlatAliasModelImpl
   }
 }
 
-class FlatDocumentModelImpl extends AbstractDocumentModel<FlatFieldType> implements FlatDocumentModel {
+class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectFieldType> implements FlatDocumentModel {
   public clone() {
     return new FlatDocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
   }
@@ -64,7 +64,7 @@ export function createFlatAliasModel(params: CreateFlatAliasModelParams): FlatAl
 interface CreateFlatDocumentModelParams {
   name: string;
   docs: string | undefined;
-  fieldsById: Record<string, FlatFieldType>;
+  fieldsById: Record<string, FlatObjectFieldType>;
 }
 export function createFlatDocumentModel(params: CreateFlatDocumentModelParams): FlatDocumentModel {
   return new FlatDocumentModelImpl(params.name, params.docs, params.fieldsById);

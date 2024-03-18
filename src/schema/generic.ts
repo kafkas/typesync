@@ -10,10 +10,10 @@ export interface ListType<T> {
 
 export interface ObjectType<T> {
   type: 'object';
-  fields: FieldType<T>[];
+  fields: ObjectFieldType<T>[];
 }
 
-export interface FieldType<T> {
+export interface ObjectFieldType<T> {
   type: T;
   optional: boolean;
   name: string;
@@ -33,7 +33,7 @@ export interface AliasModel<T> {
   clone(): AliasModel<T>;
 }
 
-export interface DocumentModel<T, F extends FieldType<T>> {
+export interface DocumentModel<T, F extends ObjectFieldType<T>> {
   type: 'document';
   name: string;
   docs: string | undefined;
@@ -41,7 +41,7 @@ export interface DocumentModel<T, F extends FieldType<T>> {
   clone(): DocumentModel<T, F>;
 }
 
-export type Model<T, F extends FieldType<T>> = AliasModel<T> | DocumentModel<T, F>;
+export type Model<T, F extends ObjectFieldType<T>> = AliasModel<T> | DocumentModel<T, F>;
 
 export interface Schema<A, D> {
   aliasModels: A[];
