@@ -94,7 +94,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedModel, extractedAliasModels };
       }
       case 'object': {
-        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value);
+        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -117,7 +117,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   }
 
   function flattenDocumentModel(documentModel: schema.DocumentModel): FlattenDocumentModelResult {
-    const res = flattenObjectType({ type: 'object', fields: documentModel.fields });
+    const res = flattenObjectType({ type: 'object', fields: documentModel.fields }, documentModel.name);
     const flattenedModel = createFlatDocumentModel({
       name: documentModel.name,
       docs: documentModel.docs,
@@ -147,9 +147,9 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
-  function flattenObjectType(objectType: schema.types.Object): FlattenObjectTypeResult {
+  function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
     const resultsForFields = objectType.fields.map(field => {
-      const flattenResult = flattenType(field.type, capitalize(field.name));
+      const flattenResult = flattenType(field.type, `${aliasName}${capitalize(field.name)}`);
       return { field, flattenResult };
     });
     const flattenedType: FlatObjectType = {
@@ -200,7 +200,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'list':
         return flattenListType(type, aliasName);
       case 'object': {
-        const result = flattenObjectType(type);
+        const result = flattenObjectType(type, aliasName);
         const name = aliasName;
         // TODO: Implement
         const docs = undefined;

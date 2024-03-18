@@ -37,6 +37,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
         "attributes": [
           {
             "docs": undefined,
+            "name": "street",
             "optional": false,
             "type": {
               "type": "str",
@@ -44,6 +45,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "city",
             "optional": false,
             "type": {
               "type": "str",
@@ -51,6 +53,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "zip_code",
             "optional": false,
             "type": {
               "type": "str",
@@ -67,6 +70,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
         "attributes": [
           {
             "docs": undefined,
+            "name": "type",
             "optional": false,
             "type": {
               "type": "literal",
@@ -75,6 +79,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "name",
             "optional": false,
             "type": {
               "type": "str",
@@ -82,6 +87,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "lives_left",
             "optional": false,
             "type": {
               "type": "int",
@@ -98,6 +104,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
         "attributes": [
           {
             "docs": undefined,
+            "name": "type",
             "optional": false,
             "type": {
               "type": "literal",
@@ -106,6 +113,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "name",
             "optional": false,
             "type": {
               "type": "str",
@@ -113,6 +121,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "breed",
             "optional": false,
             "type": {
               "type": "str",
@@ -146,6 +155,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
         "attributes": [
           {
             "docs": undefined,
+            "name": "username",
             "optional": false,
             "type": {
               "name": "Username",
@@ -154,6 +164,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "age",
             "optional": false,
             "type": {
               "type": "int",
@@ -161,6 +172,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "is_active",
             "optional": false,
             "type": {
               "type": "bool",
@@ -168,6 +180,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "role",
             "optional": false,
             "type": {
               "name": "UserRole",
@@ -176,6 +189,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "created_at",
             "optional": true,
             "type": {
               "type": "datetime",
@@ -183,6 +197,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "location",
             "optional": false,
             "type": {
               "type": "tuple",
@@ -198,6 +213,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "address",
             "optional": false,
             "type": {
               "name": "Address",
@@ -206,6 +222,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "favorite_numbers",
             "optional": false,
             "type": {
               "of": {
@@ -216,6 +233,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "pets",
             "optional": false,
             "type": {
               "of": {
@@ -227,6 +245,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "bio",
             "optional": false,
             "type": {
               "members": [
@@ -242,6 +261,7 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
           },
           {
             "docs": undefined,
+            "name": "area_code",
             "optional": false,
             "type": {
               "type": "literal",
