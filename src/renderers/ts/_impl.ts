@@ -10,18 +10,18 @@ class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}
 
   public render(g: TSGeneration): RenderedFile[] {
-    const builder = new StringBuilder();
+    const b = new StringBuilder();
 
     const tsFirestoreImport = this.getImportFirestoreStatement();
-    builder.append(`${tsFirestoreImport}\n\n`);
+    b.append(`${tsFirestoreImport}\n\n`);
 
     g.declarations.forEach(declaration => {
-      builder.append(`${this.renderDeclaration(declaration)};\n\n`);
+      b.append(`${this.renderDeclaration(declaration)};\n\n`);
     });
 
     const renderedFile: RenderedFile = {
       relativePath: this.config.rootFileName,
-      content: builder.toString(),
+      content: b.toString(),
     };
 
     return [renderedFile];

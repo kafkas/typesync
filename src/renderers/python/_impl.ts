@@ -20,19 +20,19 @@ class PythonRendererImpl implements PythonRenderer {
   public constructor(private readonly config: PythonRendererConfig) {}
 
   public render(g: PythonGeneration): RenderedFile[] {
-    const builder = new StringBuilder();
+    const b = new StringBuilder();
 
-    builder.append(`${this.generateImportStatements()}\n\n`);
-    builder.append(`${this.generateStaticDeclarations()}\n`);
-    builder.append(`# Model Definitions\n\n`);
+    b.append(`${this.generateImportStatements()}\n\n`);
+    b.append(`${this.generateStaticDeclarations()}\n`);
+    b.append(`# Model Definitions\n\n`);
 
     g.declarations.forEach(declaration => {
-      builder.append(`${this.renderDeclaration(declaration)};\n\n`);
+      b.append(`${this.renderDeclaration(declaration)}\n\n`);
     });
 
     const renderedFile: RenderedFile = {
       relativePath: this.config.rootFileName,
-      content: builder.toString(),
+      content: b.toString(),
     };
 
     return [renderedFile];
@@ -91,8 +91,14 @@ class PythonRendererImpl implements PythonRenderer {
 
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
     const { modelName, modelType } = declaration;
-    // TODO:
-    return ``;
+    const b = new StringBuilder();
+    b.append(`class ${modelName}(pydantic.BaseModel):\n`);
+    modelType.attributes.forEach(attribute => {
+      const expression = python.expressionForType(attribute.type);
+      b.append(`${this.indent(1)}${attribute.name}: ${expression.content}\n`);
+    });
+    b.append('\n');
+    return b.toString();
   }
 
   private indent(count: number) {
