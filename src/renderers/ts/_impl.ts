@@ -31,11 +31,13 @@ class TSRendererImpl implements TSRenderer {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;
-        return `export type ${modelName} = ${ts.expressionForType(modelType)};`;
+        const expression = ts.expressionForType(modelType);
+        return `export type ${modelName} = ${expression.content};`;
       }
       case 'interface': {
         const { modelName, modelType } = declaration;
-        return `export interface ${modelName} ${ts.expressionForType(modelType)}`;
+        const expression = ts.expressionForType(modelType);
+        return `export interface ${modelName} ${expression.content}`;
       }
       default:
         assertNever(declaration);

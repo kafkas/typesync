@@ -98,7 +98,7 @@ export function expressionForObjectType(t: Object): Expression {
 }
 
 export function expressionForUnionType(t: Union): Expression {
-  const separatedExpressions = t.members.map(expressionForType).join(' | ');
+  const separatedExpressions = t.members.map(memberType => expressionForType(memberType).content).join(' | ');
   return { content: `${separatedExpressions}` };
 }
 
