@@ -23,10 +23,6 @@ export interface TSGeneration {
 
 export interface TSGeneratorConfig {
   platform: TSGenerationPlatform;
-  /**
-   * The number of spaces for each indentation.
-   */
-  indentation: number;
 }
 
 export interface TSGenerator {

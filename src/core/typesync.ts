@@ -38,12 +38,12 @@ class TypeSyncImpl implements TypeSync {
   }
 
   private createGenerator(opts: TypeSyncGenerateOptions): Generator {
-    const { platform, indentation } = opts;
+    const { platform } = opts;
     switch (platform) {
       case 'ts:firebase-admin:11':
-        return createTSGenerator({ platform, indentation });
+        return createTSGenerator({ platform });
       case 'py:firebase-admin:6':
-        return createPythonGenerator({ platform, indentation });
+        return createPythonGenerator({ platform });
       default:
         assertNever(platform);
     }
