@@ -1,6 +1,6 @@
-import { definition } from '../../definition';
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
+import { definition } from '../definition';
+import { schema } from '../schema';
+import { assertNever } from '../util/assert';
 
 export function primitiveTypeToSchema(vt: definition.types.Primitive): schema.types.Primitive {
   switch (vt) {

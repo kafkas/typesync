@@ -1,5 +1,4 @@
 import type { schema } from '.';
-import { converters } from '../converters';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract';
@@ -43,7 +42,7 @@ export function createSchema(def?: definition.Definition): schema.Schema {
     Object.entries(def).forEach(([modelName, defModel]) => {
       switch (defModel.type) {
         case 'alias': {
-          const schemaType = converters.definition.typeToSchema(defModel.value);
+          const schemaType = definition.convert.typeToSchema(defModel.value);
           const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
           aliasModelsById.set(modelName, aliasModel);
           break;
@@ -51,7 +50,7 @@ export function createSchema(def?: definition.Definition): schema.Schema {
         case 'document': {
           const fieldsById = Object.fromEntries(
             Object.entries(defModel.fields).map(([fieldName, defField]) => {
-              const schemaField = converters.definition.fieldToSchema(fieldName, defField);
+              const schemaField = definition.convert.fieldToSchema(fieldName, defField);
               return [fieldName, schemaField];
             })
           );
