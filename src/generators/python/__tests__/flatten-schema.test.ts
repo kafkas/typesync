@@ -77,9 +77,9 @@ describe('flatten-schema', () => {
     const expectedFlattenedSchema = (() => {
       const s = schema.createSchema();
       const aliasModel = schema.createAliasModel({
-        // TODO: Implement these
-        name: 'Placeholder',
+        name: 'Credentials',
         docs: undefined,
+        // TODO: Implement
         // docs: credentialsDocs,
         value: credentialsObjectType,
       });
@@ -98,8 +98,7 @@ describe('flatten-schema', () => {
             name: 'credentials',
             type: {
               type: 'alias',
-              // TODO: Implement this
-              name: 'Placeholder',
+              name: 'Credentials',
             },
             docs: credentialsDocs,
             optional: false,
