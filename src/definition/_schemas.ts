@@ -65,7 +65,7 @@ export const type = (aliasNames: string[]): z.ZodType<types.Type> =>
     .or(unionType(aliasNames))
     .or(aliasType(aliasNames));
 
-export const field = (aliasNames: string[]): z.ZodType<types.Field> =>
+export const field = (aliasNames: string[]): z.ZodType<types.ObjectField> =>
   z
     .object({
       type: type(aliasNames),

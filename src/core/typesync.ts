@@ -53,9 +53,9 @@ class TypeSyncImpl implements TypeSync {
     const { platform, indentation } = opts;
     switch (platform) {
       case 'ts:firebase-admin:11':
-        return renderers.ts.create({ rootFileName: 'index.ts', platform });
+        return renderers.createTSRenderer({ rootFileName: 'index.ts', platform });
       case 'py:firebase-admin:6':
-        return renderers.python.create({ rootFileName: 'models.py', platform, indentation });
+        return renderers.createPythonRenderer({ rootFileName: 'models.py', platform, indentation });
       default:
         assertNever(platform);
     }

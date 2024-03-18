@@ -6,56 +6,250 @@ exports[`PythonGeneratorImpl produces the correct generation for a flat schema 1
     {
       "modelName": "Username",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "type": "str",
       },
       "type": "alias",
     },
     {
       "modelName": "UserRole",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "attributes": [
+          {
+            "key": "ADMIN",
+            "value": "admin",
+          },
+          {
+            "key": "USER",
+            "value": "user",
+          },
+          {
+            "key": "GUEST",
+            "value": "guest",
+          },
+        ],
+        "type": "enum-class",
       },
-      "type": "alias",
+      "type": "enum-class",
     },
     {
       "modelName": "Address",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "attributes": [
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+        ],
+        "type": "object-class",
       },
-      "type": "alias",
+      "type": "pydantic-class",
     },
     {
       "modelName": "Cat",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "attributes": [
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": "cat",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "int",
+            },
+          },
+        ],
+        "type": "object-class",
       },
-      "type": "alias",
+      "type": "pydantic-class",
     },
     {
       "modelName": "Dog",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "attributes": [
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": "dog",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "str",
+            },
+          },
+        ],
+        "type": "object-class",
       },
-      "type": "alias",
+      "type": "pydantic-class",
     },
     {
       "modelName": "Pet",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "members": [
+          {
+            "name": "Cat",
+            "type": "alias",
+          },
+          {
+            "name": "Dog",
+            "type": "alias",
+          },
+        ],
+        "type": "union",
       },
       "type": "alias",
     },
     {
       "modelName": "UserProfile",
       "modelType": {
-        "name": "Placeholder",
-        "type": "alias",
+        "attributes": [
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "name": "Username",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "int",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "bool",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "name": "UserRole",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": true,
+            "type": {
+              "type": "datetime",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "tuple",
+              "values": [
+                {
+                  "type": "int",
+                },
+                {
+                  "type": "int",
+                },
+              ],
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "name": "Address",
+              "type": "alias",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "of": {
+                "type": "int",
+              },
+              "type": "list",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "of": {
+                "name": "Pet",
+                "type": "alias",
+              },
+              "type": "list",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "members": [
+                {
+                  "type": "none",
+                },
+                {
+                  "type": "str",
+                },
+              ],
+              "type": "union",
+            },
+          },
+          {
+            "docs": undefined,
+            "optional": false,
+            "type": {
+              "type": "literal",
+              "value": 34,
+            },
+          },
+        ],
+        "type": "object-class",
       },
       "type": "pydantic-class",
     },

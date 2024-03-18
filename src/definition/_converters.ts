@@ -1,6 +1,6 @@
-import { definition } from '../../definition';
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
+import { definition } from '../definition';
+import { schema } from '../schema';
+import { assertNever } from '../util/assert';
 
 export function primitiveTypeToSchema(vt: definition.types.Primitive): schema.types.Primitive {
   switch (vt) {
@@ -54,7 +54,7 @@ export function objectTypeToSchema(vt: definition.types.Object): schema.types.Ob
   };
 }
 
-export function fieldToSchema(fieldName: string, field: definition.types.Field): schema.types.Field {
+export function fieldToSchema(fieldName: string, field: definition.types.ObjectField): schema.types.ObjectField {
   return {
     type: typeToSchema(field.type),
     optional: !!field.optional,

@@ -1,9 +1,10 @@
 import { StringBuilder } from '@proficient/ds';
 
-import type { TSDeclaration, TSGeneration } from '../generators/ts';
-import { ts } from '../platforms/ts';
-import { assertNever } from '../util/assert';
-import type { RenderedFile, TSRenderer, TSRendererConfig } from './_types';
+import type { TSDeclaration, TSGeneration } from '../../generators/ts';
+import { ts } from '../../platforms/ts';
+import { assertNever } from '../../util/assert';
+import type { RenderedFile } from '../_types';
+import type { TSRenderer, TSRendererConfig } from './_types';
 
 class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}
@@ -46,6 +47,6 @@ class TSRendererImpl implements TSRenderer {
   }
 }
 
-export function create(config: TSRendererConfig) {
+export function createTSRenderer(config: TSRendererConfig) {
   return new TSRendererImpl(config);
 }

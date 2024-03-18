@@ -50,3 +50,24 @@ export interface Alias {
 }
 
 export type Type = Primitive | Literal | Tuple | List | Union | Alias;
+
+export interface EnumClass {
+  readonly type: 'enum-class';
+  readonly attributes: EnumClassAttribute[];
+}
+
+export interface EnumClassAttribute {
+  key: string;
+  value: string | number;
+}
+
+export interface ObjectClass {
+  readonly type: 'object-class';
+  readonly attributes: ObjectClassAttribute[];
+}
+
+export interface ObjectClassAttribute {
+  type: Type;
+  optional?: boolean;
+  docs?: string;
+}

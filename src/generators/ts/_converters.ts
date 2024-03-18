@@ -39,10 +39,10 @@ export function listTypeToTS(t: schema.types.List): ts.List {
 }
 
 export function objectTypeToTS(t: schema.types.Object): ts.Object {
-  return { type: 'object', fields: t.fields.map(fieldTypeToTS) };
+  return { type: 'object', properties: t.fields.map(objectPropertyTypeToTS) };
 }
 
-export function fieldTypeToTS(t: schema.types.Field): ts.Field {
+export function objectPropertyTypeToTS(t: schema.types.ObjectField): ts.ObjectProperty {
   return { type: typeToTS(t.type), optional: t.optional, name: t.name, docs: t.docs };
 }
 

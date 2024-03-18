@@ -1,6 +1,7 @@
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
-import { flattenSchema } from '../../util/flatten-schema';
+import { flatTypeToPython } from './_converters';
+import { flattenSchema } from './_flatten-schema';
 import type { PythonDeclaration, PythonGeneration, PythonGenerator, PythonGeneratorConfig } from './_types';
 
 class PythonGeneratorImpl implements PythonGenerator {
@@ -13,14 +14,38 @@ class PythonGeneratorImpl implements PythonGenerator {
     const declarations: PythonDeclaration[] = [];
 
     aliasModels.forEach(model => {
-      // TODO: Implement
-      const pythonType: python.Alias = { type: 'alias', name: 'Placeholder' };
-      declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
+      if (model.value.type === 'object') {
+        const pythonType: python.ObjectClass = {
+          type: 'object-class',
+          attributes: model.value.fields.map(f => ({
+            type: flatTypeToPython(f.type),
+            docs: f.docs,
+            optional: f.optional,
+          })),
+        };
+        declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
+      } else if (model.value.type === 'enum') {
+        const pythonType: python.EnumClass = {
+          type: 'enum-class',
+          attributes: model.value.items.map(item => ({ key: item.label, value: item.value })),
+        };
+        declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType });
+      } else {
+        const pythonType = flatTypeToPython(model.value);
+        declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
+      }
     });
 
     documentModels.forEach(model => {
-      // TODO: Implement
-      const pythonType: python.Alias = { type: 'alias', name: 'Placeholder' };
+      // A Firestore document can be considered an 'object' type
+      const pythonType: python.ObjectClass = {
+        type: 'object-class',
+        attributes: model.fields.map(f => ({
+          type: flatTypeToPython(f.type),
+          docs: f.docs,
+          optional: f.optional,
+        })),
+      };
       declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
     });
 

@@ -14,13 +14,13 @@ export function validateEmptyDir(pathToDir: string) {
     const stats = statSync(pathToDir);
 
     if (!stats.isDirectory()) {
-      throw new Error(`The path ${pathToDir} is non-empty`);
+      throw new Error(`The path ${pathToDir} is non-empty.`);
     }
 
     const isEmpty = readdirSync(pathToDir).length === 0;
 
     if (!isEmpty) {
-      throw new Error(`The directory ${pathToDir} is non-empty`);
+      throw new Error(`The directory ${pathToDir} is non-empty.`);
     }
   } catch {
     try {
