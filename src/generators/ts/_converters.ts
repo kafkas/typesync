@@ -38,8 +38,8 @@ export function listTypeToTS(t: schema.types.List): ts.List {
   return { type: 'list', of: typeToTS(t.of) };
 }
 
-export function mapTypeToTS(t: schema.types.Map): ts.List {
-  return { type: 'list', of: typeToTS(t.of) };
+export function mapTypeToTS(t: schema.types.Map): ts.Record {
+  return { type: 'record', of: typeToTS(t.of) };
 }
 
 export function objectTypeToTS(t: schema.types.Object): ts.Object {
