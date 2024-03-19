@@ -10,27 +10,34 @@ class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}
 
   public render(g: TSGeneration): RenderedFile[] {
-    const builder = new StringBuilder();
+    const b = new StringBuilder();
 
     const tsFirestoreImport = this.getImportFirestoreStatement();
-    builder.append(`${tsFirestoreImport}\n\n`);
+    b.append(`${tsFirestoreImport}\n\n`);
 
     g.declarations.forEach(declaration => {
-      builder.append(`${this.renderDeclaration(declaration)};\n\n`);
+      b.append(`${this.renderDeclaration(declaration)};\n\n`);
     });
 
-    return [{ relativePath: this.config.rootFileName, content: builder.toString() }];
+    const renderedFile: RenderedFile = {
+      relativePath: this.config.rootFileName,
+      content: b.toString(),
+    };
+
+    return [renderedFile];
   }
 
   private renderDeclaration(declaration: TSDeclaration) {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType } = declaration;
-        return `export type ${modelName} = ${ts.expressionForType(modelType)};`;
+        const expression = ts.expressionForType(modelType);
+        return `export type ${modelName} = ${expression.content};`;
       }
       case 'interface': {
         const { modelName, modelType } = declaration;
-        return `export interface ${modelName} ${ts.expressionForType(modelType)}`;
+        const expression = ts.expressionForType(modelType);
+        return `export interface ${modelName} ${expression.content}`;
       }
       default:
         assertNever(declaration);

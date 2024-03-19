@@ -4,7 +4,6 @@ import { createTSGenerator } from '../_impl';
 describe('TSGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {
     const generator = createTSGenerator({
-      indentation: 4,
       platform: 'ts:firebase-admin:11',
     });
     const schema = loadSchemaForTestDefinition('flat');

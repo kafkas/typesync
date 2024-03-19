@@ -29,10 +29,6 @@ export interface PythonGeneration {
 
 export interface PythonGeneratorConfig {
   platform: PythonGenerationPlatform;
-  /**
-   * The number of spaces for each indentation.
-   */
-  indentation: number;
 }
 
 export interface PythonGenerator {

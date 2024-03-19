@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash';
+
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
 import {
@@ -74,7 +76,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedModel, extractedAliasModels: [] };
       }
       case 'tuple': {
-        const { flattenedType, extractedAliasModels } = flattenTupleType(aliasModel.value);
+        const { flattenedType, extractedAliasModels } = flattenTupleType(aliasModel.value, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -83,7 +85,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedModel, extractedAliasModels };
       }
       case 'list': {
-        const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.value);
+        const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.value, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -92,7 +94,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedModel, extractedAliasModels };
       }
       case 'object': {
-        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value);
+        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -101,7 +103,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedModel, extractedAliasModels };
       }
       case 'union': {
-        const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.value);
+        const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.value, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -115,7 +117,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   }
 
   function flattenDocumentModel(documentModel: schema.DocumentModel): FlattenDocumentModelResult {
-    const res = flattenObjectType({ type: 'object', fields: documentModel.fields });
+    const res = flattenObjectType({ type: 'object', fields: documentModel.fields }, documentModel.name);
     const flattenedModel = createFlatDocumentModel({
       name: documentModel.name,
       docs: documentModel.docs,
@@ -124,8 +126,10 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedModel, extractedAliasModels: res.extractedAliasModels };
   }
 
-  function flattenTupleType(tupleType: schema.types.Tuple): FlattenTupleTypeResult {
-    const resultsForValues = tupleType.values.map(flattenType);
+  function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
+    const resultsForValues = tupleType.values.map((valueType, valueTypeIdx) =>
+      flattenType(valueType, `${aliasName}_${valueTypeIdx}`)
+    );
     const flattenedType: FlatTupleType = {
       type: 'tuple',
       values: resultsForValues.map(res => res.flattenedType),
@@ -134,8 +138,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenListType(listType: schema.types.List): FlattenListTypeResult {
-    const resultForOf = flattenType(listType.of);
+  function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
+    const resultForOf = flattenType(listType.of, aliasName);
     const flattenedType: FlatListType = {
       type: 'list',
       of: resultForOf.flattenedType,
@@ -143,21 +147,28 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
-  function flattenObjectType(objectType: schema.types.Object): FlattenObjectTypeResult {
-    const resultForFields = objectType.fields.map(originalField => ({
-      ...flattenType(originalField.type),
-      originalField,
-    }));
+  function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
+    const resultsForFields = objectType.fields.map(field => {
+      const flattenResult = flattenType(field.type, `${aliasName}${capitalize(field.name)}`);
+      return { field, flattenResult };
+    });
     const flattenedType: FlatObjectType = {
       type: 'object',
-      fields: resultForFields.map(r => ({ ...r.originalField, type: r.flattenedType })),
+      fields: resultsForFields.map(r => ({
+        docs: r.field.docs,
+        name: r.field.name,
+        optional: r.field.optional,
+        type: r.flattenResult.flattenedType,
+      })),
     };
-    const extractedAliasModels = resultForFields.map(r => r.extractedAliasModels).flat(1);
+    const extractedAliasModels = resultsForFields.map(r => r.flattenResult.extractedAliasModels).flat(1);
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenUnionType(unionType: schema.types.Union): FlattenUnionTypeResult {
-    const resultsForMembers = unionType.members.map(flattenType);
+  function flattenUnionType(unionType: schema.types.Union, aliasName: string): FlattenUnionTypeResult {
+    const resultsForMembers = unionType.members.map((memberType, memberIdx) =>
+      flattenType(memberType, `${aliasName}_${memberIdx}`)
+    );
     const flattenedType: FlatUnionType = {
       type: 'union',
       members: resultsForMembers.map(res => res.flattenedType),
@@ -166,7 +177,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenType(type: schema.types.Type): FlattenTypeResult {
+  function flattenType(type: schema.types.Type, aliasName: string): FlattenTypeResult {
     switch (type.type) {
       case 'nil':
       case 'string':
@@ -177,28 +188,28 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'alias':
         return { flattenedType: type, extractedAliasModels: [] };
       case 'enum': {
+        const name = aliasName;
         // TODO: Implement
-        const name = 'Placeholder';
         const docs = undefined;
         const aliasModel = createFlatAliasModel({ name, docs, value: type });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [aliasModel] };
       }
       case 'tuple':
-        return flattenTupleType(type);
+        return flattenTupleType(type, aliasName);
       case 'list':
-        return flattenListType(type);
+        return flattenListType(type, aliasName);
       case 'object': {
+        const result = flattenObjectType(type, aliasName);
+        const name = aliasName;
         // TODO: Implement
-        const result = flattenObjectType(type);
-        const name = 'Placeholder';
         const docs = undefined;
         const aliasModel = createFlatAliasModel({ name, docs, value: result.flattenedType });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
       case 'union':
-        return flattenUnionType(type);
+        return flattenUnionType(type, aliasName);
       default:
         assertNever(type);
     }

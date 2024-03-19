@@ -18,7 +18,7 @@ export function expressionForStrType(_t: Str): Expression {
 }
 
 export function expressionForBoolType(_t: Bool): Expression {
-  return { content: 'boolean' };
+  return { content: 'bool' };
 }
 
 export function expressionForIntType(_t: Int): Expression {

@@ -2,6 +2,7 @@ import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
 import { schema } from '../../../schema';
 import { deepFreeze } from '../../../util/deep-freeze';
 import { flattenSchema } from '../_flatten-schema';
+import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFlatSchema } from '../_schema';
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {
@@ -30,7 +31,7 @@ describe('flatten-schema', () => {
 
   it(`flattens the schema by creating new aliases`, () => {
     const credentialsDocs = 'An object that represents user credentials';
-    const credentialsObjectType: schema.types.Object = {
+    const credentialsObjectType: FlatObjectType = {
       type: 'object',
       fields: [
         {
@@ -75,16 +76,16 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = schema.createSchema();
-      const aliasModel = schema.createAliasModel({
-        // TODO: Implement these
-        name: 'Placeholder',
+      const s = createFlatSchema();
+      const aliasModel = createFlatAliasModel({
+        name: 'UserCredentials',
         docs: undefined,
+        // TODO: Implement
         // docs: credentialsDocs,
         value: credentialsObjectType,
       });
 
-      const userModel = schema.createDocumentModel({
+      const userModel = createFlatDocumentModel({
         name: 'User',
         docs: undefined,
         fieldsById: {
@@ -98,8 +99,7 @@ describe('flatten-schema', () => {
             name: 'credentials',
             type: {
               type: 'alias',
-              // TODO: Implement this
-              name: 'Placeholder',
+              name: 'UserCredentials',
             },
             docs: credentialsDocs,
             optional: false,
