@@ -39,6 +39,11 @@ export interface List {
   readonly of: Type;
 }
 
+export interface Dict {
+  readonly type: 'dict';
+  readonly of: Type;
+}
+
 export interface Union {
   readonly type: 'union';
   readonly members: Type[];
@@ -49,7 +54,7 @@ export interface Alias {
   readonly name: string;
 }
 
-export type Type = Primitive | Literal | Tuple | List | Union | Alias;
+export type Type = Primitive | Literal | Tuple | List | Dict | Union | Alias;
 
 export interface EnumClass {
   readonly type: 'enum-class';

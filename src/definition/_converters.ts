@@ -47,6 +47,13 @@ export function listTypeToSchema(vt: definition.types.List): schema.types.List {
   };
 }
 
+export function mapTypeToSchema(vt: definition.types.Map): schema.types.Map {
+  return {
+    type: 'map',
+    of: typeToSchema(vt.of),
+  };
+}
+
 export function objectTypeToSchema(vt: definition.types.Object): schema.types.Object {
   return {
     type: 'object',
@@ -88,6 +95,8 @@ export function typeToSchema(vt: definition.types.Type): schema.types.Type {
       return tupleTypeToSchema(vt);
     case 'list':
       return listTypeToSchema(vt);
+    case 'map':
+      return mapTypeToSchema(vt);
     case 'object':
       return objectTypeToSchema(vt);
     default:

@@ -23,6 +23,11 @@ export interface List {
   of: Type;
 }
 
+export interface Map {
+  type: 'map';
+  of: Type;
+}
+
 export interface Object {
   type: 'object';
   fields: Record<string, ObjectField>;
@@ -38,4 +43,4 @@ export type Union = Type[];
 
 export type Alias = string;
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;
+export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | Union | Alias;

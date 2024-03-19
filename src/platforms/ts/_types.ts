@@ -43,6 +43,11 @@ export interface List {
   readonly of: Type;
 }
 
+export interface Record {
+  readonly type: 'record';
+  readonly of: Type;
+}
+
 export interface Object {
   readonly type: 'object';
   readonly properties: ObjectProperty[];
