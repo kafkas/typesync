@@ -10,6 +10,7 @@ import type {
   Null,
   Number,
   Object,
+  Record,
   String,
   Timestamp,
   Tuple,
@@ -81,6 +82,11 @@ export function expressionForListType(t: List): Expression {
   return { content: `${expression.content}[]` };
 }
 
+export function expressionForRecordType(t: Record): Expression {
+  const expression = expressionForType(t.of);
+  return { content: `Record<string, ${expression.content}>` };
+}
+
 export function expressionForObjectType(t: Object): Expression {
   const { properties } = t;
   const builder = new StringBuilder();
@@ -126,6 +132,8 @@ export function expressionForType(t: Type): Expression {
       return expressionForTupleType(t);
     case 'list':
       return expressionForListType(t);
+    case 'record':
+      return expressionForRecordType(t);
     case 'object':
       return expressionForObjectType(t);
     case 'union':

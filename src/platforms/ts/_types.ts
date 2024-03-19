@@ -70,4 +70,4 @@ export interface Alias {
   readonly name: string;
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;
+export type Type = Primitive | Literal | Enum | Tuple | List | Record | Object | Union | Alias;
