@@ -8,6 +8,11 @@ export interface ListType<T> {
   of: T;
 }
 
+export interface MapType<T> {
+  type: 'map';
+  of: T;
+}
+
 export interface ObjectType<T> {
   type: 'object';
   fields: ObjectFieldType<T>[];

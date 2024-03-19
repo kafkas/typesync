@@ -245,6 +245,18 @@ exports[`TSGeneratorImpl produces the correct generation for a flat schema 1`] =
           },
           {
             "docs": undefined,
+            "name": "petsById",
+            "optional": false,
+            "type": {
+              "of": {
+                "name": "Pet",
+                "type": "alias",
+              },
+              "type": "record",
+            },
+          },
+          {
+            "docs": undefined,
             "name": "bio",
             "optional": false,
             "type": {

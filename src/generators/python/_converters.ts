@@ -1,7 +1,7 @@
 import { python } from '../../platforms/python';
 import { schema } from '../../schema';
 import { assertNever } from '../../util/assert';
-import { FlatListType, FlatTupleType, FlatType, FlatUnionType } from './_schema';
+import { FlatListType, FlatMapType, FlatTupleType, FlatType, FlatUnionType } from './_schema';
 
 export function nilTypeToPython(_t: schema.types.Nil): python.None {
   return { type: 'none' };
@@ -35,6 +35,10 @@ export function flatListTypeToPython(t: FlatListType): python.List {
   return { type: 'list', of: flatTypeToPython(t.of) };
 }
 
+export function flatMapTypeToPython(t: FlatMapType): python.Dict {
+  return { type: 'dict', of: flatTypeToPython(t.of) };
+}
+
 export function flatUnionTypeToPython(t: FlatUnionType): python.Union {
   return { type: 'union', members: t.members.map(flatTypeToPython) };
 }
@@ -61,6 +65,8 @@ export function flatTypeToPython(t: FlatType): python.Type {
       return flatTupleTypeToPython(t);
     case 'list':
       return flatListTypeToPython(t);
+    case 'map':
+      return flatMapTypeToPython(t);
     case 'union':
       return flatUnionTypeToPython(t);
     case 'alias':

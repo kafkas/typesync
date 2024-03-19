@@ -43,6 +43,11 @@ export interface List {
   readonly of: Type;
 }
 
+export interface Record {
+  readonly type: 'record';
+  readonly of: Type;
+}
+
 export interface Object {
   readonly type: 'object';
   readonly properties: ObjectProperty[];
@@ -65,4 +70,4 @@ export interface Alias {
   readonly name: string;
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;
+export type Type = Primitive | Literal | Enum | Tuple | List | Record | Object | Union | Alias;

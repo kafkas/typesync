@@ -94,6 +94,10 @@ UserProfile:
         type:
           type: list
           of: Pet
+      petsById:
+        type:
+          type: map
+          of: Pet
       bio:
         type:
           - nil

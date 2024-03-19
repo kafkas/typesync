@@ -41,6 +41,16 @@ export const listType = (aliasNames: string[]) =>
       .strict()
   );
 
+export const mapType = (aliasNames: string[]) =>
+  z.lazy(() =>
+    z
+      .object({
+        type: z.literal('map'),
+        of: type(aliasNames),
+      })
+      .strict()
+  );
+
 export const objectType = (aliasNames: string[]) =>
   z.lazy(() =>
     z
@@ -61,6 +71,7 @@ export const type = (aliasNames: string[]): z.ZodType<types.Type> =>
     .or(enumType)
     .or(tupleType(aliasNames))
     .or(listType(aliasNames))
+    .or(mapType(aliasNames))
     .or(objectType(aliasNames))
     .or(unionType(aliasNames))
     .or(aliasType(aliasNames));

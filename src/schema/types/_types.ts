@@ -1,4 +1,4 @@
-import type { ListType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic';
+import type { ListType, MapType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic';
 
 export interface Nil {
   type: 'nil';
@@ -39,6 +39,8 @@ export type Tuple = TupleType<Type>;
 
 export type List = ListType<Type>;
 
+export type Map = MapType<Type>;
+
 export type Object = ObjectType<Type>;
 
 export type ObjectField = ObjectFieldType<Type>;
@@ -50,4 +52,4 @@ export interface Alias {
   name: string;
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Object | Union | Alias;
+export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | Union | Alias;

@@ -6,6 +6,7 @@ import {
   FlatAliasModel,
   FlatDocumentModel,
   FlatListType,
+  FlatMapType,
   FlatObjectType,
   FlatSchema,
   FlatTupleType,
@@ -33,6 +34,11 @@ interface FlattenTupleTypeResult {
 
 interface FlattenListTypeResult {
   flattenedType: FlatListType;
+  extractedAliasModels: FlatAliasModel[];
+}
+
+interface FlattenMapTypeResult {
+  flattenedType: FlatMapType;
   extractedAliasModels: FlatAliasModel[];
 }
 
@@ -86,6 +92,15 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       }
       case 'list': {
         const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.type, aliasModel.name);
+        const flattenedModel = createFlatAliasModel({
+          name: aliasModel.name,
+          docs: aliasModel.docs,
+          type: flattenedType,
+        });
+        return { flattenedModel, extractedAliasModels };
+      }
+      case 'map': {
+        const { flattenedType, extractedAliasModels } = flattenMapType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -147,6 +162,15 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
+  function flattenMapType(listType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
+    const resultForOf = flattenType(listType.of, aliasName);
+    const flattenedType: FlatMapType = {
+      type: 'map',
+      of: resultForOf.flattenedType,
+    };
+    return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
+  }
+
   function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
     const resultsForFields = objectType.fields.map(field => {
       const flattenResult = flattenType(field.type, `${aliasName}${capitalize(field.name)}`);
@@ -199,6 +223,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return flattenTupleType(type, aliasName);
       case 'list':
         return flattenListType(type, aliasName);
+      case 'map':
+        return flattenMapType(type, aliasName);
       case 'object': {
         const result = flattenObjectType(type, aliasName);
         const name = aliasName;

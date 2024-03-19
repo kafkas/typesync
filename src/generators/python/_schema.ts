@@ -4,6 +4,7 @@ import type {
   AliasModel,
   DocumentModel,
   ListType,
+  MapType,
   ObjectFieldType,
   ObjectType,
   Schema,
@@ -16,11 +17,13 @@ export type FlatType =
   | schema.types.Literal
   | FlatTupleType
   | FlatListType
+  | FlatMapType
   | FlatUnionType
   | schema.types.Alias;
 
 export type FlatTupleType = TupleType<FlatType>;
 export type FlatListType = ListType<FlatType>;
+export type FlatMapType = MapType<FlatType>;
 export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
 export type FlatUnionType = UnionType<FlatType>;

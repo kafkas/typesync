@@ -1,5 +1,19 @@
 import { assertNever } from '../../util/assert';
-import type { Alias, Bool, Datetime, Int, List, Literal, None, Str, Tuple, Type, Undefined, Union } from './_types';
+import type {
+  Alias,
+  Bool,
+  Datetime,
+  Dict,
+  Int,
+  List,
+  Literal,
+  None,
+  Str,
+  Tuple,
+  Type,
+  Undefined,
+  Union,
+} from './_types';
 
 export interface Expression {
   content: string;
@@ -49,7 +63,12 @@ export function expressionForTupleType(t: Tuple): Expression {
 
 export function expressionForListType(t: List): Expression {
   const expression = expressionForType(t.of);
-  return { content: `typing.list[${expression.content}]` };
+  return { content: `typing.List[${expression.content}]` };
+}
+
+export function expressionForDictType(t: Dict): Expression {
+  const expression = expressionForType(t.of);
+  return { content: `typing.Dict[str, ${expression.content}]` };
 }
 
 export function expressionForUnionType(t: Union): Expression {
@@ -81,6 +100,8 @@ export function expressionForType(t: Type): Expression {
       return expressionForTupleType(t);
     case 'list':
       return expressionForListType(t);
+    case 'dict':
+      return expressionForDictType(t);
     case 'union':
       return expressionForUnionType(t);
     case 'alias':

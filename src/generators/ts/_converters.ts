@@ -38,6 +38,10 @@ export function listTypeToTS(t: schema.types.List): ts.List {
   return { type: 'list', of: typeToTS(t.of) };
 }
 
+export function mapTypeToTS(t: schema.types.Map): ts.Record {
+  return { type: 'record', of: typeToTS(t.of) };
+}
+
 export function objectTypeToTS(t: schema.types.Object): ts.Object {
   return { type: 'object', properties: t.fields.map(objectPropertyTypeToTS) };
 }
@@ -74,6 +78,8 @@ export function typeToTS(t: schema.types.Type): ts.Type {
       return tupleTypeToTS(t);
     case 'list':
       return listTypeToTS(t);
+    case 'map':
+      return mapTypeToTS(t);
     case 'object':
       return objectTypeToTS(t);
     case 'union':
