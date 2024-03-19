@@ -68,7 +68,7 @@ export function expressionForListType(t: List): Expression {
 
 export function expressionForDictType(t: Dict): Expression {
   const expression = expressionForType(t.of);
-  return { content: `typing.Dict[${expression.content}]` };
+  return { content: `typing.Dict[str, ${expression.content}]` };
 }
 
 export function expressionForUnionType(t: Union): Expression {
