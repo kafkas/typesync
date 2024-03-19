@@ -85,7 +85,7 @@ describe('flatten-schema', () => {
         docs: undefined,
         // TODO: Implement
         // docs: credentialsDocs,
-        value: credentialsObjectType,
+        type: credentialsObjectType,
       });
 
       const userModel = createFlatDocumentModel({
