@@ -10,7 +10,7 @@ class TSGeneratorImpl implements TSGenerator {
     const declarations: TSDeclaration[] = [];
 
     aliasModels.forEach(model => {
-      const tsType = typeToTS(model.value);
+      const tsType = typeToTS(model.type);
       declarations.push({ type: 'alias', modelName: model.name, modelType: tsType });
     });
 

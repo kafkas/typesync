@@ -1,11 +1,11 @@
 Username:
   model: alias
-  value: string
+  type: string
 
 UserRole:
   model: alias
   docs: Represents a user role
-  value:
+  type:
     type: enum
     items:
       - label: ADMIN
@@ -17,7 +17,7 @@ UserRole:
 
 Address:
   model: alias
-  value:
+  type:
     type: object
     fields:
       street:
@@ -29,7 +29,7 @@ Address:
 
 Cat:
   model: alias
-  value:
+  type:
     type: object
     fields:
       type:
@@ -43,7 +43,7 @@ Cat:
 
 Dog:
   model: alias
-  value:
+  type:
     type: object
     fields:
       type:
@@ -57,7 +57,7 @@ Dog:
 
 Pet:
   model: alias
-  value:
+  type:
     - Cat
     - Dog
 

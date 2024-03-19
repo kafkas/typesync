@@ -59,7 +59,7 @@ interface FlattenTypeResult {
  */
 export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   function flattenAliasModel(aliasModel: schema.AliasModel): FlattenAliasModelResult {
-    switch (aliasModel.value.type) {
+    switch (aliasModel.type.type) {
       case 'nil':
       case 'string':
       case 'boolean':
@@ -71,48 +71,48 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
-          value: aliasModel.value,
+          type: aliasModel.type,
         });
         return { flattenedModel, extractedAliasModels: [] };
       }
       case 'tuple': {
-        const { flattenedType, extractedAliasModels } = flattenTupleType(aliasModel.value, aliasModel.name);
+        const { flattenedType, extractedAliasModels } = flattenTupleType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
-          value: flattenedType,
+          type: flattenedType,
         });
         return { flattenedModel, extractedAliasModels };
       }
       case 'list': {
-        const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.value, aliasModel.name);
+        const { flattenedType, extractedAliasModels } = flattenListType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
-          value: flattenedType,
+          type: flattenedType,
         });
         return { flattenedModel, extractedAliasModels };
       }
       case 'object': {
-        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.value, aliasModel.name);
+        const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
-          value: flattenedType,
+          type: flattenedType,
         });
         return { flattenedModel, extractedAliasModels };
       }
       case 'union': {
-        const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.value, aliasModel.name);
+        const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
-          value: flattenedType,
+          type: flattenedType,
         });
         return { flattenedModel, extractedAliasModels };
       }
       default:
-        assertNever(aliasModel.value);
+        assertNever(aliasModel.type);
     }
   }
 
@@ -191,7 +191,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const name = aliasName;
         // TODO: Implement
         const docs = undefined;
-        const aliasModel = createFlatAliasModel({ name, docs, value: type });
+        const aliasModel = createFlatAliasModel({ name, docs, type });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [aliasModel] };
       }
@@ -204,7 +204,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const name = aliasName;
         // TODO: Implement
         const docs = undefined;
-        const aliasModel = createFlatAliasModel({ name, docs, value: result.flattenedType });
+        const aliasModel = createFlatAliasModel({ name, docs, type: result.flattenedType });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }

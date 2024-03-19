@@ -79,7 +79,7 @@ export const aliasModel = (aliasNames: string[]) =>
     .object({
       model: z.literal('alias'),
       docs: z.string().optional(),
-      value: type(aliasNames),
+      type: type(aliasNames),
     })
     .strict();
 

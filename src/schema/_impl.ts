@@ -24,7 +24,7 @@ class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Sc
 
 class AliasModelImpl extends AbstractAliasModel<types.Type> implements AliasModel {
   public clone() {
-    return new AliasModelImpl(this.name, this.docs, this.cloneValue());
+    return new AliasModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
@@ -42,7 +42,7 @@ export function createSchema(def?: definition.Definition): schema.Schema {
     Object.entries(def).forEach(([modelName, defModel]) => {
       switch (defModel.model) {
         case 'alias': {
-          const schemaType = definition.convert.typeToSchema(defModel.value);
+          const schemaType = definition.convert.typeToSchema(defModel.type);
           const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
           aliasModelsById.set(modelName, aliasModel);
           break;

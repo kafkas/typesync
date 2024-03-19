@@ -9,11 +9,11 @@ export abstract class AbstractAliasModel<T> {
   public constructor(
     public readonly name: string,
     public readonly docs: string | undefined,
-    public readonly value: T
+    public readonly type: T
   ) {}
 
-  protected cloneValue() {
-    return cloneDeep(this.value);
+  protected cloneType() {
+    return cloneDeep(this.type);
   }
 }
 

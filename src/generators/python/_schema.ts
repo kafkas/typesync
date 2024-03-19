@@ -41,7 +41,7 @@ class FlatAliasModelImpl
   implements FlatAliasModel
 {
   public clone() {
-    return new FlatAliasModelImpl(this.name, this.docs, this.cloneValue());
+    return new FlatAliasModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
@@ -54,11 +54,11 @@ class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectType> implem
 interface CreateFlatAliasModelParams {
   name: string;
   docs: string | undefined;
-  value: FlatType | FlatObjectType | schema.types.Enum;
+  type: FlatType | FlatObjectType | schema.types.Enum;
 }
 
 export function createFlatAliasModel(params: CreateFlatAliasModelParams): FlatAliasModel {
-  return new FlatAliasModelImpl(params.name, params.docs, params.value);
+  return new FlatAliasModelImpl(params.name, params.docs, params.type);
 }
 
 interface CreateFlatDocumentModelParams {

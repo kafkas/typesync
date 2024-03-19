@@ -29,7 +29,7 @@ export interface AliasModel<T> {
   model: 'alias';
   name: string;
   docs: string | undefined;
-  value: T;
+  type: T;
   clone(): AliasModel<T>;
 }
 

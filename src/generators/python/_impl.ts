@@ -14,10 +14,10 @@ class PythonGeneratorImpl implements PythonGenerator {
     const declarations: PythonDeclaration[] = [];
 
     aliasModels.forEach(model => {
-      if (model.value.type === 'object') {
+      if (model.type.type === 'object') {
         const pythonType: python.ObjectClass = {
           type: 'object-class',
-          attributes: model.value.fields.map(f => ({
+          attributes: model.type.fields.map(f => ({
             name: f.name,
             type: flatTypeToPython(f.type),
             docs: f.docs,
@@ -25,14 +25,14 @@ class PythonGeneratorImpl implements PythonGenerator {
           })),
         };
         declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
-      } else if (model.value.type === 'enum') {
+      } else if (model.type.type === 'enum') {
         const pythonType: python.EnumClass = {
           type: 'enum-class',
-          attributes: model.value.items.map(item => ({ key: item.label, value: item.value })),
+          attributes: model.type.items.map(item => ({ key: item.label, value: item.value })),
         };
         declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType });
       } else {
-        const pythonType = flatTypeToPython(model.value);
+        const pythonType = flatTypeToPython(model.type);
         declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
       }
     });
