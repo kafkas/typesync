@@ -40,7 +40,7 @@ export function createSchema(def?: definition.Definition): schema.Schema {
 
   if (def) {
     Object.entries(def).forEach(([modelName, defModel]) => {
-      switch (defModel.type) {
+      switch (defModel.model) {
         case 'alias': {
           const schemaType = definition.convert.typeToSchema(defModel.value);
           const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);

@@ -1,13 +1,13 @@
 import type { types } from './types';
 
 export interface DocumentModel {
-  type: 'document';
+  model: 'document';
   docs?: string;
   fields: Record<string, types.ObjectField>;
 }
 
 export interface AliasModel {
-  type: 'alias';
+  model: 'alias';
   docs?: string;
   value: types.Type;
 }

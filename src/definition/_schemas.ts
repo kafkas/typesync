@@ -77,7 +77,7 @@ export const field = (aliasNames: string[]): z.ZodType<types.ObjectField> =>
 export const documentModel = (aliasNames: string[]) =>
   z
     .object({
-      type: z.literal('document'),
+      model: z.literal('document'),
       docs: z.string().optional(),
       fields: z.record(field(aliasNames)),
     })
@@ -86,13 +86,13 @@ export const documentModel = (aliasNames: string[]) =>
 export const aliasModel = (aliasNames: string[]) =>
   z
     .object({
-      type: z.literal('alias'),
+      model: z.literal('alias'),
       docs: z.string().optional(),
       value: type(aliasNames),
     })
     .strict();
 
 export const model = (aliasNames: string[]) =>
-  z.discriminatedUnion('type', [documentModel(aliasNames), aliasModel(aliasNames)]);
+  z.discriminatedUnion('model', [documentModel(aliasNames), aliasModel(aliasNames)]);
 
 export const definition = (aliasNames: string[]) => z.record(model(aliasNames));
