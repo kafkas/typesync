@@ -54,6 +54,6 @@ class TSRendererImpl implements TSRenderer {
   }
 }
 
-export function createTSRenderer(config: TSRendererConfig) {
+export function createTSRenderer(config: TSRendererConfig): TSRenderer {
   return new TSRendererImpl(config);
 }

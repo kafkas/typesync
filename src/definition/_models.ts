@@ -1,17 +1,17 @@
 import type { types } from './types';
 
-export interface DocumentModel {
-  type: 'document';
-  docs?: string;
-  fields: Record<string, types.ObjectField>;
-}
-
 export interface AliasModel {
-  type: 'alias';
+  model: 'alias';
   docs?: string;
-  value: types.Type;
+  type: types.Type;
 }
 
-export type Model = DocumentModel | AliasModel;
+export interface DocumentModel {
+  model: 'document';
+  docs?: string;
+  type: types.Object;
+}
+
+export type Model = AliasModel | DocumentModel;
 
 export type Definition = Record<string, Model>;

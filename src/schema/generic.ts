@@ -26,22 +26,22 @@ export interface UnionType<T> {
 }
 
 export interface AliasModel<T> {
-  type: 'alias';
+  model: 'alias';
   name: string;
   docs: string | undefined;
-  value: T;
+  type: T;
   clone(): AliasModel<T>;
 }
 
-export interface DocumentModel<T, F extends ObjectFieldType<T>> {
-  type: 'document';
+export interface DocumentModel<T> {
+  model: 'document';
   name: string;
   docs: string | undefined;
-  fields: F[];
-  clone(): DocumentModel<T, F>;
+  type: T;
+  clone(): DocumentModel<T>;
 }
 
-export type Model<T, F extends ObjectFieldType<T>> = AliasModel<T> | DocumentModel<T, F>;
+export type Model<T> = AliasModel<T> | DocumentModel<T>;
 
 export interface Schema<A, D> {
   aliasModels: A[];

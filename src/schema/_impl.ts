@@ -1,4 +1,4 @@
-import type { schema } from '.';
+import { schema } from '.';
 import { definition } from '../definition';
 import { assertNever } from '../util/assert';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract';
@@ -11,7 +11,7 @@ import type { types } from './types';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 
-export type DocumentModel = DocumentModelGeneric<types.Type, types.ObjectField>;
+export type DocumentModel = DocumentModelGeneric<types.Object>;
 
 export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
 
@@ -24,13 +24,13 @@ class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Sc
 
 class AliasModelImpl extends AbstractAliasModel<types.Type> implements AliasModel {
   public clone() {
-    return new AliasModelImpl(this.name, this.docs, this.cloneValue());
+    return new AliasModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
-class DocumentModelImpl extends AbstractDocumentModel<types.ObjectField> implements DocumentModel {
+class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements DocumentModel {
   public clone() {
-    return new DocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
+    return new DocumentModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
@@ -40,21 +40,16 @@ export function createSchema(def?: definition.Definition): schema.Schema {
 
   if (def) {
     Object.entries(def).forEach(([modelName, defModel]) => {
-      switch (defModel.type) {
+      switch (defModel.model) {
         case 'alias': {
-          const schemaType = definition.convert.typeToSchema(defModel.value);
+          const schemaType = definition.convert.typeToSchema(defModel.type);
           const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
           aliasModelsById.set(modelName, aliasModel);
           break;
         }
         case 'document': {
-          const fieldsById = Object.fromEntries(
-            Object.entries(defModel.fields).map(([fieldName, defField]) => {
-              const schemaField = definition.convert.fieldToSchema(fieldName, defField);
-              return [fieldName, schemaField];
-            })
-          );
-          const documentModel = new DocumentModelImpl(modelName, defModel.docs, fieldsById);
+          const schemaType = definition.convert.objectTypeToSchema(defModel.type);
+          const documentModel = new DocumentModelImpl(modelName, defModel.docs, schemaType);
           documentModelsById.set(modelName, documentModel);
           break;
         }
@@ -81,10 +76,10 @@ export function createAliasModel(params: CreateAliasModelParams): schema.AliasMo
 interface CreateDocumentModelParams {
   name: string;
   docs: string | undefined;
-  fieldsById: Record<string, schema.types.ObjectField>;
+  type: schema.types.Object;
 }
 
 export function createDocumentModel(params: CreateDocumentModelParams): schema.DocumentModel {
-  const { name, docs, fieldsById } = params;
-  return new DocumentModelImpl(name, docs, fieldsById);
+  const { name, docs, type } = params;
+  return new DocumentModelImpl(name, docs, type);
 }

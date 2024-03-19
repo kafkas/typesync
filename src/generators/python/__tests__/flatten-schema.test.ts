@@ -54,19 +54,22 @@ describe('flatten-schema', () => {
       const userModel = schema.createDocumentModel({
         name: 'User',
         docs: undefined,
-        fieldsById: {
-          name: {
-            name: 'name',
-            type: { type: 'string' },
-            docs: undefined,
-            optional: false,
-          },
-          credentials: {
-            name: 'credentials',
-            type: credentialsObjectType,
-            docs: credentialsDocs,
-            optional: false,
-          },
+        type: {
+          type: 'object',
+          fields: [
+            {
+              name: 'name',
+              type: { type: 'string' },
+              docs: undefined,
+              optional: false,
+            },
+            {
+              name: 'credentials',
+              type: credentialsObjectType,
+              docs: credentialsDocs,
+              optional: false,
+            },
+          ],
         },
       });
 
@@ -82,28 +85,31 @@ describe('flatten-schema', () => {
         docs: undefined,
         // TODO: Implement
         // docs: credentialsDocs,
-        value: credentialsObjectType,
+        type: credentialsObjectType,
       });
 
       const userModel = createFlatDocumentModel({
         name: 'User',
         docs: undefined,
-        fieldsById: {
-          name: {
-            name: 'name',
-            type: { type: 'string' },
-            docs: undefined,
-            optional: false,
-          },
-          credentials: {
-            name: 'credentials',
-            type: {
-              type: 'alias',
-              name: 'UserCredentials',
+        type: {
+          type: 'object',
+          fields: [
+            {
+              name: 'name',
+              type: { type: 'string' },
+              docs: undefined,
+              optional: false,
             },
-            docs: credentialsDocs,
-            optional: false,
-          },
+            {
+              name: 'credentials',
+              type: {
+                type: 'alias',
+                name: 'UserCredentials',
+              },
+              docs: credentialsDocs,
+              optional: false,
+            },
+          ],
         },
       });
 

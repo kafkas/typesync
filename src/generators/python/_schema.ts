@@ -25,7 +25,7 @@ export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
 export type FlatUnionType = UnionType<FlatType>;
 export type FlatAliasModel = AliasModel<FlatType | FlatObjectType | schema.types.Enum>;
-export type FlatDocumentModel = DocumentModel<FlatType, FlatObjectFieldType>;
+export type FlatDocumentModel = DocumentModel<FlatObjectType>;
 export type FlatModel = FlatAliasModel | FlatDocumentModel;
 export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
 
@@ -41,33 +41,33 @@ class FlatAliasModelImpl
   implements FlatAliasModel
 {
   public clone() {
-    return new FlatAliasModelImpl(this.name, this.docs, this.cloneValue());
+    return new FlatAliasModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
-class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectFieldType> implements FlatDocumentModel {
+class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectType> implements FlatDocumentModel {
   public clone() {
-    return new FlatDocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
+    return new FlatDocumentModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
 interface CreateFlatAliasModelParams {
   name: string;
   docs: string | undefined;
-  value: FlatType | FlatObjectType | schema.types.Enum;
+  type: FlatType | FlatObjectType | schema.types.Enum;
 }
 
 export function createFlatAliasModel(params: CreateFlatAliasModelParams): FlatAliasModel {
-  return new FlatAliasModelImpl(params.name, params.docs, params.value);
+  return new FlatAliasModelImpl(params.name, params.docs, params.type);
 }
 
 interface CreateFlatDocumentModelParams {
   name: string;
   docs: string | undefined;
-  fieldsById: Record<string, FlatObjectFieldType>;
+  type: FlatObjectType;
 }
 export function createFlatDocumentModel(params: CreateFlatDocumentModelParams): FlatDocumentModel {
-  return new FlatDocumentModelImpl(params.name, params.docs, params.fieldsById);
+  return new FlatDocumentModelImpl(params.name, params.docs, params.type);
 }
 
 export function createFlatSchema(): FlatSchema {
