@@ -7,6 +7,13 @@ import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors'
 import { extractErrorMessage } from '../util/extract-error-message';
 import type { Logger } from './logger';
 
+// TODO: Make sure this is consistent with the stricter schema
+const DEFINITION_SCHEMA_LOOSE = z.record(
+  z.object({
+    model: z.enum(['document', 'alias']),
+  })
+);
+
 export interface DefinitionParser {
   parseDefinition(pathToDefinition: string): definition.Definition;
 }
@@ -32,14 +39,9 @@ class DefinitionParserImpl implements DefinitionParser {
   }
 
   private extractAliasModelNames(definitionContentJson: unknown) {
-    const looseDefinitionSchema = z.record(
-      z.object({
-        type: z.enum(['document', 'alias']),
-      })
-    );
-    const parsedDefinition = this.parseDefinitionWithSchema(definitionContentJson, looseDefinitionSchema);
+    const parsedDefinition = this.parseDefinitionWithSchema(definitionContentJson, DEFINITION_SCHEMA_LOOSE);
     return Object.entries(parsedDefinition)
-      .filter(([, model]) => model.type === 'alias')
+      .filter(([, model]) => model.model === 'alias')
       .map(([name]) => name);
   }
 

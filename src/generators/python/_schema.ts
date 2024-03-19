@@ -25,7 +25,7 @@ export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
 export type FlatUnionType = UnionType<FlatType>;
 export type FlatAliasModel = AliasModel<FlatType | FlatObjectType | schema.types.Enum>;
-export type FlatDocumentModel = DocumentModel<FlatType, FlatObjectFieldType>;
+export type FlatDocumentModel = DocumentModel<FlatObjectType>;
 export type FlatModel = FlatAliasModel | FlatDocumentModel;
 export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
 
@@ -45,9 +45,9 @@ class FlatAliasModelImpl
   }
 }
 
-class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectFieldType> implements FlatDocumentModel {
+class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectType> implements FlatDocumentModel {
   public clone() {
-    return new FlatDocumentModelImpl(this.name, this.docs, this.cloneFieldsById());
+    return new FlatDocumentModelImpl(this.name, this.docs, this.cloneType());
   }
 }
 
@@ -64,10 +64,10 @@ export function createFlatAliasModel(params: CreateFlatAliasModelParams): FlatAl
 interface CreateFlatDocumentModelParams {
   name: string;
   docs: string | undefined;
-  fieldsById: Record<string, FlatObjectFieldType>;
+  type: FlatObjectType;
 }
 export function createFlatDocumentModel(params: CreateFlatDocumentModelParams): FlatDocumentModel {
-  return new FlatDocumentModelImpl(params.name, params.docs, params.fieldsById);
+  return new FlatDocumentModelImpl(params.name, params.docs, params.type);
 }
 
 export function createFlatSchema(): FlatSchema {

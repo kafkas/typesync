@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash';
 
 import { assertNever } from '../util/assert';
-import type { AliasModel, DocumentModel, ObjectFieldType } from './generic';
+import type { AliasModel, DocumentModel } from './generic';
 
 export abstract class AbstractAliasModel<T> {
-  public readonly type = 'alias';
+  public readonly model = 'alias';
 
   public constructor(
     public readonly name: string,
@@ -17,28 +17,21 @@ export abstract class AbstractAliasModel<T> {
   }
 }
 
-export abstract class AbstractDocumentModel<F extends ObjectFieldType<unknown>> {
-  public readonly type = 'document';
-
-  public get fields() {
-    return Object.values(this.fieldsById);
-  }
+export abstract class AbstractDocumentModel<T> {
+  public readonly model = 'document';
 
   public constructor(
     public readonly name: string,
     public readonly docs: string | undefined,
-    protected readonly fieldsById: Record<string, F>
+    public readonly type: T
   ) {}
 
-  protected cloneFieldsById() {
-    return cloneDeep(this.fieldsById);
+  protected cloneType() {
+    return cloneDeep(this.type);
   }
 }
 
-export abstract class AbstractSchema<
-  A extends AliasModel<unknown>,
-  D extends DocumentModel<unknown, ObjectFieldType<unknown>>,
-> {
+export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends DocumentModel<unknown>> {
   public get aliasModels() {
     return Array.from(this.aliasModelsById.values());
   }
@@ -69,7 +62,7 @@ export abstract class AbstractSchema<
   }
 
   public addModel(model: A | D): void {
-    switch (model.type) {
+    switch (model.model) {
       case 'alias':
         this.addAliasModel(model);
         break;

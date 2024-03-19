@@ -1,9 +1,9 @@
 Username:
-  type: alias
+  model: alias
   value: string
 
 UserRole:
-  type: alias
+  model: alias
   docs: Represents a user role
   value:
     type: enum
@@ -16,7 +16,7 @@ UserRole:
         value: guest
 
 Address:
-  type: alias
+  model: alias
   value:
     type: object
     fields:
@@ -28,7 +28,7 @@ Address:
         type: string
 
 Cat:
-  type: alias
+  model: alias
   value:
     type: object
     fields:
@@ -42,7 +42,7 @@ Cat:
         type: int
 
 Dog:
-  type: alias
+  model: alias
   value:
     type: object
     fields:
@@ -56,47 +56,49 @@ Dog:
         type: string
 
 Pet:
-  type: alias
+  model: alias
   value:
     - Cat
     - Dog
 
 UserProfile:
-  type: document
+  model: document
   docs: User profile model
-  fields:
-    username:
-      type: Username
-    age:
-      type: int
-    is_active:
-      type: boolean
-    role:
-      type: UserRole
-    created_at:
-      type: timestamp
-      optional: true
-    location:
-      type:
-        type: tuple
-        values:
-          - int
-          - int
-    address:
-      type: Address
-    favorite_numbers:
-      type:
-        type: list
-        of: int
-    pets:
-      type:
-        type: list
-        of: Pet
-    bio:
-      type:
-        - nil
-        - string
-    area_code:
-      type:
-        type: literal
-        value: 34
+  type:
+    type: object
+    fields:
+      username:
+        type: Username
+      age:
+        type: int
+      is_active:
+        type: boolean
+      role:
+        type: UserRole
+      created_at:
+        type: timestamp
+        optional: true
+      location:
+        type:
+          type: tuple
+          values:
+            - int
+            - int
+      address:
+        type: Address
+      favorite_numbers:
+        type:
+          type: list
+          of: int
+      pets:
+        type:
+          type: list
+          of: Pet
+      bio:
+        type:
+          - nil
+          - string
+      area_code:
+        type:
+          type: literal
+          value: 34

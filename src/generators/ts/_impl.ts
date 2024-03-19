@@ -16,7 +16,7 @@ class TSGeneratorImpl implements TSGenerator {
 
     documentModels.forEach(model => {
       // A Firestore document can be considered an 'object' type
-      const tsType = objectTypeToTS({ type: 'object', fields: model.fields });
+      const tsType = objectTypeToTS(model.type);
       declarations.push({ type: 'interface', modelName: model.name, modelType: tsType });
     });
 

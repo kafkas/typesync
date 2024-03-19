@@ -117,11 +117,11 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   }
 
   function flattenDocumentModel(documentModel: schema.DocumentModel): FlattenDocumentModelResult {
-    const res = flattenObjectType({ type: 'object', fields: documentModel.fields }, documentModel.name);
+    const res = flattenObjectType(documentModel.type, documentModel.name);
     const flattenedModel = createFlatDocumentModel({
       name: documentModel.name,
       docs: documentModel.docs,
-      fieldsById: Object.fromEntries(res.flattenedType.fields.map(field => [field.name, field])),
+      type: res.flattenedType,
     });
     return { flattenedModel, extractedAliasModels: res.extractedAliasModels };
   }

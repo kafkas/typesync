@@ -41,7 +41,7 @@ class PythonGeneratorImpl implements PythonGenerator {
       // A Firestore document can be considered an 'object' type
       const pythonType: python.ObjectClass = {
         type: 'object-class',
-        attributes: model.fields.map(f => ({
+        attributes: model.type.fields.map(f => ({
           name: f.name,
           type: flatTypeToPython(f.type),
           docs: f.docs,
