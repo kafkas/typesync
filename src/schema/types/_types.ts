@@ -16,11 +16,15 @@ export interface Integer {
   type: 'int';
 }
 
+export interface Double {
+  type: 'double';
+}
+
 export interface Timestamp {
   type: 'timestamp';
 }
 
-export type Primitive = Nil | String | Boolean | Integer | Timestamp;
+export type Primitive = Nil | String | Boolean | Integer | Double | Timestamp;
 
 export interface Literal {
   type: 'literal';

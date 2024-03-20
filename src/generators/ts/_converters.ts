@@ -18,6 +18,10 @@ export function integerTypeToTS(_t: schema.types.Integer): ts.Number {
   return { type: 'number' };
 }
 
+export function doubleTypeToTS(_t: schema.types.Double): ts.Number {
+  return { type: 'number' };
+}
+
 export function timestampTypeToTS(_t: schema.types.Timestamp): ts.Timestamp {
   return { type: 'timestamp' };
 }
@@ -68,6 +72,8 @@ export function typeToTS(t: schema.types.Type): ts.Type {
       return booleanTypeToTS(t);
     case 'int':
       return integerTypeToTS(t);
+    case 'double':
+      return doubleTypeToTS(t);
     case 'timestamp':
       return timestampTypeToTS(t);
     case 'literal':

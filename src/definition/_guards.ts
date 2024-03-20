@@ -8,6 +8,7 @@ export function isPrimitiveType(candidate: unknown): candidate is types.Primitiv
     case 'string':
     case 'boolean':
     case 'int':
+    case 'double':
     case 'timestamp':
       return true;
     default:

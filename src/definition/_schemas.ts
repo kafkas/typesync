@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import type { types } from './types';
 
-export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'timestamp']);
+export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'double', 'timestamp']);
 
 export const literalType = z.object({
   type: z.literal('literal'),

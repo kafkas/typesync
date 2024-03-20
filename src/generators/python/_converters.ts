@@ -19,6 +19,10 @@ export function integerTypeToPython(_t: schema.types.Integer): python.Int {
   return { type: 'int' };
 }
 
+export function doubleTypeToPython(_t: schema.types.Double): python.Float {
+  return { type: 'float' };
+}
+
 export function timestampTypeToPython(_t: schema.types.Timestamp): python.Datetime {
   return { type: 'datetime' };
 }
@@ -57,6 +61,8 @@ export function flatTypeToPython(t: FlatType): python.Type {
       return booleanTypeToPython(t);
     case 'int':
       return integerTypeToPython(t);
+    case 'double':
+      return doubleTypeToPython(t);
     case 'timestamp':
       return timestampTypeToPython(t);
     case 'literal':

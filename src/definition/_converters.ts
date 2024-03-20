@@ -12,6 +12,8 @@ export function primitiveTypeToSchema(vt: definition.types.Primitive): schema.ty
       return { type: 'boolean' };
     case 'int':
       return { type: 'int' };
+    case 'double':
+      return { type: 'double' };
     case 'timestamp':
       return { type: 'timestamp' };
     default:
