@@ -15,3 +15,5 @@ export interface TypeSyncGenerateOptions {
 export interface TypeSync {
   generate(opts: TypeSyncGenerateOptions): Promise<void>;
 }
+
+export { createTypeSync } from './core/typesync';
