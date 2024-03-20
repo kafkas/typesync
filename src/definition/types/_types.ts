@@ -1,4 +1,4 @@
-export type Primitive = 'nil' | 'string' | 'boolean' | 'int' | 'timestamp';
+export type Primitive = 'nil' | 'string' | 'boolean' | 'int' | 'double' | 'timestamp';
 
 export interface Literal {
   type: 'literal';

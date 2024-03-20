@@ -18,11 +18,15 @@ export interface Int {
   readonly type: 'int';
 }
 
+export interface Float {
+  readonly type: 'float';
+}
+
 export interface Datetime {
   readonly type: 'datetime';
 }
 
-export type Primitive = None | Undefined | Str | Bool | Int | Datetime;
+export type Primitive = None | Undefined | Str | Bool | Int | Float | Datetime;
 
 export interface Literal {
   readonly type: 'literal';

@@ -70,6 +70,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'string':
       case 'boolean':
       case 'int':
+      case 'double':
       case 'timestamp':
       case 'literal':
       case 'enum':
@@ -207,6 +208,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'string':
       case 'boolean':
       case 'int':
+      case 'double':
       case 'timestamp':
       case 'literal':
       case 'alias':

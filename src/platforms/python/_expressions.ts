@@ -4,6 +4,7 @@ import type {
   Bool,
   Datetime,
   Dict,
+  Float,
   Int,
   List,
   Literal,
@@ -37,6 +38,10 @@ export function expressionForBoolType(_t: Bool): Expression {
 
 export function expressionForIntType(_t: Int): Expression {
   return { content: 'int' };
+}
+
+export function expressionForFloatType(_t: Float): Expression {
+  return { content: 'float' };
 }
 
 export function expressionForDatetimeType(_t: Datetime): Expression {
@@ -92,6 +97,8 @@ export function expressionForType(t: Type): Expression {
       return expressionForBoolType(t);
     case 'int':
       return expressionForIntType(t);
+    case 'float':
+      return expressionForFloatType(t);
     case 'datetime':
       return expressionForDatetimeType(t);
     case 'literal':
