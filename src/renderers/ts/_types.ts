@@ -5,8 +5,9 @@ import type { RenderedFile } from '../_types';
 export interface TSRendererConfig {
   rootFileName: string;
   platform: TSGenerationPlatform;
+  indentation: number;
 }
 
 export interface TSRenderer {
-  render(g: TSGeneration): RenderedFile[];
+  render(g: TSGeneration): Promise<RenderedFile[]>;
 }

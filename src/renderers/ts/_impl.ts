@@ -1,4 +1,5 @@
 import { StringBuilder } from '@proficient/ds';
+import { format } from 'prettier';
 
 import type { TSDeclaration, TSGeneration } from '../../generators/ts';
 import { ts } from '../../platforms/ts';
@@ -9,7 +10,7 @@ import type { TSRenderer, TSRendererConfig } from './_types';
 class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}
 
-  public render(g: TSGeneration): RenderedFile[] {
+  public async render(g: TSGeneration): Promise<RenderedFile[]> {
     const b = new StringBuilder();
 
     const tsFirestoreImport = this.getImportFirestoreStatement();
@@ -19,9 +20,18 @@ class TSRendererImpl implements TSRenderer {
       b.append(`${this.renderDeclaration(declaration)};\n\n`);
     });
 
+    const content = b.toString();
+    const formattedContent = await format(content, {
+      parser: 'typescript',
+      tabWidth: this.config.indentation,
+      trailingComma: 'es5',
+      printWidth: 120,
+      singleQuote: true,
+    });
+
     const renderedFile: RenderedFile = {
       relativePath: this.config.rootFileName,
-      content: b.toString(),
+      content: formattedContent,
     };
 
     return [renderedFile];
