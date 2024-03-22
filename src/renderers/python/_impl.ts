@@ -85,8 +85,24 @@ class PythonRendererImpl implements PythonRenderer {
 
   private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
     const { modelName, modelType } = declaration;
-    // TODO:
-    return ``;
+    const b = new StringBuilder();
+    b.append(`class ${modelName}(enum.Enum):\n`);
+    modelType.attributes.forEach(attribute => {
+      b.append(`${this.indent(1)}${attribute.key} = ${this.enumClassAttributeValueAsString(attribute)}\n`);
+    });
+    b.append('\n');
+    return b.toString();
+  }
+
+  private enumClassAttributeValueAsString(attribute: python.EnumClassAttribute) {
+    switch (typeof attribute.value) {
+      case 'string':
+        return `"${attribute.value}"`;
+      case 'number':
+        return `${attribute.value}`;
+      default:
+        assertNever(attribute.value);
+    }
   }
 
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
