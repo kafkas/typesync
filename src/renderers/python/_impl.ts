@@ -19,7 +19,7 @@ class PythonRendererImpl implements PythonRenderer {
 
   public constructor(private readonly config: PythonRendererConfig) {}
 
-  public render(g: PythonGeneration): RenderedFile[] {
+  public async render(g: PythonGeneration): Promise<RenderedFile[]> {
     const b = new StringBuilder();
 
     b.append(`${this.generateImportStatements()}\n\n`);

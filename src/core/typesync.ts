@@ -25,7 +25,7 @@ class TypeSyncImpl implements TypeSync {
     const def = parser.parseDefinition(pathToDefinition);
     const s = schema.createSchema(def);
     const g = generator.generate(s);
-    const files = renderer.render(g);
+    const files = await renderer.render(g);
 
     await this.writeRenderedFiles(pathToOutputDir, files);
   }
@@ -53,7 +53,7 @@ class TypeSyncImpl implements TypeSync {
     const { platform, indentation } = opts;
     switch (platform) {
       case 'ts:firebase-admin:11':
-        return renderers.createTSRenderer({ rootFileName: 'index.ts', platform });
+        return renderers.createTSRenderer({ rootFileName: 'index.ts', platform, indentation });
       case 'py:firebase-admin:6':
         return renderers.createPythonRenderer({ rootFileName: 'models.py', platform, indentation });
       default:

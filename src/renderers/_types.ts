@@ -13,5 +13,5 @@ export interface RenderedFile {
 }
 
 export interface Renderer {
-  render(g: Generation): RenderedFile[];
+  render(g: Generation): Promise<RenderedFile[]>;
 }

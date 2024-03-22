@@ -9,5 +9,5 @@ export interface PythonRendererConfig {
 }
 
 export interface PythonRenderer {
-  render(g: PythonGeneration): RenderedFile[];
+  render(g: PythonGeneration): Promise<RenderedFile[]>;
 }
