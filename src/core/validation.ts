@@ -1,4 +1,4 @@
-import { GenerationPlatform } from '../api';
+import { type GenerationPlatform } from '../api';
 import { assertNeverNoThrow } from '../util/assert';
 
 export function isGenerationPlatform(candidate: string): candidate is GenerationPlatform {

@@ -3,8 +3,7 @@ import { resolve } from 'node:path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypeSync } from './api';
-import { isGenerationPlatform } from './core/validation';
+import { createTypeSync, getPlatforms } from './api';
 
 const typesync = createTypeSync();
 
@@ -15,39 +14,43 @@ void yargs(hideBin(process.argv))
     y => {
       return y
         .option('pathToDefinition', {
-          describe: 'Path to the definition YAML file',
-          type: 'string',
-          demandOption: true,
-        })
-        .option('pathToOutputDir', {
-          describe: 'Path to output',
+          describe: 'Path to the definition file. Must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
         .option('platform', {
-          describe: 'Target platform and version (e.g., ts:firebase-admin:11)',
+          describe: 'Target platform and version',
+          type: 'string',
+          demandOption: true,
+          choices: getPlatforms(),
+        })
+        .option('pathToOutputDir', {
+          describe: 'Path to the output directory',
           type: 'string',
           demandOption: true,
         })
         .option('indentation', {
-          describe: 'Indentation',
-          type: 'count',
+          describe: 'Indentation or tab width for the generated code',
+          type: 'number',
           demandOption: false,
+          default: 4,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
         });
     },
     async args => {
-      const { pathToDefinition, pathToOutputDir, platform } = args;
-
-      if (!isGenerationPlatform(platform)) {
-        throw new Error('Wrong platform');
-      }
+      const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
 
       await typesync.generate({
         pathToDefinition: resolve(process.cwd(), pathToDefinition),
-        pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
         platform,
-        debug: false,
-        indentation: 4,
+        pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
+        indentation,
+        debug,
       });
     }
   )
