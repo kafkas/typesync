@@ -34,6 +34,12 @@
       }
     ],
     "@typescript-eslint/no-var-requires": 0,
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["^yargs/.+"]
+      }
+    ],
     "no-console": 0,
     "no-constant-condition": 0,
     "no-empty": [2, { "allowEmptyCatch": true }],

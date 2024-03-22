@@ -1,9 +1,13 @@
 {
-  "name": "typesync",
+  "name": "typesync-cli",
   "version": "0.0.0",
   "description": "Autogenerate Firestore models",
+  "bin": {
+    "typesync": "lib/cli.js"
+  },
   "scripts": {
     "build": "rm -rf lib && tsc -p tsconfig.build.json",
+    "build-local": "npm run build && chmod +x lib/cli.js",
     "format": "prettier --write \"src/**/*.(js|ts|json)\"",
     "format-check": "prettier --check \"src/**/*.(js|ts|json)\"",
     "lint": "eslint src --ext .ts",
@@ -15,9 +19,6 @@
   "files": [
     "lib"
   ],
-  "exports": {
-    "./schema": "./lib"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kafkas/typesync.git"
@@ -48,7 +49,8 @@
     "lodash": "^4.17.21",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "yargs": "^17.7.2"
   },
   "dependencies": {
     "@proficient/ds": "^0.3.2",
