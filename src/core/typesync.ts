@@ -9,8 +9,8 @@ import { renderers } from '../renderers';
 import { schema } from '../schema';
 import { assertNever } from '../util/assert';
 import { writeFile } from '../util/fs';
-import { createDefinitionParser } from './_definition-parser';
-import { createLogger } from './_logger';
+import { createDefinitionParser } from './definition-parser';
+import { createLogger } from './logger';
 
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions) {

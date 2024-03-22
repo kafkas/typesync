@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { definition } from '../definition';
 import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
 import { extractErrorMessage } from '../util/extract-error-message';
-import type { Logger } from './_logger';
+import type { Logger } from './logger';
 
 // TODO: Make sure this is consistent with the stricter schema
 const DEFINITION_SCHEMA_LOOSE = z.record(
