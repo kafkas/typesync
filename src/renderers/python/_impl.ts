@@ -26,7 +26,7 @@ class PythonRendererImpl implements PythonRenderer {
     const b = new StringBuilder();
 
     b.append(`${this.generateImportStatements()}\n\n`);
-    b.append(`${this.generateStaticDeclarations()}\n`);
+    b.append(`${this.generateStaticDeclarations()}\n\n`);
     b.append(`# Model Definitions\n\n`);
 
     g.declarations.forEach(declaration => {
@@ -100,7 +100,7 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`${this.indent(4)}continue\n`);
     b.append(`${this.indent(3)}else:\n`);
     b.append(`${this.indent(4)}processed[field_name] = field_value\n`);
-    b.append(`${this.indent(2)}return processed\n`);
+    b.append(`${this.indent(2)}return processed`);
 
     return b.toString();
   }
@@ -140,10 +140,12 @@ class PythonRendererImpl implements PythonRenderer {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(enum.Enum):\n`);
-    modelType.attributes.forEach(attribute => {
-      b.append(`${this.indent(1)}${attribute.key} = ${this.enumClassAttributeValueAsString(attribute)}\n`);
+    modelType.attributes.forEach((attribute, attributeIdx) => {
+      b.append(`${this.indent(1)}${attribute.key} = ${this.enumClassAttributeValueAsString(attribute)}`);
+      if (attributeIdx !== modelType.attributes.length - 1) {
+        b.append(`\n`);
+      }
     });
-    b.append('\n');
     return b.toString();
   }
 
@@ -175,6 +177,19 @@ class PythonRendererImpl implements PythonRenderer {
       }
     });
     b.append('\n');
+
+    b.append(`${this.indent(1)}class Config:\n`);
+    b.append(`${this.indent(2)}use_enum_values = True\n\n`);
+
+    b.append(`${this.indent(1)}def __setattr__(self, name: str, value: typing.Any) -> None:\n`);
+    modelType.attributes.forEach(attribute => {
+      if (attribute.optional && !python.canBeNone(attribute.type)) {
+        b.append(`${this.indent(2)}if name == "${attribute.name}" and value is None:\n`);
+        b.append(`${this.indent(3)}raise ValueError("'${attribute.name}' field cannot be set to None")\n`);
+      }
+    });
+    b.append(`${this.indent(2)}super().__setattr__(name, value)`);
+
     return b.toString();
   }
 
