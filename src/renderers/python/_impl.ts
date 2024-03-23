@@ -40,16 +40,65 @@ class PythonRendererImpl implements PythonRenderer {
 
   private generateStaticDeclarations() {
     const b = new StringBuilder();
-    b.append(`class TypeSyncUndefined:\n`);
+
+    b.append(this.generateStaticDeclarationsForTypeSyncUndefined());
+    b.append(`\n`);
+    b.append(this.generateStaticDeclarationsForTypeSyncModel());
+
+    return b.toString();
+  }
+
+  private generateStaticDeclarationsForTypeSyncUndefined() {
+    const b = new StringBuilder();
+
+    b.append(`${this.indent(0)}class TypeSyncUndefined:\n`);
     b.append(`${this.indent(1)}_instance = None\n\n`);
+
     b.append(`${this.indent(1)}def __init__(self):\n`);
     b.append(`${this.indent(2)}if TypeSyncUndefined._instance is not None:\n`);
     b.append(
-      `${this.indent(3)}raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Use UNDEFINED instead.")\n`
+      `${this.indent(3)}raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")\n`
     );
     b.append(`${this.indent(2)}else:\n`);
     b.append(`${this.indent(3)}TypeSyncUndefined._instance = self\n\n`);
-    b.append(`UNDEFINED = TypeSyncUndefined()\n`);
+
+    b.append(`${this.indent(1)}@classmethod\n`);
+    b.append(`${this.indent(1)}def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:\n`);
+    b.append(`${this.indent(2)}return core_schema.with_info_plain_validator_function(cls.validate)\n\n`);
+
+    b.append(`${this.indent(1)}@classmethod\n`);
+    b.append(`${this.indent(1)}def validate(cls, value: typing.Any, info) -> TypeSyncUndefined:\n`);
+    b.append(`${this.indent(2)}if not isinstance(value, cls):\n`);
+    b.append(`${this.indent(3)}raise ValueError("Undefined field type is not valid")\n`);
+    b.append(`${this.indent(2)}return value\n\n`);
+
+    b.append(`${this.indent(0)}UNDEFINED = TypeSyncUndefined()\n`);
+
+    return b.toString();
+  }
+  private generateStaticDeclarationsForTypeSyncModel() {
+    const b = new StringBuilder();
+
+    b.append(`${this.indent(0)}class TypeSyncModel(pydantic.BaseModel):\n`);
+    b.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
+    b.append(`${this.indent(2)}processed = {}\n`);
+    b.append(`${this.indent(2)}for field_name, field_value in self.__dict__.items():\n`);
+    b.append(`${this.indent(3)}if isinstance(field_value, pydantic.BaseModel):\n`);
+    b.append(`${this.indent(4)}processed[field_name] = field_value.model_dump(**kwargs)\n`);
+    b.append(`${this.indent(3)}elif isinstance(field_value, list):\n`);
+    b.append(
+      `${this.indent(4)}processed[field_name] = [item.model_dump(**kwargs) if isinstance(item, pydantic.BaseModel) else item for item in field_value]\n`
+    );
+    b.append(`${this.indent(3)}elif isinstance(field_value, dict):\n`);
+    b.append(
+      `${this.indent(4)}processed[field_name] = {key: value.model_dump(**kwargs) if isinstance(value, pydantic.BaseModel) else value for key, value in field_value.items()}\n`
+    );
+    b.append(`${this.indent(3)}elif field_value is UNDEFINED:\n`);
+    b.append(`${this.indent(4)}continue\n`);
+    b.append(`${this.indent(3)}else:\n`);
+    b.append(`${this.indent(4)}processed[field_name] = field_value\n`);
+    b.append(`${this.indent(2)}return processed\n`);
+
     return b.toString();
   }
 
@@ -59,7 +108,8 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`import typing\n`);
     b.append(`import datetime\n`);
     b.append(`import enum\n`);
-    b.append(`import pydantic`);
+    b.append(`import pydantic\n`);
+    b.append(`from pydantic_core import core_schema`);
     return b.toString();
   }
 
@@ -80,7 +130,7 @@ class PythonRendererImpl implements PythonRenderer {
   private renderAliasDeclaration(declaration: PythonAliasDeclaration) {
     const { modelName, modelType } = declaration;
     const expression = python.expressionForType(modelType);
-    return `${modelName} = ${expression.content};`;
+    return `${modelName} = ${expression.content}`;
   }
 
   private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
@@ -108,7 +158,7 @@ class PythonRendererImpl implements PythonRenderer {
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
-    b.append(`class ${modelName}(pydantic.BaseModel):\n`);
+    b.append(`class ${modelName}(TypeSyncModel):\n`);
     modelType.attributes.forEach(attribute => {
       const expression = python.expressionForType(attribute.type);
       b.append(`${this.indent(1)}${attribute.name}: ${expression.content}\n`);
