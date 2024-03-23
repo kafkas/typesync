@@ -107,3 +107,10 @@ export const model = (aliasNames: string[]) =>
   z.discriminatedUnion('model', [aliasModel(aliasNames), documentModel(aliasNames)]);
 
 export const definition = (aliasNames: string[]) => z.record(model(aliasNames));
+
+// TODO: Needs to be made consistent with definition
+export const definitionLoose = z.record(
+  z.object({
+    model: z.enum(['document', 'alias']),
+  })
+);
