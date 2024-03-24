@@ -1466,11 +1466,6 @@
   resolved "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.4.tgz"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
-"@tsconfig/node18@^18.2.3":
-  version "18.2.3"
-  resolved "https://registry.yarnpkg.com/@tsconfig/node18/-/node18-18.2.3.tgz#8c1b254f58335fe4dfe83e86238360e55cc473e7"
-  integrity sha512-5GKTU9bfn4L37G9IdK8wcHfvyMijzw1uKNCd2Rs75V7fZK/l2OjGJ8Aa2myqNnESjekm/udpCnFH9qR9yPCtmw==
-
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.14":
   version "7.20.5"
   resolved "https://registry.npmjs.org/@types/babel__core/-/babel__core-7.20.5.tgz"
