@@ -1,6 +1,6 @@
-import { schema } from '../../schema';
-import { objectTypeToTS, typeToTS } from './_converters';
-import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types';
+import { schema } from '../../schema/index.js';
+import { objectTypeToTS, typeToTS } from './_converters.js';
+import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types.js';
 
 class TSGeneratorImpl implements TSGenerator {
   public constructor(private readonly config: TSGeneratorConfig) {}

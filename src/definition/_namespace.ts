@@ -1,6 +1,6 @@
-export * as schemas from './_schemas';
-export type { types } from './types';
+export * as schemas from './_schemas.js';
+export type { types } from './types/index.js';
 
-export * as convert from './_converters';
-export * from './_guards';
-export * from './_models';
+export * as convert from './_converters.js';
+export * from './_guards.js';
+export * from './_models.js';

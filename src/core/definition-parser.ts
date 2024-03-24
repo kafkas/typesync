@@ -2,10 +2,10 @@ import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 
-import { definition } from '../definition';
-import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors';
-import { extractErrorMessage } from '../util/extract-error-message';
-import type { Logger } from './logger';
+import { definition } from '../definition/index.js';
+import { DefinitionNotValidError, DefinitionNotValidYamlError } from '../errors/index.js';
+import { extractErrorMessage } from '../util/extract-error-message.js';
+import type { Logger } from './logger.js';
 
 export interface DefinitionParser {
   parseDefinition(pathToDefinition: string): definition.Definition;

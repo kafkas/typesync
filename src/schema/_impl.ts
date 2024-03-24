@@ -1,13 +1,13 @@
-import { schema } from '.';
-import { definition } from '../definition';
-import { assertNever } from '../util/assert';
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract';
+import { definition } from '../definition/index.js';
+import { assertNever } from '../util/assert.js';
+import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract.js';
 import {
   AliasModel as AliasModelGeneric,
   DocumentModel as DocumentModelGeneric,
   Schema as SchemaGeneric,
-} from './generic';
-import type { types } from './types';
+} from './generic.js';
+import { schema } from './index.js';
+import type { types } from './types/index.js';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 

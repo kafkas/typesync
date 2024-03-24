@@ -1,5 +1,4 @@
-import type { schema } from '../../schema';
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../../schema/abstract';
+import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../../schema/abstract.js';
 import type {
   AliasModel,
   DocumentModel,
@@ -10,7 +9,8 @@ import type {
   Schema,
   TupleType,
   UnionType,
-} from '../../schema/generic';
+} from '../../schema/generic.js';
+import type { schema } from '../../schema/index.js';
 
 export type FlatType =
   | schema.types.Primitive

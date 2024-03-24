@@ -1,1 +1,1 @@
-export * as renderers from './_namespace';
+export * as renderers from './_namespace.js';

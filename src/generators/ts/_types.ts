@@ -1,6 +1,6 @@
-import type { TSGenerationPlatform } from '../../api';
-import type { ts } from '../../platforms/ts';
-import type { schema } from '../../schema';
+import type { TSGenerationPlatform } from '../../api.js';
+import type { ts } from '../../platforms/ts/index.js';
+import type { schema } from '../../schema/index.js';
 
 export interface TSAliasDeclaration {
   type: 'alias';

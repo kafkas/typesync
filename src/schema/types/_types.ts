@@ -1,4 +1,4 @@
-import type { ListType, MapType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic';
+import type { ListType, MapType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic.js';
 
 export interface Nil {
   type: 'nil';

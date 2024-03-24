@@ -1,5 +1,5 @@
-import { type GenerationPlatform } from '../api';
-import { assertNeverNoThrow } from '../util/assert';
+import { type GenerationPlatform } from '../api.js';
+import { assertNeverNoThrow } from '../util/assert.js';
 
 export function isGenerationPlatform(candidate: string): candidate is GenerationPlatform {
   const c = candidate as GenerationPlatform;

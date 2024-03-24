@@ -1,4 +1,4 @@
-import { objectKeys } from './util/object-keys';
+import { objectKeys } from './util/object-keys.js';
 
 const TS_PLATFORMS = {
   'ts:firebase-admin:11': true,
@@ -38,4 +38,4 @@ export interface TypeSync {
   generate(opts: TypeSyncGenerateOptions): Promise<void>;
 }
 
-export { createTypeSync } from './core/typesync';
+export { createTypeSync } from './core/typesync.js';

@@ -6,13 +6,13 @@ import type {
   PythonEnumClassDeclaration,
   PythonGeneration,
   PythonPydanticClassDeclaration,
-} from '../../generators/python';
-import { python } from '../../platforms/python';
-import { assertNever } from '../../util/assert';
-import { multiply } from '../../util/multiply-str';
-import { space } from '../../util/space';
-import type { RenderedFile } from '../_types';
-import type { PythonRenderer, PythonRendererConfig } from './_types';
+} from '../../generators/python/index.js';
+import { python } from '../../platforms/python/index.js';
+import { assertNever } from '../../util/assert.js';
+import { multiply } from '../../util/multiply-str.js';
+import { space } from '../../util/space.js';
+import type { RenderedFile } from '../_types.js';
+import type { PythonRenderer, PythonRendererConfig } from './_types.js';
 
 const UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
 const UNDEFINED_SENTINEL_CLASS = 'TypeSyncUndefined';

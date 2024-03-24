@@ -1,3 +1,3 @@
-import * as python from './_namespace';
+import * as python from './_namespace.js';
 
 export { python };

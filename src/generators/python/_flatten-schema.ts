@@ -1,7 +1,7 @@
-import { capitalize } from 'lodash';
+import lodash from 'lodash';
 
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
+import { schema } from '../../schema/index.js';
+import { assertNever } from '../../util/assert.js';
 import {
   FlatAliasModel,
   FlatDocumentModel,
@@ -15,7 +15,7 @@ import {
   createFlatAliasModel,
   createFlatDocumentModel,
   createFlatSchema,
-} from './_schema';
+} from './_schema.js';
 
 interface FlattenAliasModelResult {
   flattenedModel: FlatAliasModel;
@@ -174,7 +174,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
 
   function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
     const resultsForFields = objectType.fields.map(field => {
-      const flattenResult = flattenType(field.type, `${aliasName}${capitalize(field.name)}`);
+      const flattenResult = flattenType(field.type, `${aliasName}${lodash.capitalize(field.name)}`);
       return { field, flattenResult };
     });
     const flattenedType: FlatObjectType = {

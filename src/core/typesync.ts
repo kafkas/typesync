@@ -1,16 +1,16 @@
 import { resolve } from 'path';
 
-import type { TypeSync, TypeSyncGenerateOptions } from '../api';
-import { InvalidIndentationOption } from '../errors';
-import { type Generator } from '../generators';
-import { createPythonGenerator } from '../generators/python';
-import { createTSGenerator } from '../generators/ts';
-import { renderers } from '../renderers';
-import { schema } from '../schema';
-import { assertNever } from '../util/assert';
-import { writeFile } from '../util/fs';
-import { createDefinitionParser } from './definition-parser';
-import { createLogger } from './logger';
+import type { TypeSync, TypeSyncGenerateOptions } from '../api.js';
+import { InvalidIndentationOption } from '../errors/index.js';
+import { type Generator } from '../generators/index.js';
+import { createPythonGenerator } from '../generators/python/index.js';
+import { createTSGenerator } from '../generators/ts/index.js';
+import { renderers } from '../renderers/index.js';
+import { schema } from '../schema/index.js';
+import { assertNever } from '../util/assert.js';
+import { writeFile } from '../util/fs.js';
+import { createDefinitionParser } from './definition-parser.js';
+import { createLogger } from './logger.js';
 
 class TypeSyncImpl implements TypeSync {
   public async generate(opts: TypeSyncGenerateOptions) {

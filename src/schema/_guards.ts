@@ -1,4 +1,4 @@
-import type { types } from './types';
+import type { types } from './types/index.js';
 
 export function isPrimitiveType(t: types.Type): t is types.Primitive {
   switch (t.type) {

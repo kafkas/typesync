@@ -3,7 +3,7 @@ import { writeFile as _writeFile } from 'node:fs/promises';
 import 'node:os';
 import { dirname } from 'node:path';
 
-import { extractErrorMessage } from './extract-error-message';
+import { extractErrorMessage } from './extract-error-message.js';
 
 /**
  * Checks if the specified directory is empty. Creates the directory if it can be created.

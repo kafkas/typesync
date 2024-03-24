@@ -1,8 +1,8 @@
-import { python } from '../../platforms/python';
-import { schema } from '../../schema';
-import { flatTypeToPython } from './_converters';
-import { flattenSchema } from './_flatten-schema';
-import type { PythonDeclaration, PythonGeneration, PythonGenerator, PythonGeneratorConfig } from './_types';
+import { python } from '../../platforms/python/index.js';
+import { schema } from '../../schema/index.js';
+import { flatTypeToPython } from './_converters.js';
+import { flattenSchema } from './_flatten-schema.js';
+import type { PythonDeclaration, PythonGeneration, PythonGenerator, PythonGeneratorConfig } from './_types.js';
 
 class PythonGeneratorImpl implements PythonGenerator {
   public constructor(private readonly config: PythonGeneratorConfig) {}

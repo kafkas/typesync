@@ -1,11 +1,11 @@
 import { StringBuilder } from '@proficient/ds';
 import { format } from 'prettier';
 
-import type { TSDeclaration, TSGeneration } from '../../generators/ts';
-import { ts } from '../../platforms/ts';
-import { assertNever } from '../../util/assert';
-import type { RenderedFile } from '../_types';
-import type { TSRenderer, TSRendererConfig } from './_types';
+import type { TSDeclaration, TSGeneration } from '../../generators/ts/index.js';
+import { ts } from '../../platforms/ts/index.js';
+import { assertNever } from '../../util/assert.js';
+import type { RenderedFile } from '../_types.js';
+import type { TSRenderer, TSRendererConfig } from './_types.js';
 
 class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}

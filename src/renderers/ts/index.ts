@@ -1,1 +1,1 @@
-export * from './_namespace';
+export * from './_namespace.js';
