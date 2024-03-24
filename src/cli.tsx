@@ -63,6 +63,7 @@ void yargs(hideBin(process.argv))
           <GenerationSuccessful
             aliasModelCount={result.aliasModelCount}
             documentModelCount={result.documentModelCount}
+            pathToRootFile={result.pathToRootFile}
           />
         );
       } catch (e) {

@@ -37,6 +37,7 @@ export interface TypeSyncGenerateOptions {
 export interface TypeSyncGenerateResult {
   aliasModelCount: number;
   documentModelCount: number;
+  pathToRootFile: string;
 }
 
 export interface TypeSync {

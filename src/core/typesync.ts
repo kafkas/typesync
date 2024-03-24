@@ -25,13 +25,15 @@ class TypeSyncImpl implements TypeSync {
     const def = parser.parseDefinition(pathToDefinition);
     const s = schema.createSchema(def);
     const g = generator.generate(s);
-    const files = await renderer.render(g);
+    const { rootFile, files } = await renderer.render(g);
 
     await this.writeRenderedFiles(pathToOutputDir, files);
+    const pathToRootFile = resolve(pathToOutputDir, rootFile.relativePath);
 
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
+      pathToRootFile,
     };
   }
 

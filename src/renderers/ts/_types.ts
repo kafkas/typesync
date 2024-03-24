@@ -1,6 +1,6 @@
 import type { TSGenerationPlatform } from '../../api.js';
 import type { TSGeneration } from '../../generators/ts/index.js';
-import type { RenderedFile } from '../_types.js';
+import type { RenderResult } from '../_types.js';
 
 export interface TSRendererConfig {
   rootFileName: string;
@@ -9,5 +9,5 @@ export interface TSRendererConfig {
 }
 
 export interface TSRenderer {
-  render(g: TSGeneration): Promise<RenderedFile[]>;
+  render(g: TSGeneration): Promise<RenderResult>;
 }

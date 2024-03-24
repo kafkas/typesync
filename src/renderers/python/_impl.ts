@@ -11,7 +11,7 @@ import { python } from '../../platforms/python/index.js';
 import { assertNever } from '../../util/assert.js';
 import { multiply } from '../../util/multiply-str.js';
 import { space } from '../../util/space.js';
-import type { RenderedFile } from '../_types.js';
+import type { RenderResult, RenderedFile } from '../_types.js';
 import type { PythonRenderer, PythonRendererConfig } from './_types.js';
 
 const UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
@@ -22,7 +22,7 @@ class PythonRendererImpl implements PythonRenderer {
 
   public constructor(private readonly config: PythonRendererConfig) {}
 
-  public async render(g: PythonGeneration): Promise<RenderedFile[]> {
+  public async render(g: PythonGeneration): Promise<RenderResult> {
     const b = new StringBuilder();
 
     b.append(`${this.generateImportStatements()}\n\n`);
@@ -33,12 +33,12 @@ class PythonRendererImpl implements PythonRenderer {
       b.append(`${this.renderDeclaration(declaration)}\n\n`);
     });
 
-    const renderedFile: RenderedFile = {
+    const rootFile: RenderedFile = {
       relativePath: this.config.rootFileName,
       content: b.toString(),
     };
 
-    return [renderedFile];
+    return { rootFile, files: [rootFile] };
   }
 
   private generateStaticDeclarations() {
