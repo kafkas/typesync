@@ -1,4 +1,3 @@
-import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema.js';
 import { schema } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { flattenSchema } from '../_flatten-schema.js';
@@ -6,7 +5,23 @@ import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFl
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {
-    const inputSchema = loadSchemaForTestDefinition('flat');
+    const inputSchema = schema.createSchema({
+      SomeAliasModel: {
+        model: 'alias',
+        type: 'string',
+      },
+      SomeDocumentModel: {
+        model: 'document',
+        type: {
+          type: 'object',
+          fields: {
+            field1: {
+              type: 'SomeAliasModell',
+            },
+          },
+        },
+      },
+    });
 
     deepFreeze(inputSchema);
 
@@ -16,14 +31,48 @@ describe('flatten-schema', () => {
   });
 
   it('returns a new schema', () => {
-    const inputSchema = loadSchemaForTestDefinition('flat');
+    const inputSchema = schema.createSchema({
+      SomeAliasModel: {
+        model: 'alias',
+        type: 'string',
+      },
+      SomeDocumentModel: {
+        model: 'document',
+        type: {
+          type: 'object',
+          fields: {
+            field1: {
+              type: 'SomeAliasModel',
+            },
+          },
+        },
+      },
+    });
+
     const flattenedSchema = flattenSchema(inputSchema);
 
     expect(flattenedSchema).not.toBe(inputSchema);
   });
 
   it(`does nothing when the schema is "flat"`, () => {
-    const inputSchema = loadSchemaForTestDefinition('flat');
+    const inputSchema = schema.createSchema({
+      SomeAliasModel: {
+        model: 'alias',
+        type: 'string',
+      },
+      SomeDocumentModel: {
+        model: 'document',
+        type: {
+          type: 'object',
+          fields: {
+            field1: {
+              type: 'SomeAliasModel',
+            },
+          },
+        },
+      },
+    });
+
     const flattenedSchema = flattenSchema(inputSchema);
 
     expect(flattenedSchema).toEqual(inputSchema);

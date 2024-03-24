@@ -1,0 +1,162 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`definition-parser correctly parses definition from a YAML file 1`] = `
+{
+  "Address": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "city": {
+          "type": "string",
+        },
+        "street": {
+          "type": "string",
+        },
+        "zip_code": {
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Cat": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "lives_left": {
+          "type": "int",
+        },
+        "name": {
+          "type": "string",
+        },
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "cat",
+          },
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Dog": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "breed": {
+          "type": "string",
+        },
+        "name": {
+          "type": "string",
+        },
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "dog",
+          },
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Pet": {
+    "model": "alias",
+    "type": [
+      "Cat",
+      "Dog",
+    ],
+  },
+  "UserProfile": {
+    "docs": "User profile model",
+    "model": "document",
+    "type": {
+      "fields": {
+        "address": {
+          "type": "Address",
+        },
+        "age": {
+          "type": "int",
+        },
+        "area_code": {
+          "type": {
+            "type": "literal",
+            "value": 34,
+          },
+        },
+        "bio": {
+          "type": [
+            "nil",
+            "string",
+          ],
+        },
+        "created_at": {
+          "optional": true,
+          "type": "timestamp",
+        },
+        "favorite_numbers": {
+          "type": {
+            "of": "int",
+            "type": "list",
+          },
+        },
+        "is_active": {
+          "type": "boolean",
+        },
+        "location": {
+          "type": {
+            "type": "tuple",
+            "values": [
+              "int",
+              "int",
+            ],
+          },
+        },
+        "pets": {
+          "type": {
+            "of": "Pet",
+            "type": "list",
+          },
+        },
+        "petsById": {
+          "type": {
+            "of": "Pet",
+            "type": "map",
+          },
+        },
+        "role": {
+          "type": "UserRole",
+        },
+        "username": {
+          "type": "Username",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "UserRole": {
+    "docs": "Represents a user role",
+    "model": "alias",
+    "type": {
+      "items": [
+        {
+          "label": "ADMIN",
+          "value": "admin",
+        },
+        {
+          "label": "USER",
+          "value": "user",
+        },
+        {
+          "label": "GUEST",
+          "value": "guest",
+        },
+      ],
+      "type": "enum",
+    },
+  },
+  "Username": {
+    "model": "alias",
+    "type": "string",
+  },
+}
+`;
