@@ -7,8 +7,8 @@ import { hideBin } from 'yargs/helpers';
 
 import { createTypeSync, getPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
-import { GenerationInProgress } from './components/GenerationInProgress.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
+import { extractErrorMessage } from './util/extract-error-message.js';
 
 const typesync = createTypeSync();
 
@@ -50,8 +50,6 @@ void yargs(hideBin(process.argv))
     async args => {
       const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
 
-      render(<GenerationInProgress />);
-
       try {
         await typesync.generate({
           pathToDefinition: resolve(process.cwd(), pathToDefinition),
@@ -63,7 +61,7 @@ void yargs(hideBin(process.argv))
 
         render(<GenerationSuccessful />);
       } catch (e) {
-        render(<GenerationFailed />);
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
     }
   )
