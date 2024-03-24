@@ -1,8 +1,15 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "."
+    "strict": true,
+    "module": "Node16",
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "outDir": "../dist",
+    "sourceMap": false,
+    "types": ["node", "jest"],
+    "esModuleInterop": true
   },
   "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"],
   "exclude": ["playground/**/*"]
