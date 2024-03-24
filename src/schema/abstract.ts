@@ -1,7 +1,7 @@
-import { cloneDeep } from 'lodash';
+import lodash from 'lodash';
 
-import { assertNever } from '../util/assert';
-import type { AliasModel, DocumentModel } from './generic';
+import { assertNever } from '../util/assert.js';
+import type { AliasModel, DocumentModel } from './generic.js';
 
 export abstract class AbstractAliasModel<T> {
   public readonly model = 'alias';
@@ -13,7 +13,7 @@ export abstract class AbstractAliasModel<T> {
   ) {}
 
   protected cloneType() {
-    return cloneDeep(this.type);
+    return lodash.cloneDeep(this.type);
   }
 }
 
@@ -27,7 +27,7 @@ export abstract class AbstractDocumentModel<T> {
   ) {}
 
   protected cloneType() {
-    return cloneDeep(this.type);
+    return lodash.cloneDeep(this.type);
   }
 }
 

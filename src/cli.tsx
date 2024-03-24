@@ -1,9 +1,14 @@
 #!/usr/bin/env node
+import { render } from 'ink';
 import { resolve } from 'node:path';
+import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypeSync, getPlatforms } from './api';
+import { createTypeSync, getPlatforms } from './api.js';
+import { GenerationFailed } from './components/GenerationFailed.js';
+import { GenerationInProgress } from './components/GenerationInProgress.js';
+import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 
 const typesync = createTypeSync();
 
@@ -45,13 +50,21 @@ void yargs(hideBin(process.argv))
     async args => {
       const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
 
-      await typesync.generate({
-        pathToDefinition: resolve(process.cwd(), pathToDefinition),
-        platform,
-        pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
-        indentation,
-        debug,
-      });
+      render(<GenerationInProgress />);
+
+      try {
+        await typesync.generate({
+          pathToDefinition: resolve(process.cwd(), pathToDefinition),
+          platform,
+          pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
+          indentation,
+          debug,
+        });
+
+        render(<GenerationSuccessful />);
+      } catch (e) {
+        render(<GenerationFailed />);
+      }
     }
   )
   .demandCommand(1)

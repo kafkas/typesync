@@ -1,5 +1,5 @@
-import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
-import { createTSGenerator } from '../_impl';
+import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema.js';
+import { createTSGenerator } from '../_impl.js';
 
 describe('TSGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {

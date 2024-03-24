@@ -1,2 +1,2 @@
-export { createPythonGenerator } from './_impl';
-export type * from './_types';
+export { createPythonGenerator } from './_impl.js';
+export type * from './_types.js';

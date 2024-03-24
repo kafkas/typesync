@@ -1,2 +1,2 @@
-export * from './_impl';
-export type * from './_types';
+export * from './_impl.js';
+export type * from './_types.js';

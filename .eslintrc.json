@@ -6,17 +6,16 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
     "plugin:prettier/recommended",
+    "plugin:require-extensions/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 11,
+    "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "node", "import", "prettier"],
+  "plugins": ["@typescript-eslint", "node", "require-extensions", "prettier"],
   "rules": {
     "@typescript-eslint/ban-ts-comment": 0,
     "@typescript-eslint/ban-types": 0,
@@ -34,22 +33,9 @@
       }
     ],
     "@typescript-eslint/no-var-requires": 0,
-    "import/no-unresolved": [
-      "error",
-      {
-        "ignore": ["^yargs/.+"]
-      }
-    ],
     "no-console": 0,
     "no-constant-condition": 0,
     "no-empty": [2, { "allowEmptyCatch": true }],
     "no-shadow": 2
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".json", ".ts"]
-      }
-    }
   }
 }

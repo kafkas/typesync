@@ -1,1 +1,1 @@
-export * as schema from './_namespace';
+export * as schema from './_namespace.js';

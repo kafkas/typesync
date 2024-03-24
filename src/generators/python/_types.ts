@@ -1,6 +1,6 @@
-import type { PythonGenerationPlatform } from '../../api';
-import type { python } from '../../platforms/python';
-import type { schema } from '../../schema';
+import type { PythonGenerationPlatform } from '../../api.js';
+import type { python } from '../../platforms/python/index.js';
+import type { schema } from '../../schema/index.js';
 
 export interface PythonAliasDeclaration {
   type: 'alias';

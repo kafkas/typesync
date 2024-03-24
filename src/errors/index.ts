@@ -1,2 +1,2 @@
-export * from './invalid-def';
-export * from './invalid-opts';
+export * from './invalid-def.js';
+export * from './invalid-opts.js';

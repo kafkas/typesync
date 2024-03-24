@@ -1,5 +1,5 @@
-import { assertNever } from '../../util/assert';
-import type { Primitive, Type } from './_types';
+import { assertNever } from '../../util/assert.js';
+import type { Primitive, Type } from './_types.js';
 
 export function isPrimitiveType(t: Type): t is Primitive {
   switch (t.type) {

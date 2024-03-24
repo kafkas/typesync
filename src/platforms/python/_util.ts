@@ -1,4 +1,4 @@
-import { Type } from './_types';
+import { Type } from './_types.js';
 
 export function canBeNone(type: Type) {
   if (type.type === 'none') return true;

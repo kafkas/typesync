@@ -1,5 +1,5 @@
-import { assertNeverNoThrow } from '../util/assert';
-import type { types } from './types';
+import { assertNeverNoThrow } from '../util/assert.js';
+import type { types } from './types/index.js';
 
 export function isPrimitiveType(candidate: unknown): candidate is types.Primitive {
   const c = candidate as types.Primitive;

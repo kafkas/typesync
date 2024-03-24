@@ -1,6 +1,6 @@
-import type { schema } from '../schema';
-import { PythonGeneration } from './python';
-import { TSGeneration } from './ts';
+import type { schema } from '../schema/index.js';
+import { PythonGeneration } from './python/index.js';
+import { TSGeneration } from './ts/index.js';
 
 export type Generation = PythonGeneration | TSGeneration;
 

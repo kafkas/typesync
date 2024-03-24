@@ -1,4 +1,4 @@
-export type { types } from './types';
+export type { types } from './types/index.js';
 
-export * from './_guards';
-export * from './_impl';
+export * from './_guards.js';
+export * from './_impl.js';

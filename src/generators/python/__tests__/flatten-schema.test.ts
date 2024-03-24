@@ -1,8 +1,8 @@
-import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
-import { schema } from '../../../schema';
-import { deepFreeze } from '../../../util/deep-freeze';
-import { flattenSchema } from '../_flatten-schema';
-import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFlatSchema } from '../_schema';
+import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema.js';
+import { schema } from '../../../schema/index.js';
+import { deepFreeze } from '../../../util/deep-freeze.js';
+import { flattenSchema } from '../_flatten-schema.js';
+import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFlatSchema } from '../_schema.js';
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {

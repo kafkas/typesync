@@ -1,6 +1,6 @@
-import { ts } from '../../platforms/ts';
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
+import { ts } from '../../platforms/ts/index.js';
+import { schema } from '../../schema/index.js';
+import { assertNever } from '../../util/assert.js';
 
 export function nilTypeToTS(_t: schema.types.Nil): ts.Null {
   return { type: 'null' };

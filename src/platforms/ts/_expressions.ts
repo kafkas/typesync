@@ -1,6 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { assertNever } from '../../util/assert';
+import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
   Boolean,
@@ -16,7 +16,7 @@ import type {
   Tuple,
   Type,
   Union,
-} from './_types';
+} from './_types.js';
 
 export interface Expression {
   content: string;

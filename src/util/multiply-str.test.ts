@@ -1,4 +1,4 @@
-import { multiply } from './multiply-str';
+import { multiply } from './multiply-str.js';
 
 describe('multiply-str', () => {
   describe('returns empty string if count is 0', () => {

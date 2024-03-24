@@ -1,6 +1,6 @@
-import type { PythonGenerationPlatform } from '../../api';
-import type { PythonGeneration } from '../../generators/python';
-import type { RenderedFile } from '../_types';
+import type { PythonGenerationPlatform } from '../../api.js';
+import type { PythonGeneration } from '../../generators/python/index.js';
+import type { RenderedFile } from '../_types.js';
 
 export interface PythonRendererConfig {
   rootFileName: string;

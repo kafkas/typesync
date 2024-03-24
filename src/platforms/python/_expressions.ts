@@ -1,4 +1,4 @@
-import { assertNever } from '../../util/assert';
+import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
   Bool,
@@ -14,7 +14,7 @@ import type {
   Type,
   Undefined,
   Union,
-} from './_types';
+} from './_types.js';
 
 export interface Expression {
   content: string;

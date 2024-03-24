@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
-    "rootDir": "."
+    "noEmit": true
   },
   "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"],
   "exclude": ["playground/**/*"]

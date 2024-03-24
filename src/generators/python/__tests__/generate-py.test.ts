@@ -1,5 +1,5 @@
-import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema';
-import { createPythonGenerator } from '../_impl';
+import { loadSchemaForTestDefinition } from '../../../../test/util/load-schema.js';
+import { createPythonGenerator } from '../_impl.js';
 
 describe('PythonGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {

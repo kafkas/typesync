@@ -1,1 +1,1 @@
-export * as definition from './_namespace';
+export * as definition from './_namespace.js';

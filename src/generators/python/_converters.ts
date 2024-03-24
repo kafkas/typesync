@@ -1,7 +1,7 @@
-import { python } from '../../platforms/python';
-import { schema } from '../../schema';
-import { assertNever } from '../../util/assert';
-import { FlatListType, FlatMapType, FlatTupleType, FlatType, FlatUnionType } from './_schema';
+import { python } from '../../platforms/python/index.js';
+import { schema } from '../../schema/index.js';
+import { assertNever } from '../../util/assert.js';
+import { FlatListType, FlatMapType, FlatTupleType, FlatType, FlatUnionType } from './_schema.js';
 
 export function nilTypeToPython(_t: schema.types.Nil): python.None {
   return { type: 'none' };

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { types } from './types';
+import type { types } from './types/index.js';
 
 export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'double', 'timestamp']);
 
