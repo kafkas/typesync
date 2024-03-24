@@ -51,7 +51,7 @@ void yargs(hideBin(process.argv))
       const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
 
       try {
-        await typesync.generate({
+        const result = await typesync.generate({
           pathToDefinition: resolve(process.cwd(), pathToDefinition),
           platform,
           pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
@@ -59,7 +59,12 @@ void yargs(hideBin(process.argv))
           debug,
         });
 
-        render(<GenerationSuccessful />);
+        render(
+          <GenerationSuccessful
+            aliasModelCount={result.aliasModelCount}
+            documentModelCount={result.documentModelCount}
+          />
+        );
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }

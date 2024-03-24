@@ -8,14 +8,15 @@
   "type": "module",
   "scripts": {
     "build": "rm -rf lib && tsc -p tsconfig.build.json",
-    "build-local": "npm run build && chmod +x lib/cli.js",
+    "build-local": "yarn run build && chmod +x lib/cli.js",
+    "dev": "tsc --watch -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.(js|ts|json)\"",
     "format-check": "prettier --check \"src/**/*.(js|ts|json)\"",
     "lint": "eslint src --ext .ts",
-    "test": "npm run test:compile && npm run test:run",
+    "test": "yarn run test:compile && yarn run test:run",
     "test:compile": "tsc -p tsconfig.test.json",
     "test:run": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test-local": "npm run test:compile && npm run test:run -- --verbose"
+    "test-local": "yarn run test:compile && yarn run test:run -- --verbose"
   },
   "files": [
     "lib"
@@ -39,6 +40,7 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.178",
     "@types/node": "^20.11.24",
+    "@types/pluralize": "^0.0.33",
     "@types/react": "^18.2.69",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
@@ -58,6 +60,7 @@
   "dependencies": {
     "@proficient/ds": "^0.3.2",
     "ink": "^4.4.1",
+    "pluralize": "^8.0.0",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "yaml": "^2.4.0",
