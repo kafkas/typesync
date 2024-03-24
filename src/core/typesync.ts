@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-import type { TypeSync, TypeSyncGenerateOptions } from '../api.js';
+import type { TypeSync, TypeSyncGenerateOptions, TypeSyncGenerateResult } from '../api.js';
 import { InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
@@ -13,7 +13,7 @@ import { createDefinitionParser } from './definition-parser.js';
 import { createLogger } from './logger.js';
 
 class TypeSyncImpl implements TypeSync {
-  public async generate(opts: TypeSyncGenerateOptions) {
+  public async generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult> {
     const logger = createLogger(opts.debug);
     this.validateOpts(opts);
 
@@ -25,9 +25,16 @@ class TypeSyncImpl implements TypeSync {
     const def = parser.parseDefinition(pathToDefinition);
     const s = schema.createSchema(def);
     const g = generator.generate(s);
-    const files = await renderer.render(g);
+    const { rootFile, files } = await renderer.render(g);
 
     await this.writeRenderedFiles(pathToOutputDir, files);
+    const pathToRootFile = resolve(pathToOutputDir, rootFile.relativePath);
+
+    return {
+      aliasModelCount: s.aliasModels.length,
+      documentModelCount: s.documentModels.length,
+      pathToRootFile,
+    };
   }
 
   private validateOpts(opts: TypeSyncGenerateOptions) {

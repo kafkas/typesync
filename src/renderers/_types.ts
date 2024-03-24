@@ -12,6 +12,11 @@ export interface RenderedFile {
   content: string;
 }
 
+export interface RenderResult {
+  rootFile: RenderedFile;
+  files: RenderedFile[];
+}
+
 export interface Renderer {
-  render(g: Generation): Promise<RenderedFile[]>;
+  render(g: Generation): Promise<RenderResult>;
 }

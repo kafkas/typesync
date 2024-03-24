@@ -34,8 +34,14 @@ export interface TypeSyncGenerateOptions {
   debug: boolean;
 }
 
+export interface TypeSyncGenerateResult {
+  aliasModelCount: number;
+  documentModelCount: number;
+  pathToRootFile: string;
+}
+
 export interface TypeSync {
-  generate(opts: TypeSyncGenerateOptions): Promise<void>;
+  generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult>;
 }
 
 export { createTypeSync } from './core/typesync.js';
