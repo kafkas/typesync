@@ -35,9 +35,11 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
+    "@types/ink": "^2.0.3",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.178",
     "@types/node": "^20.11.24",
+    "@types/react": "^18.2.69",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "babel-jest": "^27.5.1",
@@ -54,7 +56,9 @@
   },
   "dependencies": {
     "@proficient/ds": "^0.3.2",
+    "ink": "^4.4.1",
     "prettier": "^3.2.5",
+    "react": "^18.2.0",
     "yaml": "^2.4.0",
     "zod": "^3.22.4"
   }
