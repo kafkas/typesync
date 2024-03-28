@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PythonRendererImpl correctly renders a Python generation 1`] = `Promise {}`;
