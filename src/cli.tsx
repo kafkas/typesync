@@ -12,7 +12,7 @@ import { extractErrorMessage } from './util/extract-error-message.js';
 
 const typesync = createTypeSync();
 
-void yargs(hideBin(process.argv))
+await yargs(hideBin(process.argv))
   .command(
     'generate',
     'Generates models from a definition file',

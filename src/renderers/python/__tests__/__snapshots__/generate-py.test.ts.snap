@@ -1,0 +1,134 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PythonRendererImpl correctly renders a Python generation 1`] = `
+{
+  "files": [
+    {
+      "content": "from __future__ import annotations
+
+import typing
+import datetime
+import enum
+import pydantic
+from pydantic_core import core_schema
+
+class TypeSyncUndefined:
+    _instance = None
+
+    def __init__(self):
+        if TypeSyncUndefined._instance is not None:
+            raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+        else:
+            TypeSyncUndefined._instance = self
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(cls.validate)
+
+    @classmethod
+    def validate(cls, value: typing.Any, info) -> TypeSyncUndefined:
+        if not isinstance(value, cls):
+            raise ValueError("Undefined field type is not valid")
+        return value
+
+UNDEFINED = TypeSyncUndefined()
+
+class TypeSyncModel(pydantic.BaseModel):
+    def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        processed = {}
+        for field_name, field_value in self.__dict__.items():
+            if isinstance(field_value, pydantic.BaseModel):
+                processed[field_name] = field_value.model_dump(**kwargs)
+            elif isinstance(field_value, list):
+                processed[field_name] = [item.model_dump(**kwargs) if isinstance(item, pydantic.BaseModel) else item for item in field_value]
+            elif isinstance(field_value, dict):
+                processed[field_name] = {key: value.model_dump(**kwargs) if isinstance(value, pydantic.BaseModel) else value for key, value in field_value.items()}
+            elif field_value is UNDEFINED:
+                continue
+            else:
+                processed[field_name] = field_value
+        return processed
+
+# Model Definitions
+
+Username = str
+
+class Dog(TypeSyncModel):
+    name: str
+    breed: str
+
+    class Config:
+        use_enum_values = True
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        super().__setattr__(name, value)
+
+",
+      "relativePath": "models.py",
+    },
+  ],
+  "rootFile": {
+    "content": "from __future__ import annotations
+
+import typing
+import datetime
+import enum
+import pydantic
+from pydantic_core import core_schema
+
+class TypeSyncUndefined:
+    _instance = None
+
+    def __init__(self):
+        if TypeSyncUndefined._instance is not None:
+            raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+        else:
+            TypeSyncUndefined._instance = self
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(cls.validate)
+
+    @classmethod
+    def validate(cls, value: typing.Any, info) -> TypeSyncUndefined:
+        if not isinstance(value, cls):
+            raise ValueError("Undefined field type is not valid")
+        return value
+
+UNDEFINED = TypeSyncUndefined()
+
+class TypeSyncModel(pydantic.BaseModel):
+    def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        processed = {}
+        for field_name, field_value in self.__dict__.items():
+            if isinstance(field_value, pydantic.BaseModel):
+                processed[field_name] = field_value.model_dump(**kwargs)
+            elif isinstance(field_value, list):
+                processed[field_name] = [item.model_dump(**kwargs) if isinstance(item, pydantic.BaseModel) else item for item in field_value]
+            elif isinstance(field_value, dict):
+                processed[field_name] = {key: value.model_dump(**kwargs) if isinstance(value, pydantic.BaseModel) else value for key, value in field_value.items()}
+            elif field_value is UNDEFINED:
+                continue
+            else:
+                processed[field_name] = field_value
+        return processed
+
+# Model Definitions
+
+Username = str
+
+class Dog(TypeSyncModel):
+    name: str
+    breed: str
+
+    class Config:
+        use_enum_values = True
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        super().__setattr__(name, value)
+
+",
+    "relativePath": "models.py",
+  },
+}
+`;
