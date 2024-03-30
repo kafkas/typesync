@@ -56,11 +56,20 @@ jobs:
 workflows:
   build_test_deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - lint:
           requires: [build]
+          filters:
+            tags:
+              only: /.*/
       - test:
           requires: [build]
+          filters:
+            tags:
+              only: /.*/
       - publish:
           requires: [build, lint, test]
           filters:
