@@ -41,11 +41,30 @@ jobs:
           name: Run rests
           command: yarn test
 
+  publish:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run:
+          name: Publish to NPM
+          command: npm publish
+
 workflows:
-  ts_check:
+  build_test_deploy:
     jobs:
       - build
       - lint:
           requires: [build]
       - test:
           requires: [build]
+      - publish:
+          requires: [build, lint, test]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
