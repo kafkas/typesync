@@ -72,8 +72,8 @@ workflows:
               only: /.*/
       - publish:
           requires: [build, lint, test]
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+\.\d+\.\d+$/
+          # filters:
+          #   branches:
+          #     ignore: /.*/
+          #   tags:
+          #     only: /^v\d+\.\d+\.\d+$/
