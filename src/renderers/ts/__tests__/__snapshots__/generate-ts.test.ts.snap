@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TSRendererImpl correctly renders a TS generation 1`] = `
+{
+  "files": [
+    {
+      "content": "import { firestore } from 'firebase-admin';
+
+export type Username = string;
+
+export interface Dog {
+    name: string;
+    breed: string;
+}
+",
+      "relativePath": "models.py",
+    },
+  ],
+  "rootFile": {
+    "content": "import { firestore } from 'firebase-admin';
+
+export type Username = string;
+
+export interface Dog {
+    name: string;
+    breed: string;
+}
+",
+    "relativePath": "models.py",
+  },
+}
+`;
