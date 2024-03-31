@@ -1,16 +1,32 @@
 #!/usr/bin/env node
 import { render } from 'ink';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { z } from 'zod';
 
 import { createTypeSync, getPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
+import { getDirName } from './util/fs.js';
+
+function extractVersionFromPackageJson() {
+  const packageJsonSchema = z.object({
+    version: z.string(),
+  });
+  const dirName = getDirName(import.meta.url);
+  const pathToPackageJson = resolve(dirName, '../package.json');
+  const packageJsonRaw = JSON.parse(readFileSync(pathToPackageJson).toString());
+  const { version } = packageJsonSchema.parse(packageJsonRaw);
+  return version;
+}
 
 const typesync = createTypeSync();
+
+const cliVersion = extractVersionFromPackageJson();
 
 await yargs(hideBin(process.argv))
   .command(
@@ -73,4 +89,5 @@ await yargs(hideBin(process.argv))
   )
   .demandCommand(1)
   .help()
+  .version(cliVersion)
   .parse();
