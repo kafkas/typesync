@@ -40,8 +40,24 @@ export interface TypeSyncGenerateResult {
   pathToRootFile: string;
 }
 
+export interface TypeSyncValidateOptions {
+  pathToDefinition: string;
+  debug: boolean;
+}
+
+export type TypeSyncValidateResult =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      message: string;
+    };
+
 export interface TypeSync {
   generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult>;
+
+  validate(opts: TypeSyncValidateOptions): Promise<TypeSyncValidateResult>;
 }
 
 export { createTypeSync } from './core/typesync.js';
