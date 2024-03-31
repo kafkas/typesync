@@ -5,6 +5,6 @@ type Props = {
   message: string;
 };
 
-export function CheckFailed({ message }: Props) {
+export function ValidationFailed({ message }: Props) {
   return <Text color="red">{message}</Text>;
 }

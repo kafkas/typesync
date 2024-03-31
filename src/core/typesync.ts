@@ -2,10 +2,10 @@ import { resolve } from 'path';
 
 import type {
   TypeSync,
-  TypeSyncCheckOptions,
-  TypeSyncCheckResult,
   TypeSyncGenerateOptions,
   TypeSyncGenerateResult,
+  TypeSyncValidateOptions,
+  TypeSyncValidateResult,
 } from '../api.js';
 import { InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
@@ -51,7 +51,7 @@ class TypeSyncImpl implements TypeSync {
     }
   }
 
-  public async check(opts: TypeSyncCheckOptions): Promise<TypeSyncCheckResult> {
+  public async validate(opts: TypeSyncValidateOptions): Promise<TypeSyncValidateResult> {
     const logger = createLogger(opts.debug);
 
     const { pathToDefinition } = opts;

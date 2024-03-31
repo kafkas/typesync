@@ -8,10 +8,10 @@ import { hideBin } from 'yargs/helpers';
 import { z } from 'zod';
 
 import { createTypeSync, getPlatforms } from './api.js';
-import { CheckFailed } from './components/CheckFailed.js';
-import { CheckSuccessful } from './components/CheckSuccessful.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
+import { ValidationFailed } from './components/ValidationFailed.js';
+import { ValidationSuccessful } from './components/ValidationSuccessful.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
 import { getDirName } from './util/fs.js';
 
@@ -89,7 +89,7 @@ await yargs(hideBin(process.argv))
     }
   )
   .command(
-    'check',
+    'validate',
     'Validates definition syntax',
     y =>
       y
@@ -107,15 +107,15 @@ await yargs(hideBin(process.argv))
     async args => {
       const { pathToDefinition, debug } = args;
 
-      const result = await typesync.check({
+      const result = await typesync.validate({
         pathToDefinition: resolve(process.cwd(), pathToDefinition),
         debug,
       });
 
       if (result.success) {
-        render(<CheckSuccessful />);
+        render(<ValidationSuccessful />);
       } else {
-        render(<CheckFailed message={result.message} />);
+        render(<ValidationFailed message={result.message} />);
       }
     }
   )
