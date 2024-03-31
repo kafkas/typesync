@@ -1,6 +1,12 @@
 import { resolve } from 'path';
 
-import type { TypeSync, TypeSyncGenerateOptions, TypeSyncGenerateResult } from '../api.js';
+import type {
+  TypeSync,
+  TypeSyncCheckOptions,
+  TypeSyncCheckResult,
+  TypeSyncGenerateOptions,
+  TypeSyncGenerateResult,
+} from '../api.js';
 import { InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
@@ -8,6 +14,7 @@ import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
 import { schema } from '../schema/index.js';
 import { assertNever } from '../util/assert.js';
+import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
 import { createDefinitionParser } from './definition-parser.js';
 import { createLogger } from './logger.js';
@@ -41,6 +48,21 @@ class TypeSyncImpl implements TypeSync {
     const { indentation } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
+    }
+  }
+
+  public async check(opts: TypeSyncCheckOptions): Promise<TypeSyncCheckResult> {
+    const logger = createLogger(opts.debug);
+
+    const { pathToDefinition } = opts;
+
+    const parser = createDefinitionParser(logger);
+
+    try {
+      parser.parseDefinition(pathToDefinition);
+      return { success: true };
+    } catch (e) {
+      return { success: false, message: extractErrorMessage(e) };
     }
   }
 

@@ -8,6 +8,8 @@ import { hideBin } from 'yargs/helpers';
 import { z } from 'zod';
 
 import { createTypeSync, getPlatforms } from './api.js';
+import { CheckFailed } from './components/CheckFailed.js';
+import { CheckSuccessful } from './components/CheckSuccessful.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
@@ -32,8 +34,8 @@ await yargs(hideBin(process.argv))
   .command(
     'generate',
     'Generates models from a definition file',
-    y => {
-      return y
+    y =>
+      y
         .option('pathToDefinition', {
           describe: 'Path to the definition file. Must be a YAML file containing model definitions.',
           type: 'string',
@@ -61,8 +63,7 @@ await yargs(hideBin(process.argv))
           type: 'boolean',
           demandOption: false,
           default: false,
-        });
-    },
+        }),
     async args => {
       const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
 
@@ -84,6 +85,37 @@ await yargs(hideBin(process.argv))
         );
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'check',
+    'Validates definition syntax',
+    y =>
+      y
+        .option('pathToDefinition', {
+          describe: 'Path to the definition file. Must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
+        }),
+    async args => {
+      const { pathToDefinition, debug } = args;
+
+      const result = await typesync.check({
+        pathToDefinition: resolve(process.cwd(), pathToDefinition),
+        debug,
+      });
+
+      if (result.success) {
+        render(<CheckSuccessful />);
+      } else {
+        render(<CheckFailed message={result.message} />);
       }
     }
   )

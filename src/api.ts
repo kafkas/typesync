@@ -40,8 +40,24 @@ export interface TypeSyncGenerateResult {
   pathToRootFile: string;
 }
 
+export interface TypeSyncCheckOptions {
+  pathToDefinition: string;
+  debug: boolean;
+}
+
+export type TypeSyncCheckResult =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      message: string;
+    };
+
 export interface TypeSync {
   generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult>;
+
+  check(opts: TypeSyncCheckOptions): Promise<TypeSyncCheckResult>;
 }
 
 export { createTypeSync } from './core/typesync.js';
