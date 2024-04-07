@@ -11,3 +11,20 @@ playground
 .firebase
 
 secrets/**/*
+
+### PYTHON START
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PEP 582
+__pypackages__/
+
+# Environments
+.env
+.venv
+.mypy_cache/
+
+### PYTHON END
