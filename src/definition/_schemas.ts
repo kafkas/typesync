@@ -107,9 +107,7 @@ const createDefinition = (aliasType: z.ZodType) => {
     .object({
       model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
       docs: z.string().optional().describe('Optional documentation for the model.'),
-      type: objectType.describe(
-        `The type that represents the shape of the document model. Can be one of 'object' or 'map'.`
-      ),
+      type: objectType.describe(`The type that represents the shape of the document model. Must be an 'object' type.`),
     })
     .strict()
     .describe('A document model.');
