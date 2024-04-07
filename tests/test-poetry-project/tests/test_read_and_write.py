@@ -14,8 +14,12 @@ FIRESTORE_EMULATOR_PORT = "8080"
 
 PACKAGE_ROOT = Path(test_poetry_project.__file__).parent
 PROJECT_ROOT = PACKAGE_ROOT.parent
+REPO_ROOT = PROJECT_ROOT.parent.parent
+
 TYPESYNC_MODEL_IN_PATH = PACKAGE_ROOT / "models.yml"
 TYPESYNC_OUTPUT_DIR_PATH = PACKAGE_ROOT
+
+TYPESYNC_CLI_ENTRYPOINT_PATH = REPO_ROOT / "src" / "cli.tsx"
 
 
 @pytest.fixture
@@ -23,14 +27,15 @@ def generated_typesync_python_schema_file() -> Generator[Path, None, None]:
     model_output_path = TYPESYNC_OUTPUT_DIR_PATH / "models.py"
     subprocess.run(
         [
-            "npx",
-            "typesync",
+            "yarn",
+            "tsx",
+            TYPESYNC_CLI_ENTRYPOINT_PATH.absolute().as_posix(),
             "generate",
             "--platform",
             "py:firebase-admin:6",
-            "--pathToDefinition",
+            "--definition",
             TYPESYNC_MODEL_IN_PATH.absolute().as_posix(),
-            "--pathToOutputDir",
+            "--outputDir",
             TYPESYNC_OUTPUT_DIR_PATH.absolute().as_posix(),
         ],
         check=True,
