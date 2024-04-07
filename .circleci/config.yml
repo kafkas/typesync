@@ -43,9 +43,25 @@ jobs:
 
   publish:
     executor: node/default
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: secrets/hosting-service-account-prod.json
     steps:
       - attach_workspace:
           at: ~/project
+      - run:
+          name: Install the Firebase CLI
+          command: yarn global add firebase-tools@13.5.1
+      - run:
+          name: Prepare service account
+          command: |
+            mkdir -p secrets
+            echo $HOSTING_SERVICE_ACCOUNT_BASE64_PROD | base64 -d > secrets/hosting-service-account-prod.json
+      - run:
+          name: Publish JSON schema
+          command: firebase deploy --only hosting
+      - run:
+          name: Delete service account
+          command: rm -rf secrets/hosting-service-account-prod.json
       - run:
           name: Configure NPM
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

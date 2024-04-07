@@ -9,3 +9,5 @@ coverage/
 playground
 
 .firebase
+
+secrets/**/*
