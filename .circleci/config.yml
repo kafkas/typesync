@@ -69,7 +69,7 @@ jobs:
         type: string
     working_directory: ~/project/tests/test-poetry-project
     steps:
-      - checkout
+      - checkout:
           path: ~/project
       - attach_workspace:
           at: << parameters.path_to_typesync_model_dir >>
