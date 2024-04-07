@@ -36,8 +36,9 @@ await yargs(hideBin(process.argv))
     'Generates models from a definition file',
     y =>
       y
-        .option('pathToDefinition', {
-          describe: 'Path to the definition file. Must be a YAML file containing model definitions.',
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
@@ -65,11 +66,11 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { pathToDefinition, platform, pathToOutputDir, indentation, debug } = args;
+      const { definition, platform, pathToOutputDir, indentation, debug } = args;
 
       try {
         const result = await typesync.generate({
-          pathToDefinition: resolve(process.cwd(), pathToDefinition),
+          definition: resolve(process.cwd(), definition),
           platform,
           pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
           indentation,
@@ -108,7 +109,7 @@ await yargs(hideBin(process.argv))
       const { pathToDefinition, debug } = args;
 
       const result = await typesync.validate({
-        pathToDefinition: resolve(process.cwd(), pathToDefinition),
+        definition: resolve(process.cwd(), pathToDefinition),
         debug,
       });
 

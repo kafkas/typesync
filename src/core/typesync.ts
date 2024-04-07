@@ -1,3 +1,4 @@
+import { globSync } from 'glob';
 import { resolve } from 'path';
 
 import type {
@@ -7,7 +8,7 @@ import type {
   TypeSyncValidateOptions,
   TypeSyncValidateResult,
 } from '../api.js';
-import { InvalidIndentationOption } from '../errors/index.js';
+import { DefinitionFilesNotFoundError, InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
@@ -24,15 +25,18 @@ class TypeSyncImpl implements TypeSync {
     const logger = createLogger(opts.debug);
     this.validateOpts(opts);
 
-    const { pathToDefinition, pathToOutputDir } = opts;
+    const { definition: definitionGlobPattern, pathToOutputDir } = opts;
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
     const parser = createDefinitionParser(logger);
 
-    const def = parser.parseDefinition(pathToDefinition);
-    const s = schema.createSchema(def);
-    const g = generator.generate(s);
-    const { rootFile, files } = await renderer.render(g);
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
+    logger.info(`Found ${definitionFilePaths.length} files matching Glob pattern:`, definitionFilePaths);
+
+    const definition = parser.parseDefinition(definitionFilePaths);
+    const s = schema.createSchema(definition);
+    const generation = generator.generate(s);
+    const { rootFile, files } = await renderer.render(generation);
 
     await this.writeRenderedFiles(pathToOutputDir, files);
     const pathToRootFile = resolve(pathToOutputDir, rootFile.relativePath);
@@ -54,16 +58,24 @@ class TypeSyncImpl implements TypeSync {
   public async validate(opts: TypeSyncValidateOptions): Promise<TypeSyncValidateResult> {
     const logger = createLogger(opts.debug);
 
-    const { pathToDefinition } = opts;
-
+    const { definition: definitionGlobPattern } = opts;
     const parser = createDefinitionParser(logger);
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
 
     try {
-      parser.parseDefinition(pathToDefinition);
+      parser.parseDefinition(definitionFilePaths);
       return { success: true };
     } catch (e) {
       return { success: false, message: extractErrorMessage(e) };
     }
+  }
+
+  private findDefinitionFilesMatchingPattern(globPattern: string) {
+    const filePaths = globSync(globPattern);
+    if (filePaths.length === 0) {
+      throw new DefinitionFilesNotFoundError(globPattern);
+    }
+    return filePaths as [string, ...string[]];
   }
 
   private createGenerator(opts: TypeSyncGenerateOptions): Generator {
