@@ -167,8 +167,8 @@ workflows:
           type: approval
       - generate-typesync-models:
           requires: [ approve-integration-tests ]
-          model_path: "tests/test_poetry_project/models.yml"
-          output_dir_path: "tests/test_poetry_project"
+          model_path: "tests/test-poetry-project/test_poetry_project/models.yml"
+          output_dir_path: "tests/test-poetry-project/test_poetry_project"
           platform: "py:firebase-admin:6"
       - test-typesync-python-end-to-end:
           requires: [ generate-typesync-models ]
