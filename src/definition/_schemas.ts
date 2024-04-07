@@ -8,21 +8,23 @@ const createDefinition = (aliasType: z.ZodType) => {
   const literalType = z
     .object({
       type: z.literal('literal'),
-      value: z.string().or(z.number().int()).or(z.boolean()),
+      value: z.string().or(z.number().int()).or(z.boolean()).describe('The literal value.'),
     })
     .describe('A literal type');
 
   const enumType = z
     .object({
       type: z.literal('enum'),
-      items: z.array(
-        z
-          .object({
-            label: z.string(),
-            value: z.string().or(z.number()),
-          })
-          .strict()
-      ),
+      items: z
+        .array(
+          z
+            .object({
+              label: z.string().describe('The label for this enumeration item.'),
+              value: z.string().or(z.number()).describe('The value for this enumeration item.'),
+            })
+            .strict()
+        )
+        .describe('A list containing the enumeration items.'),
     })
     .describe('An enum type');
 
@@ -31,7 +33,7 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('tuple'),
-          values: z.array(type),
+          values: z.array(type).describe('An ordered list of types that comprise this tuple.'),
         })
         .strict()
     )
@@ -42,7 +44,7 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('list'),
-          of: type,
+          of: type.describe('The type representing each element in this list.'),
         })
         .strict()
     )
@@ -53,24 +55,24 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('map'),
-          of: type,
+          of: type.describe('The type representing the values in this map. The keys in a map are always strings.'),
         })
         .strict()
     )
-    .describe('A map type');
+    .describe('An arbitrary mapping from strings to any valid types.');
 
   const objectType = z
     .lazy(() =>
       z
         .object({
           type: z.literal('object'),
-          fields: z.record(field),
+          fields: z.record(field).describe('The fields that belong to this object.'),
         })
         .strict()
     )
-    .describe('An object type');
+    .describe('An object type.');
 
-  const unionType = z.lazy(() => z.array(type)).describe('A union type');
+  const unionType = z.lazy(() => z.array(type)).describe('A union type.');
 
   const type: z.ZodType<types.Type> = primitiveType
     .or(literalType)
@@ -81,34 +83,36 @@ const createDefinition = (aliasType: z.ZodType) => {
     .or(objectType)
     .or(unionType)
     .or(aliasType)
-    .describe('Any valid type');
+    .describe('Any valid type.');
 
   const field: z.ZodType<types.ObjectField> = z
     .object({
       type: type,
-      optional: z.boolean().optional(),
-      docs: z.string().optional(),
+      optional: z.boolean().optional().describe('Whether this field is optional. Defaults to false.'),
+      docs: z.string().optional().describe('Optional documentation for the object field.'),
     })
     .strict()
-    .describe('An object field');
+    .describe('An object field.');
 
   const aliasModel = z
     .object({
-      model: z.literal('alias'),
-      docs: z.string().optional(),
-      type: type,
+      model: z.literal('alias').describe(`A literal field indicating that this is an 'alias' model.`),
+      docs: z.string().optional().describe('Optional documentation for the model.'),
+      type: type.describe(`The type that this model is an alias of.`),
     })
     .strict()
     .describe('An alias model');
 
   const documentModel = z
     .object({
-      model: z.literal('document'),
-      docs: z.string().optional(),
-      type: objectType,
+      model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
+      docs: z.string().optional().describe('Optional documentation for the model.'),
+      type: objectType.describe(
+        `The type that represents the shape of the document model. Can be one of 'object' or 'map'.`
+      ),
     })
     .strict()
-    .describe('A document model');
+    .describe('A document model.');
 
   const model = z.discriminatedUnion('model', [aliasModel, documentModel]);
 
@@ -116,7 +120,7 @@ const createDefinition = (aliasType: z.ZodType) => {
 };
 
 export const definition = (() => {
-  const aliasType = z.string().describe('An alias type');
+  const aliasType = z.string().describe('An alias type.');
   return createDefinition(aliasType);
 })();
 
