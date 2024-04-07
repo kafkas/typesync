@@ -128,6 +128,11 @@ workflows:
               only: /.*/
       - approve-publish:
           type: approval
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
       - publish:
           requires: [build, lint, test, approve-publish]
           filters:
