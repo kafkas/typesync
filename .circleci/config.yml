@@ -16,6 +16,11 @@ jobs:
       - run:
           name: Build the project
           command: yarn run build
+      - run:
+          name: Check if repo contains the correct JSON schema for the current version
+          command: |
+            yarn run generate-json-schema
+            git --no-pager diff --exit-code
       - persist_to_workspace:
           root: .
           paths: [.]
