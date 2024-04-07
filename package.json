@@ -12,6 +12,7 @@
     "dev": "tsc --watch -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.(js|ts|json)\"",
     "format-check": "prettier --check \"src/**/*.(js|ts|json)\"",
+    "generate-json-schema": "tsx scripts/generate-json-schema",
     "lint": "eslint src --ext .ts",
     "test": "yarn run test:compile && yarn run test:run",
     "test:compile": "tsc -p tsconfig.test.json",
@@ -53,7 +54,9 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "5.3.3"
+    "tsx": "^4.7.2",
+    "typescript": "5.3.3",
+    "zod-to-json-schema": "^3.22.5"
   },
   "dependencies": {
     "@proficient/ds": "^0.3.2",
