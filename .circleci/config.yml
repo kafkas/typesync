@@ -13,7 +13,7 @@ commands:
         default: .
     steps:
       - checkout:
-          path: ~/project
+          path: << parameters.checkout_path >>
       - node/install-packages:
           pkg-manager: yarn
       - run:
