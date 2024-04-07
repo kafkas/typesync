@@ -81,6 +81,7 @@ class TypeSyncImpl implements TypeSync {
   private createGenerator(opts: TypeSyncGenerateOptions): Generator {
     const { platform } = opts;
     switch (platform) {
+      case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
         return createTSGenerator({ platform });
       case 'py:firebase-admin:6':
@@ -93,6 +94,7 @@ class TypeSyncImpl implements TypeSync {
   private createRenderer(opts: TypeSyncGenerateOptions): renderers.Renderer {
     const { platform, indentation } = opts;
     switch (platform) {
+      case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
         return renderers.createTSRenderer({ rootFileName: 'index.ts', platform, indentation });
       case 'py:firebase-admin:6':
