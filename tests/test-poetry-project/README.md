@@ -1,1 +1,1 @@
-A sample Python project managed with Poetry; this project is used as a test.
+A sample Python project managed with Poetry; this is used to test Typesync
