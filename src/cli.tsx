@@ -48,8 +48,8 @@ await yargs(hideBin(process.argv))
           demandOption: true,
           choices: getPlatforms(),
         })
-        .option('pathToOutputDir', {
-          describe: 'Path to the output directory',
+        .option('outputDir', {
+          describe: 'The path to the output directory',
           type: 'string',
           demandOption: true,
         })
@@ -66,13 +66,13 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { definition, platform, pathToOutputDir, indentation, debug } = args;
+      const { definition, platform, outputDir, indentation, debug } = args;
 
       try {
         const result = await typesync.generate({
           definition: resolve(process.cwd(), definition),
           platform,
-          pathToOutputDir: resolve(process.cwd(), pathToOutputDir),
+          outputDir: resolve(process.cwd(), outputDir),
           indentation,
           debug,
         });

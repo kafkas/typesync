@@ -25,7 +25,7 @@ class TypeSyncImpl implements TypeSync {
     const logger = createLogger(opts.debug);
     this.validateOpts(opts);
 
-    const { definition: definitionGlobPattern, pathToOutputDir } = opts;
+    const { definition: definitionGlobPattern, outputDir: pathToOutputDir } = opts;
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
     const parser = createDefinitionParser(logger);

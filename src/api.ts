@@ -29,7 +29,7 @@ export function getPlatforms(): GenerationPlatform[] {
 export interface TypeSyncGenerateOptions {
   definition: string;
   platform: GenerationPlatform;
-  pathToOutputDir: string;
+  outputDir: string;
   indentation: number;
   debug: boolean;
 }
