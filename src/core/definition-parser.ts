@@ -14,7 +14,7 @@ export interface DefinitionParser {
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger?: Logger) {}
 
-  public parseDefinition(pathToDefinition: string) {
+  public parseDefinition(pathToDefinition: string): definition.Definition {
     const definitionJson = this.parseYamlFileAsJson(pathToDefinition);
     const aliasNames = this.extractAliasModelNames(definitionJson);
     const definitionSchema = definition.schemas.definition(aliasNames);
