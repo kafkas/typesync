@@ -2,6 +2,7 @@
   "$ref": "#/definitions/v0.0",
   "definitions": {
     "v0.0": {
+      "type": "object",
       "additionalProperties": {
         "anyOf": [
           {
