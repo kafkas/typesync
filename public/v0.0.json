@@ -274,7 +274,7 @@
                 },
                 "required": ["type", "fields"],
                 "additionalProperties": false,
-                "description": "The type that represents the shape of the document model. Can be one of 'object' or 'map'."
+                "description": "The type that represents the shape of the document model. Must be an 'object' type."
               }
             },
             "required": ["model", "type"],
