@@ -1,0 +1,289 @@
+{
+  "$ref": "#/definitions/v0.0",
+  "definitions": {
+    "v0.0": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string",
+                "const": "alias",
+                "description": "A literal field indicating that this is an 'alias' model."
+              },
+              "docs": {
+                "type": "string",
+                "description": "Optional documentation for the model."
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "anyOf": [
+                                          {
+                                            "anyOf": [
+                                              {
+                                                "type": "string",
+                                                "enum": [
+                                                  "nil",
+                                                  "string",
+                                                  "boolean",
+                                                  "int",
+                                                  "double",
+                                                  "timestamp"
+                                                ],
+                                                "description": "A primitive type"
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "literal"
+                                                  },
+                                                  "value": {
+                                                    "anyOf": [
+                                                      {
+                                                        "anyOf": [
+                                                          { "type": "string" },
+                                                          { "type": "integer" }
+                                                        ]
+                                                      },
+                                                      { "type": "boolean" }
+                                                    ],
+                                                    "description": "The literal value."
+                                                  }
+                                                },
+                                                "required": ["type", "value"],
+                                                "additionalProperties": false,
+                                                "description": "A literal type"
+                                              }
+                                            ],
+                                            "description": "A primitive type"
+                                          },
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "enum"
+                                              },
+                                              "items": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "label": {
+                                                      "type": "string",
+                                                      "description": "The label for this enumeration item."
+                                                    },
+                                                    "value": {
+                                                      "type": [
+                                                        "string",
+                                                        "number"
+                                                      ],
+                                                      "description": "The value for this enumeration item."
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "label",
+                                                    "value"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                "description": "A list containing the enumeration items."
+                                              }
+                                            },
+                                            "required": ["type", "items"],
+                                            "additionalProperties": false,
+                                            "description": "An enum type"
+                                          }
+                                        ],
+                                        "description": "A primitive type"
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tuple"
+                                          },
+                                          "values": {
+                                            "type": "array",
+                                            "items": {
+                                              "anyOf": [
+                                                {
+                                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                                },
+                                                {
+                                                  "type": "string",
+                                                  "description": "An alias type."
+                                                }
+                                              ],
+                                              "description": "Any valid type."
+                                            },
+                                            "description": "An ordered list of types that comprise this tuple."
+                                          }
+                                        },
+                                        "required": ["type", "values"],
+                                        "additionalProperties": false,
+                                        "description": "A tuple type"
+                                      }
+                                    ],
+                                    "description": "A primitive type"
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "const": "list"
+                                      },
+                                      "of": {
+                                        "anyOf": [
+                                          {
+                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                          },
+                                          {
+                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                          }
+                                        ],
+                                        "description": "The type representing each element in this list."
+                                      }
+                                    },
+                                    "required": ["type", "of"],
+                                    "additionalProperties": false,
+                                    "description": "A list type"
+                                  }
+                                ],
+                                "description": "A primitive type"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": { "type": "string", "const": "map" },
+                                  "of": {
+                                    "anyOf": [
+                                      {
+                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                      },
+                                      {
+                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                      }
+                                    ],
+                                    "description": "The type representing the values in this map. The keys in a map are always strings."
+                                  }
+                                },
+                                "required": ["type", "of"],
+                                "additionalProperties": false,
+                                "description": "An arbitrary mapping from strings to any valid types."
+                              }
+                            ],
+                            "description": "A primitive type"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": { "type": "string", "const": "object" },
+                              "fields": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
+                                    },
+                                    "optional": {
+                                      "type": "boolean",
+                                      "description": "Whether this field is optional. Defaults to false."
+                                    },
+                                    "docs": {
+                                      "type": "string",
+                                      "description": "Optional documentation for the object field."
+                                    }
+                                  },
+                                  "required": ["type"],
+                                  "additionalProperties": false,
+                                  "description": "An object field."
+                                },
+                                "description": "The fields that belong to this object."
+                              }
+                            },
+                            "required": ["type", "fields"],
+                            "additionalProperties": false,
+                            "description": "An object type."
+                          }
+                        ],
+                        "description": "A primitive type"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
+                        },
+                        "description": "A union type."
+                      }
+                    ],
+                    "description": "A primitive type"
+                  },
+                  {
+                    "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                  }
+                ],
+                "description": "The type that this model is an alias of."
+              }
+            },
+            "required": ["model", "type"],
+            "additionalProperties": false,
+            "description": "An alias model"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string",
+                "const": "document",
+                "description": "A literal field indicating that this is a 'document' model."
+              },
+              "docs": {
+                "type": "string",
+                "description": "Optional documentation for the model."
+              },
+              "type": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string", "const": "object" },
+                  "fields": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1/properties/fields/additionalProperties"
+                    },
+                    "description": "The fields that belong to this object."
+                  }
+                },
+                "required": ["type", "fields"],
+                "additionalProperties": false,
+                "description": "The type that represents the shape of the document model. Can be one of 'object' or 'map'."
+              }
+            },
+            "required": ["model", "type"],
+            "additionalProperties": false,
+            "description": "A document model."
+          }
+        ]
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
