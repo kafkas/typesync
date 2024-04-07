@@ -6,4 +6,6 @@ lib/
 
 coverage/
 
-playground/
+playground
+
+.firebase
