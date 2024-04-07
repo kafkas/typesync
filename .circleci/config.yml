@@ -48,6 +48,8 @@ jobs:
         type: enum
         enum: ["ts:firebase-admin:11", "py:firebase-admin:6", "ts:firebase-admin:12"]
     steps:
+      - checkout-build-yarn-project:
+          checkout_path: ~/project
       - run:
           name: Generate types from the model schema
           command: |
@@ -138,6 +140,7 @@ workflows:
       - approve-integration-tests:
           type: approval
       - generate-typesync-models:
+          requires: [ approve-integration-tests ]
           model_path: "tests/test_poetry_project/models.yml"
           output_dir_path: "tests/test_poetry_project"
           platform: "py:firebase-admin:6"
