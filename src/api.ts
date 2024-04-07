@@ -27,9 +27,9 @@ export function getPlatforms(): GenerationPlatform[] {
 }
 
 export interface TypeSyncGenerateOptions {
-  pathToDefinition: string;
+  definition: string;
   platform: GenerationPlatform;
-  pathToOutputDir: string;
+  outputDir: string;
   indentation: number;
   debug: boolean;
 }
@@ -41,7 +41,7 @@ export interface TypeSyncGenerateResult {
 }
 
 export interface TypeSyncValidateOptions {
-  pathToDefinition: string;
+  definition: string;
   debug: boolean;
 }
 
