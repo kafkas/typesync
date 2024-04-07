@@ -5,9 +5,12 @@ version: 2.1
 orbs:
   node: circleci/node@5.2.0
 
-jobs:
-  build:
-    executor: node/default
+commands:
+  checkout-build-yarn-project:
+    parameters:
+      checkout_path:
+        type: string
+        default: .
     steps:
       - checkout:
           path: ~/project
@@ -16,6 +19,12 @@ jobs:
       - run:
           name: Build the project
           command: yarn run build
+jobs:
+  build:
+    executor: node/default
+    steps:
+      - checkout-build-yarn-project:
+          checkout_path: ~/project
       - run:
           name: Check if repo contains the correct JSON schema for the current version
           command: |
@@ -23,6 +32,30 @@ jobs:
             git --no-pager diff --exit-code
       - persist_to_workspace:
           root: .
+          paths: [.]
+  
+  generate-typesync-models:
+    executor: node/default
+    parameters:
+      model_path:
+        description: Relative/absolute path to the input model .yml file
+        type: string
+      output_dir_path:
+        description: Target output dir of the generated types 
+        type: string
+      platform:
+        description: Target platform and version
+        type: enum
+        enum: ["ts:firebase-admin:11", "py:firebase-admin:6", "ts:firebase-admin:12"]
+    steps:
+      - run:
+          name: Generate types from the model schema
+          command: |
+            yarn tsx src/cli.tsx generate --definition << parameters.model_path >> \
+            --platform << parameters.platform >> \
+            --outputDir << parameters.output_dir_path >>
+      - persist_to_workspace:
+          root: << output_dir_path >>
           paths: [.]
 
   lint:
@@ -91,10 +124,20 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - approve-publish:
+          type: approval
       - publish:
-          requires: [build, lint, test]
+          requires: [build, lint, test, approve-publish]
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^v\d+\.\d+\.\d+$/
+  integration-tests:
+    jobs:
+      - approve-integration-tests:
+          type: approval
+      - generate-typesync-models:
+          model_path: "tests/test_poetry_project/models.yml"
+          output_dir_path: "tests/test_poetry_project"
+          platform: "py:firebase-admin:6"
