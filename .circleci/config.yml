@@ -55,7 +55,7 @@ jobs:
             --platform << parameters.platform >> \
             --outputDir << parameters.output_dir_path >>
       - persist_to_workspace:
-          root: << output_dir_path >>
+          root: << parameters.output_dir_path >>
           paths: [.]
 
   lint:
