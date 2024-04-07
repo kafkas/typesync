@@ -30,7 +30,7 @@ class DefinitionParserImpl implements DefinitionParser {
       contentJson: this.parseYamlFileAsJson(path),
     }));
     const { aliasModelNames } = this.extractModelNamesFromDefinitionFiles(rawDefinitionFiles);
-    const definitionFileSchema = definition.schemas.definition(aliasModelNames);
+    const definitionFileSchema = definition.schemas.definitionWithKnownAliases(aliasModelNames);
     return rawDefinitionFiles.reduce<definition.Definition>((acc, rawFile) => {
       const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definitionFileSchema);
       Object.entries(parsedFile.content).forEach(([modelName, model]) => {
@@ -56,7 +56,7 @@ class DefinitionParserImpl implements DefinitionParser {
 
     rawDefinitionFiles.forEach(rawFile => {
       const { path } = rawFile;
-      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definition.schemas.definitionLoose);
+      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definition.schemas.definition);
       Object.entries(parsedFile.content).forEach(([modelName, model]) => {
         if (aliasModelNameSet.has(modelName) || documentModelNameSet.has(modelName)) {
           throw new DuplicateModelNameError(path, modelName);
@@ -66,7 +66,7 @@ class DefinitionParserImpl implements DefinitionParser {
         } else if (model.model === 'document') {
           documentModelNameSet.add(modelName);
         } else {
-          assertNever(model.model);
+          assertNever(model);
         }
       });
     });

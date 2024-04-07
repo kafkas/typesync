@@ -2,115 +2,125 @@ import { z } from 'zod';
 
 import type { types } from './types/index.js';
 
-export const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'double', 'timestamp']);
+const createDefinition = (aliasType: z.ZodType) => {
+  const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'double', 'timestamp']).describe('A primitive type');
 
-export const literalType = z.object({
-  type: z.literal('literal'),
-  value: z.string().or(z.number().int()).or(z.boolean()),
-});
+  const literalType = z
+    .object({
+      type: z.literal('literal'),
+      value: z.string().or(z.number().int()).or(z.boolean()),
+    })
+    .describe('A literal type');
 
-export const enumType = z.object({
-  type: z.literal('enum'),
-  items: z.array(
-    z
-      .object({
-        label: z.string(),
-        value: z.string().or(z.number()),
-      })
-      .strict()
-  ),
-});
+  const enumType = z
+    .object({
+      type: z.literal('enum'),
+      items: z.array(
+        z
+          .object({
+            label: z.string(),
+            value: z.string().or(z.number()),
+          })
+          .strict()
+      ),
+    })
+    .describe('An enum type');
 
-export const tupleType = (aliasNames: string[]) =>
-  z.lazy(() =>
-    z
-      .object({
-        type: z.literal('tuple'),
-        values: z.array(type(aliasNames)),
-      })
-      .strict()
-  );
+  const tupleType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('tuple'),
+          values: z.array(type),
+        })
+        .strict()
+    )
+    .describe('A tuple type');
 
-export const listType = (aliasNames: string[]) =>
-  z.lazy(() =>
-    z
-      .object({
-        type: z.literal('list'),
-        of: type(aliasNames),
-      })
-      .strict()
-  );
+  const listType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('list'),
+          of: type,
+        })
+        .strict()
+    )
+    .describe('A list type');
 
-export const mapType = (aliasNames: string[]) =>
-  z.lazy(() =>
-    z
-      .object({
-        type: z.literal('map'),
-        of: type(aliasNames),
-      })
-      .strict()
-  );
+  const mapType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('map'),
+          of: type,
+        })
+        .strict()
+    )
+    .describe('A map type');
 
-export const objectType = (aliasNames: string[]) =>
-  z.lazy(() =>
-    z
-      .object({
-        type: z.literal('object'),
-        fields: z.record(field(aliasNames)),
-      })
-      .strict()
-  );
+  const objectType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('object'),
+          fields: z.record(field),
+        })
+        .strict()
+    )
+    .describe('An object type');
 
-export const unionType = (aliasNames: string[]) => z.lazy(() => z.array(type(aliasNames)));
+  const unionType = z.lazy(() => z.array(type)).describe('A union type');
 
-export const aliasType = (aliasNames: string[]) => z.enum([...aliasNames] as [string, ...string[]]);
-
-export const type = (aliasNames: string[]): z.ZodType<types.Type> =>
-  primitiveType
+  const type: z.ZodType<types.Type> = primitiveType
     .or(literalType)
     .or(enumType)
-    .or(tupleType(aliasNames))
-    .or(listType(aliasNames))
-    .or(mapType(aliasNames))
-    .or(objectType(aliasNames))
-    .or(unionType(aliasNames))
-    .or(aliasType(aliasNames));
+    .or(tupleType)
+    .or(listType)
+    .or(mapType)
+    .or(objectType)
+    .or(unionType)
+    .or(aliasType)
+    .describe('Any valid type');
 
-export const field = (aliasNames: string[]): z.ZodType<types.ObjectField> =>
-  z
+  const field: z.ZodType<types.ObjectField> = z
     .object({
-      type: type(aliasNames),
+      type: type,
       optional: z.boolean().optional(),
       docs: z.string().optional(),
     })
-    .strict();
+    .strict()
+    .describe('An object field');
 
-export const aliasModel = (aliasNames: string[]) =>
-  z
+  const aliasModel = z
     .object({
       model: z.literal('alias'),
       docs: z.string().optional(),
-      type: type(aliasNames),
+      type: type,
     })
-    .strict();
+    .strict()
+    .describe('An alias model');
 
-export const documentModel = (aliasNames: string[]) =>
-  z
+  const documentModel = z
     .object({
       model: z.literal('document'),
       docs: z.string().optional(),
-      type: objectType(aliasNames),
+      type: objectType,
     })
-    .strict();
+    .strict()
+    .describe('A document model');
 
-export const model = (aliasNames: string[]) =>
-  z.discriminatedUnion('model', [aliasModel(aliasNames), documentModel(aliasNames)]);
+  const model = z.discriminatedUnion('model', [aliasModel, documentModel]);
 
-export const definition = (aliasNames: string[]) => z.record(model(aliasNames));
+  return z.record(model);
+};
 
-// TODO: Needs to be made consistent with definition
-export const definitionLoose = z.record(
-  z.object({
-    model: z.enum(['document', 'alias']),
-  })
-);
+export const definition = (() => {
+  const aliasType = z.string().describe('An alias type');
+  return createDefinition(aliasType);
+})();
+
+export const definitionWithKnownAliases = (aliasNames: string[]) => {
+  const aliasType = z.enum([...aliasNames] as [string, ...string[]]).describe('An alias type');
+  return createDefinition(aliasType);
+};
