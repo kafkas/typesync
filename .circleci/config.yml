@@ -60,6 +60,27 @@ jobs:
           root: << parameters.output_dir_path >>
           paths: [.]
 
+  test-typesync-python-end-to-end:
+    docker:
+      - image: seymurkafkas/python-java-gcloud:latest
+    parameters:
+      path_to_typesync_model_dir:
+        description: Relative/absolute path to the generated python model dir, containing the model file
+        type: string
+    working_directory: ~/project/tests/test-poetry-project
+    steps:
+      - checkout
+          path: ~/project
+      - attach_workspace:
+          at: << parameters.path_to_typesync_model_dir >>
+      - run:
+          name: Install the Poetry project 
+          command: |
+            poetry install
+      - run:
+          name: Run Python end-to-end tests
+          command: |
+            poetry run pytest
   lint:
     executor: node/default
     steps:
@@ -149,3 +170,6 @@ workflows:
           model_path: "tests/test_poetry_project/models.yml"
           output_dir_path: "tests/test_poetry_project"
           platform: "py:firebase-admin:6"
+      - test-typesync-python-end-to-end:
+          requires: [ generate-typesync-models ]
+          path_to_typesync_model_dir: "tests/test-poetry-project/test_poetry_project/models/"
