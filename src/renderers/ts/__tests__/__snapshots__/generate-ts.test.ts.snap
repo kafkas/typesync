@@ -4,7 +4,7 @@ exports[`TSRendererImpl correctly renders a TS generation 1`] = `
 {
   "files": [
     {
-      "content": "import { firestore } from 'firebase-admin';
+      "content": "import type { firestore } from 'firebase-admin';
 
 export type Username = string;
 
@@ -17,7 +17,7 @@ export interface Dog {
     },
   ],
   "rootFile": {
-    "content": "import { firestore } from 'firebase-admin';
+    "content": "import type { firestore } from 'firebase-admin';
 
 export type Username = string;
 
