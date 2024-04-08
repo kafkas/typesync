@@ -4,14 +4,15 @@ import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import {
   FlatAliasModel,
+  FlatDiscriminatedUnionType,
   FlatDocumentModel,
   FlatListType,
   FlatMapType,
   FlatObjectType,
   FlatSchema,
+  FlatSimpleUnionType,
   FlatTupleType,
   FlatType,
-  FlatUnionType,
   createFlatAliasModel,
   createFlatDocumentModel,
   createFlatSchema,
@@ -47,8 +48,13 @@ interface FlattenObjectTypeResult {
   extractedAliasModels: FlatAliasModel[];
 }
 
-interface FlattenUnionTypeResult {
-  flattenedType: FlatUnionType;
+interface FlattenDiscriminatedUnionTypeResult {
+  flattenedType: FlatDiscriminatedUnionType;
+  extractedAliasModels: FlatAliasModel[];
+}
+
+interface FlattenSimpleUnionTypeResult {
+  flattenedType: FlatSimpleUnionType;
   extractedAliasModels: FlatAliasModel[];
 }
 
@@ -118,8 +124,17 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         });
         return { flattenedModel, extractedAliasModels };
       }
-      case 'union': {
-        const { flattenedType, extractedAliasModels } = flattenUnionType(aliasModel.type, aliasModel.name);
+      case 'discriminated-union': {
+        const { flattenedType, extractedAliasModels } = flattenDiscriminatedUnionType(aliasModel.type, aliasModel.name);
+        const flattenedModel = createFlatAliasModel({
+          name: aliasModel.name,
+          docs: aliasModel.docs,
+          type: flattenedType,
+        });
+        return { flattenedModel, extractedAliasModels };
+      }
+      case 'simple-union': {
+        const { flattenedType, extractedAliasModels } = flattenSimpleUnionType(aliasModel.type, aliasModel.name);
         const flattenedModel = createFlatAliasModel({
           name: aliasModel.name,
           docs: aliasModel.docs,
@@ -190,15 +205,31 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenUnionType(unionType: schema.types.Union, aliasName: string): FlattenUnionTypeResult {
-    const resultsForMembers = unionType.members.map((memberType, memberIdx) =>
-      flattenType(memberType, `${aliasName}_${memberIdx}`)
-    );
-    const flattenedType: FlatUnionType = {
-      type: 'union',
-      members: resultsForMembers.map(res => res.flattenedType),
+  function flattenDiscriminatedUnionType(
+    unionType: schema.types.DiscriminatedUnion,
+    aliasName: string
+  ): FlattenDiscriminatedUnionTypeResult {
+    // TODO: Implement core logic here
+    const flattenedType: FlatDiscriminatedUnionType = {
+      type: 'discriminated-union',
+      discriminant: unionType.discriminant,
+      variants: [],
     };
-    const extractedAliasModels = resultsForMembers.map(res => res.extractedAliasModels).flat(1);
+    return { flattenedType, extractedAliasModels: [] };
+  }
+
+  function flattenSimpleUnionType(
+    unionType: schema.types.SimpleUnion,
+    aliasName: string
+  ): FlattenSimpleUnionTypeResult {
+    const resultsForVariants = unionType.variants.map((variantType, variantIdx) =>
+      flattenType(variantType, `${aliasName}_${variantIdx}`)
+    );
+    const flattenedType: FlatSimpleUnionType = {
+      type: 'simple-union',
+      variants: resultsForVariants.map(res => res.flattenedType),
+    };
+    const extractedAliasModels = resultsForVariants.map(res => res.extractedAliasModels).flat(1);
     return { flattenedType, extractedAliasModels };
   }
 
@@ -236,8 +267,10 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
-      case 'union':
-        return flattenUnionType(type, aliasName);
+      case 'discriminated-union':
+        return flattenDiscriminatedUnionType(type, aliasName);
+      case 'simple-union':
+        return flattenSimpleUnionType(type, aliasName);
       default:
         assertNever(type);
     }

@@ -1,14 +1,15 @@
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../../schema/abstract.js';
 import type {
   AliasModel,
+  DiscriminatedUnionType,
   DocumentModel,
   ListType,
   MapType,
   ObjectFieldType,
   ObjectType,
   Schema,
+  SimpleUnionType,
   TupleType,
-  UnionType,
 } from '../../schema/generic.js';
 import type { schema } from '../../schema/index.js';
 
@@ -18,7 +19,8 @@ export type FlatType =
   | FlatTupleType
   | FlatListType
   | FlatMapType
-  | FlatUnionType
+  | FlatDiscriminatedUnionType
+  | FlatSimpleUnionType
   | schema.types.Alias;
 
 export type FlatTupleType = TupleType<FlatType>;
@@ -26,7 +28,8 @@ export type FlatListType = ListType<FlatType>;
 export type FlatMapType = MapType<FlatType>;
 export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
-export type FlatUnionType = UnionType<FlatType>;
+export type FlatDiscriminatedUnionType = DiscriminatedUnionType<schema.types.Alias>;
+export type FlatSimpleUnionType = SimpleUnionType<FlatType>;
 export type FlatAliasModel = AliasModel<FlatType | FlatObjectType | schema.types.Enum>;
 export type FlatDocumentModel = DocumentModel<FlatObjectType>;
 export type FlatModel = FlatAliasModel | FlatDocumentModel;

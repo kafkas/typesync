@@ -48,9 +48,15 @@ export interface Dict {
   readonly of: Type;
 }
 
-export interface Union {
-  readonly type: 'union';
-  readonly members: Type[];
+export interface DiscriminatedUnion {
+  readonly type: 'discriminated-union';
+  readonly discriminant: string;
+  readonly variants: Alias[];
+}
+
+export interface SimpleUnion {
+  readonly type: 'simple-union';
+  readonly variants: Type[];
 }
 
 export interface Alias {
@@ -58,7 +64,7 @@ export interface Alias {
   readonly name: string;
 }
 
-export type Type = Primitive | Literal | Tuple | List | Dict | Union | Alias;
+export type Type = Primitive | Literal | Tuple | List | Dict | DiscriminatedUnion | SimpleUnion | Alias;
 
 export interface EnumClass {
   readonly type: 'enum-class';

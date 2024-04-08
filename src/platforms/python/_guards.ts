@@ -15,7 +15,8 @@ export function isPrimitiveType(t: Type): t is Primitive {
     case 'tuple':
     case 'list':
     case 'dict':
-    case 'union':
+    case 'discriminated-union':
+    case 'simple-union':
     case 'alias':
       return false;
     default:

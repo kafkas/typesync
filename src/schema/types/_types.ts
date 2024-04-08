@@ -1,4 +1,12 @@
-import type { ListType, MapType, ObjectFieldType, ObjectType, TupleType, UnionType } from '../generic.js';
+import type {
+  DiscriminatedUnionType,
+  ListType,
+  MapType,
+  ObjectFieldType,
+  ObjectType,
+  SimpleUnionType,
+  TupleType,
+} from '../generic.js';
 
 export interface Nil {
   type: 'nil';
@@ -49,7 +57,11 @@ export type Object = ObjectType<Type>;
 
 export type ObjectField = ObjectFieldType<Type>;
 
-export type Union = UnionType<Type>;
+export type DiscriminatedUnion = DiscriminatedUnionType<Object | Alias>;
+
+export type SimpleUnion = SimpleUnionType<Type>;
+
+export type Union = DiscriminatedUnion | SimpleUnion;
 
 export interface Alias {
   type: 'alias';

@@ -39,7 +39,18 @@ export interface ObjectField {
   docs?: string;
 }
 
-export type Union = Type[];
+export interface DiscriminatedUnion {
+  type: 'union';
+  discriminant: string;
+  variants: (Object | Alias)[];
+}
+
+export interface SimpleUnion {
+  type: 'union';
+  variants: Type[];
+}
+
+export type Union = DiscriminatedUnion | SimpleUnion;
 
 export type Alias = string;
 

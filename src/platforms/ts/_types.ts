@@ -62,7 +62,7 @@ export interface ObjectProperty {
 
 export interface Union {
   readonly type: 'union';
-  readonly members: Type[];
+  readonly variants: Type[];
 }
 
 export interface Alias {

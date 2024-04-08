@@ -25,10 +25,18 @@ export interface ObjectFieldType<T> {
   docs: string | undefined;
 }
 
-export interface UnionType<T> {
-  type: 'union';
-  members: T[];
+export interface DiscriminatedUnionType<T> {
+  type: 'discriminated-union';
+  discriminant: string;
+  variants: T[];
 }
+
+export interface SimpleUnionType<T> {
+  type: 'simple-union';
+  variants: T[];
+}
+
+export type AliasType = string;
 
 export interface AliasModel<T> {
   model: 'alias';

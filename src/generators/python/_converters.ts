@@ -1,7 +1,14 @@
 import { python } from '../../platforms/python/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
-import { FlatListType, FlatMapType, FlatTupleType, FlatType, FlatUnionType } from './_schema.js';
+import {
+  FlatDiscriminatedUnionType,
+  FlatListType,
+  FlatMapType,
+  FlatSimpleUnionType,
+  FlatTupleType,
+  FlatType,
+} from './_schema.js';
 
 export function nilTypeToPython(_t: schema.types.Nil): python.None {
   return { type: 'none' };
@@ -43,8 +50,12 @@ export function flatMapTypeToPython(t: FlatMapType): python.Dict {
   return { type: 'dict', of: flatTypeToPython(t.of) };
 }
 
-export function flatUnionTypeToPython(t: FlatUnionType): python.Union {
-  return { type: 'union', members: t.members.map(flatTypeToPython) };
+export function flatDiscriminatedUnionTypeToPython(t: FlatDiscriminatedUnionType): python.DiscriminatedUnion {
+  return { type: 'discriminated-union', discriminant: t.discriminant, variants: t.variants };
+}
+
+export function flatSimpleUnionTypeToPython(t: FlatSimpleUnionType): python.SimpleUnion {
+  return { type: 'simple-union', variants: t.variants.map(flatTypeToPython) };
 }
 
 export function flatAliasTypeToPython(t: schema.types.Alias): python.Alias {
@@ -73,8 +84,10 @@ export function flatTypeToPython(t: FlatType): python.Type {
       return flatListTypeToPython(t);
     case 'map':
       return flatMapTypeToPython(t);
-    case 'union':
-      return flatUnionTypeToPython(t);
+    case 'discriminated-union':
+      return flatDiscriminatedUnionTypeToPython(t);
+    case 'simple-union':
+      return flatSimpleUnionTypeToPython(t);
     case 'alias':
       return flatAliasTypeToPython(t);
     default:
