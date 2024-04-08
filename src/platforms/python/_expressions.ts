@@ -21,7 +21,7 @@ export interface Expression {
 }
 
 export function expressionForUndefinedType(_t: Undefined): Expression {
-  return { content: 'TypeSyncUndefined' };
+  return { content: 'TypesyncUndefined' };
 }
 
 export function expressionForNoneType(_t: None): Expression {
