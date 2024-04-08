@@ -27,7 +27,7 @@ export function getPlatforms(): GenerationPlatform[] {
   return [...getTSPlatforms(), ...getPythonPlatforms()];
 }
 
-export interface TypeSyncGenerateOptions {
+export interface TypesyncGenerateOptions {
   definition: string;
   platform: GenerationPlatform;
   outputDir: string;
@@ -35,18 +35,18 @@ export interface TypeSyncGenerateOptions {
   debug: boolean;
 }
 
-export interface TypeSyncGenerateResult {
+export interface TypesyncGenerateResult {
   aliasModelCount: number;
   documentModelCount: number;
   pathToRootFile: string;
 }
 
-export interface TypeSyncValidateOptions {
+export interface TypesyncValidateOptions {
   definition: string;
   debug: boolean;
 }
 
-export type TypeSyncValidateResult =
+export type TypesyncValidateResult =
   | {
       success: true;
     }
@@ -55,10 +55,10 @@ export type TypeSyncValidateResult =
       message: string;
     };
 
-export interface TypeSync {
-  generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult>;
+export interface Typesync {
+  generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult>;
 
-  validate(opts: TypeSyncValidateOptions): Promise<TypeSyncValidateResult>;
+  validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult>;
 }
 
-export { createTypeSync } from './core/typesync.js';
+export { createTypesync } from './core/typesync.js';

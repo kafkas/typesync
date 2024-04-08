@@ -15,7 +15,7 @@ import type { RenderResult, RenderedFile } from '../_types.js';
 import type { PythonRenderer, PythonRendererConfig } from './_types.js';
 
 const UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
-const UNDEFINED_SENTINEL_CLASS = 'TypeSyncUndefined';
+const UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 
 class PythonRendererImpl implements PythonRenderer {
   public readonly type = 'python';
@@ -46,7 +46,7 @@ class PythonRendererImpl implements PythonRenderer {
 
     b.append(this.generateStaticDeclarationsForUndefinedSentinel());
     b.append(`\n`);
-    b.append(this.generateStaticDeclarationsForTypeSyncModel());
+    b.append(this.generateStaticDeclarationsForTypesyncModel());
 
     return b.toString();
   }
@@ -79,10 +79,10 @@ class PythonRendererImpl implements PythonRenderer {
 
     return b.toString();
   }
-  private generateStaticDeclarationsForTypeSyncModel() {
+  private generateStaticDeclarationsForTypesyncModel() {
     const b = new StringBuilder();
 
-    b.append(`${this.indent(0)}class TypeSyncModel(pydantic.BaseModel):\n`);
+    b.append(`${this.indent(0)}class TypesyncModel(pydantic.BaseModel):\n`);
     b.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
     b.append(`${this.indent(2)}processed = {}\n`);
     b.append(`${this.indent(2)}for field_name, field_value in self.__dict__.items():\n`);
@@ -163,7 +163,7 @@ class PythonRendererImpl implements PythonRenderer {
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
-    b.append(`class ${modelName}(TypeSyncModel):\n`);
+    b.append(`class ${modelName}(TypesyncModel):\n`);
     modelType.attributes.forEach(attribute => {
       if (attribute.optional) {
         const expression = python.expressionForType({

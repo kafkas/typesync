@@ -2,11 +2,11 @@ import { globSync } from 'glob';
 import { resolve } from 'path';
 
 import type {
-  TypeSync,
-  TypeSyncGenerateOptions,
-  TypeSyncGenerateResult,
-  TypeSyncValidateOptions,
-  TypeSyncValidateResult,
+  Typesync,
+  TypesyncGenerateOptions,
+  TypesyncGenerateResult,
+  TypesyncValidateOptions,
+  TypesyncValidateResult,
 } from '../api.js';
 import { DefinitionFilesNotFoundError, InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
@@ -20,8 +20,8 @@ import { writeFile } from '../util/fs.js';
 import { createDefinitionParser } from './definition-parser.js';
 import { createLogger } from './logger.js';
 
-class TypeSyncImpl implements TypeSync {
-  public async generate(opts: TypeSyncGenerateOptions): Promise<TypeSyncGenerateResult> {
+class TypesyncImpl implements Typesync {
+  public async generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult> {
     const logger = createLogger(opts.debug);
     this.validateOpts(opts);
 
@@ -48,14 +48,14 @@ class TypeSyncImpl implements TypeSync {
     };
   }
 
-  private validateOpts(opts: TypeSyncGenerateOptions) {
+  private validateOpts(opts: TypesyncGenerateOptions) {
     const { indentation } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
     }
   }
 
-  public async validate(opts: TypeSyncValidateOptions): Promise<TypeSyncValidateResult> {
+  public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
     const logger = createLogger(opts.debug);
 
     const { definition: definitionGlobPattern } = opts;
@@ -78,7 +78,7 @@ class TypeSyncImpl implements TypeSync {
     return filePaths as [string, ...string[]];
   }
 
-  private createGenerator(opts: TypeSyncGenerateOptions): Generator {
+  private createGenerator(opts: TypesyncGenerateOptions): Generator {
     const { platform } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
@@ -91,7 +91,7 @@ class TypeSyncImpl implements TypeSync {
     }
   }
 
-  private createRenderer(opts: TypeSyncGenerateOptions): renderers.Renderer {
+  private createRenderer(opts: TypesyncGenerateOptions): renderers.Renderer {
     const { platform, indentation } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
@@ -114,6 +114,6 @@ class TypeSyncImpl implements TypeSync {
   }
 }
 
-export function createTypeSync(): TypeSync {
-  return new TypeSyncImpl();
+export function createTypesync(): Typesync {
+  return new TypesyncImpl();
 }

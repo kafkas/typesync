@@ -12,28 +12,28 @@ import enum
 import pydantic
 from pydantic_core import core_schema
 
-class TypeSyncUndefined:
+class TypesyncUndefined:
     _instance = None
 
     def __init__(self):
-        if TypeSyncUndefined._instance is not None:
-            raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+        if TypesyncUndefined._instance is not None:
+            raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
         else:
-            TypeSyncUndefined._instance = self
+            TypesyncUndefined._instance = self
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
         return core_schema.with_info_plain_validator_function(cls.validate)
 
     @classmethod
-    def validate(cls, value: typing.Any, info) -> TypeSyncUndefined:
+    def validate(cls, value: typing.Any, info) -> TypesyncUndefined:
         if not isinstance(value, cls):
             raise ValueError("Undefined field type is not valid")
         return value
 
-UNDEFINED = TypeSyncUndefined()
+UNDEFINED = TypesyncUndefined()
 
-class TypeSyncModel(pydantic.BaseModel):
+class TypesyncModel(pydantic.BaseModel):
     def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
         processed = {}
         for field_name, field_value in self.__dict__.items():
@@ -53,7 +53,7 @@ class TypeSyncModel(pydantic.BaseModel):
 
 Username = str
 
-class Dog(TypeSyncModel):
+class Dog(TypesyncModel):
     name: str
     breed: str
 
@@ -76,28 +76,28 @@ import enum
 import pydantic
 from pydantic_core import core_schema
 
-class TypeSyncUndefined:
+class TypesyncUndefined:
     _instance = None
 
     def __init__(self):
-        if TypeSyncUndefined._instance is not None:
-            raise RuntimeError("TypeSyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+        if TypesyncUndefined._instance is not None:
+            raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
         else:
-            TypeSyncUndefined._instance = self
+            TypesyncUndefined._instance = self
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
         return core_schema.with_info_plain_validator_function(cls.validate)
 
     @classmethod
-    def validate(cls, value: typing.Any, info) -> TypeSyncUndefined:
+    def validate(cls, value: typing.Any, info) -> TypesyncUndefined:
         if not isinstance(value, cls):
             raise ValueError("Undefined field type is not valid")
         return value
 
-UNDEFINED = TypeSyncUndefined()
+UNDEFINED = TypesyncUndefined()
 
-class TypeSyncModel(pydantic.BaseModel):
+class TypesyncModel(pydantic.BaseModel):
     def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
         processed = {}
         for field_name, field_value in self.__dict__.items():
@@ -117,7 +117,7 @@ class TypeSyncModel(pydantic.BaseModel):
 
 Username = str
 
-class Dog(TypeSyncModel):
+class Dog(TypesyncModel):
     name: str
     breed: str
 
