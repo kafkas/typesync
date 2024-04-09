@@ -61,10 +61,13 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
   },
   "Pet": {
     "model": "alias",
-    "type": [
-      "Cat",
-      "Dog",
-    ],
+    "type": {
+      "type": "union",
+      "variants": [
+        "Cat",
+        "Dog",
+      ],
+    },
   },
   "UserProfile": {
     "docs": "User profile model",
@@ -84,10 +87,13 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
           },
         },
         "bio": {
-          "type": [
-            "nil",
-            "string",
-          ],
+          "type": {
+            "type": "union",
+            "variants": [
+              "nil",
+              "string",
+            ],
+          },
         },
         "created_at": {
           "optional": true,
