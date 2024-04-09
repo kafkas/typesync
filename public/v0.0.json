@@ -228,10 +228,50 @@
                         "description": "A primitive type"
                       },
                       {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
-                        },
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": { "type": "string", "const": "union" },
+                              "discriminant": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "variants": {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1"
+                                    },
+                                    {
+                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                    }
+                                  ],
+                                  "description": "An object type."
+                                }
+                              }
+                            },
+                            "required": ["type", "discriminant", "variants"],
+                            "additionalProperties": false,
+                            "description": "A discriminated union type."
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": { "type": "string", "const": "union" },
+                              "variants": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
+                                }
+                              }
+                            },
+                            "required": ["type", "variants"],
+                            "additionalProperties": false,
+                            "description": "A simple union type."
+                          }
+                        ],
                         "description": "A union type."
                       }
                     ],
