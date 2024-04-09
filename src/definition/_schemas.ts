@@ -72,7 +72,26 @@ const createDefinition = (aliasType: z.ZodType) => {
     )
     .describe('An object type.');
 
-  const unionType = z.lazy(() => z.array(type)).describe('A union type.');
+  const discriminatedUnionType = z
+    .lazy(() =>
+      z.object({
+        type: z.literal('union'),
+        discriminant: z.string().min(1),
+        variants: z.array(objectType.or(aliasType)),
+      })
+    )
+    .describe('A discriminated union type.');
+
+  const simpleUnionType = z
+    .lazy(() =>
+      z.object({
+        type: z.literal('union'),
+        variants: z.array(type),
+      })
+    )
+    .describe('A simple union type.');
+
+  const unionType = discriminatedUnionType.or(simpleUnionType).describe('A union type.');
 
   const type: z.ZodType<types.Type> = primitiveType
     .or(literalType)
