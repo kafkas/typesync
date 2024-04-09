@@ -34,7 +34,11 @@ class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements D
   }
 }
 
-export function createSchema(def?: definition.Definition): schema.Schema {
+export function create(): schema.Schema {
+  return createFromDefinition({});
+}
+
+export function createFromDefinition(def: definition.Definition): schema.Schema {
   const aliasModelsById = new Map<string, schema.AliasModel>();
   const documentModelsById = new Map<string, schema.DocumentModel>();
 

@@ -7,7 +7,7 @@ describe('PythonGeneratorImpl', () => {
     const generator = createPythonGenerator({
       platform: 'py:firebase-admin:6',
     });
-    const s = schema.createSchema({
+    const s = schema.createFromDefinition({
       Username: {
         model: 'alias',
         type: 'string',

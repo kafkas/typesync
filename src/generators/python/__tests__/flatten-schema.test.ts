@@ -5,7 +5,7 @@ import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFl
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {
-    const inputSchema = schema.createSchema({
+    const inputSchema = schema.createFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -31,7 +31,7 @@ describe('flatten-schema', () => {
   });
 
   it('returns a new schema', () => {
-    const inputSchema = schema.createSchema({
+    const inputSchema = schema.createFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -55,7 +55,7 @@ describe('flatten-schema', () => {
   });
 
   it(`does nothing when the schema is "flat"`, () => {
-    const inputSchema = schema.createSchema({
+    const inputSchema = schema.createFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -99,7 +99,7 @@ describe('flatten-schema', () => {
     };
 
     const inputSchema = (() => {
-      const s = schema.createSchema();
+      const s = schema.create();
       const userModel = schema.createDocumentModel({
         name: 'User',
         docs: undefined,
@@ -174,7 +174,7 @@ describe('flatten-schema', () => {
 
   it(`flattens discriminated union variants and creates new aliases`, () => {
     const inputSchema = (() => {
-      const s = schema.createSchema();
+      const s = schema.create();
       const petModel = schema.createAliasModel({
         name: 'Pet',
         docs: undefined,
