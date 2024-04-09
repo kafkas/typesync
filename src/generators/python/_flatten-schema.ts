@@ -1,7 +1,8 @@
 import lodash from 'lodash';
 
 import { schema } from '../../schema/index.js';
-import { assertNever } from '../../util/assert.js';
+import { assert, assertNever } from '../../util/assert.js';
+import { pascalCase } from '../../util/pascal-case.js';
 import {
   FlatAliasModel,
   FlatDiscriminatedUnionType,
@@ -111,13 +112,37 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     unionType: schema.types.DiscriminatedUnion,
     aliasName: string
   ): FlattenDiscriminatedUnionTypeResult {
-    // TODO: Implement core logic here
     const flattenedType: FlatDiscriminatedUnionType = {
       type: 'discriminated-union',
       discriminant: unionType.discriminant,
       variants: [],
     };
-    return { flattenedType, extractedAliasModels: [] };
+    const extractedAliasModels: FlatAliasModel[] = [];
+
+    unionType.variants.forEach(variantType => {
+      if (variantType.type === 'object') {
+        const discriminantField = variantType.fields.find(field => field.name === unionType.discriminant);
+        // TODO: This assertion should be done in a better way
+        assert(
+          discriminantField &&
+            discriminantField.type.type === 'literal' &&
+            typeof discriminantField.type.value === 'string'
+        );
+        const name = `${aliasName}${pascalCase(discriminantField.type.value)}`;
+        const res = flattenObjectType(variantType, name);
+        // TODO: Implement
+        const docs = undefined;
+        const aliasModel = createFlatAliasModel({ name, docs, type: res.flattenedType });
+        extractedAliasModels.push(...res.extractedAliasModels, aliasModel);
+        flattenedType.variants.push({ type: 'alias', name });
+      } else if (variantType.type === 'alias') {
+        flattenedType.variants.push(variantType);
+      } else {
+        assertNever(variantType);
+      }
+    });
+
+    return { flattenedType, extractedAliasModels };
   }
 
   function flattenSimpleUnionType(
