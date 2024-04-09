@@ -37,8 +37,7 @@ export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
 
 class FlatSchemaImpl extends AbstractSchema<FlatAliasModel, FlatDocumentModel> implements FlatSchema {
   public clone() {
-    const { aliasModelsById, documentModelsById } = this.cloneMaps();
-    return new FlatSchemaImpl(aliasModelsById, documentModelsById);
+    return this.cloneModels(new FlatSchemaImpl());
   }
 }
 
@@ -77,5 +76,5 @@ export function createFlatDocumentModel(params: CreateFlatDocumentModelParams): 
 }
 
 export function createFlatSchema(): FlatSchema {
-  return new FlatSchemaImpl(new Map(), new Map());
+  return new FlatSchemaImpl();
 }

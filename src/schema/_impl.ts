@@ -17,8 +17,7 @@ export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
 
 class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
   public clone() {
-    const { aliasModelsById, documentModelsById } = this.cloneMaps();
-    return new SchemaImpl(aliasModelsById, documentModelsById);
+    return this.cloneModels(new SchemaImpl());
   }
 }
 
@@ -39,31 +38,28 @@ export function create(): schema.Schema {
 }
 
 export function createFromDefinition(def: definition.Definition): schema.Schema {
-  const aliasModelsById = new Map<string, schema.AliasModel>();
-  const documentModelsById = new Map<string, schema.DocumentModel>();
+  const s = new SchemaImpl();
 
-  if (def) {
-    Object.entries(def).forEach(([modelName, defModel]) => {
-      switch (defModel.model) {
-        case 'alias': {
-          const schemaType = definition.convert.typeToSchema(defModel.type);
-          const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
-          aliasModelsById.set(modelName, aliasModel);
-          break;
-        }
-        case 'document': {
-          const schemaType = definition.convert.objectTypeToSchema(defModel.type);
-          const documentModel = new DocumentModelImpl(modelName, defModel.docs, schemaType);
-          documentModelsById.set(modelName, documentModel);
-          break;
-        }
-        default:
-          assertNever(defModel);
+  Object.entries(def).forEach(([modelName, defModel]) => {
+    switch (defModel.model) {
+      case 'alias': {
+        const schemaType = definition.convert.typeToSchema(defModel.type);
+        const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
+        s.addAliasModel(aliasModel);
+        break;
       }
-    });
-  }
+      case 'document': {
+        const schemaType = definition.convert.objectTypeToSchema(defModel.type);
+        const documentModel = new DocumentModelImpl(modelName, defModel.docs, schemaType);
+        s.addDocumentModel(documentModel);
+        break;
+      }
+      default:
+        assertNever(defModel);
+    }
+  });
 
-  return new SchemaImpl(aliasModelsById, documentModelsById);
+  return s;
 }
 
 interface CreateAliasModelParams {

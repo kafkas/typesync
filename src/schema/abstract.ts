@@ -32,6 +32,9 @@ export abstract class AbstractDocumentModel<T> {
 }
 
 export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends DocumentModel<unknown>> {
+  protected readonly aliasModelsById: Map<string, A>;
+  protected readonly documentModelsById: Map<string, D>;
+
   public get aliasModels() {
     return Array.from(this.aliasModelsById.values());
   }
@@ -40,19 +43,25 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
     return Array.from(this.documentModelsById.values());
   }
 
-  public constructor(
-    protected readonly aliasModelsById: Map<string, A>,
-    protected readonly documentModelsById: Map<string, D>
-  ) {}
+  public constructor() {
+    this.aliasModelsById = new Map();
+    this.documentModelsById = new Map();
+  }
 
-  protected cloneMaps() {
+  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
     const aliasModelsById = new Map(
       Array.from(this.aliasModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as A])
     );
     const documentModelsById = new Map(
       Array.from(this.documentModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as D])
     );
-    return { aliasModelsById, documentModelsById };
+    aliasModelsById.forEach(model => {
+      toSchema.addAliasModel(model);
+    });
+    documentModelsById.forEach(model => {
+      toSchema.addDocumentModel(model);
+    });
+    return toSchema;
   }
 
   public addModels(...models: (A | D)[]): void {
