@@ -12,4 +12,7 @@ describe('definition-parser', () => {
     const definition = parser.parseDefinition(filePaths);
     expect(definition).toMatchSnapshot();
   });
+
+  // TODO: Check if parser throws if a discriminant union alias variant does not resolve to object
+  // TODO: Check if parser throws if a discriminant union variant does not have the discriminant key
 });

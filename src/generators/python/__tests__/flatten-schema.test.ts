@@ -78,7 +78,7 @@ describe('flatten-schema', () => {
     expect(flattenedSchema).toEqual(inputSchema);
   });
 
-  it(`flattens the schema by creating new aliases`, () => {
+  it(`flattens nested object types and creates new aliases`, () => {
     const credentialsDocs = 'An object that represents user credentials';
     const credentialsObjectType: FlatObjectType = {
       type: 'object',
@@ -163,6 +163,93 @@ describe('flatten-schema', () => {
       });
 
       s.addModels(aliasModel, userModel);
+
+      return s;
+    })();
+
+    const flattenedSchema = flattenSchema(inputSchema);
+
+    expect(flattenedSchema).toEqual(expectedFlattenedSchema);
+  });
+
+  it(`flattens discriminated union variants and creates new aliases`, () => {
+    const inputSchema = (() => {
+      const s = schema.createSchema();
+      const petModel = schema.createAliasModel({
+        name: 'Pet',
+        docs: undefined,
+        value: {
+          type: 'discriminated-union',
+          discriminant: 'type',
+          variants: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
+                { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+              ],
+            },
+            {
+              type: 'object',
+              fields: [
+                { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
+                { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+              ],
+            },
+          ],
+        },
+      });
+      s.addModel(petModel);
+
+      return s;
+    })();
+
+    const expectedFlattenedSchema = (() => {
+      const s = createFlatSchema();
+      const catModel = createFlatAliasModel({
+        name: 'PetCat',
+        docs: undefined,
+        type: {
+          type: 'object',
+          fields: [
+            { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
+            { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+          ],
+        },
+      });
+
+      const dogModel = createFlatAliasModel({
+        name: 'PetDog',
+        docs: undefined,
+        type: {
+          type: 'object',
+          fields: [
+            { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
+            { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+          ],
+        },
+      });
+
+      const petModel = createFlatAliasModel({
+        name: 'Pet',
+        docs: undefined,
+        type: {
+          type: 'discriminated-union',
+          discriminant: 'type',
+          variants: [
+            {
+              type: 'alias',
+              name: 'PetCat',
+            },
+            {
+              type: 'alias',
+              name: 'PetDog',
+            },
+          ],
+        },
+      });
+
+      s.addModels(catModel, dogModel, petModel);
 
       return s;
     })();
