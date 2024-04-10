@@ -11,7 +11,7 @@ import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { noop } from '../util/misc.js';
 import type { AliasModel, DocumentModel } from './generic.js';
-import { schema } from './index.js';
+import type { schema } from './index.js';
 
 export abstract class AbstractAliasModel<T> {
   public readonly model = 'alias';
