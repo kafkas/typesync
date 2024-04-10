@@ -109,6 +109,13 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
     return this.aliasModelsById.get(modelName);
   }
 
+  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
+    const aliasModelClones = Array.from(this.aliasModelsById.values()).map(m => m.clone() as A);
+    const documentModelClones = Array.from(this.documentModels.values()).map(m => m.clone() as D);
+    toSchema.addModelGroup([...aliasModelClones, ...documentModelClones]);
+    return toSchema;
+  }
+
   private validateModelNotAlreadyExists(model: A | D) {
     const am = this.aliasModelsById.get(model.name);
 
@@ -121,21 +128,5 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
     if (dm !== undefined) {
       throw new Error(`The schema already has a '${model.name}' document model.`);
     }
-  }
-
-  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
-    const aliasModelsById = new Map(
-      Array.from(this.aliasModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as A])
-    );
-    const documentModelsById = new Map(
-      Array.from(this.documentModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as D])
-    );
-    aliasModelsById.forEach(model => {
-      toSchema.addAliasModel(model);
-    });
-    documentModelsById.forEach(model => {
-      toSchema.addDocumentModel(model);
-    });
-    return toSchema;
   }
 }
