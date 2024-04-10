@@ -1,4 +1,10 @@
 import { definition } from '../definition/index.js';
+import {
+  InvalidDiscriminantFieldError,
+  InvalidDiscriminatedUnionAliasVariantError,
+  MissingDiscriminantFieldError,
+  MissingDiscriminatedUnionAliasVariantError,
+} from '../errors/invalid-schema.js';
 import { assertNever } from '../util/assert.js';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract.js';
 import {
@@ -16,6 +22,46 @@ export type DocumentModel = DocumentModelGeneric<types.Object>;
 export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
 
 class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
+  protected validateAliasModel(model: AliasModel): void {
+    if (model.type.type === 'discriminated-union') {
+      const { variants, discriminant } = model.type;
+      variants.forEach((variantType, variantIdx) => {
+        if (variantType.type === 'object') {
+          const { fields } = variantType;
+          const discriminantField = fields.find(f => f.name === discriminant);
+          if (discriminantField === undefined) {
+            throw new MissingDiscriminantFieldError(model.name, discriminant, variantIdx);
+          }
+          if (discriminantField.type.type !== 'literal' || typeof discriminantField.type.value !== 'string') {
+            throw new InvalidDiscriminantFieldError(model.name, variantIdx);
+          }
+        } else if (variantType.type === 'alias') {
+          const aliasModel = this.getAliasModel(variantType.name);
+          if (aliasModel === undefined) {
+            throw new MissingDiscriminatedUnionAliasVariantError(model.name, variantType.name);
+          }
+          if (aliasModel.type.type !== 'object') {
+            throw new InvalidDiscriminatedUnionAliasVariantError(model.name, variantType.name);
+          }
+          const { fields } = aliasModel.type;
+          const discriminantField = fields.find(f => f.name === discriminant);
+          if (discriminantField === undefined) {
+            throw new MissingDiscriminantFieldError(model.name, discriminant, variantType.name);
+          }
+          if (discriminantField.type.type !== 'literal' || typeof discriminantField.type.value !== 'string') {
+            throw new InvalidDiscriminantFieldError(model.name, variantType.name);
+          }
+        } else {
+          assertNever(variantType);
+        }
+      });
+    }
+  }
+
+  protected validateDocumentModel(model: DocumentModel): void {
+    // TODO: Implement
+  }
+
   public clone() {
     return this.cloneModels(new SchemaImpl());
   }

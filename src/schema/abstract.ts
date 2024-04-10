@@ -35,6 +35,9 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
   protected readonly aliasModelsById: Map<string, A>;
   protected readonly documentModelsById: Map<string, D>;
 
+  protected abstract validateAliasModel(model: A): void;
+  protected abstract validateDocumentModel(model: D): void;
+
   public get aliasModels() {
     return Array.from(this.aliasModelsById.values());
   }
@@ -48,25 +51,32 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
     this.documentModelsById = new Map();
   }
 
-  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
-    const aliasModelsById = new Map(
-      Array.from(this.aliasModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as A])
-    );
-    const documentModelsById = new Map(
-      Array.from(this.documentModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as D])
-    );
-    aliasModelsById.forEach(model => {
-      toSchema.addAliasModel(model);
-    });
-    documentModelsById.forEach(model => {
-      toSchema.addDocumentModel(model);
-    });
-    return toSchema;
-  }
-
-  public addModels(...models: (A | D)[]): void {
+  public addModelGroup(models: (A | D)[]): void {
     models.forEach(model => {
-      this.addModel(model);
+      this.validateModelNotAlreadyExists(model);
+      switch (model.model) {
+        case 'alias':
+          this.aliasModelsById.set(model.name, model);
+          break;
+        case 'document':
+          this.documentModelsById.set(model.name, model);
+          break;
+        default:
+          assertNever(model);
+      }
+    });
+
+    models.forEach(model => {
+      switch (model.model) {
+        case 'alias':
+          this.validateAliasModel(model);
+          break;
+        case 'document':
+          this.validateDocumentModel(model);
+          break;
+        default:
+          assertNever(model);
+      }
     });
   }
 
@@ -86,11 +96,17 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
   public addAliasModel(model: A): void {
     this.validateModelNotAlreadyExists(model);
     this.aliasModelsById.set(model.name, model);
+    this.validateAliasModel(model);
   }
 
   public addDocumentModel(model: D): void {
     this.validateModelNotAlreadyExists(model);
     this.documentModelsById.set(model.name, model);
+    this.validateDocumentModel(model);
+  }
+
+  protected getAliasModel(modelName: string) {
+    return this.aliasModelsById.get(modelName);
   }
 
   private validateModelNotAlreadyExists(model: A | D) {
@@ -105,5 +121,21 @@ export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends Do
     if (dm !== undefined) {
       throw new Error(`The schema already has a '${model.name}' document model.`);
     }
+  }
+
+  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
+    const aliasModelsById = new Map(
+      Array.from(this.aliasModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as A])
+    );
+    const documentModelsById = new Map(
+      Array.from(this.documentModelsById.entries()).map(([modelName, model]) => [modelName, model.clone() as D])
+    );
+    aliasModelsById.forEach(model => {
+      toSchema.addAliasModel(model);
+    });
+    documentModelsById.forEach(model => {
+      toSchema.addDocumentModel(model);
+    });
+    return toSchema;
   }
 }

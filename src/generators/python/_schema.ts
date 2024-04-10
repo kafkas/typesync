@@ -36,6 +36,14 @@ export type FlatModel = FlatAliasModel | FlatDocumentModel;
 export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
 
 class FlatSchemaImpl extends AbstractSchema<FlatAliasModel, FlatDocumentModel> implements FlatSchema {
+  protected validateAliasModel(model: FlatAliasModel): void {
+    // TODO: Implement
+  }
+
+  protected validateDocumentModel(model: FlatDocumentModel): void {
+    // TODO: Implement
+  }
+
   public clone() {
     return this.cloneModels(new FlatSchemaImpl());
   }

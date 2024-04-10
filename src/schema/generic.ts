@@ -60,7 +60,12 @@ export interface Schema<A, D> {
   aliasModels: A[];
   documentModels: D[];
   clone(): Schema<A, D>;
-  addModels(...models: (A | D)[]): void;
+  /**
+   * Similar to adding models to the schema one by one, with an important difference. Models are validated
+   * after all the models in the "group" have been added to the schema. This makes sure that validation code
+   * doesn't fail because of missing models.
+   */
+  addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
   addAliasModel(model: A): void;
   addDocumentModel(model: D): void;

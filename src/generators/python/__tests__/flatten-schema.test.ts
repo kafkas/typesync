@@ -162,7 +162,7 @@ describe('flatten-schema', () => {
         },
       });
 
-      s.addModels(aliasModel, userModel);
+      s.addModelGroup([aliasModel, userModel]);
 
       return s;
     })();
@@ -249,7 +249,7 @@ describe('flatten-schema', () => {
         },
       });
 
-      s.addModels(catModel, dogModel, petModel);
+      s.addModelGroup([catModel, dogModel, petModel]);
 
       return s;
     })();
