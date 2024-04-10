@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 
 import { definition } from '../definition/index.js';
-import { InvalidAliasModelError } from '../errors/invalid-model.js';
+import { InvalidAliasModelError, InvalidDocumentModelError } from '../errors/invalid-model.js';
 import {
   InvalidDiscriminantFieldError,
   InvalidDiscriminatedUnionAliasVariantError,
@@ -40,7 +40,7 @@ class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Sc
       this.validateType(model.type);
     } catch (e) {
       const message = extractErrorMessage(e);
-      throw new InvalidAliasModelError(model.name, message);
+      throw new InvalidDocumentModelError(model.name, message);
     }
   }
 
