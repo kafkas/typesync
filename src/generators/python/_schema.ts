@@ -1,5 +1,3 @@
-import { noop } from 'lodash';
-
 import { InvalidAliasModelError, InvalidDocumentModelError } from '../../errors/invalid-model.js';
 import {
   InvalidDiscriminantFieldError,
@@ -23,6 +21,7 @@ import type {
 import type { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { extractErrorMessage } from '../../util/extract-error-message.js';
+import { noop } from '../../util/misc.js';
 
 export type FlatType =
   | schema.types.Primitive

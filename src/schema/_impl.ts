@@ -1,5 +1,3 @@
-import { noop } from 'lodash';
-
 import { definition } from '../definition/index.js';
 import { InvalidAliasModelError, InvalidDocumentModelError } from '../errors/invalid-model.js';
 import {
@@ -10,6 +8,7 @@ import {
 } from '../errors/invalid-schema-type.js';
 import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
+import { noop } from '../util/misc.js';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract.js';
 import {
   AliasModel as AliasModelGeneric,
