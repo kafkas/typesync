@@ -179,10 +179,6 @@ export abstract class AbstractSchema<
     }
   }
 
-  private validatePrimitiveType(_: schema.types.Primitive) {
-    noop();
-  }
-
   private validateTupleType(t: schema.types.Tuple) {
     t.values.forEach(vt => this.validateType(vt));
   }
