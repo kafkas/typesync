@@ -4,16 +4,17 @@ import type {
   Bool,
   Datetime,
   Dict,
+  DiscriminatedUnion,
   Float,
   Int,
   List,
   Literal,
   None,
+  SimpleUnion,
   Str,
   Tuple,
   Type,
   Undefined,
-  Union,
 } from './_types.js';
 
 export interface Expression {
@@ -76,8 +77,15 @@ export function expressionForDictType(t: Dict): Expression {
   return { content: `typing.Dict[str, ${expression.content}]` };
 }
 
-export function expressionForUnionType(t: Union): Expression {
-  const commaSeparatedExpressions = t.members.map(memberType => expressionForType(memberType).content).join(', ');
+export function expressionForDiscriminatedUnionType(t: DiscriminatedUnion): Expression {
+  const commaSeparatedExpressions = t.variants.map(vt => expressionForType(vt).content).join(', ');
+  return {
+    content: `Annotated[typing.Union[${commaSeparatedExpressions}], pydantic.Field(discriminator='${t.discriminant}')]`,
+  };
+}
+
+export function expressionForSimpleUnionType(t: SimpleUnion): Expression {
+  const commaSeparatedExpressions = t.variants.map(vt => expressionForType(vt).content).join(', ');
   return { content: `typing.Union[${commaSeparatedExpressions}]` };
 }
 
@@ -109,8 +117,10 @@ export function expressionForType(t: Type): Expression {
       return expressionForListType(t);
     case 'dict':
       return expressionForDictType(t);
-    case 'union':
-      return expressionForUnionType(t);
+    case 'discriminated-union':
+      return expressionForDiscriminatedUnionType(t);
+    case 'simple-union':
+      return expressionForSimpleUnionType(t);
     case 'alias':
       return expressionForAliasType(t);
     default:

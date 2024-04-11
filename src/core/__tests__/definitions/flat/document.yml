@@ -37,8 +37,10 @@ UserProfile:
           of: Pet
       bio:
         type:
-          - nil
-          - string
+          type: union
+          variants:
+            - nil
+            - string
       area_code:
         type:
           type: literal

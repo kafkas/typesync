@@ -7,7 +7,7 @@ describe('TSGeneratorImpl', () => {
     const generator = createTSGenerator({
       platform: 'ts:firebase-admin:11',
     });
-    const s = schema.createSchema({
+    const s = schema.createFromDefinition({
       Username: {
         model: 'alias',
         type: 'string',

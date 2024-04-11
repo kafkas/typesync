@@ -34,7 +34,7 @@ class TypesyncImpl implements Typesync {
     logger.info(`Found ${definitionFilePaths.length} files matching Glob pattern:`, definitionFilePaths);
 
     const definition = parser.parseDefinition(definitionFilePaths);
-    const s = schema.createSchema(definition);
+    const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
     const { rootFile, files } = await renderer.render(generation);
 

@@ -112,7 +112,8 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`import datetime\n`);
     b.append(`import enum\n`);
     b.append(`import pydantic\n`);
-    b.append(`from pydantic_core import core_schema`);
+    b.append(`from pydantic_core import core_schema\n`);
+    b.append(`from typing_extensions import Annotated`);
     return b.toString();
   }
 
@@ -167,8 +168,8 @@ class PythonRendererImpl implements PythonRenderer {
     modelType.attributes.forEach(attribute => {
       if (attribute.optional) {
         const expression = python.expressionForType({
-          type: 'union',
-          members: [python.UNDEFINED, attribute.type],
+          type: 'simple-union',
+          variants: [python.UNDEFINED, attribute.type],
         });
         b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}\n`);
       } else {

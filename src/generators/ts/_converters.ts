@@ -55,7 +55,7 @@ export function objectPropertyTypeToTS(t: schema.types.ObjectField): ts.ObjectPr
 }
 
 export function unionTypeToTS(t: schema.types.Union): ts.Union {
-  return { type: 'union', members: t.members.map(typeToTS) };
+  return { type: 'union', variants: t.variants.map(typeToTS) };
 }
 
 export function aliasTypeToTS(t: schema.types.Alias): ts.Alias {
@@ -88,7 +88,9 @@ export function typeToTS(t: schema.types.Type): ts.Type {
       return mapTypeToTS(t);
     case 'object':
       return objectTypeToTS(t);
-    case 'union':
+    case 'discriminated-union':
+      return unionTypeToTS(t);
+    case 'simple-union':
       return unionTypeToTS(t);
     case 'alias':
       return aliasTypeToTS(t);

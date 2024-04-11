@@ -104,7 +104,7 @@ export function expressionForObjectType(t: Object): Expression {
 }
 
 export function expressionForUnionType(t: Union): Expression {
-  const separatedExpressions = t.members.map(memberType => expressionForType(memberType).content).join(' | ');
+  const separatedExpressions = t.variants.map(vt => expressionForType(vt).content).join(' | ');
   return { content: `${separatedExpressions}` };
 }
 

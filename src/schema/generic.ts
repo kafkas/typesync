@@ -25,10 +25,18 @@ export interface ObjectFieldType<T> {
   docs: string | undefined;
 }
 
-export interface UnionType<T> {
-  type: 'union';
-  members: T[];
+export interface DiscriminatedUnionType<T> {
+  type: 'discriminated-union';
+  discriminant: string;
+  variants: T[];
 }
+
+export interface SimpleUnionType<T> {
+  type: 'simple-union';
+  variants: T[];
+}
+
+export type AliasType = string;
 
 export interface AliasModel<T> {
   model: 'alias';
@@ -52,8 +60,11 @@ export interface Schema<A, D> {
   aliasModels: A[];
   documentModels: D[];
   clone(): Schema<A, D>;
-  addModels(...models: (A | D)[]): void;
+  /**
+   * Similar to adding models to the schema one by one, with an important difference. Models are validated only
+   * after the entire "group" has been added to the schema. This makes sure that the validation code doesn't fail
+   * because of missing models.
+   */
+  addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
-  addAliasModel(model: A): void;
-  addDocumentModel(model: D): void;
 }

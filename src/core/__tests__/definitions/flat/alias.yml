@@ -58,5 +58,7 @@ Dog:
 Pet:
   model: alias
   type:
-    - Cat
-    - Dog
+    type: union
+    variants:
+      - Cat
+      - Dog
