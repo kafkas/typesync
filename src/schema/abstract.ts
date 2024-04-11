@@ -74,6 +74,9 @@ export abstract class AbstractSchema<
         default:
           assertNever(model);
       }
+    });
+
+    models.forEach(model => {
       this.validateModel(model);
     });
   }
