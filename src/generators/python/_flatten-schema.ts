@@ -1,7 +1,8 @@
 import lodash from 'lodash';
 
 import { schema } from '../../schema/index.js';
-import { assert, assertNever } from '../../util/assert.js';
+import { assertNever } from '../../util/assert.js';
+import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 import { pascalCase } from '../../util/pascal-case.js';
 import {
   FlatAliasModel,
@@ -121,14 +122,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
 
     unionType.variants.forEach(variantType => {
       if (variantType.type === 'object') {
-        const discriminantField = variantType.fields.find(field => field.name === unionType.discriminant);
-        // TODO: This assertion should be done in a better way
-        assert(
-          discriminantField &&
-            discriminantField.type.type === 'literal' &&
-            typeof discriminantField.type.value === 'string'
-        );
-        const name = `${aliasName}${pascalCase(discriminantField.type.value)}`;
+        const discriminantValue = extractDiscriminantValue(unionType, variantType);
+        const name = `${aliasName}${pascalCase(discriminantValue)}`;
         const res = flattenObjectType(variantType, name);
         // TODO: Implement
         const docs = undefined;
