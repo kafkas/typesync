@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 
-import { InvalidAliasModelError, InvalidDocumentModelError } from '../errors/invalid-model.js';
+import { DuplicateModelError, InvalidModelError } from '../errors/invalid-model.js';
 import {
   InvalidDiscriminantFieldError,
   InvalidDiscriminatedUnionAliasVariantError,
@@ -74,19 +74,7 @@ export abstract class AbstractSchema<
         default:
           assertNever(model);
       }
-    });
-
-    models.forEach(model => {
-      switch (model.model) {
-        case 'alias':
-          this.validateAliasModel(model);
-          break;
-        case 'document':
-          this.validateDocumentModel(model);
-          break;
-        default:
-          assertNever(model);
-      }
+      this.validateModel(model);
     });
   }
 
@@ -95,11 +83,11 @@ export abstract class AbstractSchema<
     switch (model.model) {
       case 'alias':
         this.aliasModelsById.set(model.name, model);
-        this.validateAliasModel(model);
+        this.validateModel(model);
         break;
       case 'document':
         this.documentModelsById.set(model.name, model);
-        this.validateDocumentModel(model);
+        this.validateModel(model);
         break;
       default:
         assertNever(model);
@@ -119,33 +107,18 @@ export abstract class AbstractSchema<
 
   private validateModelNotAlreadyExists(model: A | D) {
     const am = this.aliasModelsById.get(model.name);
-
-    if (am !== undefined) {
-      throw new Error(`The schema already has a '${model.name}' alias model.`);
-    }
-
     const dm = this.documentModelsById.get(model.name);
-
-    if (dm !== undefined) {
-      throw new Error(`The schema already has a '${model.name}' document model.`);
+    if (am !== undefined || dm !== undefined) {
+      throw new DuplicateModelError(model.name);
     }
   }
 
-  private validateAliasModel(model: A): void {
+  private validateModel(model: A | D): void {
     try {
       this.validateType(model.type);
     } catch (e) {
       const message = extractErrorMessage(e);
-      throw new InvalidAliasModelError(model.name, message);
-    }
-  }
-
-  private validateDocumentModel(model: D): void {
-    try {
-      this.validateType(model.type);
-    } catch (e) {
-      const message = extractErrorMessage(e);
-      throw new InvalidDocumentModelError(model.name, message);
+      throw new InvalidModelError(model.name, message);
     }
   }
 

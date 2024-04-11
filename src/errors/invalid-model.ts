@@ -1,11 +1,11 @@
-export class InvalidAliasModelError extends Error {
+export class InvalidModelError extends Error {
   public constructor(modelName: string, message: string) {
-    super(`The alias model '${modelName}' is not valid. ${message}`);
+    super(`The schema model '${modelName}' is not valid. ${message}`);
   }
 }
 
-export class InvalidDocumentModelError extends Error {
-  public constructor(modelName: string, message: string) {
-    super(`The document model '${modelName}' is not valid. ${message}`);
+export class DuplicateModelError extends InvalidModelError {
+  public constructor(modelName: string) {
+    super(modelName, `The schema already has a '${modelName}' model. Duplicates are not allowed.`);
   }
 }
