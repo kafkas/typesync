@@ -67,6 +67,4 @@ export interface Schema<A, D> {
    */
   addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
-  addAliasModel(model: A): void;
-  addDocumentModel(model: D): void;
 }

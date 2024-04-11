@@ -91,28 +91,19 @@ export abstract class AbstractSchema<
   }
 
   public addModel(model: A | D): void {
+    this.validateModelNotAlreadyExists(model);
     switch (model.model) {
       case 'alias':
-        this.addAliasModel(model);
+        this.aliasModelsById.set(model.name, model);
+        this.validateAliasModel(model);
         break;
       case 'document':
-        this.addDocumentModel(model);
+        this.documentModelsById.set(model.name, model);
+        this.validateDocumentModel(model);
         break;
       default:
         assertNever(model);
     }
-  }
-
-  public addAliasModel(model: A): void {
-    this.validateModelNotAlreadyExists(model);
-    this.aliasModelsById.set(model.name, model);
-    this.validateAliasModel(model);
-  }
-
-  public addDocumentModel(model: D): void {
-    this.validateModelNotAlreadyExists(model);
-    this.documentModelsById.set(model.name, model);
-    this.validateDocumentModel(model);
   }
 
   protected getAliasModel(modelName: string) {

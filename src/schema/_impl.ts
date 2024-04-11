@@ -40,24 +40,22 @@ export function create(): schema.Schema {
 export function createFromDefinition(def: definition.Definition): schema.Schema {
   const s = new SchemaImpl();
 
-  Object.entries(def).forEach(([modelName, defModel]) => {
+  const models = Object.entries(def).map(([modelName, defModel]) => {
     switch (defModel.model) {
       case 'alias': {
         const schemaType = definition.convert.typeToSchema(defModel.type);
-        const aliasModel = new AliasModelImpl(modelName, defModel.docs, schemaType);
-        s.addAliasModel(aliasModel);
-        break;
+        return new AliasModelImpl(modelName, defModel.docs, schemaType);
       }
       case 'document': {
         const schemaType = definition.convert.objectTypeToSchema(defModel.type);
-        const documentModel = new DocumentModelImpl(modelName, defModel.docs, schemaType);
-        s.addDocumentModel(documentModel);
-        break;
+        return new DocumentModelImpl(modelName, defModel.docs, schemaType);
       }
       default:
         assertNever(defModel);
     }
   });
+
+  s.addModelGroup(models);
 
   return s;
 }
