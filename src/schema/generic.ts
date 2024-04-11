@@ -62,8 +62,8 @@ export interface Schema<A, D> {
   clone(): Schema<A, D>;
   /**
    * Similar to adding models to the schema one by one, with an important difference. Models are validated only
-   * after the entire "group" has been added to the schema. This makes sure that validation code doesn't fail
-   * doesn't fail because of missing models.
+   * after the entire "group" has been added to the schema. This makes sure that the validation code doesn't fail
+   * because of missing models.
    */
   addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
