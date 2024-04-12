@@ -219,7 +219,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       docs: aliasModel.docs,
       type: newModelType,
     });
-    newSchema.addModelGroup([flattenedModel, ...extractedAliasModels]);
+    // TODO: Check if this should run outside of this block
+    newSchema.addModelGroup([...extractedAliasModels, flattenedModel]);
   });
 
   documentModels.forEach(documentModel => {
@@ -229,7 +230,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       docs: documentModel.docs,
       type: flattenedType,
     });
-    newSchema.addModelGroup([flattenedModel, ...extractedAliasModels]);
+    newSchema.addModelGroup([...extractedAliasModels, flattenedModel]);
   });
 
   return newSchema;
