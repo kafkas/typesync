@@ -27,7 +27,7 @@ export interface Literal {
 
 export interface Enum {
   readonly type: 'enum';
-  readonly items: {
+  readonly members: {
     label: string;
     value: string | number;
   }[];

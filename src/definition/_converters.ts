@@ -31,7 +31,7 @@ export function literalTypeToSchema(t: definition.types.Literal): schema.types.L
 export function enumTypeToSchema(t: definition.types.Enum): schema.types.Enum {
   return {
     type: 'enum',
-    items: t.items,
+    members: t.members,
   };
 }
 

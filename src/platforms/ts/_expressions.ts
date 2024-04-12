@@ -56,8 +56,8 @@ export function expressionForLiteralType(t: Literal): Expression {
 }
 
 export function expressionForEnumType(t: Enum): Expression {
-  const { items } = t;
-  const content = items
+  const { members } = t;
+  const content = members
     .map(({ value }) => {
       switch (typeof value) {
         case 'string':

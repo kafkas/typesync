@@ -31,7 +31,7 @@ export function literalTypeToTS(t: schema.types.Literal): ts.Literal {
 }
 
 export function enumTypeToTS(t: schema.types.Enum): ts.Enum {
-  return { type: 'enum', items: t.items };
+  return { type: 'enum', members: t.members };
 }
 
 export function tupleTypeToTS(t: schema.types.Tuple): ts.Tuple {

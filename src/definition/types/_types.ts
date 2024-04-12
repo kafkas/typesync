@@ -7,7 +7,7 @@ export interface Literal {
 
 export interface Enum {
   type: 'enum';
-  items: {
+  members: {
     label: string;
     value: string | number;
   }[];

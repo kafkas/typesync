@@ -15,7 +15,7 @@ const createDefinition = (aliasType: z.ZodType) => {
   const enumType = z
     .object({
       type: z.literal('enum'),
-      items: z
+      members: z
         .array(
           z
             .object({
@@ -24,7 +24,7 @@ const createDefinition = (aliasType: z.ZodType) => {
             })
             .strict()
         )
-        .describe('A list containing the enumeration items.'),
+        .describe('A list containing the enumeration members.'),
     })
     .describe('An enum type');
 

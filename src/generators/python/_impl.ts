@@ -28,7 +28,7 @@ class PythonGeneratorImpl implements PythonGenerator {
       } else if (model.type.type === 'enum') {
         const pythonType: python.EnumClass = {
           type: 'enum-class',
-          attributes: model.type.items.map(item => ({ key: item.label, value: item.value })),
+          attributes: model.type.members.map(item => ({ key: item.label, value: item.value })),
         };
         declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType });
       } else {
