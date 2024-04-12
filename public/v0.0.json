@@ -79,7 +79,7 @@
                                                 "type": "string",
                                                 "const": "enum"
                                               },
-                                              "items": {
+                                              "members": {
                                                 "type": "array",
                                                 "items": {
                                                   "type": "object",
@@ -102,10 +102,10 @@
                                                   ],
                                                   "additionalProperties": false
                                                 },
-                                                "description": "A list containing the enumeration items."
+                                                "description": "A list containing the enumeration members."
                                               }
                                             },
-                                            "required": ["type", "items"],
+                                            "required": ["type", "members"],
                                             "additionalProperties": false,
                                             "description": "An enum type"
                                           }
@@ -119,7 +119,7 @@
                                             "type": "string",
                                             "const": "tuple"
                                           },
-                                          "values": {
+                                          "elements": {
                                             "type": "array",
                                             "items": {
                                               "anyOf": [
@@ -136,7 +136,7 @@
                                             "description": "An ordered list of types that comprise this tuple."
                                           }
                                         },
-                                        "required": ["type", "values"],
+                                        "required": ["type", "elements"],
                                         "additionalProperties": false,
                                         "description": "A tuple type"
                                       }
@@ -156,7 +156,7 @@
                                             "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
                                           },
                                           {
-                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                           }
                                         ],
                                         "description": "The type representing each element in this list."
@@ -179,7 +179,7 @@
                                         "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
                                       },
                                       {
-                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                       }
                                     ],
                                     "description": "The type representing the values in this map. The keys in a map are always strings."
@@ -202,7 +202,7 @@
                                   "type": "object",
                                   "properties": {
                                     "type": {
-                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
+                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
                                     },
                                     "optional": {
                                       "type": "boolean",
@@ -245,7 +245,7 @@
                                       "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1"
                                     },
                                     {
-                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                     }
                                   ],
                                   "description": "An object type."
@@ -263,7 +263,7 @@
                               "variants": {
                                 "type": "array",
                                 "items": {
-                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items"
+                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
                                 }
                               }
                             },
@@ -278,7 +278,7 @@
                     "description": "A primitive type"
                   },
                   {
-                    "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/values/items/anyOf/1"
+                    "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                   }
                 ],
                 "description": "The type that this model is an alias of."
