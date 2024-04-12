@@ -16,7 +16,7 @@ describe('TSGeneratorImpl', () => {
         model: 'alias',
         type: {
           type: 'enum',
-          items: [
+          members: [
             { label: 'Admin', value: 'admin' },
             { label: 'User', value: 'user' },
           ],
@@ -39,7 +39,7 @@ describe('TSGeneratorImpl', () => {
           modelName: 'UserRole',
           modelType: {
             type: 'enum',
-            items: [
+            members: [
               { label: 'Admin', value: 'admin' },
               { label: 'User', value: 'user' },
             ],

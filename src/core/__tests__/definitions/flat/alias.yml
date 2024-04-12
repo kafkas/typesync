@@ -7,7 +7,7 @@ UserRole:
   docs: Represents a user role
   type:
     type: enum
-    items:
+    members:
       - label: ADMIN
         value: admin
       - label: USER

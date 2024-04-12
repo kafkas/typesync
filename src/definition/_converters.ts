@@ -31,28 +31,28 @@ export function literalTypeToSchema(t: definition.types.Literal): schema.types.L
 export function enumTypeToSchema(t: definition.types.Enum): schema.types.Enum {
   return {
     type: 'enum',
-    items: t.items,
+    members: t.members,
   };
 }
 
 export function tupleTypeToSchema(t: definition.types.Tuple): schema.types.Tuple {
   return {
     type: 'tuple',
-    values: t.values.map(typeToSchema),
+    elements: t.elements.map(typeToSchema),
   };
 }
 
 export function listTypeToSchema(t: definition.types.List): schema.types.List {
   return {
     type: 'list',
-    of: typeToSchema(t.of),
+    elementType: typeToSchema(t.elementType),
   };
 }
 
 export function mapTypeToSchema(t: definition.types.Map): schema.types.Map {
   return {
     type: 'map',
-    of: typeToSchema(t.of),
+    valueType: typeToSchema(t.valueType),
   };
 }
 

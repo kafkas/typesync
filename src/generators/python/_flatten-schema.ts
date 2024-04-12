@@ -62,31 +62,31 @@ interface FlattenTypeResult {
  */
 export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
-    const resultsForValues = tupleType.values.map((valueType, valueTypeIdx) =>
+    const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
       flattenType(valueType, `${aliasName}_${valueTypeIdx}`)
     );
     const flattenedType: FlatTupleType = {
       type: 'tuple',
-      values: resultsForValues.map(res => res.flattenedType),
+      elements: resultsForValues.map(res => res.flattenedType),
     };
     const extractedAliasModels = resultsForValues.map(res => res.extractedAliasModels).flat(1);
     return { flattenedType, extractedAliasModels };
   }
 
   function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
-    const resultForOf = flattenType(listType.of, aliasName);
+    const resultForOf = flattenType(listType.elementType, aliasName);
     const flattenedType: FlatListType = {
       type: 'list',
-      of: resultForOf.flattenedType,
+      elementType: resultForOf.flattenedType,
     };
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
-  function flattenMapType(listType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
-    const resultForOf = flattenType(listType.of, aliasName);
+  function flattenMapType(mapType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
+    const resultForOf = flattenType(mapType.valueType, aliasName);
     const flattenedType: FlatMapType = {
       type: 'map',
-      of: resultForOf.flattenedType,
+      valueType: resultForOf.flattenedType,
     };
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }

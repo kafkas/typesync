@@ -31,19 +31,19 @@ export function literalTypeToTS(t: schema.types.Literal): ts.Literal {
 }
 
 export function enumTypeToTS(t: schema.types.Enum): ts.Enum {
-  return { type: 'enum', items: t.items };
+  return { type: 'enum', members: t.members };
 }
 
 export function tupleTypeToTS(t: schema.types.Tuple): ts.Tuple {
-  return { type: 'tuple', values: t.values.map(typeToTS) };
+  return { type: 'tuple', elements: t.elements.map(typeToTS) };
 }
 
 export function listTypeToTS(t: schema.types.List): ts.List {
-  return { type: 'list', of: typeToTS(t.of) };
+  return { type: 'list', elementType: typeToTS(t.elementType) };
 }
 
 export function mapTypeToTS(t: schema.types.Map): ts.Record {
-  return { type: 'record', of: typeToTS(t.of) };
+  return { type: 'record', valueType: typeToTS(t.valueType) };
 }
 
 export function objectTypeToTS(t: schema.types.Object): ts.Object {

@@ -101,7 +101,7 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
         },
         "favorite_numbers": {
           "type": {
-            "of": "int",
+            "elementType": "int",
             "type": "list",
           },
         },
@@ -110,23 +110,23 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
         },
         "location": {
           "type": {
-            "type": "tuple",
-            "values": [
+            "elements": [
               "int",
               "int",
             ],
+            "type": "tuple",
           },
         },
         "pets": {
           "type": {
-            "of": "Pet",
+            "elementType": "Pet",
             "type": "list",
           },
         },
         "petsById": {
           "type": {
-            "of": "Pet",
             "type": "map",
+            "valueType": "Pet",
           },
         },
         "role": {
@@ -143,7 +143,7 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
     "docs": "Represents a user role",
     "model": "alias",
     "type": {
-      "items": [
+      "members": [
         {
           "label": "ADMIN",
           "value": "admin",

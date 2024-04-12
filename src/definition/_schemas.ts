@@ -15,7 +15,7 @@ const createDefinition = (aliasType: z.ZodType) => {
   const enumType = z
     .object({
       type: z.literal('enum'),
-      items: z
+      members: z
         .array(
           z
             .object({
@@ -24,7 +24,7 @@ const createDefinition = (aliasType: z.ZodType) => {
             })
             .strict()
         )
-        .describe('A list containing the enumeration items.'),
+        .describe('A list containing the enumeration members.'),
     })
     .describe('An enum type');
 
@@ -33,7 +33,7 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('tuple'),
-          values: z.array(type).describe('An ordered list of types that comprise this tuple.'),
+          elements: z.array(type).describe('An ordered list of types that comprise this tuple.'),
         })
         .strict()
     )
@@ -44,7 +44,7 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('list'),
-          of: type.describe('The type representing each element in this list.'),
+          elementType: type.describe('The type representing each element in this list.'),
         })
         .strict()
     )
@@ -55,7 +55,9 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('map'),
-          of: type.describe('The type representing the values in this map. The keys in a map are always strings.'),
+          valueType: type.describe(
+            'The type representing the values in this map. The keys in a map are always strings.'
+          ),
         })
         .strict()
     )

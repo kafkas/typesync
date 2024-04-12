@@ -16,7 +16,7 @@ describe('PythonGeneratorImpl', () => {
         model: 'alias',
         type: {
           type: 'enum',
-          items: [
+          members: [
             { label: 'Admin', value: 'admin' },
             { label: 'User', value: 'user' },
           ],

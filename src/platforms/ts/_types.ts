@@ -27,7 +27,7 @@ export interface Literal {
 
 export interface Enum {
   readonly type: 'enum';
-  readonly items: {
+  readonly members: {
     label: string;
     value: string | number;
   }[];
@@ -35,17 +35,17 @@ export interface Enum {
 
 export interface Tuple {
   readonly type: 'tuple';
-  readonly values: Type[];
+  readonly elements: Type[];
 }
 
 export interface List {
   readonly type: 'list';
-  readonly of: Type;
+  readonly elementType: Type;
 }
 
 export interface Record {
   readonly type: 'record';
-  readonly of: Type;
+  readonly valueType: Type;
 }
 
 export interface Object {

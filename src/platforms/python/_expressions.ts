@@ -63,17 +63,17 @@ export function expressionForLiteralType(t: Literal): Expression {
 }
 
 export function expressionForTupleType(t: Tuple): Expression {
-  const commaSeparatedExpressions = t.values.map(vt => expressionForType(vt).content).join(', ');
+  const commaSeparatedExpressions = t.elements.map(vt => expressionForType(vt).content).join(', ');
   return { content: `tuple[${commaSeparatedExpressions}]` };
 }
 
 export function expressionForListType(t: List): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.elementType);
   return { content: `typing.List[${expression.content}]` };
 }
 
 export function expressionForDictType(t: Dict): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.valueType);
   return { content: `typing.Dict[str, ${expression.content}]` };
 }
 

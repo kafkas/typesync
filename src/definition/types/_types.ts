@@ -7,7 +7,7 @@ export interface Literal {
 
 export interface Enum {
   type: 'enum';
-  items: {
+  members: {
     label: string;
     value: string | number;
   }[];
@@ -15,17 +15,17 @@ export interface Enum {
 
 export interface Tuple {
   type: 'tuple';
-  values: Type[];
+  elements: Type[];
 }
 
 export interface List {
   type: 'list';
-  of: Type;
+  elementType: Type;
 }
 
 export interface Map {
   type: 'map';
-  of: Type;
+  valueType: Type;
 }
 
 export interface Object {

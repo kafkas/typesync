@@ -24,7 +24,7 @@ describe('schema.createFromDefinition()', () => {
             model: 'alias',
             type: {
               type: 'map',
-              of: 'string',
+              valueType: 'string',
             },
           },
           Pet: {

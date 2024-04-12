@@ -156,15 +156,15 @@ export abstract class AbstractSchema<
   }
 
   private validateTupleType(t: schema.types.Tuple) {
-    t.values.forEach(vt => this.validateType(vt));
+    t.elements.forEach(vt => this.validateType(vt));
   }
 
   private validateListType(t: schema.types.List) {
-    this.validateType(t.of);
+    this.validateType(t.elementType);
   }
 
   private validateMapType(t: schema.types.Map) {
-    this.validateType(t.of);
+    this.validateType(t.valueType);
   }
 
   private validateObjectType(t: schema.types.Object) {

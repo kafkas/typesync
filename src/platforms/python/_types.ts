@@ -35,17 +35,17 @@ export interface Literal {
 
 export interface Tuple {
   readonly type: 'tuple';
-  readonly values: Type[];
+  readonly elements: Type[];
 }
 
 export interface List {
   readonly type: 'list';
-  readonly of: Type;
+  readonly elementType: Type;
 }
 
 export interface Dict {
   readonly type: 'dict';
-  readonly of: Type;
+  readonly valueType: Type;
 }
 
 export interface DiscriminatedUnion {

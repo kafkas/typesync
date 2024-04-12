@@ -3,7 +3,7 @@ UserRole:
   docs: Represents a user's role within a project.
   type:
     type: enum
-    items:
+    members:
       - label: Owner
         value: owner
       - label: Admin

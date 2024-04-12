@@ -56,8 +56,8 @@ export function expressionForLiteralType(t: Literal): Expression {
 }
 
 export function expressionForEnumType(t: Enum): Expression {
-  const { items } = t;
-  const content = items
+  const { members } = t;
+  const content = members
     .map(({ value }) => {
       switch (typeof value) {
         case 'string':
@@ -73,17 +73,17 @@ export function expressionForEnumType(t: Enum): Expression {
 }
 
 export function expressionForTupleType(t: Tuple): Expression {
-  const commaSeparatedExpressions = t.values.map(vt => expressionForType(vt).content).join(', ');
+  const commaSeparatedExpressions = t.elements.map(vt => expressionForType(vt).content).join(', ');
   return { content: `[${commaSeparatedExpressions}]` };
 }
 
 export function expressionForListType(t: List): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.elementType);
   return { content: `${expression.content}[]` };
 }
 
 export function expressionForRecordType(t: Record): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.valueType);
   return { content: `Record<string, ${expression.content}>` };
 }
 

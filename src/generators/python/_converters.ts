@@ -39,15 +39,15 @@ export function literalTypeToPython(t: schema.types.Literal): python.Literal {
 }
 
 export function flatTupleTypeToPython(t: FlatTupleType): python.Tuple {
-  return { type: 'tuple', values: t.values.map(flatTypeToPython) };
+  return { type: 'tuple', elements: t.elements.map(flatTypeToPython) };
 }
 
 export function flatListTypeToPython(t: FlatListType): python.List {
-  return { type: 'list', of: flatTypeToPython(t.of) };
+  return { type: 'list', elementType: flatTypeToPython(t.elementType) };
 }
 
 export function flatMapTypeToPython(t: FlatMapType): python.Dict {
-  return { type: 'dict', of: flatTypeToPython(t.of) };
+  return { type: 'dict', valueType: flatTypeToPython(t.valueType) };
 }
 
 export function flatDiscriminatedUnionTypeToPython(t: FlatDiscriminatedUnionType): python.DiscriminatedUnion {

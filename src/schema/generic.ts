@@ -1,16 +1,16 @@
 export interface TupleType<T> {
   type: 'tuple';
-  values: T[];
+  elements: T[];
 }
 
 export interface ListType<T> {
   type: 'list';
-  of: T;
+  elementType: T;
 }
 
 export interface MapType<T> {
   type: 'map';
-  of: T;
+  valueType: T;
 }
 
 export interface ObjectType<T> {
