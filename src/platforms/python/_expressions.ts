@@ -63,7 +63,7 @@ export function expressionForLiteralType(t: Literal): Expression {
 }
 
 export function expressionForTupleType(t: Tuple): Expression {
-  const commaSeparatedExpressions = t.values.map(vt => expressionForType(vt).content).join(', ');
+  const commaSeparatedExpressions = t.elements.map(vt => expressionForType(vt).content).join(', ');
   return { content: `tuple[${commaSeparatedExpressions}]` };
 }
 

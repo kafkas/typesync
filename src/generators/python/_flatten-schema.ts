@@ -62,12 +62,12 @@ interface FlattenTypeResult {
  */
 export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
-    const resultsForValues = tupleType.values.map((valueType, valueTypeIdx) =>
+    const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
       flattenType(valueType, `${aliasName}_${valueTypeIdx}`)
     );
     const flattenedType: FlatTupleType = {
       type: 'tuple',
-      values: resultsForValues.map(res => res.flattenedType),
+      elements: resultsForValues.map(res => res.flattenedType),
     };
     const extractedAliasModels = resultsForValues.map(res => res.extractedAliasModels).flat(1);
     return { flattenedType, extractedAliasModels };

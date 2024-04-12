@@ -35,7 +35,7 @@ export function enumTypeToTS(t: schema.types.Enum): ts.Enum {
 }
 
 export function tupleTypeToTS(t: schema.types.Tuple): ts.Tuple {
-  return { type: 'tuple', values: t.values.map(typeToTS) };
+  return { type: 'tuple', elements: t.elements.map(typeToTS) };
 }
 
 export function listTypeToTS(t: schema.types.List): ts.List {

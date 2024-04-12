@@ -1,6 +1,6 @@
 export interface TupleType<T> {
   type: 'tuple';
-  values: T[];
+  elements: T[];
 }
 
 export interface ListType<T> {

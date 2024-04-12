@@ -35,7 +35,7 @@ export interface Enum {
 
 export interface Tuple {
   readonly type: 'tuple';
-  readonly values: Type[];
+  readonly elements: Type[];
 }
 
 export interface List {

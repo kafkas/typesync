@@ -38,7 +38,7 @@ export function enumTypeToSchema(t: definition.types.Enum): schema.types.Enum {
 export function tupleTypeToSchema(t: definition.types.Tuple): schema.types.Tuple {
   return {
     type: 'tuple',
-    values: t.values.map(typeToSchema),
+    elements: t.elements.map(typeToSchema),
   };
 }
 

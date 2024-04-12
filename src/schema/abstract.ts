@@ -156,7 +156,7 @@ export abstract class AbstractSchema<
   }
 
   private validateTupleType(t: schema.types.Tuple) {
-    t.values.forEach(vt => this.validateType(vt));
+    t.elements.forEach(vt => this.validateType(vt));
   }
 
   private validateListType(t: schema.types.List) {

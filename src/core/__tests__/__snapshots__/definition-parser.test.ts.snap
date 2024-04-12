@@ -111,7 +111,7 @@ exports[`definition-parser correctly parses definition from a YAML file 1`] = `
         "location": {
           "type": {
             "type": "tuple",
-            "values": [
+            "elements": [
               "int",
               "int",
             ],

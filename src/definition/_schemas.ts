@@ -33,7 +33,7 @@ const createDefinition = (aliasType: z.ZodType) => {
       z
         .object({
           type: z.literal('tuple'),
-          values: z.array(type).describe('An ordered list of types that comprise this tuple.'),
+          elements: z.array(type).describe('An ordered list of types that comprise this tuple.'),
         })
         .strict()
     )

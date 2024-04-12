@@ -15,7 +15,7 @@ export interface Enum {
 
 export interface Tuple {
   type: 'tuple';
-  values: Type[];
+  elements: Type[];
 }
 
 export interface List {
