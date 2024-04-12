@@ -129,18 +129,14 @@ export function expressionForType(t: Type): Expression {
     case 'enum':
       return expressionForEnumType(t);
     case 'tuple':
-      // TODO: Need to add docs
       return expressionForTupleType(t);
     case 'list':
-      // TODO: Need to add docs
       return expressionForListType(t);
     case 'record':
       return expressionForRecordType(t);
     case 'object':
-      // TODO: Need to add docs
       return expressionForObjectType(t);
     case 'union':
-      // TODO: Need to add docs
       return expressionForUnionType(t);
     case 'alias':
       return expressionForAliasType(t);
