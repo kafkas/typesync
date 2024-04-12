@@ -4,13 +4,13 @@ import { format } from 'prettier';
 import type { TSDeclaration, TSGeneration } from '../../generators/ts/index.js';
 import { ts } from '../../platforms/ts/index.js';
 import { assertNever } from '../../util/assert.js';
-import type { RenderResult, RenderedFile } from '../_types.js';
+import type { RenderedFile } from '../_types.js';
 import type { TSRenderer, TSRendererConfig } from './_types.js';
 
 class TSRendererImpl implements TSRenderer {
   public constructor(private readonly config: TSRendererConfig) {}
 
-  public async render(g: TSGeneration): Promise<RenderResult> {
+  public async render(g: TSGeneration): Promise<RenderedFile> {
     const b = new StringBuilder();
 
     const tsFirestoreImport = this.getImportFirestoreStatement();
@@ -30,11 +30,10 @@ class TSRendererImpl implements TSRenderer {
     });
 
     const rootFile: RenderedFile = {
-      relativePath: this.config.rootFileName,
       content: formattedContent,
     };
 
-    return { rootFile, files: [rootFile] };
+    return rootFile;
   }
 
   private renderDeclaration(declaration: TSDeclaration) {

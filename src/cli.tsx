@@ -30,18 +30,18 @@ await yargs(hideBin(process.argv))
           demandOption: true,
         })
         .option('platform', {
-          describe: 'Target platform and version',
+          describe: 'Target platform and version.',
           type: 'string',
           demandOption: true,
           choices: getPlatforms(),
         })
-        .option('outputDir', {
-          describe: 'The path to the output directory',
+        .option('outFile', {
+          describe: 'The path to the output file.',
           type: 'string',
           demandOption: true,
         })
         .option('indentation', {
-          describe: 'Indentation or tab width for the generated code',
+          describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
           default: 4,
@@ -53,13 +53,14 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { definition, platform, outputDir, indentation, debug } = args;
+      const { definition, platform, outFile, indentation, debug } = args;
 
+      const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
         const result = await typesync.generate({
           definition: resolve(process.cwd(), definition),
           platform,
-          outputDir: resolve(process.cwd(), outputDir),
+          outFile: pathToOutputFile,
           indentation,
           debug,
         });
@@ -68,7 +69,7 @@ await yargs(hideBin(process.argv))
           <GenerationSuccessful
             aliasModelCount={result.aliasModelCount}
             documentModelCount={result.documentModelCount}
-            pathToRootFile={result.pathToRootFile}
+            pathToOutputFile={pathToOutputFile}
           />
         );
       } catch (e) {
