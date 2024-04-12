@@ -4,7 +4,6 @@ import { createPythonRenderer } from '../_impl.js';
 describe('PythonRendererImpl', () => {
   it('correctly renders a Python generation', async () => {
     const renderer = createPythonRenderer({
-      rootFileName: 'models.py',
       indentation: 4,
       platform: 'py:firebase-admin:6',
     });

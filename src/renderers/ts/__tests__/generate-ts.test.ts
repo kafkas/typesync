@@ -4,7 +4,6 @@ import { createTSRenderer } from '../_impl.js';
 describe('TSRendererImpl', () => {
   it('correctly renders a TS generation', async () => {
     const renderer = createTSRenderer({
-      rootFileName: 'models.py',
       indentation: 4,
       platform: 'ts:firebase-admin:11',
     });
