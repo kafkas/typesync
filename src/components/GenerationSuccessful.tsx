@@ -5,10 +5,10 @@ import React from 'react';
 type Props = {
   aliasModelCount: number;
   documentModelCount: number;
-  pathToRootFile: string;
+  pathToOutputFile: string;
 };
 
-export function GenerationSuccessful({ aliasModelCount, documentModelCount, pathToRootFile }: Props) {
+export function GenerationSuccessful({ aliasModelCount, documentModelCount, pathToOutputFile }: Props) {
   return (
     <Box flexDirection="column">
       <Text color="green">✔ Successfully generated type definitions for models.</Text>
@@ -16,7 +16,7 @@ export function GenerationSuccessful({ aliasModelCount, documentModelCount, path
       <Text>✔ {pluralize('document model', documentModelCount, true)}</Text>
       <Box>
         <Text>✔ Wrote output to: </Text>
-        <Text color="green">{pathToRootFile}</Text>
+        <Text color="green">{pathToOutputFile}</Text>
       </Box>
     </Box>
   );

@@ -30,7 +30,7 @@ export function getPlatforms(): GenerationPlatform[] {
 export interface TypesyncGenerateOptions {
   definition: string;
   platform: GenerationPlatform;
-  outputDir: string;
+  outFile: string;
   indentation: number;
   debug: boolean;
 }
@@ -38,7 +38,6 @@ export interface TypesyncGenerateOptions {
 export interface TypesyncGenerateResult {
   aliasModelCount: number;
   documentModelCount: number;
-  pathToRootFile: string;
 }
 
 export interface TypesyncValidateOptions {

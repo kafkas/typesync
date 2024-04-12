@@ -1,5 +1,4 @@
 import { globSync } from 'glob';
-import { resolve } from 'path';
 
 import type {
   Typesync,
@@ -25,7 +24,7 @@ class TypesyncImpl implements Typesync {
     const logger = createLogger(opts.debug);
     this.validateOpts(opts);
 
-    const { definition: definitionGlobPattern, outputDir: pathToOutputDir } = opts;
+    const { definition: definitionGlobPattern, outFile: pathToOutputFile } = opts;
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
     const parser = createDefinitionParser(logger);
@@ -36,15 +35,12 @@ class TypesyncImpl implements Typesync {
     const definition = parser.parseDefinition(definitionFilePaths);
     const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
-    const { rootFile, files } = await renderer.render(generation);
-
-    await this.writeRenderedFiles(pathToOutputDir, files);
-    const pathToRootFile = resolve(pathToOutputDir, rootFile.relativePath);
+    const file = await renderer.render(generation);
+    await writeFile(pathToOutputFile, file.content);
 
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
-      pathToRootFile,
     };
   }
 
@@ -96,21 +92,12 @@ class TypesyncImpl implements Typesync {
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
-        return renderers.createTSRenderer({ rootFileName: 'index.ts', platform, indentation });
+        return renderers.createTSRenderer({ platform, indentation });
       case 'py:firebase-admin:6':
-        return renderers.createPythonRenderer({ rootFileName: 'models.py', platform, indentation });
+        return renderers.createPythonRenderer({ platform, indentation });
       default:
         assertNever(platform);
     }
-  }
-
-  private async writeRenderedFiles(pathToOutputDir: string, files: renderers.RenderedFile[]) {
-    await Promise.all(
-      files.map(async file => {
-        const path = resolve(pathToOutputDir, file.relativePath);
-        await writeFile(path, file.content);
-      })
-    );
   }
 }
 
