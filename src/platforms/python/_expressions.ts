@@ -68,12 +68,12 @@ export function expressionForTupleType(t: Tuple): Expression {
 }
 
 export function expressionForListType(t: List): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.elementType);
   return { content: `typing.List[${expression.content}]` };
 }
 
 export function expressionForDictType(t: Dict): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.valueType);
   return { content: `typing.Dict[str, ${expression.content}]` };
 }
 

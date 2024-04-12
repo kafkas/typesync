@@ -40,12 +40,12 @@ export interface Tuple {
 
 export interface List {
   readonly type: 'list';
-  readonly of: Type;
+  readonly elementType: Type;
 }
 
 export interface Dict {
   readonly type: 'dict';
-  readonly of: Type;
+  readonly valueType: Type;
 }
 
 export interface DiscriminatedUnion {

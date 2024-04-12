@@ -20,12 +20,12 @@ export interface Tuple {
 
 export interface List {
   type: 'list';
-  of: Type;
+  elementType: Type;
 }
 
 export interface Map {
   type: 'map';
-  of: Type;
+  valueType: Type;
 }
 
 export interface Object {

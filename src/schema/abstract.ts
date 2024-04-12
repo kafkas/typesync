@@ -160,11 +160,11 @@ export abstract class AbstractSchema<
   }
 
   private validateListType(t: schema.types.List) {
-    this.validateType(t.of);
+    this.validateType(t.elementType);
   }
 
   private validateMapType(t: schema.types.Map) {
-    this.validateType(t.of);
+    this.validateType(t.valueType);
   }
 
   private validateObjectType(t: schema.types.Object) {

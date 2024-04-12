@@ -40,12 +40,12 @@ export interface Tuple {
 
 export interface List {
   readonly type: 'list';
-  readonly of: Type;
+  readonly elementType: Type;
 }
 
 export interface Record {
   readonly type: 'record';
-  readonly of: Type;
+  readonly valueType: Type;
 }
 
 export interface Object {

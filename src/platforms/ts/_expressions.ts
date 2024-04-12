@@ -78,12 +78,12 @@ export function expressionForTupleType(t: Tuple): Expression {
 }
 
 export function expressionForListType(t: List): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.elementType);
   return { content: `${expression.content}[]` };
 }
 
 export function expressionForRecordType(t: Record): Expression {
-  const expression = expressionForType(t.of);
+  const expression = expressionForType(t.valueType);
   return { content: `Record<string, ${expression.content}>` };
 }
 

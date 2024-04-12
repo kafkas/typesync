@@ -74,19 +74,19 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   }
 
   function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
-    const resultForOf = flattenType(listType.of, aliasName);
+    const resultForOf = flattenType(listType.elementType, aliasName);
     const flattenedType: FlatListType = {
       type: 'list',
-      of: resultForOf.flattenedType,
+      elementType: resultForOf.flattenedType,
     };
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }
 
-  function flattenMapType(listType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
-    const resultForOf = flattenType(listType.of, aliasName);
+  function flattenMapType(mapType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
+    const resultForOf = flattenType(mapType.valueType, aliasName);
     const flattenedType: FlatMapType = {
       type: 'map',
-      of: resultForOf.flattenedType,
+      valueType: resultForOf.flattenedType,
     };
     return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
   }

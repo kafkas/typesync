@@ -26,15 +26,15 @@ UserProfile:
       favorite_numbers:
         type:
           type: list
-          of: int
+          elementType: int
       pets:
         type:
           type: list
-          of: Pet
+          elementType: Pet
       petsById:
         type:
           type: map
-          of: Pet
+          valueType: Pet
       bio:
         type:
           type: union
