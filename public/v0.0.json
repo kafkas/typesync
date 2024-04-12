@@ -150,7 +150,7 @@
                                         "type": "string",
                                         "const": "list"
                                       },
-                                      "of": {
+                                      "elementType": {
                                         "anyOf": [
                                           {
                                             "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
@@ -162,7 +162,7 @@
                                         "description": "The type representing each element in this list."
                                       }
                                     },
-                                    "required": ["type", "of"],
+                                    "required": ["type", "elementType"],
                                     "additionalProperties": false,
                                     "description": "A list type"
                                   }
@@ -173,7 +173,7 @@
                                 "type": "object",
                                 "properties": {
                                   "type": { "type": "string", "const": "map" },
-                                  "of": {
+                                  "valueType": {
                                     "anyOf": [
                                       {
                                         "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
@@ -185,7 +185,7 @@
                                     "description": "The type representing the values in this map. The keys in a map are always strings."
                                   }
                                 },
-                                "required": ["type", "of"],
+                                "required": ["type", "valueType"],
                                 "additionalProperties": false,
                                 "description": "An arbitrary mapping from strings to any valid types."
                               }
