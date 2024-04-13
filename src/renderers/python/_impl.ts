@@ -171,13 +171,14 @@ class PythonRendererImpl implements PythonRenderer {
           variants: [python.UNDEFINED, attribute.type],
         });
         b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}`);
-        if (attribute.docs !== undefined) {
-          b.append(`\n${this.indent(1)}"""${attribute.docs}"""\n`);
-        }
       } else {
         const expression = python.expressionForType(attribute.type);
-        b.append(`${this.indent(1)}${attribute.name}: ${expression.content}\n`);
+        b.append(`${this.indent(1)}${attribute.name}: ${expression.content}`);
       }
+      if (attribute.docs !== undefined) {
+        b.append(`\n${this.indent(1)}"""${attribute.docs}"""`);
+      }
+      b.append(`\n`);
     });
     b.append('\n');
 
