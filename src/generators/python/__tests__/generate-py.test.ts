@@ -37,6 +37,7 @@ describe('PythonGeneratorImpl', () => {
             },
           },
         },
+        docs: 'Represents a project within a workspace',
       },
     });
     const generation = generator.generate(s);
@@ -59,6 +60,7 @@ describe('PythonGeneratorImpl', () => {
               { key: 'User', value: 'user' },
             ],
           },
+          modelDocs: undefined,
         },
         {
           type: 'pydantic-class',
@@ -70,6 +72,7 @@ describe('PythonGeneratorImpl', () => {
               { name: 'completed', docs: 'Whether the project is completed', optional: false, type: { type: 'bool' } },
             ],
           },
+          modelDocs: 'Represents a project within a workspace',
         },
       ],
     };

@@ -28,6 +28,7 @@ describe('PythonRendererImpl', () => {
               { type: { type: 'str' }, name: 'breed', optional: false, docs: undefined },
             ],
           },
+          modelDocs: undefined,
         },
       ],
     };
