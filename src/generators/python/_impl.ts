@@ -38,7 +38,7 @@ class PythonGeneratorImpl implements PythonGenerator {
         declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType, modelDocs: model.docs });
       } else {
         const pythonType = flatTypeToPython(model.type);
-        declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
+        declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType, modelDocs: model.docs });
       }
     });
 

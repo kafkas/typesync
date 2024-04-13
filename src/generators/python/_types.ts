@@ -6,6 +6,7 @@ export interface PythonAliasDeclaration {
   type: 'alias';
   modelName: string;
   modelType: python.Type;
+  modelDocs: string | undefined;
 }
 
 export interface PythonEnumClassDeclaration {

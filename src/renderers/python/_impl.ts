@@ -131,9 +131,13 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderAliasDeclaration(declaration: PythonAliasDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const expression = python.expressionForType(modelType);
-    return `${modelName} = ${expression.content}`;
+    let output = `${modelName} = ${expression.content}`;
+    if (modelDocs !== undefined) {
+      output += `\n"""${modelDocs}"""`;
+    }
+    return output;
   }
 
   private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
