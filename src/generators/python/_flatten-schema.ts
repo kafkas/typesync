@@ -74,26 +74,26 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   }
 
   function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
-    const resultForOf = flattenType(listType.elementType, aliasName);
+    const resultForElementType = flattenType(listType.elementType, `${aliasName}Element`);
     const flattenedType: FlatListType = {
       type: 'list',
-      elementType: resultForOf.flattenedType,
+      elementType: resultForElementType.flattenedType,
     };
-    return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
+    return { flattenedType, extractedAliasModels: resultForElementType.extractedAliasModels };
   }
 
   function flattenMapType(mapType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
-    const resultForOf = flattenType(mapType.valueType, aliasName);
+    const resultForValueType = flattenType(mapType.valueType, `${aliasName}Value`);
     const flattenedType: FlatMapType = {
       type: 'map',
-      valueType: resultForOf.flattenedType,
+      valueType: resultForValueType.flattenedType,
     };
-    return { flattenedType, extractedAliasModels: resultForOf.extractedAliasModels };
+    return { flattenedType, extractedAliasModels: resultForValueType.extractedAliasModels };
   }
 
   function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
     const resultsForFields = objectType.fields.map(field => {
-      const flattenResult = flattenType(field.type, `${aliasName}${lodash.capitalize(field.name)}`);
+      const flattenResult = flattenType(field.type, `${aliasName}${pascalCase(field.name)}`);
       return { field, flattenResult };
     });
     const flattenedType: FlatObjectType = {
