@@ -24,8 +24,8 @@ describe('PythonRendererImpl', () => {
           modelType: {
             type: 'object-class',
             attributes: [
-              { type: { type: 'str' }, name: 'name' },
-              { type: { type: 'str' }, name: 'breed' },
+              { type: { type: 'str' }, name: 'name', optional: false, docs: undefined },
+              { type: { type: 'str' }, name: 'breed', optional: false, docs: undefined },
             ],
           },
         },

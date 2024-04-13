@@ -84,6 +84,6 @@ export interface ObjectClass {
 export interface ObjectClassAttribute {
   type: Type;
   name: string;
-  optional?: boolean;
-  docs?: string;
+  optional: boolean;
+  docs: string | undefined;
 }
