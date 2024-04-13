@@ -63,7 +63,7 @@ interface FlattenTypeResult {
 export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
     const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
-      flattenType(valueType, `${aliasName}_${valueTypeIdx}`)
+      flattenType(valueType, `${aliasName}_${valueTypeIdx + 1}`)
     );
     const flattenedType: FlatTupleType = {
       type: 'tuple',
@@ -143,7 +143,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     aliasName: string
   ): FlattenSimpleUnionTypeResult {
     const resultsForVariants = unionType.variants.map((variantType, variantIdx) =>
-      flattenType(variantType, `${aliasName}_${variantIdx}`)
+      flattenType(variantType, `${aliasName}_${variantIdx + 1}`)
     );
     const flattenedType: FlatSimpleUnionType = {
       type: 'simple-union',
