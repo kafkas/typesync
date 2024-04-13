@@ -17,6 +17,7 @@ describe('TSRendererImpl', () => {
           modelType: {
             type: 'string',
           },
+          modelDocs: undefined,
         },
         {
           type: 'interface',
@@ -28,6 +29,7 @@ describe('TSRendererImpl', () => {
               { type: { type: 'string' }, name: 'breed', docs: undefined, optional: false },
             ],
           },
+          modelDocs: undefined,
         },
       ],
     };
