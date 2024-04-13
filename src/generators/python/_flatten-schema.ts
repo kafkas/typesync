@@ -125,9 +125,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const discriminantValue = extractDiscriminantValue(unionType, variantType);
         const name = `${aliasName}${pascalCase(discriminantValue)}`;
         const res = flattenObjectType(variantType, name);
-        // TODO: Implement
-        const docs = undefined;
-        const aliasModel = createFlatAliasModel({ name, docs, type: res.flattenedType });
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: res.flattenedType });
         extractedAliasModels.push(...res.extractedAliasModels, aliasModel);
         flattenedType.variants.push({ type: 'alias', name });
       } else if (variantType.type === 'alias') {
@@ -168,9 +166,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return { flattenedType: type, extractedAliasModels: [] };
       case 'enum': {
         const name = aliasName;
-        // TODO: Implement
-        const docs = undefined;
-        const aliasModel = createFlatAliasModel({ name, docs, type });
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [aliasModel] };
       }
@@ -183,9 +179,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'object': {
         const result = flattenObjectType(type, aliasName);
         const name = aliasName;
-        // TODO: Implement
-        const docs = undefined;
-        const aliasModel = createFlatAliasModel({ name, docs, type: result.flattenedType });
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
