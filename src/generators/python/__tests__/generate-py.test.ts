@@ -22,6 +22,22 @@ describe('PythonGeneratorImpl', () => {
           ],
         },
       },
+      Project: {
+        model: 'document',
+        type: {
+          type: 'object',
+          fields: {
+            id: {
+              type: 'string',
+              docs: 'The ID of the project',
+            },
+            completed: {
+              type: 'boolean',
+              docs: 'Whether the project is completed',
+            },
+          },
+        },
+      },
     });
     const generation = generator.generate(s);
 
@@ -41,6 +57,17 @@ describe('PythonGeneratorImpl', () => {
             attributes: [
               { key: 'Admin', value: 'admin' },
               { key: 'User', value: 'user' },
+            ],
+          },
+        },
+        {
+          type: 'pydantic-class',
+          modelName: 'Project',
+          modelType: {
+            type: 'object-class',
+            attributes: [
+              { name: 'id', docs: 'The ID of the project', optional: false, type: { type: 'str' } },
+              { name: 'completed', docs: 'Whether the project is completed', optional: false, type: { type: 'bool' } },
             ],
           },
         },
