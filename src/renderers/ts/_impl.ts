@@ -37,16 +37,25 @@ class TSRendererImpl implements TSRenderer {
   }
 
   private renderDeclaration(declaration: TSDeclaration) {
+    let output = '';
     switch (declaration.type) {
       case 'alias': {
-        const { modelName, modelType } = declaration;
+        const { modelName, modelType, modelDocs } = declaration;
         const expression = ts.expressionForType(modelType);
-        return `export type ${modelName} = ${expression.content};`;
+        if (modelDocs !== undefined) {
+          output += `/** ${modelDocs} */\n`;
+        }
+        output += `export type ${modelName} = ${expression.content};`;
+        return output;
       }
       case 'interface': {
-        const { modelName, modelType } = declaration;
+        const { modelName, modelType, modelDocs } = declaration;
         const expression = ts.expressionForType(modelType);
-        return `export interface ${modelName} ${expression.content}`;
+        if (modelDocs !== undefined) {
+          output += `/** ${modelDocs} */\n`;
+        }
+        output += `export interface ${modelName} ${expression.content}`;
+        return output;
       }
       default:
         assertNever(declaration);
