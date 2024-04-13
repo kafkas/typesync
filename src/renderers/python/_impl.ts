@@ -137,9 +137,12 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(enum.Enum):\n`);
+    if (modelDocs !== undefined) {
+      b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
+    }
     modelType.attributes.forEach((attribute, attributeIdx) => {
       b.append(`${this.indent(1)}${attribute.key} = ${this.enumClassAttributeValueAsString(attribute)}`);
       if (attributeIdx !== modelType.attributes.length - 1) {
@@ -161,9 +164,12 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(TypesyncModel):\n`);
+    if (modelDocs !== undefined) {
+      b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
+    }
     modelType.attributes.forEach(attribute => {
       if (attribute.optional) {
         const expression = python.expressionForType({

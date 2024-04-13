@@ -12,12 +12,14 @@ export interface PythonEnumClassDeclaration {
   type: 'enum-class';
   modelName: string;
   modelType: python.EnumClass;
+  modelDocs: string | undefined;
 }
 
 export interface PythonPydanticClassDeclaration {
   type: 'pydantic-class';
   modelName: string;
   modelType: python.ObjectClass;
+  modelDocs: string | undefined;
 }
 
 export type PythonDeclaration = PythonAliasDeclaration | PythonEnumClassDeclaration | PythonPydanticClassDeclaration;
