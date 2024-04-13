@@ -170,7 +170,10 @@ class PythonRendererImpl implements PythonRenderer {
           type: 'simple-union',
           variants: [python.UNDEFINED, attribute.type],
         });
-        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}\n`);
+        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}`);
+        if (attribute.docs !== undefined) {
+          b.append(`\n${this.indent(1)}"""${attribute.docs}"""\n`);
+        }
       } else {
         const expression = python.expressionForType(attribute.type);
         b.append(`${this.indent(1)}${attribute.name}: ${expression.content}\n`);
