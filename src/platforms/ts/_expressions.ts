@@ -94,7 +94,7 @@ export function expressionForObjectType(t: Object): Expression {
   builder.append(`{\n`);
   properties.forEach(prop => {
     if (prop.docs !== undefined) {
-      // TODO: Add docs
+      builder.append(`/** ${prop.docs} */\n`);
     }
     const expression = expressionForType(prop.type);
     builder.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);

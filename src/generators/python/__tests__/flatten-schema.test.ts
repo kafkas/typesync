@@ -79,7 +79,6 @@ describe('flatten-schema', () => {
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsDocs = 'An object that represents user credentials';
     const credentialsObjectType: FlatObjectType = {
       type: 'object',
       fields: [
@@ -115,7 +114,7 @@ describe('flatten-schema', () => {
             {
               name: 'credentials',
               type: credentialsObjectType,
-              docs: credentialsDocs,
+              docs: 'An object that represents user credentials',
               optional: false,
             },
           ],
@@ -132,8 +131,6 @@ describe('flatten-schema', () => {
       const aliasModel = createFlatAliasModel({
         name: 'UserCredentials',
         docs: undefined,
-        // TODO: Implement
-        // docs: credentialsDocs,
         type: credentialsObjectType,
       });
 
@@ -155,7 +152,7 @@ describe('flatten-schema', () => {
                 type: 'alias',
                 name: 'UserCredentials',
               },
-              docs: credentialsDocs,
+              docs: 'An object that represents user credentials',
               optional: false,
             },
           ],

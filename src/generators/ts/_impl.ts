@@ -11,13 +11,13 @@ class TSGeneratorImpl implements TSGenerator {
 
     aliasModels.forEach(model => {
       const tsType = typeToTS(model.type);
-      declarations.push({ type: 'alias', modelName: model.name, modelType: tsType });
+      declarations.push({ type: 'alias', modelName: model.name, modelType: tsType, modelDocs: model.docs });
     });
 
     documentModels.forEach(model => {
       // A Firestore document can be considered an 'object' type
       const tsType = objectTypeToTS(model.type);
-      declarations.push({ type: 'interface', modelName: model.name, modelType: tsType });
+      declarations.push({ type: 'interface', modelName: model.name, modelType: tsType, modelDocs: model.docs });
     });
 
     return { type: 'ts', declarations };

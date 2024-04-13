@@ -30,7 +30,7 @@ class TypesyncImpl implements Typesync {
     const parser = createDefinitionParser(logger);
 
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-    logger.info(`Found ${definitionFilePaths.length} files matching Glob pattern:`, definitionFilePaths);
+    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
 
     const definition = parser.parseDefinition(definitionFilePaths);
     const s = schema.createFromDefinition(definition);

@@ -131,15 +131,22 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderAliasDeclaration(declaration: PythonAliasDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const expression = python.expressionForType(modelType);
-    return `${modelName} = ${expression.content}`;
+    let output = `${modelName} = ${expression.content}`;
+    if (modelDocs !== undefined) {
+      output += `\n"""${modelDocs}"""`;
+    }
+    return output;
   }
 
   private renderEnumClassDeclaration(declaration: PythonEnumClassDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(enum.Enum):\n`);
+    if (modelDocs !== undefined) {
+      b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
+    }
     modelType.attributes.forEach((attribute, attributeIdx) => {
       b.append(`${this.indent(1)}${attribute.key} = ${this.enumClassAttributeValueAsString(attribute)}`);
       if (attributeIdx !== modelType.attributes.length - 1) {
@@ -161,20 +168,27 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(TypesyncModel):\n`);
+    if (modelDocs !== undefined) {
+      b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
+    }
     modelType.attributes.forEach(attribute => {
       if (attribute.optional) {
         const expression = python.expressionForType({
           type: 'simple-union',
           variants: [python.UNDEFINED, attribute.type],
         });
-        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}\n`);
+        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}`);
       } else {
         const expression = python.expressionForType(attribute.type);
-        b.append(`${this.indent(1)}${attribute.name}: ${expression.content}\n`);
+        b.append(`${this.indent(1)}${attribute.name}: ${expression.content}`);
       }
+      if (attribute.docs !== undefined) {
+        b.append(`\n${this.indent(1)}"""${attribute.docs}"""`);
+      }
+      b.append(`\n`);
     });
     b.append('\n');
 

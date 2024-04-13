@@ -11,6 +11,7 @@ describe('PythonGeneratorImpl', () => {
       Username: {
         model: 'alias',
         type: 'string',
+        docs: 'A string that uniquely identifies the user.',
       },
       UserRole: {
         model: 'alias',
@@ -22,6 +23,23 @@ describe('PythonGeneratorImpl', () => {
           ],
         },
       },
+      Project: {
+        model: 'document',
+        type: {
+          type: 'object',
+          fields: {
+            id: {
+              type: 'string',
+              docs: 'The ID of the project',
+            },
+            completed: {
+              type: 'boolean',
+              docs: 'Whether the project is completed',
+            },
+          },
+        },
+        docs: 'Represents a project within a workspace',
+      },
     });
     const generation = generator.generate(s);
 
@@ -32,6 +50,7 @@ describe('PythonGeneratorImpl', () => {
           type: 'alias',
           modelName: 'Username',
           modelType: { type: 'str' },
+          modelDocs: 'A string that uniquely identifies the user.',
         },
         {
           type: 'enum-class',
@@ -43,6 +62,19 @@ describe('PythonGeneratorImpl', () => {
               { key: 'User', value: 'user' },
             ],
           },
+          modelDocs: undefined,
+        },
+        {
+          type: 'pydantic-class',
+          modelName: 'Project',
+          modelType: {
+            type: 'object-class',
+            attributes: [
+              { name: 'id', docs: 'The ID of the project', optional: false, type: { type: 'str' } },
+              { name: 'completed', docs: 'Whether the project is completed', optional: false, type: { type: 'bool' } },
+            ],
+          },
+          modelDocs: 'Represents a project within a workspace',
         },
       ],
     };

@@ -11,6 +11,7 @@ describe('TSGeneratorImpl', () => {
       Username: {
         model: 'alias',
         type: 'string',
+        docs: 'A string that uniquely identifies a user.',
       },
       UserRole: {
         model: 'alias',
@@ -33,6 +34,7 @@ describe('TSGeneratorImpl', () => {
           type: 'alias',
           modelName: 'Username',
           modelType: { type: 'string' },
+          modelDocs: 'A string that uniquely identifies a user.',
         },
         {
           type: 'alias',
@@ -44,6 +46,7 @@ describe('TSGeneratorImpl', () => {
               { label: 'User', value: 'user' },
             ],
           },
+          modelDocs: undefined,
         },
       ],
     };

@@ -24,16 +24,21 @@ class PythonGeneratorImpl implements PythonGenerator {
             optional: f.optional,
           })),
         };
-        declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
+        declarations.push({
+          type: 'pydantic-class',
+          modelName: model.name,
+          modelType: pythonType,
+          modelDocs: model.docs,
+        });
       } else if (model.type.type === 'enum') {
         const pythonType: python.EnumClass = {
           type: 'enum-class',
           attributes: model.type.members.map(item => ({ key: item.label, value: item.value })),
         };
-        declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType });
+        declarations.push({ type: 'enum-class', modelName: model.name, modelType: pythonType, modelDocs: model.docs });
       } else {
         const pythonType = flatTypeToPython(model.type);
-        declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType });
+        declarations.push({ type: 'alias', modelName: model.name, modelType: pythonType, modelDocs: model.docs });
       }
     });
 
@@ -48,7 +53,12 @@ class PythonGeneratorImpl implements PythonGenerator {
           optional: f.optional,
         })),
       };
-      declarations.push({ type: 'pydantic-class', modelName: model.name, modelType: pythonType });
+      declarations.push({
+        type: 'pydantic-class',
+        modelName: model.name,
+        modelType: pythonType,
+        modelDocs: model.docs,
+      });
     });
 
     return { type: 'python', declarations };
