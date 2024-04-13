@@ -11,6 +11,7 @@ describe('PythonGeneratorImpl', () => {
       Username: {
         model: 'alias',
         type: 'string',
+        docs: 'A string that uniquely identifies the user.',
       },
       UserRole: {
         model: 'alias',
@@ -49,6 +50,7 @@ describe('PythonGeneratorImpl', () => {
           type: 'alias',
           modelName: 'Username',
           modelType: { type: 'str' },
+          modelDocs: 'A string that uniquely identifies the user.',
         },
         {
           type: 'enum-class',

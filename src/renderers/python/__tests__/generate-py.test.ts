@@ -17,18 +17,29 @@ describe('PythonRendererImpl', () => {
           modelType: {
             type: 'str',
           },
+          modelDocs: 'A string that uniquely identifies the user.',
         },
         {
           type: 'pydantic-class',
-          modelName: 'Dog',
+          modelName: 'Project',
           modelType: {
             type: 'object-class',
             attributes: [
-              { type: { type: 'str' }, name: 'name', optional: false, docs: undefined },
-              { type: { type: 'str' }, name: 'breed', optional: false, docs: undefined },
+              {
+                type: { type: 'str' },
+                name: 'name',
+                optional: false,
+                docs: undefined,
+              },
+              {
+                type: { type: 'bool' },
+                name: 'completed',
+                optional: false,
+                docs: 'Whether the project is completed.',
+              },
             ],
           },
-          modelDocs: undefined,
+          modelDocs: 'A project within a workspace',
         },
       ],
     };

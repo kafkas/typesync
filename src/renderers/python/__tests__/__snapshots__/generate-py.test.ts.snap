@@ -51,10 +51,13 @@ class TypesyncModel(pydantic.BaseModel):
 # Model Definitions
 
 Username = str
+"""A string that uniquely identifies the user."""
 
-class Dog(TypesyncModel):
+class Project(TypesyncModel):
+    """A project within a workspace"""
     name: str
-    breed: str
+    completed: bool
+    """Whether the project is completed."""
 
     class Config:
         use_enum_values = True
