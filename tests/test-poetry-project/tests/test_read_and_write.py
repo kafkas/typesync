@@ -17,29 +17,39 @@ PROJECT_ROOT = PACKAGE_ROOT.parent
 REPO_ROOT = PROJECT_ROOT.parent.parent
 
 TYPESYNC_MODEL_IN_PATH = PACKAGE_ROOT / "models.yml"
-TYPESYNC_OUTPUT_DIR_PATH = PACKAGE_ROOT
 
 TYPESYNC_CLI_ENTRYPOINT_PATH = REPO_ROOT / "src" / "cli.tsx"
 
 
+def is_running_on_ci_machine() -> bool:
+    return os.getenv("CIRCLECI", None) is not None
+
+
 @pytest.fixture
 def generated_typesync_python_schema_file() -> Generator[Path, None, None]:
-    model_output_path = TYPESYNC_OUTPUT_DIR_PATH / "models.py"
-    subprocess.run(
-        [
-            "yarn",
-            "tsx",
-            TYPESYNC_CLI_ENTRYPOINT_PATH.absolute().as_posix(),
-            "generate",
-            "--platform",
-            "py:firebase-admin:6",
-            "--definition",
-            TYPESYNC_MODEL_IN_PATH.absolute().as_posix(),
-            "--outputDir",
-            TYPESYNC_OUTPUT_DIR_PATH.absolute().as_posix(),
-        ],
-        check=True,
-    )
+    model_output_path = PACKAGE_ROOT / "models.py"
+    if is_running_on_ci_machine():
+        model_intermediate_output_path_str = os.getenv("TYPESYNC_OUT_MODEL_PATH", None)
+        assert model_intermediate_output_path_str is not None
+        model_intermediate_output_path = Path(model_intermediate_output_path_str)
+        assert model_intermediate_output_path.is_file(), "The intermediate typesync output path (TYPESYNC_OUT_MODEL_PATH) must be a file, not a directory!"
+        model_intermediate_output_path.rename(model_output_path.absolute())
+    else:
+        subprocess.run(
+            [
+                "yarn",
+                "tsx",
+                TYPESYNC_CLI_ENTRYPOINT_PATH.absolute().as_posix(),
+                "generate",
+                "--platform",
+                "py:firebase-admin:6",
+                "--definition",
+                TYPESYNC_MODEL_IN_PATH.absolute().as_posix(),
+                "--outFile",
+                model_output_path.absolute().as_posix(),
+            ],
+            check=True,
+        )
     yield model_output_path
     model_output_path.unlink()
 
