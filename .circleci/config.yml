@@ -157,10 +157,7 @@ workflows:
               only: /^v\d+\.\d+\.\d+$/
   integration-tests:
     jobs:
-      - approve-integration-tests:
-          type: approval
       - generate-typesync-models:
-          requires: [ approve-integration-tests ]
           model_path: "tests/test-poetry-project/test_poetry_project/models.yml"
           output_folder_path: "tests/test-poetry-project/autogen"
           platform: "py:firebase-admin:6"
