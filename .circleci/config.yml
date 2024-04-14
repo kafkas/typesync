@@ -80,7 +80,7 @@ jobs:
       - run:
           name: Run Python end-to-end tests
           command: |
-            poetry run pytest
+            TYPESYNC_OUT_MODEL_PATH=<< parameters.path_to_typesync_model_dir >> poetry run pytest
   lint:
     executor: node/default
     steps:
