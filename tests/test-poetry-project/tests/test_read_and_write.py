@@ -32,6 +32,7 @@ def generated_typesync_python_schema_file() -> Generator[Path, None, None]:
         model_intermediate_output_path_str = os.getenv("TYPESYNC_OUT_MODEL_PATH", None)
         assert model_intermediate_output_path_str is not None
         model_intermediate_output_path = Path(model_intermediate_output_path_str)
+        assert model_intermediate_output_path.is_file(), "The intermediate typesync output path (TYPESYNC_OUT_MODEL_PATH) must be a file, not a directory!"
         model_intermediate_output_path.rename(model_output_path.absolute())
     else:
         subprocess.run(
@@ -91,13 +92,6 @@ def test_firestore_read_and_write(
     firestore_client: firestore.Client,
     input_json_paths: list[Path],
 ):
-    try:
-        pass
-    except Exception as e:
-        raise ValueError(
-            f"Cannot import the module statically from {generated_typesync_python_schema_file.absolute(): {e}}"
-        )
-
     from test_poetry_project.models import User
 
     for input_json_path in input_json_paths:
