@@ -40,7 +40,7 @@ jobs:
       model_path:
         description: Relative/absolute path to the input model .yml file
         type: string
-      output_dir_path:
+      output_file_path:
         description: Target output dir of the generated types 
         type: string
       platform:
@@ -55,9 +55,9 @@ jobs:
           command: |
             yarn tsx src/cli.tsx generate --definition << parameters.model_path >> \
             --platform << parameters.platform >> \
-            --outputDir << parameters.output_dir_path >>
+            --outFile << parameters.output_file_path >>
       - persist_to_workspace:
-          root: << parameters.output_dir_path >>
+          root: << parameters.output_file_path >>
           paths: [.]
 
   test-typesync-python-end-to-end:
@@ -168,7 +168,7 @@ workflows:
       - generate-typesync-models:
           requires: [ approve-integration-tests ]
           model_path: "tests/test-poetry-project/test_poetry_project/models.yml"
-          output_dir_path: "tests/test-poetry-project/test_poetry_project"
+          output_file_path: "tests/test-poetry-project/test_poetry_project/models.py"
           platform: "py:firebase-admin:6"
       - test-typesync-python-end-to-end:
           requires: [ generate-typesync-models ]
