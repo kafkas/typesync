@@ -82,8 +82,9 @@ await yargs(hideBin(process.argv))
     'Validates definition syntax',
     y =>
       y
-        .option('pathToDefinition', {
-          describe: 'Path to the definition file. Must be a YAML file containing model definitions.',
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
@@ -94,10 +95,10 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { pathToDefinition, debug } = args;
+      const { definition, debug } = args;
 
       const result = await typesync.validate({
-        definition: resolve(process.cwd(), pathToDefinition),
+        definition: resolve(process.cwd(), definition),
         debug,
       });
 
