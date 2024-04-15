@@ -30,9 +30,9 @@ Typesync is an open-source schema management tool for [Firestore](https://cloud.
   init: {
     'theme': 'base',
     'themeVariables': {
-      'primaryColor': '#19775B',
-      'primaryTextColor': '#fff',
-      'primaryBorderColor': '#07C983',
+      'primaryColor': '#fff',
+      'primaryTextColor': '#000',
+      'primaryBorderColor': '#dddddd',
       'lineColor': '#000',
       'secondaryColor': '#006100',
       'tertiaryColor': '#fff'
