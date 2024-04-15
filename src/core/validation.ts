@@ -6,6 +6,8 @@ export function isGenerationPlatform(candidate: string): candidate is Generation
   switch (c) {
     case 'ts:firebase-admin:12':
     case 'ts:firebase-admin:11':
+    case 'ts:firebase:10':
+    case 'ts:firebase:9':
     case 'py:firebase-admin:6':
       return true;
     default:

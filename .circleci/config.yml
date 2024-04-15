@@ -46,7 +46,7 @@ jobs:
       platform:
         description: Target platform and version
         type: enum
-        enum: ["ts:firebase-admin:11", "py:firebase-admin:6", "ts:firebase-admin:12"]
+        enum: ["ts:firebase-admin:12", "ts:firebase-admin:11", "ts:firebase:10", "ts:firebase:9", "py:firebase-admin:6"]
     steps:
       - checkout-build-yarn-project:
           checkout_path: ~/project

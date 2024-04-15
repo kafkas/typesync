@@ -3,6 +3,8 @@ import { objectKeys } from './util/object-keys.js';
 const TS_PLATFORMS = {
   'ts:firebase-admin:12': true,
   'ts:firebase-admin:11': true,
+  'ts:firebase:10': true,
+  'ts:firebase:9': true,
 };
 
 const PYTHON_PLATFORMS = {

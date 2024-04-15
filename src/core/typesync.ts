@@ -79,6 +79,8 @@ class TypesyncImpl implements Typesync {
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
+      case 'ts:firebase:10':
+      case 'ts:firebase:9':
         return createTSGenerator({ platform });
       case 'py:firebase-admin:6':
         return createPythonGenerator({ platform });
@@ -92,6 +94,8 @@ class TypesyncImpl implements Typesync {
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
+      case 'ts:firebase:10':
+      case 'ts:firebase:9':
         return renderers.createTSRenderer({ platform, indentation });
       case 'py:firebase-admin:6':
         return renderers.createPythonRenderer({ platform, indentation });
