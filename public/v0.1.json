@@ -1,7 +1,7 @@
 {
-  "$ref": "#/definitions/v0.0",
+  "$ref": "#/definitions/v0.1",
   "definitions": {
-    "v0.0": {
+    "v0.1": {
       "type": "object",
       "additionalProperties": {
         "anyOf": [
@@ -124,7 +124,7 @@
                                             "items": {
                                               "anyOf": [
                                                 {
-                                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                                  "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0"
                                                 },
                                                 {
                                                   "type": "string",
@@ -153,10 +153,10 @@
                                       "elementType": {
                                         "anyOf": [
                                           {
-                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                            "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0"
                                           },
                                           {
-                                            "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
+                                            "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                           }
                                         ],
                                         "description": "The type representing each element in this list."
@@ -176,10 +176,10 @@
                                   "valueType": {
                                     "anyOf": [
                                       {
-                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0"
+                                        "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0"
                                       },
                                       {
-                                        "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
+                                        "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                       }
                                     ],
                                     "description": "The type representing the values in this map. The keys in a map are always strings."
@@ -202,7 +202,7 @@
                                   "type": "object",
                                   "properties": {
                                     "type": {
-                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
+                                      "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
                                     },
                                     "optional": {
                                       "type": "boolean",
@@ -242,10 +242,10 @@
                                 "items": {
                                   "anyOf": [
                                     {
-                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1"
+                                      "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1"
                                     },
                                     {
-                                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
+                                      "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                                     }
                                   ],
                                   "description": "An object type."
@@ -263,7 +263,7 @@
                               "variants": {
                                 "type": "array",
                                 "items": {
-                                  "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
+                                  "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items"
                                 }
                               }
                             },
@@ -278,7 +278,7 @@
                     "description": "A primitive type"
                   },
                   {
-                    "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
+                    "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/0/anyOf/1/properties/elements/items/anyOf/1"
                   }
                 ],
                 "description": "The type that this model is an alias of."
@@ -307,7 +307,7 @@
                   "fields": {
                     "type": "object",
                     "additionalProperties": {
-                      "$ref": "#/definitions/v0.0/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1/properties/fields/additionalProperties"
+                      "$ref": "#/definitions/v0.1/additionalProperties/anyOf/0/properties/type/anyOf/0/anyOf/0/anyOf/1/properties/fields/additionalProperties"
                     },
                     "description": "The fields that belong to this object."
                   }
