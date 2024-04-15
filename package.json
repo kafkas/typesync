@@ -27,7 +27,7 @@
     "url": "git+https://github.com/kafkas/typesync.git"
   },
   "author": "Anar Kafkas <anarkafkas@gmail.com>",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/kafkas/typesync/issues"
   },
