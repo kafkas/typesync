@@ -1,0 +1,45 @@
+{
+  "Username": { "model": "alias", "type": "string" },
+  "UserRole": {
+    "model": "alias",
+    "docs": "Represents a user role",
+    "type": {
+      "type": "enum",
+      "members": [
+        { "label": "ADMIN", "value": "admin" },
+        { "label": "USER", "value": "user" },
+        { "label": "GUEST", "value": "guest" }
+      ]
+    }
+  },
+  "Address": {
+    "model": "alias",
+    "type": {
+      "type": "object",
+      "fields": { "street": { "type": "string" }, "city": { "type": "string" }, "zip_code": { "type": "string" } }
+    }
+  },
+  "Cat": {
+    "model": "alias",
+    "type": {
+      "type": "object",
+      "fields": {
+        "type": { "type": { "type": "literal", "value": "cat" } },
+        "name": { "type": "string" },
+        "lives_left": { "type": "int" }
+      }
+    }
+  },
+  "Dog": {
+    "model": "alias",
+    "type": {
+      "type": "object",
+      "fields": {
+        "type": { "type": { "type": "literal", "value": "dog" } },
+        "name": { "type": "string" },
+        "breed": { "type": "string" }
+      }
+    }
+  },
+  "Pet": { "model": "alias", "type": { "type": "union", "variants": ["Cat", "Dog"] } }
+}
