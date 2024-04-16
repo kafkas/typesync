@@ -1,6 +1,173 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`definition-parser correctly parses definition from a YAML file 1`] = `
+exports[`definition-parser correctly parses definition from JSON files 1`] = `
+{
+  "Address": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "city": {
+          "type": "string",
+        },
+        "street": {
+          "type": "string",
+        },
+        "zip_code": {
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Cat": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "lives_left": {
+          "type": "int",
+        },
+        "name": {
+          "type": "string",
+        },
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "cat",
+          },
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Dog": {
+    "model": "alias",
+    "type": {
+      "fields": {
+        "breed": {
+          "type": "string",
+        },
+        "name": {
+          "type": "string",
+        },
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "dog",
+          },
+        },
+      },
+      "type": "object",
+    },
+  },
+  "Pet": {
+    "model": "alias",
+    "type": {
+      "type": "union",
+      "variants": [
+        "Cat",
+        "Dog",
+      ],
+    },
+  },
+  "UserProfile": {
+    "docs": "User profile model",
+    "model": "document",
+    "type": {
+      "fields": {
+        "address": {
+          "type": "Address",
+        },
+        "age": {
+          "type": "int",
+        },
+        "area_code": {
+          "type": {
+            "type": "literal",
+            "value": 34,
+          },
+        },
+        "bio": {
+          "type": {
+            "type": "union",
+            "variants": [
+              "nil",
+              "string",
+            ],
+          },
+        },
+        "created_at": {
+          "optional": true,
+          "type": "timestamp",
+        },
+        "favorite_numbers": {
+          "type": {
+            "elementType": "int",
+            "type": "list",
+          },
+        },
+        "is_active": {
+          "type": "boolean",
+        },
+        "location": {
+          "type": {
+            "elements": [
+              "int",
+              "int",
+            ],
+            "type": "tuple",
+          },
+        },
+        "pets": {
+          "type": {
+            "elementType": "Pet",
+            "type": "list",
+          },
+        },
+        "petsById": {
+          "type": {
+            "type": "map",
+            "valueType": "Pet",
+          },
+        },
+        "role": {
+          "type": "UserRole",
+        },
+        "username": {
+          "type": "Username",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "UserRole": {
+    "docs": "Represents a user role",
+    "model": "alias",
+    "type": {
+      "members": [
+        {
+          "label": "ADMIN",
+          "value": "admin",
+        },
+        {
+          "label": "USER",
+          "value": "user",
+        },
+        {
+          "label": "GUEST",
+          "value": "guest",
+        },
+      ],
+      "type": "enum",
+    },
+  },
+  "Username": {
+    "model": "alias",
+    "type": "string",
+  },
+}
+`;
+
+exports[`definition-parser correctly parses definition from YAML files 1`] = `
 {
   "Address": {
     "model": "alias",
