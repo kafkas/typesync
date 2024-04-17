@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { definition } from '../definition/index.js';
 import {
   DefinitionFileFieldNotValidError,
-  DefinitionFileNotValidYamlError,
+  DefinitionFileNotValidYamlOrJsonError,
   DuplicateModelNameError,
 } from '../errors/index.js';
 import { assertNever } from '../util/assert.js';
@@ -27,7 +27,7 @@ class DefinitionParserImpl implements DefinitionParser {
   public parseDefinition(filePaths: string[]): definition.Definition {
     const rawDefinitionFiles: RawDefinitionFile[] = filePaths.map(path => ({
       path,
-      contentJson: this.parseYamlFileAsJson(path),
+      contentJson: this.parseDefinitionFileAsJson(path),
     }));
     const { aliasModelNames } = this.extractModelNamesFromDefinitionFiles(rawDefinitionFiles);
     const definitionFileSchema = definition.schemas.definitionWithKnownAliases(aliasModelNames);
@@ -40,13 +40,17 @@ class DefinitionParserImpl implements DefinitionParser {
     }, {});
   }
 
-  private parseYamlFileAsJson(pathToFile: string): unknown {
+  private parseDefinitionFileAsJson(pathToFile: string): unknown {
     try {
-      const yamlContent = readFileSync(pathToFile).toString();
-      return parseYaml(yamlContent, { strict: true });
+      const content = readFileSync(pathToFile).toString();
+      if (pathToFile.endsWith('.json')) {
+        return JSON.parse(content);
+      } else {
+        return parseYaml(content, { strict: true });
+      }
     } catch (e) {
       this.logger?.error(extractErrorMessage(e));
-      throw new DefinitionFileNotValidYamlError(pathToFile);
+      throw new DefinitionFileNotValidYamlOrJsonError(pathToFile);
     }
   }
 

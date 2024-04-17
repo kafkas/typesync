@@ -1,0 +1,66 @@
+{
+  "UserProfile": {
+    "model": "document",
+    "docs": "User profile model",
+    "type": {
+      "type": "object",
+      "fields": {
+        "username": {
+          "type": "Username"
+        },
+        "age": {
+          "type": "int"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "role": {
+          "type": "UserRole"
+        },
+        "created_at": {
+          "type": "timestamp",
+          "optional": true
+        },
+        "location": {
+          "type": {
+            "type": "tuple",
+            "elements": ["int", "int"]
+          }
+        },
+        "address": {
+          "type": "Address"
+        },
+        "favorite_numbers": {
+          "type": {
+            "type": "list",
+            "elementType": "int"
+          }
+        },
+        "pets": {
+          "type": {
+            "type": "list",
+            "elementType": "Pet"
+          }
+        },
+        "petsById": {
+          "type": {
+            "type": "map",
+            "valueType": "Pet"
+          }
+        },
+        "bio": {
+          "type": {
+            "type": "union",
+            "variants": ["nil", "string"]
+          }
+        },
+        "area_code": {
+          "type": {
+            "type": "literal",
+            "value": 34
+          }
+        }
+      }
+    }
+  }
+}
