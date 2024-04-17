@@ -1,5 +1,8 @@
 {
-  "Username": { "model": "alias", "type": "string" },
+  "Username": {
+    "model": "alias",
+    "type": "string"
+  },
   "UserRole": {
     "model": "alias",
     "docs": "Represents a user role",
@@ -16,7 +19,11 @@
     "model": "alias",
     "type": {
       "type": "object",
-      "fields": { "street": { "type": "string" }, "city": { "type": "string" }, "zip_code": { "type": "string" } }
+      "fields": {
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "zip_code": { "type": "string" }
+      }
     }
   },
   "Cat": {
@@ -24,9 +31,18 @@
     "type": {
       "type": "object",
       "fields": {
-        "type": { "type": { "type": "literal", "value": "cat" } },
-        "name": { "type": "string" },
-        "lives_left": { "type": "int" }
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "cat"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "lives_left": {
+          "type": "int"
+        }
       }
     }
   },
@@ -35,11 +51,26 @@
     "type": {
       "type": "object",
       "fields": {
-        "type": { "type": { "type": "literal", "value": "dog" } },
-        "name": { "type": "string" },
-        "breed": { "type": "string" }
+        "type": {
+          "type": {
+            "type": "literal",
+            "value": "dog"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "breed": {
+          "type": "string"
+        }
       }
     }
   },
-  "Pet": { "model": "alias", "type": { "type": "union", "variants": ["Cat", "Dog"] } }
+  "Pet": {
+    "model": "alias",
+    "type": {
+      "type": "union",
+      "variants": ["Cat", "Dog"]
+    }
+  }
 }
