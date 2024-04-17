@@ -1,6 +1,6 @@
 {
   "name": "typesync-cli",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Autogenerate Firestore models",
   "bin": {
     "typesync": "lib/cli.js"
