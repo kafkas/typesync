@@ -10,9 +10,9 @@ export class DefinitionFilesNotFoundError extends DefinitionNotValidError {
   }
 }
 
-export class DefinitionFileNotValidYamlError extends DefinitionNotValidError {
+export class DefinitionFileNotValidYamlOrJsonError extends DefinitionNotValidError {
   public constructor(filePath: string) {
-    super(`The definition file '${filePath}' is not a valid YAML file. Failed to parse the file.`);
+    super(`The definition file '${filePath}' is not a valid YAML or JSON file. Failed to parse the file.`);
   }
 }
 
