@@ -15,8 +15,8 @@
     <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Typesync CLI is released under the AGPL-3.0-only license." /></a>
     <a href="https://npmjs.com/package/typesync-cli" alt="Version">
         <img src="https://img.shields.io/npm/v/typesync-cli" /></a>
-    <a href="https://npmjs.com/package/typesync-cli" alt="Size">
-        <img src="https://img.shields.io/bundlephobia/min/typesync-cli" /></a>
+    <a href="https://app.circleci.com/pipelines/github/kafkas/typesync" alt="Build Status">
+        <img src="https://circleci.com/gh/kafkas/typesync.svg?style=shield" /></a>
     <a href="https://github.com/kafkas/typesync">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
 </p>
