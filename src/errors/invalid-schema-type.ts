@@ -6,6 +6,28 @@ export class InvalidSchemaTypeError extends Error {
   }
 }
 
+export class NoEnumMembersError extends InvalidSchemaTypeError {
+  public constructor() {
+    super(`An 'enum' type must have at least one member.`);
+  }
+}
+
+export class DuplicateEnumMemberLabelError extends InvalidSchemaTypeError {
+  public constructor(label: string) {
+    super(
+      `The enum member label "${label}" has been used more than once. Each enum member must have a distinct label.`
+    );
+  }
+}
+
+export class DuplicateEnumMemberValueError extends InvalidSchemaTypeError {
+  public constructor(value: string | number) {
+    super(
+      `The enum member value ${typeof value === 'string' ? `"${value}"` : value} has been used more than once. Each enum member must have a distinct value.`
+    );
+  }
+}
+
 export class MissingDiscriminantFieldError extends InvalidSchemaTypeError {
   public constructor(discriminant: string, variantIdxOrAliasName: number | string) {
     const variantIdentifier =
