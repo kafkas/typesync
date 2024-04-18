@@ -2,8 +2,82 @@ import { InvalidModelError } from '../../errors/invalid-model.js';
 import { schema } from '../index.js';
 
 describe('schema.createFromDefinition()', () => {
+  describe(`'enum' types`, () => {
+    it(`throws 'InvalidModelError' if there are 0 members`, async () => {
+      const create = () =>
+        schema.createFromDefinition({
+          UserRole: {
+            model: 'alias',
+            type: {
+              type: 'enum',
+              members: [],
+            },
+          },
+        });
+
+      expect(create).toThrow(InvalidModelError);
+    });
+
+    it(`throws 'InvalidModelError' if there are duplicate member values`, async () => {
+      const create = () =>
+        schema.createFromDefinition({
+          UserRole: {
+            model: 'alias',
+            type: {
+              type: 'enum',
+              members: [
+                { label: 'label1', value: 'value1' },
+                { label: 'label2', value: 'value1' },
+                { label: 'label3', value: 'value3' },
+              ],
+            },
+          },
+        });
+
+      expect(create).toThrow(InvalidModelError);
+    });
+
+    it(`throws 'InvalidModelError' if there are duplicate member labels`, async () => {
+      const create = () =>
+        schema.createFromDefinition({
+          UserRole: {
+            model: 'alias',
+            type: {
+              type: 'enum',
+              members: [
+                { label: 'label1', value: 'value1' },
+                { label: 'label1', value: 'value2' },
+                { label: 'label3', value: 'value3' },
+              ],
+            },
+          },
+        });
+
+      expect(create).toThrow(InvalidModelError);
+    });
+
+    it(`does not throw if there are multiple members with distinct values`, async () => {
+      const create = () =>
+        schema.createFromDefinition({
+          UserRole: {
+            model: 'alias',
+            type: {
+              type: 'enum',
+              members: [
+                { label: 'label1', value: 'value1' },
+                { label: 'label2', value: 'value2' },
+                { label: 'label3', value: 'value3' },
+              ],
+            },
+          },
+        });
+
+      expect(create).not.toThrow();
+    });
+  });
+
   describe(`'discriminated-union' types`, () => {
-    it(`throws error if a discriminated union alias variant does not resolve to 'object'`, async () => {
+    it(`throws 'InvalidModelError' if a discriminated union alias variant does not resolve to 'object'`, async () => {
       const create = () =>
         schema.createFromDefinition({
           Cat: {
@@ -40,7 +114,7 @@ describe('schema.createFromDefinition()', () => {
       expect(create).toThrow(InvalidModelError);
     });
 
-    it('throws error if a discriminated union variant is missing the discriminant field', async () => {
+    it(`throws 'InvalidModelError' if a discriminated union variant is missing the discriminant field`, async () => {
       const create = () =>
         schema.createFromDefinition({
           Pet: {
@@ -76,7 +150,7 @@ describe('schema.createFromDefinition()', () => {
       expect(create).toThrow(InvalidModelError);
     });
 
-    it('throws error if a discriminant field is not a literal string', async () => {
+    it(`throws 'InvalidModelError' if a discriminant field is not a literal string`, async () => {
       const create = () =>
         schema.createFromDefinition({
           Pet: {
