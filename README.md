@@ -11,14 +11,18 @@
 ---
 
 <p align="center">
-    <a href="https://github.com/kafkas/typesync/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Typesync CLI is released under the AGPL-3.0-only license." /></a>
-    <a href="https://npmjs.com/package/typesync-cli" alt="Version">
-        <img src="https://img.shields.io/npm/v/typesync-cli" /></a>
-    <a href="https://npmjs.com/package/typesync-cli" alt="Size">
-        <img src="https://img.shields.io/bundlephobia/min/typesync-cli" /></a>
+    <a href="https://npmjs.com/package/typesync-cli" alt="Latest version">
+        <img src="https://img.shields.io/npm/v/typesync-cli?label=latest" /></a>
+    <a href="https://app.circleci.com/pipelines/github/kafkas/typesync" alt="Build status">
+        <img src="https://circleci.com/gh/kafkas/typesync.svg?style=shield" /></a>
+    <a href="https://github.com/kafkas/typesync/pulls" alt="Activity">
+        <img src="https://img.shields.io/github/commit-activity/m/kafkas/typesync" /></a>
     <a href="https://github.com/kafkas/typesync">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
+      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
+    <a href="https://www.npmjs.com/package/typesync-cli" alt="NPM unpacked size">
+        <img src="https://img.shields.io/npm/unpacked-size/typesync-cli" /></a>
+    <a href="https://github.com/kafkas/typesync/blob/main/LICENSE">
+      <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Typesync CLI is released under the AGPL-3.0-only license." /></a>
 </p>
 
 Typesync is an open-source schema management tool for [Firestore](https://cloud.google.com/firestore). It allows you to maintain a single source of truth for your Firestore architecture. With this schema in place, you can effortlessly auto-generate type definitions for multiple platforms like TypeScript, Python, Swift and more using the CLI tool. Typesync also lets you generate other useful things like Firestore Rules, Cloud Functions boilerplate and documentation for your models.
