@@ -29,34 +29,9 @@ Typesync is an open-source schema management tool for [Firestore](https://cloud.
 
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
-```mermaid
-%%{
-  init: {
-    'theme': 'base',
-    'themeVariables': {
-      'primaryColor': '#fff',
-      'primaryTextColor': '#000',
-      'primaryBorderColor': '#000',
-      'lineColor': '#000',
-      'secondaryColor': '#006100',
-      'tertiaryColor': '#fff'
-    }
-  }
-}%%
-graph LR;
-    A[Typesync schema];
-    A --> B[CLI];
-    B --> C[TypeScript];
-    B --> D[Swift];
-    B --> E[Python];
-    B --> F[Cloud Functions boilerplate];
-    B --> G[Security Rules];
-    C --> H[Codebase];
-    D --> H;
-    E --> H;
-    F --> H;
-    G --> H;
-```
+<div align="center">
+  <img src="images/architecture.png" width="600px" alt="header" />
+</div>
 
 ## Overview
 
