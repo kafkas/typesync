@@ -2,13 +2,17 @@ import lodash from 'lodash';
 
 import { DuplicateModelError, InvalidModelError } from '../errors/invalid-model.js';
 import {
+  DuplicateEnumMemberLabelError,
+  DuplicateEnumMemberValueError,
   InvalidDiscriminantFieldError,
   InvalidDiscriminatedUnionAliasVariantError,
   MissingDiscriminantFieldError,
   MissingDiscriminatedUnionAliasVariantError,
+  NoEnumMembersError,
 } from '../errors/invalid-schema-type.js';
 import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
+import { getDuplicateElements } from '../util/list.js';
 import { noop } from '../util/misc.js';
 import type { AliasModel, DocumentModel } from './generic.js';
 import type { schema } from './index.js';
@@ -86,15 +90,14 @@ export abstract class AbstractSchema<
     switch (model.model) {
       case 'alias':
         this.aliasModelsById.set(model.name, model);
-        this.validateModel(model);
         break;
       case 'document':
         this.documentModelsById.set(model.name, model);
-        this.validateModel(model);
         break;
       default:
         assertNever(model);
     }
+    this.validateModel(model);
   }
 
   protected getAliasModel(modelName: string) {
@@ -134,8 +137,9 @@ export abstract class AbstractSchema<
       case 'double':
       case 'timestamp':
       case 'literal':
-      case 'enum':
         return noop();
+      case 'enum':
+        return this.validateEnumType(t);
       case 'tuple':
         return this.validateTupleType(t);
       case 'list':
@@ -152,6 +156,22 @@ export abstract class AbstractSchema<
         return noop();
       default:
         assertNever(t);
+    }
+  }
+
+  private validateEnumType(t: schema.types.Enum) {
+    if (t.members.length === 0) {
+      throw new NoEnumMembersError();
+    }
+    const labels = t.members.map(member => member.label);
+    const values = t.members.map(member => member.value);
+    const [duplicateLabel] = getDuplicateElements(labels);
+    const [duplicateValue] = getDuplicateElements(values);
+    if (duplicateLabel !== undefined) {
+      throw new DuplicateEnumMemberLabelError(duplicateLabel);
+    }
+    if (duplicateValue !== undefined) {
+      throw new DuplicateEnumMemberValueError(duplicateValue);
     }
   }
 
