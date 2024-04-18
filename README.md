@@ -31,7 +31,7 @@ Typesync is an open-source schema management tool for [Firestore](https://cloud.
 
 <div align="center">
   <a href="https://docs.typesync.org">
-    <img src="images/architecture.png" alt="header" />
+    <img src="images/architecture2.png" alt="header" />
   </a>
 </div>
 
