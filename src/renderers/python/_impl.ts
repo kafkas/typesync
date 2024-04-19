@@ -40,6 +40,18 @@ class PythonRendererImpl implements PythonRenderer {
     return rootFile;
   }
 
+  private generateImportStatements() {
+    const b = new StringBuilder();
+    b.append(`from __future__ import annotations\n\n`);
+    b.append(`import typing\n`);
+    b.append(`import datetime\n`);
+    b.append(`import enum\n`);
+    b.append(`import pydantic\n`);
+    b.append(`from pydantic_core import core_schema\n`);
+    b.append(`from typing_extensions import Annotated`);
+    return b.toString();
+  }
+
   private generateStaticDeclarations() {
     const b = new StringBuilder();
 
@@ -101,18 +113,6 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`${this.indent(4)}processed[field_name] = field_value\n`);
     b.append(`${this.indent(2)}return processed`);
 
-    return b.toString();
-  }
-
-  private generateImportStatements() {
-    const b = new StringBuilder();
-    b.append(`from __future__ import annotations\n\n`);
-    b.append(`import typing\n`);
-    b.append(`import datetime\n`);
-    b.append(`import enum\n`);
-    b.append(`import pydantic\n`);
-    b.append(`from pydantic_core import core_schema\n`);
-    b.append(`from typing_extensions import Annotated`);
     return b.toString();
   }
 

@@ -1,3 +1,4 @@
+import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
@@ -74,12 +75,45 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForEnumType(
-    _type: schema.types.Enum,
-    _modelName: string,
-    _modelDocs: string | undefined
+    type: schema.types.Enum,
+    modelName: string,
+    modelDocs: string | undefined
   ): SwiftStringEnumDeclaration | SwiftIntEnumDeclaration {
-    // TODO: Implement
-    throw new Error('Unimplemented');
+    const isStringEnum = type.members.every(member => typeof member.value === 'string');
+    if (isStringEnum) {
+      const swiftType: swift.StringEnum = {
+        type: 'string-enum',
+        cases: type.members.map(member => ({
+          key: member.label,
+          value: member.value as string,
+        })),
+      };
+      return {
+        type: 'string-enum',
+        modelType: swiftType,
+        modelName,
+        modelDocs,
+      };
+    }
+
+    const isIntEnum = type.members.every(member => typeof member.value === 'number');
+    if (isIntEnum) {
+      const swiftType: swift.IntEnum = {
+        type: 'int-enum',
+        cases: type.members.map(member => ({
+          key: member.label,
+          value: member.value as number,
+        })),
+      };
+      return {
+        type: 'int-enum',
+        modelType: swiftType,
+        modelName,
+        modelDocs,
+      };
+    }
+
+    throw new MixedEnumValueTypesNotSupportedError(modelName);
   }
 
   private createDeclarationForFlatObjectType(
