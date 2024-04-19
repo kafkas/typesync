@@ -7,18 +7,28 @@ const TS_PLATFORMS = {
   'ts:firebase:9': true,
 };
 
+const SWIFT_PLATFORMS = {
+  'swift:firebase:10': true,
+};
+
 const PYTHON_PLATFORMS = {
   'py:firebase-admin:6': true,
 };
 
 export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
 
+export type SwiftGenerationPlatform = keyof typeof SWIFT_PLATFORMS;
+
 export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
 
-export type GenerationPlatform = TSGenerationPlatform | PythonGenerationPlatform;
+export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform | PythonGenerationPlatform;
 
 export function getTSPlatforms() {
   return objectKeys(TS_PLATFORMS);
+}
+
+export function getSwiftPlatforms() {
+  return objectKeys(SWIFT_PLATFORMS);
 }
 
 export function getPythonPlatforms() {
@@ -26,7 +36,7 @@ export function getPythonPlatforms() {
 }
 
 export function getPlatforms(): GenerationPlatform[] {
-  return [...getTSPlatforms(), ...getPythonPlatforms()];
+  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms()];
 }
 
 export interface TypesyncGenerateOptions {
