@@ -1,5 +1,3 @@
-import lodash from 'lodash';
-
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
