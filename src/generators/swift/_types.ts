@@ -23,6 +23,13 @@ export interface SwiftIntEnumDeclaration {
   modelDocs: string | undefined;
 }
 
+export interface SwiftEnumWithAssociatedValuesDeclaration {
+  type: 'enum-with-associated-values';
+  modelName: string;
+  modelDocs: string | undefined;
+  // TODO: Implement
+}
+
 export interface SwiftStructDeclaration {
   type: 'struct';
   modelName: string;
@@ -34,6 +41,7 @@ export type SwiftDeclaration =
   | SwiftTypealiasDeclaration
   | SwiftStringEnumDeclaration
   | SwiftIntEnumDeclaration
+  | SwiftEnumWithAssociatedValuesDeclaration
   | SwiftStructDeclaration;
 
 export interface SwiftGeneration {

@@ -1,12 +1,14 @@
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../../schema/abstract.js';
 import type {
   AliasModel,
+  DiscriminatedUnionType,
   DocumentModel,
   ListType,
   MapType,
   ObjectFieldType,
   ObjectType,
   Schema,
+  SimpleUnionType,
   TupleType,
 } from '../../schema/generic.js';
 import type { schema } from '../../schema/index.js';
@@ -24,7 +26,11 @@ export type FlatListType = ListType<FlatType>;
 export type FlatMapType = MapType<FlatType>;
 export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
-export type FlatAliasModel = AliasModel<FlatType | FlatObjectType | schema.types.Enum>;
+export type FlatDiscriminatedUnionType = DiscriminatedUnionType<schema.types.Alias>;
+export type FlatSimpleUnionType = SimpleUnionType<FlatType>;
+export type FlatAliasModel = AliasModel<
+  FlatType | FlatObjectType | FlatDiscriminatedUnionType | FlatSimpleUnionType | schema.types.Enum
+>;
 export type FlatDocumentModel = DocumentModel<FlatObjectType>;
 export type FlatModel = FlatAliasModel | FlatDocumentModel;
 export type FlatSchema = Schema<FlatAliasModel, FlatDocumentModel>;
@@ -36,7 +42,9 @@ class FlatSchemaImpl extends AbstractSchema<FlatAliasModel, FlatDocumentModel> i
 }
 
 class FlatAliasModelImpl
-  extends AbstractAliasModel<FlatType | FlatObjectType | schema.types.Enum>
+  extends AbstractAliasModel<
+    FlatType | FlatObjectType | FlatDiscriminatedUnionType | FlatSimpleUnionType | schema.types.Enum
+  >
   implements FlatAliasModel
 {
   public clone() {
@@ -53,7 +61,7 @@ class FlatDocumentModelImpl extends AbstractDocumentModel<FlatObjectType> implem
 interface CreateFlatAliasModelParams {
   name: string;
   docs: string | undefined;
-  type: FlatType | FlatObjectType | schema.types.Enum;
+  type: FlatType | FlatObjectType | FlatDiscriminatedUnionType | FlatSimpleUnionType | schema.types.Enum;
 }
 
 export function createFlatAliasModel(params: CreateFlatAliasModelParams): FlatAliasModel {

@@ -4,10 +4,12 @@ import { extractDiscriminantValue } from '../../util/extract-discriminant-value.
 import { pascalCase } from '../../util/pascal-case.js';
 import {
   FlatAliasModel,
+  FlatDiscriminatedUnionType,
   FlatListType,
   FlatMapType,
   FlatObjectType,
   FlatSchema,
+  FlatSimpleUnionType,
   FlatTupleType,
   FlatType,
   createFlatAliasModel,
@@ -32,6 +34,16 @@ interface FlattenMapTypeResult {
 
 interface FlattenObjectTypeResult {
   flattenedType: FlatObjectType;
+  extractedAliasModels: FlatAliasModel[];
+}
+
+interface FlattenDiscriminatedUnionTypeResult {
+  flattenedType: FlatDiscriminatedUnionType;
+  extractedAliasModels: FlatAliasModel[];
+}
+
+interface FlattenSimpleUnionTypeResult {
+  flattenedType: FlatSimpleUnionType;
   extractedAliasModels: FlatAliasModel[];
 }
 
@@ -95,6 +107,50 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
     return { flattenedType, extractedAliasModels };
   }
 
+  function flattenDiscriminatedUnionType(
+    unionType: schema.types.DiscriminatedUnion,
+    aliasName: string
+  ): FlattenDiscriminatedUnionTypeResult {
+    const flattenedType: FlatDiscriminatedUnionType = {
+      type: 'discriminated-union',
+      discriminant: unionType.discriminant,
+      variants: [],
+    };
+    const extractedAliasModels: FlatAliasModel[] = [];
+
+    unionType.variants.forEach(variantType => {
+      if (variantType.type === 'object') {
+        const discriminantValue = extractDiscriminantValue(unionType, variantType);
+        const name = `${aliasName}${pascalCase(discriminantValue)}`;
+        const res = flattenObjectType(variantType, name);
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: res.flattenedType });
+        extractedAliasModels.push(...res.extractedAliasModels, aliasModel);
+        flattenedType.variants.push({ type: 'alias', name });
+      } else if (variantType.type === 'alias') {
+        flattenedType.variants.push(variantType);
+      } else {
+        assertNever(variantType);
+      }
+    });
+
+    return { flattenedType, extractedAliasModels };
+  }
+
+  function flattenSimpleUnionType(
+    unionType: schema.types.SimpleUnion,
+    aliasName: string
+  ): FlattenSimpleUnionTypeResult {
+    const resultsForVariants = unionType.variants.map((variantType, variantIdx) =>
+      flattenType(variantType, `${aliasName}_${variantIdx + 1}`)
+    );
+    const flattenedType: FlatSimpleUnionType = {
+      type: 'simple-union',
+      variants: resultsForVariants.map(res => res.flattenedType),
+    };
+    const extractedAliasModels = resultsForVariants.map(res => res.extractedAliasModels).flat(1);
+    return { flattenedType, extractedAliasModels };
+  }
+
   function flattenType(type: schema.types.Type, aliasName: string): FlattenTypeResult {
     switch (type.type) {
       case 'nil':
@@ -125,10 +181,20 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
-      case 'discriminated-union':
-      case 'simple-union':
-        // TODO: Implement
-        throw new Error('Unimplemented');
+      case 'discriminated-union': {
+        const result = flattenDiscriminatedUnionType(type, aliasName);
+        const name = aliasName;
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
+        const flattenedType: schema.types.Alias = { type: 'alias', name };
+        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
+      }
+      case 'simple-union': {
+        const result = flattenSimpleUnionType(type, aliasName);
+        const name = aliasName;
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
+        const flattenedType: schema.types.Alias = { type: 'alias', name };
+        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
+      }
       default:
         assertNever(type);
     }
