@@ -36,7 +36,7 @@ Typesync is an open-source schema management tool for [Firestore](https://cloud.
 ## Overview
 
 1. [Installation](#installation)
-1. [Quick Start](#quick-start)
+1. [Quickstart](#quickstart)
 1. [License](#license)
 
 ## Installation
@@ -49,12 +49,29 @@ You can install the Typesync CLI either globally or on a per-project basis (loca
 npm i -g typesync-cli
 ```
 
-## Quick Start
+## Quickstart
 
-Once you've installed the Typesync CLI, create a directory within your project for your Typesync definition (e.g. `/definition`) and add the following YAML file into it.
+### Step 1: Install Typesync CLI
+
+First, ensure you have [Node.js](https://nodejs.org) 18+ installed. Then, install the Typesync CLI using npm:
+
+```bash
+npm install -g typesync-cli
+```
+
+### Step 2: Create your schema
+
+Create a directory within your project to store your Typesync definition files. A common practice is to name this directory `definition`.
+
+```bash
+mkdir definition
+cd definition
+```
+
+Next, create a YAML file named `models.yml` in the `definition` directory. This file will contain the schema definitions for your Firestore documents. Here's a sample schema:
 
 ```yaml models.yml
-# yaml-language-server: $schema=https://schema.typesync.org/v0.1.json
+# yaml-language-server: $schema=https://schema.typesync.org/v0.2.json
 
 UserRole:
   model: alias
@@ -84,17 +101,51 @@ User:
         type: timestamp
 ```
 
-Then run `typesync generate` to generate the types for the relevant platform. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
+### Step 3: Generate type definitions
+
+You can now run `typesync generate` to generate the types for the relevant platform. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
 
 ```bash
 typesync generate --definition 'definition/**/*.yml' --platform ts:firebase-admin:11 --outFile models.ts
 ```
 
-This will generate the types and write them to the specified `outFile`. Feel free to change this to any other path within your project.
+This command tells Typesync to:
 
-You can now edit the definition as you wish. Feel free to add, remove or rename the models and run the generation command as many times as you need.
+- search for all `.yml` files in the `definition` directory
+- generate TypeScript interfaces for use with Firebase Admin SDK (version 11)
+- output the generated interfaces to a file named `models.ts`
 
-You can also split your definition into multiple files. The `--definition 'definition/**/*.yml'` option ensures that the Typesync CLI will treat all the YAML files under `/definition` as your Typesync definition.
+Here's what the generated TypeScript file might look like:
+
+```ts models.ts
+import type { firestore } from 'firebase-admin';
+
+export type Username = string;
+
+/** Represents a user's role within a project. */
+export type UserRole = 'owner' | 'admin' | 'member';
+
+/** Represents a user that belongs to a project. */
+export interface User {
+  /** A string that uniquely identifies the user within a project. */
+  username: Username;
+  role: UserRole;
+  website_url?: string;
+  created_at: firestore.Timestamp;
+}
+```
+
+### Step 4: Integrate into your development workflow
+
+You should regenerate your types anytime the schema changes. To streamline development, consider integrating the Typesync generation command into your build process or CI/CD pipeline.
+
+#### Version Control
+
+Decide if you want to version control the generated files. It can be beneficial for ensuring consistency across environments but may require additional maintenance.
+
+#### Multiple Files
+
+If your project grows, you might want to split your schema into multiple YAML/JSON files. TypeSync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
 
 # License
 
