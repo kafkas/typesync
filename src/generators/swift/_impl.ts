@@ -129,14 +129,14 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     type.fields.forEach(field => {
       if (field.type.type === 'literal' && !field.optional) {
         computedProperties.push({
-          name: field.name,
+          originalName: field.name,
           docs: field.docs,
           type: literalTypeToSwift(field.type),
           rawValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
         });
       } else {
         storedProperties.push({
-          name: field.name,
+          originalName: field.name,
           docs: field.docs,
           optional: field.optional,
           type: flatTypeToSwift(field.type),

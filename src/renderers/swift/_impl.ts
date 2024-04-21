@@ -106,19 +106,35 @@ class SwiftRendererImpl implements SwiftRenderer {
 
   public renderStructDeclaration(declaration: SwiftStructDeclaration) {
     const { modelName, modelType } = declaration;
+    const propertyOriginalNames = [...modelType.computedProperties, ...modelType.storedProperties].map(
+      p => p.originalName
+    );
+    const hasNonCamelCaseOriginalName = propertyOriginalNames.some(name => camelCase(name) !== name);
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.computedProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       b.append('\t');
-      b.append(`var ${property.name}: ${expression.content} { ${property.rawValue} }` + '\n');
+      b.append(`var ${camelCase(property.originalName)}: ${expression.content} { ${property.rawValue} }` + '\n');
     });
     modelType.storedProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       b.append('\t');
-      b.append(`var ${property.name}: ${expression.content}` + '\n');
+      b.append(`var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` + '\n');
     });
+    if (hasNonCamelCaseOriginalName) {
+      b.append('\n');
+      b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
+      propertyOriginalNames.forEach(originalName => {
+        b.append(`\t\tcase ${camelCase(originalName)}`);
+        if (camelCase(originalName) !== originalName) {
+          b.append(` = "${originalName}"`);
+        }
+        b.append('\n');
+      });
+      b.append(`\t}\n`);
+    }
     b.append(`}`);
     return b.toString();
   }
