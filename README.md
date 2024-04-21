@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-    Autogenerate Firestore type definitions for all platforms
+    Autogenerate Firestore model types for all platforms
 </p>
 
 ---
@@ -25,7 +25,7 @@
       <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Typesync CLI is released under the AGPL-3.0-only license." /></a>
 </p>
 
-Typesync is an open-source schema management tool for [Firestore](https://cloud.google.com/firestore). It allows you to maintain a single source of truth for your Firestore architecture. With this schema in place, you can effortlessly auto-generate type definitions for multiple platforms like TypeScript, Python, Swift and more using the CLI tool. Typesync also lets you generate other useful things like Firestore Rules, Cloud Functions boilerplate and documentation for your models.
+Typesync is an open-source schema management tool for [Firestore](https://cloud.google.com/firestore). It allows you to maintain a single source of truth for your Firestore architecture. With this schema in place, you can effortlessly auto-generate type definitions for multiple platforms like TypeScript, Python, Swift and more using the CLI tool. Typesync also lets you generate other useful things like Security Rules, Cloud Functions boilerplate and documentation for your models.
 
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
@@ -35,9 +35,9 @@ Typesync is an open-source schema management tool for [Firestore](https://cloud.
 
 ## Overview
 
-1. [Installation](#Installation)
-1. [Quick Start](#Quick-Start)
-1. [License](#License)
+1. [Installation](#installation)
+1. [Quick Start](#quick-start)
+1. [License](#license)
 
 ## Installation
 
