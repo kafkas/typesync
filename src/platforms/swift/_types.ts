@@ -79,18 +79,18 @@ export interface DiscriminatedUnionEnumCase {
 
 export interface Struct {
   readonly type: 'struct';
-  readonly computedProperties: ComputedStructProperty[];
-  readonly storedProperties: StoredStructProperty[];
+  readonly literalProperties: LiteralStructProperty[];
+  readonly regularProperties: RegularStructProperty[];
 }
 
-export interface ComputedStructProperty {
+export interface LiteralStructProperty {
   readonly originalName: string;
   readonly docs: string | undefined;
   readonly type: String | Bool | Int;
-  readonly rawValue: string;
+  readonly literalValue: string;
 }
 
-export interface StoredStructProperty {
+export interface RegularStructProperty {
   readonly originalName: string;
   readonly optional: boolean;
   readonly docs: string | undefined;

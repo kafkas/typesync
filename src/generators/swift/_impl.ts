@@ -123,19 +123,19 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     modelName: string,
     modelDocs: string | undefined
   ): SwiftStructDeclaration {
-    const computedProperties: swift.ComputedStructProperty[] = [];
-    const storedProperties: swift.StoredStructProperty[] = [];
+    const literalProperties: swift.LiteralStructProperty[] = [];
+    const regularProperties: swift.RegularStructProperty[] = [];
 
     type.fields.forEach(field => {
       if (field.type.type === 'literal' && !field.optional) {
-        computedProperties.push({
+        literalProperties.push({
           originalName: field.name,
           docs: field.docs,
           type: literalTypeToSwift(field.type),
-          rawValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
+          literalValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
         });
       } else {
-        storedProperties.push({
+        regularProperties.push({
           originalName: field.name,
           docs: field.docs,
           optional: field.optional,
@@ -146,8 +146,8 @@ class SwiftGeneratorImpl implements SwiftGenerator {
 
     const swiftType: swift.Struct = {
       type: 'struct',
-      computedProperties,
-      storedProperties,
+      literalProperties,
+      regularProperties,
     };
 
     return {

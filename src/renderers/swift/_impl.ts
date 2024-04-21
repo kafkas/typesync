@@ -161,19 +161,21 @@ class SwiftRendererImpl implements SwiftRenderer {
 
   public renderStructDeclaration(declaration: SwiftStructDeclaration) {
     const { modelName, modelType } = declaration;
-    const propertyOriginalNames = [...modelType.computedProperties, ...modelType.storedProperties].map(
+    const propertyOriginalNames = [...modelType.literalProperties, ...modelType.regularProperties].map(
       p => p.originalName
     );
     const hasNonCamelCaseOriginalName = propertyOriginalNames.some(name => camelCase(name) !== name);
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
-    modelType.computedProperties.forEach(property => {
+    modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       b.append('\t');
-      b.append(`var ${camelCase(property.originalName)}: ${expression.content} { ${property.rawValue} }` + '\n');
+      b.append(
+        `private(set) var ${camelCase(property.originalName)}: ${expression.content} = ${property.literalValue}` + '\n'
+      );
     });
-    modelType.storedProperties.forEach(property => {
+    modelType.regularProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       b.append('\t');
       b.append(`var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` + '\n');
