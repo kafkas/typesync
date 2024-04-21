@@ -1,7 +1,7 @@
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
+import { pascalCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
-import { pascalCase } from '../../util/pascal-case.js';
 import {
   FlatAliasModel,
   FlatDiscriminatedUnionType,

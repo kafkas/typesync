@@ -2,7 +2,7 @@ import { StringBuilder } from '@proficient/ds';
 
 import type {
   SwiftDeclaration,
-  SwiftEnumWithAssociatedValuesDeclaration,
+  SwiftDiscriminatedUnionEnumDeclaration,
   SwiftGeneration,
   SwiftIntEnumDeclaration,
   SwiftStringEnumDeclaration,
@@ -11,6 +11,7 @@ import type {
 } from '../../generators/swift/index.js';
 import { swift } from '../../platforms/swift/index.js';
 import { assertNever } from '../../util/assert.js';
+import { camelCase } from '../../util/casing.js';
 import type { RenderedFile } from '../_types.js';
 import type { SwiftRenderer, SwiftRendererConfig } from './_types.js';
 
@@ -49,8 +50,8 @@ class SwiftRendererImpl implements SwiftRenderer {
         return this.renderStringEnumDeclaration(declaration);
       case 'int-enum':
         return this.renderIntEnumDeclaration(declaration);
-      case 'enum-with-associated-values':
-        return this.renderEnumWithAssociatedValuesDeclaration(declaration);
+      case 'discriminated-union-enum':
+        return this.renderDiscriminatedUnionEnumDeclaration(declaration);
       case 'struct':
         return this.renderStructDeclaration(declaration);
       default:
@@ -67,7 +68,7 @@ class SwiftRendererImpl implements SwiftRenderer {
   public renderStringEnumDeclaration(declaration: SwiftStringEnumDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
-    const conformedProtocolsAsString = ['String'].join(', ');
+    const conformedProtocolsAsString = ['String', 'Codable'].join(', ');
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
       b.append('\t');
@@ -80,7 +81,7 @@ class SwiftRendererImpl implements SwiftRenderer {
   public renderIntEnumDeclaration(declaration: SwiftIntEnumDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
-    const conformedProtocolsAsString = ['Int'].join(', ');
+    const conformedProtocolsAsString = ['Int', 'Codable'].join(', ');
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
       b.append('\t');
@@ -90,9 +91,17 @@ class SwiftRendererImpl implements SwiftRenderer {
     return b.toString();
   }
 
-  public renderEnumWithAssociatedValuesDeclaration(declaration: SwiftEnumWithAssociatedValuesDeclaration) {
-    // TODO: Implement
-    return ``;
+  public renderDiscriminatedUnionEnumDeclaration(declaration: SwiftDiscriminatedUnionEnumDeclaration) {
+    const { modelName, modelType } = declaration;
+    const b = new StringBuilder();
+    const conformedProtocolsAsString = ['Codable'].join(', ');
+    b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
+    modelType.values.forEach(({ structName, discriminantValue }) => {
+      b.append('\t');
+      b.append(`case ${camelCase(discriminantValue)}(${structName})` + '\n');
+    });
+    b.append(`}`);
+    return b.toString();
   }
 
   public renderStructDeclaration(declaration: SwiftStructDeclaration) {

@@ -52,8 +52,8 @@ export interface StringEnum {
 }
 
 export interface StringEnumCase {
-  key: string;
-  value: string;
+  readonly key: string;
+  readonly value: string;
 }
 
 export interface IntEnum {
@@ -62,8 +62,19 @@ export interface IntEnum {
 }
 
 export interface IntEnumCase {
-  key: string;
-  value: number;
+  readonly key: string;
+  readonly value: number;
+}
+
+export interface DiscriminatedUnionEnum {
+  readonly type: 'discriminated-union-enum';
+  readonly discriminant: string;
+  readonly values: DiscriminatedUnionEnumCase[];
+}
+
+export interface DiscriminatedUnionEnumCase {
+  readonly discriminantValue: string;
+  readonly structName: string;
 }
 
 export interface Struct {
@@ -72,8 +83,8 @@ export interface Struct {
 }
 
 export interface StructProperty {
-  type: Type;
-  name: string;
-  optional: boolean;
-  docs: string | undefined;
+  readonly type: Type;
+  readonly name: string;
+  readonly optional: boolean;
+  readonly docs: string | undefined;
 }

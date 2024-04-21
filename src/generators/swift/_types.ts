@@ -23,11 +23,11 @@ export interface SwiftIntEnumDeclaration {
   modelDocs: string | undefined;
 }
 
-export interface SwiftEnumWithAssociatedValuesDeclaration {
-  type: 'enum-with-associated-values';
+export interface SwiftDiscriminatedUnionEnumDeclaration {
+  type: 'discriminated-union-enum';
   modelName: string;
+  modelType: swift.DiscriminatedUnionEnum;
   modelDocs: string | undefined;
-  // TODO: Implement
 }
 
 export interface SwiftStructDeclaration {
@@ -41,7 +41,7 @@ export type SwiftDeclaration =
   | SwiftTypealiasDeclaration
   | SwiftStringEnumDeclaration
   | SwiftIntEnumDeclaration
-  | SwiftEnumWithAssociatedValuesDeclaration
+  | SwiftDiscriminatedUnionEnumDeclaration
   | SwiftStructDeclaration;
 
 export interface SwiftGeneration {

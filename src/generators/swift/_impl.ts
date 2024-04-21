@@ -1,7 +1,8 @@
 import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
 import { schema } from '../../schema/index.js';
-import { assertNever } from '../../util/assert.js';
+import { assert, assertNever } from '../../util/assert.js';
+import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 import { flatTypeToSwift } from './_converters.js';
 import { flattenSchema } from './_flatten-schema.js';
 import {
@@ -9,12 +10,13 @@ import {
   FlatDiscriminatedUnionType,
   FlatDocumentModel,
   FlatObjectType,
+  FlatSchema,
   FlatSimpleUnionType,
   FlatType,
 } from './_schema.js';
 import type {
   SwiftDeclaration,
-  SwiftEnumWithAssociatedValuesDeclaration,
+  SwiftDiscriminatedUnionEnumDeclaration,
   SwiftGeneration,
   SwiftGenerator,
   SwiftGeneratorConfig,
@@ -32,7 +34,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     const { aliasModels, documentModels } = flattenedSchema;
     const declarations: SwiftDeclaration[] = [];
     aliasModels.forEach(model => {
-      const d = this.createDeclarationForFlatAliasModel(model);
+      const d = this.createDeclarationForFlatAliasModel(model, flattenedSchema);
       declarations.push(d);
     });
     documentModels.forEach(model => {
@@ -42,7 +44,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     return { type: 'swift', declarations };
   }
 
-  private createDeclarationForFlatAliasModel(model: FlatAliasModel): SwiftDeclaration {
+  private createDeclarationForFlatAliasModel(model: FlatAliasModel, s: FlatSchema): SwiftDeclaration {
     switch (model.type.type) {
       case 'nil':
       case 'string':
@@ -61,7 +63,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       case 'object':
         return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
       case 'discriminated-union':
-        return this.createDeclarationForFlatDiscriminatedUnionType(model.type, model.name, model.docs);
+        return this.createDeclarationForFlatDiscriminatedUnionType(model.type, model.name, model.docs, s);
       case 'simple-union':
         return this.createDeclarationForFlatSimpleUnionType(model.type, model.name, model.docs);
       default:
@@ -139,19 +141,37 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatDiscriminatedUnionType(
-    _type: FlatDiscriminatedUnionType,
-    _modelName: string,
-    _modelDocs: string | undefined
-  ): SwiftEnumWithAssociatedValuesDeclaration {
-    // TODO: Implement
-    throw new Error('Unimplemented');
+    type: FlatDiscriminatedUnionType,
+    modelName: string,
+    modelDocs: string | undefined,
+    s: FlatSchema
+  ): SwiftDiscriminatedUnionEnumDeclaration {
+    const swiftType: swift.DiscriminatedUnionEnum = {
+      type: 'discriminated-union-enum',
+      discriminant: type.discriminant,
+      values: type.variants.map(vt => {
+        const model = s.getAliasModel(vt.name);
+        assert(model?.type.type === 'object');
+        const discriminantValue = extractDiscriminantValue(type, model.type);
+        return {
+          structName: vt.name,
+          discriminantValue,
+        };
+      }),
+    };
+    return {
+      type: 'discriminated-union-enum',
+      modelName,
+      modelType: swiftType,
+      modelDocs,
+    };
   }
 
   private createDeclarationForFlatSimpleUnionType(
     _type: FlatSimpleUnionType,
     _modelName: string,
     _modelDocs: string | undefined
-  ): SwiftEnumWithAssociatedValuesDeclaration {
+  ): SwiftDiscriminatedUnionEnumDeclaration {
     // TODO: Implement
     throw new Error('Unimplemented');
   }

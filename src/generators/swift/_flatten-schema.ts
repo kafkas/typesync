@@ -1,10 +1,11 @@
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
+import { pascalCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
-import { pascalCase } from '../../util/pascal-case.js';
 import {
   FlatAliasModel,
   FlatDiscriminatedUnionType,
+  FlatDocumentModel,
   FlatListType,
   FlatMapType,
   FlatObjectType,
@@ -204,25 +205,33 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
   const prevSchemaClone = prevSchema.clone();
   const { aliasModels, documentModels } = prevSchemaClone;
 
+  const newSchemaAliasModels: FlatAliasModel[] = [];
+  const newSchemaDocumentModels: FlatDocumentModel[] = [];
+
   aliasModels.forEach(aliasModel => {
     let newModelType;
-    let extractedAliasModels: FlatAliasModel[] | undefined;
 
     if (aliasModel.type.type === 'enum') {
       newModelType = aliasModel.type;
-      extractedAliasModels = [];
     } else if (aliasModel.type.type === 'object') {
-      ({ flattenedType: newModelType, extractedAliasModels } = flattenObjectType(aliasModel.type, aliasModel.name));
+      const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
+    } else if (aliasModel.type.type === 'discriminated-union') {
+      const { flattenedType, extractedAliasModels } = flattenDiscriminatedUnionType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
     } else {
-      ({ flattenedType: newModelType, extractedAliasModels } = flattenType(aliasModel.type, aliasModel.name));
+      const { flattenedType, extractedAliasModels } = flattenType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
     }
     const flattenedModel = createFlatAliasModel({
       name: aliasModel.name,
       docs: aliasModel.docs,
       type: newModelType,
     });
-    // TODO: Check if this should run outside of this block
-    newSchema.addModelGroup([...extractedAliasModels, flattenedModel]);
+    newSchemaAliasModels.push(flattenedModel);
   });
 
   documentModels.forEach(documentModel => {
@@ -232,8 +241,11 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       docs: documentModel.docs,
       type: flattenedType,
     });
-    newSchema.addModelGroup([...extractedAliasModels, flattenedModel]);
+    newSchemaAliasModels.push(...extractedAliasModels);
+    newSchemaDocumentModels.push(flattenedModel);
   });
+
+  newSchema.addModelGroup([...newSchemaAliasModels, ...newSchemaDocumentModels]);
 
   return newSchema;
 }
