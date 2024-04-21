@@ -11,7 +11,7 @@ import type {
 } from '../../generators/swift/index.js';
 import { swift } from '../../platforms/swift/index.js';
 import { assertNever } from '../../util/assert.js';
-import { camelCase } from '../../util/casing.js';
+import { camelCase, pascalCase } from '../../util/casing.js';
 import type { RenderedFile } from '../_types.js';
 import type { SwiftRenderer, SwiftRendererConfig } from './_types.js';
 
@@ -100,7 +100,62 @@ class SwiftRendererImpl implements SwiftRenderer {
       b.append('\t');
       b.append(`case ${camelCase(discriminantValue)}(${structName})` + '\n');
     });
+
+    b.append('\n');
+
+    b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
+    b.append(`\t\tcase ${camelCase(modelType.discriminant)}`);
+    if (camelCase(modelType.discriminant) !== modelType.discriminant) {
+      b.append(` = ${modelType.discriminant}`);
+    }
+    b.append(`\n\t}\n`);
+    b.append('\n');
+
+    b.append(`\tenum ${modelName}${pascalCase(modelType.discriminant)}: String, Codable {` + '\n');
+    modelType.values.forEach(({ discriminantValue }) => {
+      b.append(`\t\tcase ${camelCase(discriminantValue)}`);
+      if (camelCase(discriminantValue) !== discriminantValue) {
+        b.append(` = "${discriminantValue}"`);
+      }
+      b.append('\n');
+    });
+    b.append(`\t}\n`);
+
+    b.append('\n');
+
+    b.append(`\tinit(from decoder: Decoder) throws {` + '\n');
+    b.append(`\t\tlet container = try decoder.container(keyedBy: CodingKeys.self)` + `\n`);
+    b.append(
+      `\t\tlet ${camelCase(modelType.discriminant)} = try container.decode(${modelName}${pascalCase(modelType.discriminant)}.self, forKey: .${camelCase(modelType.discriminant)})` +
+        `\n`
+    );
+    b.append(`\t\tswitch ${camelCase(modelType.discriminant)} {` + `\n`);
+    modelType.values.forEach(({ structName, discriminantValue }) => {
+      b.append(`\t\tcase .${camelCase(discriminantValue)}:` + `\n`);
+      b.append(`\t\t\tself = .${camelCase(discriminantValue)}(try ${structName}(from: decoder))` + `\n`);
+    });
+    b.append(`\t\t}` + `\n`);
+    b.append(`\t}\n`);
+
+    b.append('\n');
+
+    b.append(`\tfunc encode(to encoder: Encoder) throws {` + `\n`);
+    b.append(`\t\tvar container = encoder.container(keyedBy: CodingKeys.self)` + `\n`);
+    b.append(`\t\tswitch self {` + `\n`);
+    modelType.values.forEach(({ discriminantValue }) => {
+      b.append(`\t\tcase .${camelCase(discriminantValue)}(let obj):` + `\n`);
+      b.append(
+        `\t\t\ttry container.encode(${modelName}${pascalCase(modelType.discriminant)}.${camelCase(discriminantValue)}.rawValue, forKey: .${camelCase(modelType.discriminant)})` +
+          `\n`
+      );
+      b.append(`\t\t\ttry obj.encode(to: encoder)` + `\n`);
+    });
+    b.append(`\t\t}` + `\n`);
+
+    b.append(`\t}` + `\n`);
+
     b.append(`}`);
+
     return b.toString();
   }
 
