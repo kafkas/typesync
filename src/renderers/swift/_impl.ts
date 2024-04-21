@@ -109,7 +109,12 @@ class SwiftRendererImpl implements SwiftRenderer {
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
-    modelType.properties.forEach(property => {
+    modelType.computedProperties.forEach(property => {
+      const expression = swift.expressionForType(property.type);
+      b.append('\t');
+      b.append(`var ${property.name}: ${expression.content} { ${property.rawValue} }` + '\n');
+    });
+    modelType.storedProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       b.append('\t');
       b.append(`var ${property.name}: ${expression.content}` + '\n');

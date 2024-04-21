@@ -3,7 +3,7 @@ import { swift } from '../../platforms/swift/index.js';
 import { schema } from '../../schema/index.js';
 import { assert, assertNever } from '../../util/assert.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
-import { flatTypeToSwift } from './_converters.js';
+import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
 import { flattenSchema } from './_flatten-schema.js';
 import {
   FlatAliasModel,
@@ -123,15 +123,33 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     modelName: string,
     modelDocs: string | undefined
   ): SwiftStructDeclaration {
+    const computedProperties: swift.ComputedStructProperty[] = [];
+    const storedProperties: swift.StoredStructProperty[] = [];
+
+    type.fields.forEach(field => {
+      if (field.type.type === 'literal' && !field.optional) {
+        computedProperties.push({
+          name: field.name,
+          docs: field.docs,
+          type: literalTypeToSwift(field.type),
+          rawValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
+        });
+      } else {
+        storedProperties.push({
+          name: field.name,
+          docs: field.docs,
+          optional: field.optional,
+          type: flatTypeToSwift(field.type),
+        });
+      }
+    });
+
     const swiftType: swift.Struct = {
       type: 'struct',
-      properties: type.fields.map(f => ({
-        name: f.name,
-        type: flatTypeToSwift(f.type),
-        docs: f.docs,
-        optional: f.optional,
-      })),
+      computedProperties,
+      storedProperties,
     };
+
     return {
       type: 'struct',
       modelName,
