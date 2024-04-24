@@ -221,6 +221,10 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       const { flattenedType, extractedAliasModels } = flattenDiscriminatedUnionType(aliasModel.type, aliasModel.name);
       newSchemaAliasModels.push(...extractedAliasModels);
       newModelType = flattenedType;
+    } else if (aliasModel.type.type === 'simple-union') {
+      const { flattenedType, extractedAliasModels } = flattenSimpleUnionType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
     } else {
       const { flattenedType, extractedAliasModels } = flattenType(aliasModel.type, aliasModel.name);
       newSchemaAliasModels.push(...extractedAliasModels);
