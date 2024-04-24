@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- ca6c95f: Implemented the Swift generator and the 'swift:firebase:10' platform
+- 90752a3: Implemented `unknown` type
+
 ## 0.2.1
 
 ### Patch Changes
