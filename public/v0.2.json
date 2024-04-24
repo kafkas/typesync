@@ -36,6 +36,7 @@
                                               {
                                                 "type": "string",
                                                 "enum": [
+                                                  "unknown",
                                                   "nil",
                                                   "string",
                                                   "boolean",
