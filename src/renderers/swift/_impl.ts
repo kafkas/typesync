@@ -5,6 +5,7 @@ import type {
   SwiftDiscriminatedUnionEnumDeclaration,
   SwiftGeneration,
   SwiftIntEnumDeclaration,
+  SwiftSimpleUnionEnumDeclaration,
   SwiftStringEnumDeclaration,
   SwiftStructDeclaration,
   SwiftTypealiasDeclaration,
@@ -52,6 +53,8 @@ class SwiftRendererImpl implements SwiftRenderer {
         return this.renderIntEnumDeclaration(declaration);
       case 'discriminated-union-enum':
         return this.renderDiscriminatedUnionEnumDeclaration(declaration);
+      case 'simple-union-enum':
+        return this.renderSimpleUnionEnumDeclaration(declaration);
       case 'struct':
         return this.renderStructDeclaration(declaration);
       default:
@@ -149,6 +152,64 @@ class SwiftRendererImpl implements SwiftRenderer {
           `\n`
       );
       b.append(`\t\t\ttry obj.encode(to: encoder)` + `\n`);
+    });
+    b.append(`\t\t}` + `\n`);
+
+    b.append(`\t}` + `\n`);
+
+    b.append(`}`);
+
+    return b.toString();
+  }
+
+  public renderSimpleUnionEnumDeclaration(declaration: SwiftSimpleUnionEnumDeclaration) {
+    const { modelName, modelType } = declaration;
+    const b = new StringBuilder();
+    const conformedProtocolsAsString = ['Codable'].join(', ');
+    b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
+    modelType.values.forEach(({ type }, valueIdx) => {
+      b.append('\t');
+      const expression = swift.expressionForType(type);
+      b.append(`case variant${valueIdx + 1}(${expression.content})` + '\n');
+    });
+
+    b.append('\n');
+
+    b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
+    modelType.values.forEach((_, valueIdx) => {
+      b.append(`\t\tcase variant${valueIdx + 1}` + `\n`);
+    });
+    b.append(`\t}\n`);
+
+    b.append('\n');
+
+    b.append(`\tinit(from decoder: Decoder) throws {` + '\n');
+    b.append(`\t\tlet container = try decoder.singleValueContainer()` + `\n`);
+    modelType.values.forEach(({ type }, valueIdx) => {
+      const expression = swift.expressionForType(type);
+      const variantKey = `variant${valueIdx + 1}`;
+      b.append(
+        `${valueIdx > 0 ? ' else ' : '\t\t'}if let ${variantKey} = try? container.decode(${expression.content}.self) {` +
+          `\n`
+      );
+      b.append(`\t\t\tself = .${variantKey}(${variantKey})` + `\n`);
+      b.append('\t\t}');
+    });
+    b.append(
+      ` else {\n\t\t\tthrow DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Failed to decode ${modelName} value."))\n\t\t}`
+    );
+    b.append(`\n`);
+    b.append(`\t}\n`);
+
+    b.append(`\n`);
+
+    b.append(`\tfunc encode(to encoder: Encoder) throws {` + `\n`);
+    b.append(`\t\tvar container = encoder.singleValueContainer()` + `\n`);
+    b.append(`\t\tswitch self {` + `\n`);
+    modelType.values.forEach((_, valueIdx) => {
+      const variantKey = `variant${valueIdx + 1}`;
+      b.append(`\t\tcase .${variantKey}(let val):` + `\n`);
+      b.append(`\t\t\ttry container.encode(val)\n`);
     });
     b.append(`\t\t}` + `\n`);
 

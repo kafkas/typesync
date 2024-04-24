@@ -21,6 +21,7 @@ import type {
   SwiftGenerator,
   SwiftGeneratorConfig,
   SwiftIntEnumDeclaration,
+  SwiftSimpleUnionEnumDeclaration,
   SwiftStringEnumDeclaration,
   SwiftStructDeclaration,
   SwiftTypealiasDeclaration,
@@ -186,12 +187,22 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatSimpleUnionType(
-    _type: FlatSimpleUnionType,
-    _modelName: string,
-    _modelDocs: string | undefined
-  ): SwiftDiscriminatedUnionEnumDeclaration {
-    // TODO: Implement
-    throw new Error('Unimplemented');
+    type: FlatSimpleUnionType,
+    modelName: string,
+    modelDocs: string | undefined
+  ): SwiftSimpleUnionEnumDeclaration {
+    const swiftType: swift.SimpleUnionEnum = {
+      type: 'simple-union-enum',
+      values: type.variants.map(vt => ({
+        type: flatTypeToSwift(vt),
+      })),
+    };
+    return {
+      type: 'simple-union-enum',
+      modelName,
+      modelType: swiftType,
+      modelDocs,
+    };
   }
 
   private createDeclarationForFlatType(

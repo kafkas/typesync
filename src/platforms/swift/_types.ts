@@ -77,6 +77,15 @@ export interface DiscriminatedUnionEnumCase {
   readonly structName: string;
 }
 
+export interface SimpleUnionEnum {
+  readonly type: 'simple-union-enum';
+  readonly values: SimpleUnionEnumCase[];
+}
+
+export interface SimpleUnionEnumCase {
+  readonly type: Type;
+}
+
 export interface Struct {
   readonly type: 'struct';
   readonly literalProperties: LiteralStructProperty[];

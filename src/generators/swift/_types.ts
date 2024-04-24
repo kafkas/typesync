@@ -30,6 +30,13 @@ export interface SwiftDiscriminatedUnionEnumDeclaration {
   modelDocs: string | undefined;
 }
 
+export interface SwiftSimpleUnionEnumDeclaration {
+  type: 'simple-union-enum';
+  modelName: string;
+  modelType: swift.SimpleUnionEnum;
+  modelDocs: string | undefined;
+}
+
 export interface SwiftStructDeclaration {
   type: 'struct';
   modelName: string;
@@ -42,6 +49,7 @@ export type SwiftDeclaration =
   | SwiftStringEnumDeclaration
   | SwiftIntEnumDeclaration
   | SwiftDiscriminatedUnionEnumDeclaration
+  | SwiftSimpleUnionEnumDeclaration
   | SwiftStructDeclaration;
 
 export interface SwiftGeneration {
