@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PythonRendererImpl correctly renders a Swift generation 1`] = `
+exports[`SwiftRendererImpl correctly renders a Swift generation 1`] = `
 {
   "content": "import Foundation
 

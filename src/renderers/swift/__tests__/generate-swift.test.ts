@@ -1,7 +1,7 @@
 import { SwiftGeneration } from '../../../generators/swift/index.js';
 import { createSwiftRenderer } from '../_impl.js';
 
-describe('PythonRendererImpl', () => {
+describe('SwiftRendererImpl', () => {
   it('correctly renders a Swift generation', async () => {
     const renderer = createSwiftRenderer({
       indentation: 4,
