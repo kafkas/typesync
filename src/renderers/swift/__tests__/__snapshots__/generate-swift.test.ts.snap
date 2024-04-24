@@ -6,6 +6,8 @@ exports[`SwiftRendererImpl correctly renders a Swift generation 1`] = `
 
 typealias Username = String
 
+typealias UserMetadata = Any
+
 struct Project: Codable {
 	var name: String
 	var completed: Bool
