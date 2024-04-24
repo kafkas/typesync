@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PythonRendererImpl correctly renders a Swift generation 1`] = `
+{
+  "content": "import Foundation
+
+typealias Username = String
+
+struct Project: Codable {
+	var name: String
+	var completed: Bool
+}
+
+",
+}
+`;
