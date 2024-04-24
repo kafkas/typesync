@@ -20,6 +20,14 @@ describe('SwiftRendererImpl', () => {
           modelDocs: 'A string that uniquely identifies the user.',
         },
         {
+          type: 'typealias',
+          modelName: 'UserMetadata',
+          modelType: {
+            type: 'any',
+          },
+          modelDocs: undefined,
+        },
+        {
           type: 'struct',
           modelName: 'Project',
           modelType: {

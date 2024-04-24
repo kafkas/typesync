@@ -59,6 +59,12 @@
             "type": "literal",
             "value": 34
           }
+        },
+        "metadata": {
+          "type": {
+            "type": "map",
+            "valueType": "unknown"
+          }
         }
       }
     }

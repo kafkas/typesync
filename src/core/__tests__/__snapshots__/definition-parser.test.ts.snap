@@ -117,6 +117,12 @@ exports[`definition-parser correctly parses definition from JSON files 1`] = `
             "type": "tuple",
           },
         },
+        "metadata": {
+          "type": {
+            "type": "map",
+            "valueType": "unknown",
+          },
+        },
         "pets": {
           "type": {
             "elementType": "Pet",
@@ -282,6 +288,12 @@ exports[`definition-parser correctly parses definition from YAML files 1`] = `
               "int",
             ],
             "type": "tuple",
+          },
+        },
+        "metadata": {
+          "type": {
+            "type": "map",
+            "valueType": "unknown",
           },
         },
         "pets": {

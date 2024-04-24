@@ -20,6 +20,14 @@ describe('TSRendererImpl', () => {
           modelDocs: undefined,
         },
         {
+          type: 'alias',
+          modelName: 'UserMetadata',
+          modelType: {
+            type: 'unknown',
+          },
+          modelDocs: undefined,
+        },
+        {
           type: 'interface',
           modelName: 'Dog',
           modelType: {

@@ -34,6 +34,7 @@ class PythonGeneratorImpl implements PythonGenerator {
 
   private createDeclarationForFlatAliasModel(model: FlatAliasModel): PythonDeclaration {
     switch (model.type.type) {
+      case 'unknown':
       case 'nil':
       case 'string':
       case 'boolean':

@@ -1,6 +1,7 @@
 import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
+  Any,
   Bool,
   Datetime,
   Dict,
@@ -23,6 +24,10 @@ export interface Expression {
 
 export function expressionForUndefinedType(_t: Undefined): Expression {
   return { content: 'TypesyncUndefined' };
+}
+
+export function expressionForAnyType(_t: Any): Expression {
+  return { content: 'typing.Any' };
 }
 
 export function expressionForNoneType(_t: None): Expression {
@@ -97,6 +102,8 @@ export function expressionForType(t: Type): Expression {
   switch (t.type) {
     case 'undefined':
       return expressionForUndefinedType(t);
+    case 'any':
+      return expressionForAnyType(t);
     case 'none':
       return expressionForNoneType(t);
     case 'str':

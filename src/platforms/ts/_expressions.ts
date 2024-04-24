@@ -16,10 +16,15 @@ import type {
   Tuple,
   Type,
   Union,
+  Unknown,
 } from './_types.js';
 
 export interface Expression {
   content: string;
+}
+
+export function expressionForUnknownType(_t: Unknown): Expression {
+  return { content: 'unknown' };
 }
 
 export function expressionForNullType(_t: Null): Expression {
@@ -114,6 +119,8 @@ export function expressionForAliasType(t: Alias): Expression {
 
 export function expressionForType(t: Type): Expression {
   switch (t.type) {
+    case 'unknown':
+      return expressionForUnknownType(t);
     case 'null':
       return expressionForNullType(t);
     case 'string':

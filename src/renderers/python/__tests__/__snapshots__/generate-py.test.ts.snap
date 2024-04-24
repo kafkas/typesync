@@ -53,6 +53,8 @@ class TypesyncModel(pydantic.BaseModel):
 Username = str
 """A string that uniquely identifies the user."""
 
+UserMetadata = typing.Any
+
 class Project(TypesyncModel):
     """A project within a workspace"""
     name: str

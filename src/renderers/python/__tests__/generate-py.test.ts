@@ -20,6 +20,14 @@ describe('PythonRendererImpl', () => {
           modelDocs: 'A string that uniquely identifies the user.',
         },
         {
+          type: 'alias',
+          modelName: 'UserMetadata',
+          modelType: {
+            type: 'any',
+          },
+          modelDocs: undefined,
+        },
+        {
           type: 'pydantic-class',
           modelName: 'Project',
           modelType: {

@@ -1,3 +1,7 @@
+export interface Any {
+  readonly type: 'any';
+}
+
 export interface Nil {
   readonly type: 'nil';
 }
@@ -22,7 +26,7 @@ export interface Date {
   readonly type: 'date';
 }
 
-export type Primitive = Nil | String | Bool | Int | Double | Date;
+export type Primitive = Any | Nil | String | Bool | Int | Double | Date;
 
 export interface Tuple {
   readonly type: 'tuple';

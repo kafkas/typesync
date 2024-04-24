@@ -4,6 +4,8 @@ import { assertNever } from '../util/assert.js';
 
 export function primitiveTypeToSchema(t: definition.types.Primitive): schema.types.Primitive {
   switch (t) {
+    case 'unknown':
+      return { type: 'unknown' };
     case 'nil':
       return { type: 'nil' };
     case 'string':

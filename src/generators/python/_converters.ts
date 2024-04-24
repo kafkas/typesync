@@ -10,6 +10,10 @@ import {
   FlatType,
 } from './_schema.js';
 
+export function unknownTypeToPython(_t: schema.types.Unknown): python.Any {
+  return { type: 'any' };
+}
+
 export function nilTypeToPython(_t: schema.types.Nil): python.None {
   return { type: 'none' };
 }
@@ -64,6 +68,8 @@ export function flatAliasTypeToPython(t: schema.types.Alias): python.Alias {
 
 export function flatTypeToPython(t: FlatType): python.Type {
   switch (t.type) {
+    case 'unknown':
+      return unknownTypeToPython(t);
     case 'nil':
       return nilTypeToPython(t);
     case 'string':

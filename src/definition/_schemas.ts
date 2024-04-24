@@ -3,7 +3,9 @@ import { z } from 'zod';
 import type { types } from './types/index.js';
 
 const createDefinition = (aliasType: z.ZodType) => {
-  const primitiveType = z.enum(['nil', 'string', 'boolean', 'int', 'double', 'timestamp']).describe('A primitive type');
+  const primitiveType = z
+    .enum(['unknown', 'nil', 'string', 'boolean', 'int', 'double', 'timestamp'])
+    .describe('A primitive type');
 
   const literalType = z
     .object({

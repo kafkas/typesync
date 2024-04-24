@@ -6,6 +6,8 @@ exports[`TSRendererImpl correctly renders a TS generation 1`] = `
 
 export type Username = string;
 
+export type UserMetadata = unknown;
+
 export interface Dog {
     name: string;
     breed: string;

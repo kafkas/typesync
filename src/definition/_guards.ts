@@ -4,6 +4,7 @@ import type { types } from './types/index.js';
 export function isPrimitiveType(candidate: unknown): candidate is types.Primitive {
   const c = candidate as types.Primitive;
   switch (c) {
+    case 'unknown':
     case 'nil':
     case 'string':
     case 'boolean':
