@@ -154,6 +154,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
 
   function flattenType(type: schema.types.Type, aliasName: string): FlattenTypeResult {
     switch (type.type) {
+      case 'unknown':
       case 'nil':
       case 'string':
       case 'boolean':

@@ -1,8 +1,12 @@
 import { assertNever } from '../../util/assert.js';
-import type { Alias, Bool, Date, Dictionary, Double, Int, List, Nil, String, Tuple, Type } from './_types.js';
+import type { Alias, Any, Bool, Date, Dictionary, Double, Int, List, Nil, String, Tuple, Type } from './_types.js';
 
 export interface Expression {
   content: string;
+}
+
+export function expressionForAnyType(_t: Any): Expression {
+  return { content: 'Any' };
 }
 
 export function expressionForNilType(_t: Nil): Expression {
@@ -50,6 +54,8 @@ export function expressionForAliasType(t: Alias): Expression {
 
 export function expressionForType(t: Type): Expression {
   switch (t.type) {
+    case 'any':
+      return expressionForAnyType(t);
     case 'nil':
       return expressionForNilType(t);
     case 'string':

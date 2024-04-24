@@ -8,6 +8,10 @@ import type {
   TupleType,
 } from '../generic.js';
 
+export interface Unknown {
+  type: 'unknown';
+}
+
 export interface Nil {
   type: 'nil';
 }
@@ -32,7 +36,7 @@ export interface Timestamp {
   type: 'timestamp';
 }
 
-export type Primitive = Nil | String | Boolean | Integer | Double | Timestamp;
+export type Primitive = Unknown | Nil | String | Boolean | Integer | Double | Timestamp;
 
 export interface Literal {
   type: 'literal';

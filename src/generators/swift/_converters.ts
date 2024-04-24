@@ -3,6 +3,10 @@ import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { FlatListType, FlatMapType, FlatTupleType, FlatType } from './_schema.js';
 
+export function unknownTypeToSwift(_t: schema.types.Unknown): swift.Any {
+  return { type: 'any' };
+}
+
 export function nilTypeToSwift(_t: schema.types.Nil): swift.Nil {
   return { type: 'nil' };
 }
@@ -59,6 +63,8 @@ export function flatAliasTypeToSwift(t: schema.types.Alias): swift.Alias {
 
 export function flatTypeToSwift(t: FlatType): swift.Type {
   switch (t.type) {
+    case 'unknown':
+      return unknownTypeToSwift(t);
     case 'nil':
       return nilTypeToSwift(t);
     case 'string':

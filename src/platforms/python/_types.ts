@@ -2,6 +2,10 @@ export interface Undefined {
   readonly type: 'undefined';
 }
 
+export interface Any {
+  readonly type: 'any';
+}
+
 export interface None {
   readonly type: 'none';
 }
@@ -26,7 +30,7 @@ export interface Datetime {
   readonly type: 'datetime';
 }
 
-export type Primitive = None | Undefined | Str | Bool | Int | Float | Datetime;
+export type Primitive = Undefined | Any | None | Str | Bool | Int | Float | Datetime;
 
 export interface Literal {
   readonly type: 'literal';

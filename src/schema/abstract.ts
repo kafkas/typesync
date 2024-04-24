@@ -130,6 +130,7 @@ export abstract class AbstractSchema<
 
   private validateType(t: schema.types.Type): void {
     switch (t.type) {
+      case 'unknown':
       case 'nil':
       case 'string':
       case 'boolean':
