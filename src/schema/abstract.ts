@@ -100,7 +100,7 @@ export abstract class AbstractSchema<
     this.validateModel(model);
   }
 
-  protected getAliasModel(modelName: string) {
+  public getAliasModel(modelName: string) {
     return this.aliasModelsById.get(modelName);
   }
 

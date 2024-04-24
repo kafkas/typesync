@@ -182,10 +182,20 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
-      case 'discriminated-union':
-        return flattenDiscriminatedUnionType(type, aliasName);
-      case 'simple-union':
-        return flattenSimpleUnionType(type, aliasName);
+      case 'discriminated-union': {
+        const result = flattenDiscriminatedUnionType(type, aliasName);
+        const name = aliasName;
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
+        const flattenedType: schema.types.Alias = { type: 'alias', name };
+        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
+      }
+      case 'simple-union': {
+        const result = flattenSimpleUnionType(type, aliasName);
+        const name = aliasName;
+        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
+        const flattenedType: schema.types.Alias = { type: 'alias', name };
+        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
+      }
       default:
         assertNever(type);
     }
@@ -205,6 +215,14 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       newModelType = aliasModel.type;
     } else if (aliasModel.type.type === 'object') {
       const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
+    } else if (aliasModel.type.type === 'discriminated-union') {
+      const { flattenedType, extractedAliasModels } = flattenDiscriminatedUnionType(aliasModel.type, aliasModel.name);
+      newSchemaAliasModels.push(...extractedAliasModels);
+      newModelType = flattenedType;
+    } else if (aliasModel.type.type === 'simple-union') {
+      const { flattenedType, extractedAliasModels } = flattenSimpleUnionType(aliasModel.type, aliasModel.name);
       newSchemaAliasModels.push(...extractedAliasModels);
       newModelType = flattenedType;
     } else {

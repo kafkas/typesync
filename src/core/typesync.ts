@@ -10,6 +10,7 @@ import type {
 import { DefinitionFilesNotFoundError, InvalidIndentationOption } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
+import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
 import { schema } from '../schema/index.js';
@@ -82,6 +83,8 @@ class TypesyncImpl implements Typesync {
       case 'ts:firebase:10':
       case 'ts:firebase:9':
         return createTSGenerator({ platform });
+      case 'swift:firebase:10':
+        return createSwiftGenerator({ platform });
       case 'py:firebase-admin:6':
         return createPythonGenerator({ platform });
       default:
@@ -97,6 +100,8 @@ class TypesyncImpl implements Typesync {
       case 'ts:firebase:10':
       case 'ts:firebase:9':
         return renderers.createTSRenderer({ platform, indentation });
+      case 'swift:firebase:10':
+        return renderers.createSwiftRenderer({ platform, indentation });
       case 'py:firebase-admin:6':
         return renderers.createPythonRenderer({ platform, indentation });
       default:
