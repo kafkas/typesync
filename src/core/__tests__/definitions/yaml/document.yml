@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=../../../../../public/v0.2.json
+
 UserProfile:
   model: document
   docs: User profile model
@@ -45,3 +47,7 @@ UserProfile:
         type:
           type: literal
           value: 34
+      metadata:
+        type:
+          type: map
+          valueType: unknown
