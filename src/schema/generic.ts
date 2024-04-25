@@ -16,6 +16,7 @@ export interface MapType<T> {
 export interface ObjectType<T> {
   type: 'object';
   fields: ObjectFieldType<T>[];
+  additionalFields: boolean;
 }
 
 export interface ObjectFieldType<T> {

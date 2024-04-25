@@ -95,6 +95,7 @@ describe('flatten-schema', () => {
           optional: false,
         },
       ],
+      additionalFields: false,
     };
 
     const inputSchema = (() => {
@@ -118,6 +119,7 @@ describe('flatten-schema', () => {
               optional: false,
             },
           ],
+          additionalFields: false,
         },
       });
 
@@ -156,6 +158,7 @@ describe('flatten-schema', () => {
               optional: false,
             },
           ],
+          additionalFields: false,
         },
       });
 
@@ -185,6 +188,7 @@ describe('flatten-schema', () => {
                 { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
                 { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
               ],
+              additionalFields: false,
             },
             {
               type: 'object',
@@ -192,6 +196,7 @@ describe('flatten-schema', () => {
                 { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
                 { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
               ],
+              additionalFields: false,
             },
           ],
         },
@@ -212,6 +217,7 @@ describe('flatten-schema', () => {
             { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
             { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
           ],
+          additionalFields: false,
         },
       });
 
@@ -224,6 +230,7 @@ describe('flatten-schema', () => {
             { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
             { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
           ],
+          additionalFields: false,
         },
       });
 

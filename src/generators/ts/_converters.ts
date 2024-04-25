@@ -51,7 +51,11 @@ export function mapTypeToTS(t: schema.types.Map): ts.Record {
 }
 
 export function objectTypeToTS(t: schema.types.Object): ts.Object {
-  return { type: 'object', properties: t.fields.map(objectPropertyTypeToTS) };
+  return {
+    type: 'object',
+    properties: t.fields.map(objectPropertyTypeToTS),
+    additionalProperties: t.additionalFields,
+  };
 }
 
 export function objectPropertyTypeToTS(t: schema.types.ObjectField): ts.ObjectProperty {

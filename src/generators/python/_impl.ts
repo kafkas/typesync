@@ -96,6 +96,7 @@ class PythonGeneratorImpl implements PythonGenerator {
         docs: f.docs,
         optional: f.optional,
       })),
+      additionalAttributes: type.additionalFields,
     };
     return {
       type: 'pydantic-class',

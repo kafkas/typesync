@@ -31,6 +31,7 @@ export interface Map {
 export interface Object {
   type: 'object';
   fields: Record<string, ObjectField>;
+  additionalFields?: boolean;
 }
 
 export interface ObjectField {

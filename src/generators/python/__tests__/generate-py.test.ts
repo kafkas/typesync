@@ -73,6 +73,7 @@ describe('PythonGeneratorImpl', () => {
               { name: 'id', docs: 'The ID of the project', optional: false, type: { type: 'str' } },
               { name: 'completed', docs: 'Whether the project is completed', optional: false, type: { type: 'bool' } },
             ],
+            additionalAttributes: false,
           },
           modelDocs: 'Represents a project within a workspace',
         },

@@ -96,7 +96,7 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`${this.indent(0)}class TypesyncModel(pydantic.BaseModel):\n`);
     b.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
     b.append(`${this.indent(2)}processed = {}\n`);
-    b.append(`${this.indent(2)}for field_name, field_value in self.__dict__.items():\n`);
+    b.append(`${this.indent(2)}for field_name, field_value in dict(self).items():\n`);
     b.append(`${this.indent(3)}if isinstance(field_value, pydantic.BaseModel):\n`);
     b.append(`${this.indent(4)}processed[field_name] = field_value.model_dump(**kwargs)\n`);
     b.append(`${this.indent(3)}elif isinstance(field_value, list):\n`);
@@ -193,7 +193,8 @@ class PythonRendererImpl implements PythonRenderer {
     b.append('\n');
 
     b.append(`${this.indent(1)}class Config:\n`);
-    b.append(`${this.indent(2)}use_enum_values = True\n\n`);
+    b.append(`${this.indent(2)}use_enum_values = True\n`);
+    b.append(`${this.indent(2)}extra = '${modelType.additionalAttributes ? 'allow' : 'forbid'}'\n\n`);
 
     b.append(`${this.indent(1)}def __setattr__(self, name: str, value: typing.Any) -> None:\n`);
     modelType.attributes.forEach(attribute => {

@@ -46,6 +46,7 @@ describe('PythonRendererImpl', () => {
                 docs: 'Whether the project is completed.',
               },
             ],
+            additionalAttributes: false,
           },
           modelDocs: 'A project within a workspace',
         },
