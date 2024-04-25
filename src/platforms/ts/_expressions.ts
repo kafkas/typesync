@@ -93,7 +93,7 @@ export function expressionForRecordType(t: Record): Expression {
 }
 
 export function expressionForObjectType(t: Object): Expression {
-  const { properties } = t;
+  const { properties, additionalProperties } = t;
   const b = new StringBuilder();
 
   b.append(`{\n`);
@@ -104,7 +104,9 @@ export function expressionForObjectType(t: Object): Expression {
     const expression = expressionForType(prop.type);
     b.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);
   });
-  b.append('[K: string]: unknown;\n');
+  if (additionalProperties) {
+    b.append('[K: string]: unknown;\n');
+  }
   b.append(`}`);
   return { content: b.toString() };
 }
