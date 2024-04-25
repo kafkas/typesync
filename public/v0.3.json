@@ -222,7 +222,7 @@
                               },
                               "additionalFields": {
                                 "type": "boolean",
-                                "description": "Whether to allow adding arbitrary fields to the object."
+                                "description": "Whether to allow adding arbitrary fields to the object. This currently does not have an effect on Swift output."
                               }
                             },
                             "required": ["type", "fields"],
@@ -318,7 +318,7 @@
                   },
                   "additionalFields": {
                     "type": "boolean",
-                    "description": "Whether to allow adding arbitrary fields to the object."
+                    "description": "Whether to allow adding arbitrary fields to the object. This currently does not have an effect on Swift output."
                   }
                 },
                 "required": ["type", "fields"],
