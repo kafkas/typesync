@@ -71,6 +71,7 @@ const createDefinition = (aliasType: z.ZodType) => {
         .object({
           type: z.literal('object'),
           fields: z.record(field).describe('The fields that belong to this object.'),
+          additionalFields: z.boolean().optional().describe('Whether to allow adding arbitrary fields to the object.'),
         })
         .strict()
     )

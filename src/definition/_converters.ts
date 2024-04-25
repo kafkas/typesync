@@ -62,6 +62,7 @@ export function objectTypeToSchema(t: definition.types.Object): schema.types.Obj
   return {
     type: 'object',
     fields: Object.entries(t.fields).map(([fieldName, field]) => fieldToSchema(fieldName, field)),
+    additionalFields: !!t.additionalFields,
   };
 }
 

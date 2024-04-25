@@ -103,6 +103,7 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         optional: r.field.optional,
         type: r.flattenResult.flattenedType,
       })),
+      additionalFields: objectType.additionalFields,
     };
     const extractedAliasModels = resultsForFields.map(r => r.flattenResult.extractedAliasModels).flat(1);
     return { flattenedType, extractedAliasModels };
