@@ -83,6 +83,7 @@ export interface EnumClassAttribute {
 export interface ObjectClass {
   readonly type: 'object-class';
   readonly attributes: ObjectClassAttribute[];
+  readonly additionalAttributes: boolean;
 }
 
 export interface ObjectClassAttribute {
