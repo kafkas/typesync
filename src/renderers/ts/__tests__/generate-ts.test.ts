@@ -36,6 +36,7 @@ describe('TSRendererImpl', () => {
               { type: { type: 'string' }, name: 'name', docs: undefined, optional: false },
               { type: { type: 'string' }, name: 'breed', docs: undefined, optional: false },
             ],
+            additionalProperties: false,
           },
           modelDocs: undefined,
         },
