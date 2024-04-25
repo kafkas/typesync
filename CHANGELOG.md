@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- 97071de: Extra attributes for Pydantic classes in Python output are now disallowed by default.
+- 97071de: Implemented the `additionalFields` config that allows arbitrary fields on object types
+
 ## 0.3.0
 
 ### Minor Changes
