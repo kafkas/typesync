@@ -94,18 +94,19 @@ export function expressionForRecordType(t: Record): Expression {
 
 export function expressionForObjectType(t: Object): Expression {
   const { properties } = t;
-  const builder = new StringBuilder();
+  const b = new StringBuilder();
 
-  builder.append(`{\n`);
+  b.append(`{\n`);
   properties.forEach(prop => {
     if (prop.docs !== undefined) {
-      builder.append(`/** ${prop.docs} */\n`);
+      b.append(`/** ${prop.docs} */\n`);
     }
     const expression = expressionForType(prop.type);
-    builder.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);
+    b.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);
   });
-  builder.append(`}`);
-  return { content: builder.toString() };
+  b.append('[K: string]: unknown;\n');
+  b.append(`}`);
+  return { content: b.toString() };
 }
 
 export function expressionForUnionType(t: Union): Expression {

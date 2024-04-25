@@ -55,6 +55,7 @@ export interface Record {
 export interface Object {
   readonly type: 'object';
   readonly properties: ObjectProperty[];
+  readonly additionalProperties: boolean;
 }
 
 export interface ObjectProperty {
