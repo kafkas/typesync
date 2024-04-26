@@ -9,7 +9,10 @@
     "typesync",
     "firebase",
     "firestore",
-    "cloud firestore"
+    "cloud firestore",
+    "schema",
+    "firestore schema",
+    "firestore schema management"
   ],
   "type": "module",
   "scripts": {
