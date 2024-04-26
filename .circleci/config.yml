@@ -131,6 +131,9 @@ jobs:
             mkdir -p secrets
             echo $HOSTING_SERVICE_ACCOUNT_BASE64_PROD | base64 -d > secrets/hosting-service-account-prod.json
       - run:
+          name: Switch to the 'prod' environment
+          command: firebase use prod
+      - run:
           name: Publish JSON schema
           command: firebase deploy --only hosting
       - run:
