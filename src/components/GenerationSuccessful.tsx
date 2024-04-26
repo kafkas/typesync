@@ -16,7 +16,7 @@ export function GenerationSuccessful({ aliasModelCount, documentModelCount, path
       <Text> - {pluralize('document model', documentModelCount, true)}</Text>
       <Box>
         <Text>✔ Wrote output to: </Text>
-        <Text color="green">{pathToOutputFile}</Text>
+        <Text color="yellowBright">{pathToOutputFile}</Text>
       </Box>
     </Box>
   );
