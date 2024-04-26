@@ -71,7 +71,7 @@ cd definition
 Next, create a YAML file named `models.yml` in the `definition` directory. This file will contain the schema definitions for your Firestore documents. Here's a sample schema:
 
 ```yaml models.yml
-# yaml-language-server: $schema=https://schema.typesync.org/v0.2.json
+# yaml-language-server: $schema=https://schema.typesync.org/v0.4.json
 
 UserRole:
   model: alias
@@ -97,6 +97,9 @@ User:
         docs: A string that uniquely identifies the user within a project.
       role:
         type: UserRole
+      website_url:
+        type: string
+        optional: true
       created_at:
         type: timestamp
 ```
