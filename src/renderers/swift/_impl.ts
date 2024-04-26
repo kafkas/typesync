@@ -63,15 +63,23 @@ class SwiftRendererImpl implements SwiftRenderer {
   }
 
   public renderTypealiasDeclaration(declaration: SwiftTypealiasDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const expression = swift.expressionForType(modelType);
-    return `typealias ${modelName} = ${expression.content}`;
+    const b = new StringBuilder();
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
+    b.append(`typealias ${modelName} = ${expression.content}`);
+    return b.toString();
   }
 
   public renderStringEnumDeclaration(declaration: SwiftStringEnumDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['String', 'Codable'].join(', ');
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
       b.append('\t');
@@ -82,9 +90,12 @@ class SwiftRendererImpl implements SwiftRenderer {
   }
 
   public renderIntEnumDeclaration(declaration: SwiftIntEnumDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Int', 'Codable'].join(', ');
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
       b.append('\t');
@@ -95,9 +106,12 @@ class SwiftRendererImpl implements SwiftRenderer {
   }
 
   public renderDiscriminatedUnionEnumDeclaration(declaration: SwiftDiscriminatedUnionEnumDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.values.forEach(({ structName, discriminantValue }) => {
       b.append('\t');
@@ -163,9 +177,12 @@ class SwiftRendererImpl implements SwiftRenderer {
   }
 
   public renderSimpleUnionEnumDeclaration(declaration: SwiftSimpleUnionEnumDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.values.forEach(({ type }, valueIdx) => {
       b.append('\t');
@@ -221,16 +238,22 @@ class SwiftRendererImpl implements SwiftRenderer {
   }
 
   public renderStructDeclaration(declaration: SwiftStructDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, modelType, modelDocs } = declaration;
     const propertyOriginalNames = [...modelType.literalProperties, ...modelType.regularProperties].map(
       p => p.originalName
     );
     const hasNonCamelCaseOriginalName = propertyOriginalNames.some(name => camelCase(name) !== name);
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
+    if (modelDocs !== undefined) {
+      b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
+    }
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
+      if (property.docs !== undefined) {
+        b.append(this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
+      }
       b.append('\t');
       b.append(
         `private(set) var ${camelCase(property.originalName)}: ${expression.content} = ${property.literalValue}` + '\n'
@@ -238,6 +261,9 @@ class SwiftRendererImpl implements SwiftRenderer {
     });
     modelType.regularProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
+      if (property.docs !== undefined) {
+        b.append('\t' + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
+      }
       b.append('\t');
       b.append(`var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` + '\n');
     });
@@ -255,6 +281,11 @@ class SwiftRendererImpl implements SwiftRenderer {
     }
     b.append(`}`);
     return b.toString();
+  }
+
+  private buildDocCommentsFromMarkdownDocs(markdownDocs: string) {
+    const lines = markdownDocs.split(`\n`);
+    return lines.map(line => `///${line.length > 0 ? ' ' : ''}${line}`).join('\n');
   }
 }
 
