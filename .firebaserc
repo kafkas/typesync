@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "typesync-prod"
+    "default": "typesync-prod",
+    "prod": "typesync-prod"
   }
 }
