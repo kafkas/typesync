@@ -25,15 +25,10 @@ jobs:
     steps:
       - checkout-build-yarn-project:
           checkout_path: ~/project
-      - run:
-          name: Check if repo contains the correct JSON schema for the current version
-          command: |
-            yarn run generate-json-schema
-            git --no-pager diff --exit-code
       - persist_to_workspace:
           root: .
           paths: [.]
-  
+
   generate-typesync-models:
     executor: node/default
     parameters:
@@ -41,12 +36,12 @@ jobs:
         description: Relative/absolute path to the input model .yml file
         type: string
       output_folder_path:
-        description: Target output dir of the generated types 
+        description: Target output dir of the generated types
         type: string
       platform:
         description: Target platform and version
         type: enum
-        enum: ["ts:firebase-admin:12", "ts:firebase-admin:11", "ts:firebase:10", "ts:firebase:9", "py:firebase-admin:6"]
+        enum: ['ts:firebase-admin:12', 'ts:firebase-admin:11', 'ts:firebase:10', 'ts:firebase:9', 'py:firebase-admin:6']
     steps:
       - checkout-build-yarn-project:
           checkout_path: ~/project
@@ -75,7 +70,7 @@ jobs:
       - attach_workspace:
           at: << parameters.path_to_typesync_model_dir >>
       - run:
-          name: Install the Poetry project 
+          name: Install the Poetry project
           command: |
             poetry install
       - run:
@@ -103,13 +98,30 @@ jobs:
           name: Run rests
           command: yarn test
 
-  publish:
+  publish-npm-package:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run:
+          name: Publish to NPM
+          command: npm publish
+
+  publish-json-schema:
     executor: node/default
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: secrets/hosting-service-account-prod.json
     steps:
       - attach_workspace:
           at: ~/project
+      - run:
+          name: Check if repo contains the correct JSON schema for the current version
+          command: |
+            yarn run generate-json-schema
+            git --no-pager diff --exit-code
       - run:
           name: Install the Firebase CLI
           command: yarn global add firebase-tools@13.5.1
@@ -124,12 +136,6 @@ jobs:
       - run:
           name: Delete service account
           command: rm -rf secrets/hosting-service-account-prod.json
-      - run:
-          name: Configure NPM
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run:
-          name: Publish to NPM
-          command: npm publish
 
 workflows:
   build_test_deploy:
@@ -148,19 +154,27 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - publish:
+      - publish-npm-package:
           requires: [build, lint, test]
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^v\d+\.\d+\.\d+$/
+      - publish-json-schema:
+          requires: [build, lint, test]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+
   integration-tests:
     jobs:
       - generate-typesync-models:
-          model_path: "tests/test-poetry-project/test_poetry_project/models.yml"
-          output_folder_path: "tests/test-poetry-project/autogen"
-          platform: "py:firebase-admin:6"
+          model_path: 'tests/test-poetry-project/test_poetry_project/models.yml'
+          output_folder_path: 'tests/test-poetry-project/autogen'
+          platform: 'py:firebase-admin:6'
       - test-typesync-python-end-to-end:
-          requires: [ generate-typesync-models ]
-          path_to_typesync_model_dir: "tests/test-poetry-project/autogen"
+          requires: [generate-typesync-models]
+          path_to_typesync_model_dir: 'tests/test-poetry-project/autogen'
