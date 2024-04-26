@@ -13,6 +13,8 @@ import type {
 import { swift } from '../../platforms/swift/index.js';
 import { assertNever } from '../../util/assert.js';
 import { camelCase, pascalCase } from '../../util/casing.js';
+import { multiply } from '../../util/multiply-str.js';
+import { space } from '../../util/space.js';
 import type { RenderedFile } from '../_types.js';
 import type { SwiftRenderer, SwiftRendererConfig } from './_types.js';
 
@@ -82,8 +84,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
-      b.append('\t');
-      b.append(`case ${key} = "${value}"` + '\n');
+      b.append(`${this.indent(1)}case ${key} = "${value}"` + '\n');
     });
     b.append(`}`);
     return b.toString();
@@ -98,8 +99,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.cases.forEach(({ key, value }) => {
-      b.append('\t');
-      b.append(`case ${key} = ${value}` + '\n');
+      b.append(`${this.indent(1)}case ${key} = ${value}` + '\n');
     });
     b.append(`}`);
     return b.toString();
@@ -114,62 +114,62 @@ class SwiftRendererImpl implements SwiftRenderer {
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.values.forEach(({ structName, discriminantValue }) => {
-      b.append('\t');
-      b.append(`case ${camelCase(discriminantValue)}(${structName})` + '\n');
+      b.append(`${this.indent(1)}case ${camelCase(discriminantValue)}(${structName})` + '\n');
     });
 
     b.append('\n');
 
-    b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
-    b.append(`\t\tcase ${camelCase(modelType.discriminant)}`);
+    b.append(`${this.indent(1)}private enum CodingKeys: String, CodingKey {` + '\n');
+    b.append(`${this.indent(2)}case ${camelCase(modelType.discriminant)}`);
     if (camelCase(modelType.discriminant) !== modelType.discriminant) {
       b.append(` = ${modelType.discriminant}`);
     }
-    b.append(`\n\t}\n`);
+    b.append('\n');
+    b.append(`${this.indent(1)}}` + `\n`);
     b.append('\n');
 
-    b.append(`\tenum ${modelName}${pascalCase(modelType.discriminant)}: String, Codable {` + '\n');
+    b.append(`${this.indent(1)}enum ${modelName}${pascalCase(modelType.discriminant)}: String, Codable {` + '\n');
     modelType.values.forEach(({ discriminantValue }) => {
-      b.append(`\t\tcase ${camelCase(discriminantValue)}`);
+      b.append(`${this.indent(2)}case ${camelCase(discriminantValue)}`);
       if (camelCase(discriminantValue) !== discriminantValue) {
         b.append(` = "${discriminantValue}"`);
       }
       b.append('\n');
     });
-    b.append(`\t}\n`);
+    b.append(`${this.indent(1)}}\n`);
 
     b.append('\n');
 
-    b.append(`\tinit(from decoder: Decoder) throws {` + '\n');
-    b.append(`\t\tlet container = try decoder.container(keyedBy: CodingKeys.self)` + `\n`);
+    b.append(`${this.indent(1)}init(from decoder: Decoder) throws {` + '\n');
+    b.append(`${this.indent(2)}let container = try decoder.container(keyedBy: CodingKeys.self)` + `\n`);
     b.append(
-      `\t\tlet ${camelCase(modelType.discriminant)} = try container.decode(${modelName}${pascalCase(modelType.discriminant)}.self, forKey: .${camelCase(modelType.discriminant)})` +
+      `${this.indent(2)}let ${camelCase(modelType.discriminant)} = try container.decode(${modelName}${pascalCase(modelType.discriminant)}.self, forKey: .${camelCase(modelType.discriminant)})` +
         `\n`
     );
-    b.append(`\t\tswitch ${camelCase(modelType.discriminant)} {` + `\n`);
+    b.append(`${this.indent(2)}switch ${camelCase(modelType.discriminant)} {` + `\n`);
     modelType.values.forEach(({ structName, discriminantValue }) => {
-      b.append(`\t\tcase .${camelCase(discriminantValue)}:` + `\n`);
-      b.append(`\t\t\tself = .${camelCase(discriminantValue)}(try ${structName}(from: decoder))` + `\n`);
+      b.append(`${this.indent(2)}case .${camelCase(discriminantValue)}:` + `\n`);
+      b.append(`${this.indent(3)}self = .${camelCase(discriminantValue)}(try ${structName}(from: decoder))` + `\n`);
     });
-    b.append(`\t\t}` + `\n`);
-    b.append(`\t}\n`);
+    b.append(`${this.indent(2)}}` + `\n`);
+    b.append(`${this.indent(1)}}\n`);
 
     b.append('\n');
 
-    b.append(`\tfunc encode(to encoder: Encoder) throws {` + `\n`);
-    b.append(`\t\tvar container = encoder.container(keyedBy: CodingKeys.self)` + `\n`);
-    b.append(`\t\tswitch self {` + `\n`);
+    b.append(`${this.indent(1)}func encode(to encoder: Encoder) throws {` + `\n`);
+    b.append(`${this.indent(2)}var container = encoder.container(keyedBy: CodingKeys.self)` + `\n`);
+    b.append(`${this.indent(2)}switch self {` + `\n`);
     modelType.values.forEach(({ discriminantValue }) => {
-      b.append(`\t\tcase .${camelCase(discriminantValue)}(let obj):` + `\n`);
+      b.append(`${this.indent(2)}case .${camelCase(discriminantValue)}(let obj):` + `\n`);
       b.append(
-        `\t\t\ttry container.encode(${modelName}${pascalCase(modelType.discriminant)}.${camelCase(discriminantValue)}.rawValue, forKey: .${camelCase(modelType.discriminant)})` +
+        `${this.indent(3)}try container.encode(${modelName}${pascalCase(modelType.discriminant)}.${camelCase(discriminantValue)}.rawValue, forKey: .${camelCase(modelType.discriminant)})` +
           `\n`
       );
-      b.append(`\t\t\ttry obj.encode(to: encoder)` + `\n`);
+      b.append(`${this.indent(3)}try obj.encode(to: encoder)` + `\n`);
     });
-    b.append(`\t\t}` + `\n`);
+    b.append(`${this.indent(2)}}` + `\n`);
 
-    b.append(`\t}` + `\n`);
+    b.append(`${this.indent(1)}}` + `\n`);
 
     b.append(`}`);
 
@@ -185,52 +185,53 @@ class SwiftRendererImpl implements SwiftRenderer {
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.values.forEach(({ type }, valueIdx) => {
-      b.append('\t');
       const expression = swift.expressionForType(type);
-      b.append(`case variant${valueIdx + 1}(${expression.content})` + '\n');
+      b.append(`${this.indent(1)}case variant${valueIdx + 1}(${expression.content})` + '\n');
     });
 
     b.append('\n');
 
-    b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
+    b.append(`${this.indent(1)}private enum CodingKeys: String, CodingKey {` + '\n');
     modelType.values.forEach((_, valueIdx) => {
-      b.append(`\t\tcase variant${valueIdx + 1}` + `\n`);
+      b.append(`${this.indent(2)}case variant${valueIdx + 1}` + `\n`);
     });
-    b.append(`\t}\n`);
+    b.append(`${this.indent(1)}}\n`);
 
     b.append('\n');
 
-    b.append(`\tinit(from decoder: Decoder) throws {` + '\n');
-    b.append(`\t\tlet container = try decoder.singleValueContainer()` + `\n`);
+    b.append(`${this.indent(1)}init(from decoder: Decoder) throws {` + '\n');
+    b.append(`${this.indent(2)}let container = try decoder.singleValueContainer()` + `\n`);
     modelType.values.forEach(({ type }, valueIdx) => {
       const expression = swift.expressionForType(type);
       const variantKey = `variant${valueIdx + 1}`;
       b.append(
-        `${valueIdx > 0 ? ' else ' : '\t\t'}if let ${variantKey} = try? container.decode(${expression.content}.self) {` +
+        `${valueIdx > 0 ? ' else ' : this.indent(2)}if let ${variantKey} = try? container.decode(${expression.content}.self) {` +
           `\n`
       );
-      b.append(`\t\t\tself = .${variantKey}(${variantKey})` + `\n`);
-      b.append('\t\t}');
+      b.append(`${this.indent(3)}self = .${variantKey}(${variantKey})` + `\n`);
+      b.append(`${this.indent(2)}}`);
     });
+    b.append(` else {\n`);
     b.append(
-      ` else {\n\t\t\tthrow DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Failed to decode ${modelName} value."))\n\t\t}`
+      `${this.indent(3)}throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Failed to decode ${modelName} value."))\n`
     );
+    b.append(`${this.indent(2)}}`);
     b.append(`\n`);
-    b.append(`\t}\n`);
+    b.append(`${this.indent(1)}}\n`);
 
     b.append(`\n`);
 
-    b.append(`\tfunc encode(to encoder: Encoder) throws {` + `\n`);
-    b.append(`\t\tvar container = encoder.singleValueContainer()` + `\n`);
-    b.append(`\t\tswitch self {` + `\n`);
+    b.append(`${this.indent(1)}func encode(to encoder: Encoder) throws {` + `\n`);
+    b.append(`${this.indent(2)}var container = encoder.singleValueContainer()` + `\n`);
+    b.append(`${this.indent(2)}switch self {` + `\n`);
     modelType.values.forEach((_, valueIdx) => {
       const variantKey = `variant${valueIdx + 1}`;
-      b.append(`\t\tcase .${variantKey}(let val):` + `\n`);
-      b.append(`\t\t\ttry container.encode(val)\n`);
+      b.append(`${this.indent(2)}case .${variantKey}(let val):` + `\n`);
+      b.append(`${this.indent(3)}try container.encode(val)\n`);
     });
-    b.append(`\t\t}` + `\n`);
+    b.append(`${this.indent(2)}}` + `\n`);
 
-    b.append(`\t}` + `\n`);
+    b.append(`${this.indent(1)}}` + `\n`);
 
     b.append(`}`);
 
@@ -252,32 +253,34 @@ class SwiftRendererImpl implements SwiftRenderer {
     modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       if (property.docs !== undefined) {
-        b.append(this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
+        b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
-      b.append('\t');
       b.append(
-        `private(set) var ${camelCase(property.originalName)}: ${expression.content} = ${property.literalValue}` + '\n'
+        `${this.indent(1)}private(set) var ${camelCase(property.originalName)}: ${expression.content} = ${property.literalValue}` +
+          '\n'
       );
     });
     modelType.regularProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       if (property.docs !== undefined) {
-        b.append('\t' + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
+        b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
-      b.append('\t');
-      b.append(`var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` + '\n');
+      b.append(
+        `${this.indent(1)}var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` +
+          '\n'
+      );
     });
     if (hasNonCamelCaseOriginalName) {
       b.append('\n');
-      b.append(`\tprivate enum CodingKeys: String, CodingKey {` + '\n');
+      b.append(`${this.indent(1)}private enum CodingKeys: String, CodingKey {` + '\n');
       propertyOriginalNames.forEach(originalName => {
-        b.append(`\t\tcase ${camelCase(originalName)}`);
+        b.append(`${this.indent(2)}case ${camelCase(originalName)}`);
         if (camelCase(originalName) !== originalName) {
           b.append(` = "${originalName}"`);
         }
         b.append('\n');
       });
-      b.append(`\t}\n`);
+      b.append(`${this.indent(1)}}\n`);
     }
     b.append(`}`);
     return b.toString();
@@ -286,6 +289,10 @@ class SwiftRendererImpl implements SwiftRenderer {
   private buildDocCommentsFromMarkdownDocs(markdownDocs: string) {
     const lines = markdownDocs.split(`\n`);
     return lines.map(line => `///${line.length > 0 ? ' ' : ''}${line}`).join('\n');
+  }
+
+  private indent(count: number) {
+    return multiply(space(this.config.indentation), count);
   }
 }
 
