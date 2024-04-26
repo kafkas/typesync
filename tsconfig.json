@@ -2,8 +2,8 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
-    "module": "Node16",
     "jsx": "react",
+    "module": "Node16",
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": false,

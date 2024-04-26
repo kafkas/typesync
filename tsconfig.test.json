@@ -3,6 +3,6 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"],
-  "exclude": ["playground/**/*"]
+  "exclude": ["playground/**/*"],
+  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"]
 }

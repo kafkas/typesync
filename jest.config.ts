@@ -185,10 +185,15 @@ export default {
   // Whether to use watchman for file crawling
   // watchman: true,
 
+  // A map from regular expressions to module names or to arrays of module names that allow to stub out resources, like images or styles with a single module.
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+
+  // Jest will run .mjs and .js files with nearest package.json's type field set to module as ECMAScript Modules. If you have any other files that should run with native ESM, you need to specify their file extension here.
   extensionsToTreatAsEsm: ['.ts'],
+
+  // A map from regular expressions to paths to transformers.
   transform: {
     '^.+\\.(mt|t|cj|j)s$': [
       'ts-jest',
