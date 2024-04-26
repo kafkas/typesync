@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+### Patch Changes
+
+- f901a26: Fixed a bug where the Swift generator was ignoring the `indentation` parameter.
+
 ## 0.4.1
 
 ### Patch Changes
