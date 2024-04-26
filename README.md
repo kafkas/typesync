@@ -97,6 +97,9 @@ User:
         docs: A string that uniquely identifies the user within a project.
       role:
         type: UserRole
+      website_url:
+        type: string
+        optional: true
       created_at:
         type: timestamp
 ```
