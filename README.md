@@ -150,7 +150,7 @@ Decide if you want to version control the generated files. It can be beneficial 
 
 #### Multiple Files
 
-If your project grows, you might want to split your schema into multiple YAML/JSON files. TypeSync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
+If your project grows, you might want to split your schema into multiple YAML/JSON files. Typesync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
 
 # License
 
