@@ -44,7 +44,7 @@ await yargs(hideBin(process.argv))
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 4,
+          default: 2,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
