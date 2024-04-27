@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- f5cdb96: Changed the default `indentation` to 2.
+- ac4beb4: Implemented `customPydanticBase` option that makes generated models extend from a custom Pydantic base class.
+
 ## 0.4.2
 
 ### Patch Changes
