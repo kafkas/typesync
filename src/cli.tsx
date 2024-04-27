@@ -46,6 +46,11 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: 2,
         })
+        .option('customPydanticBase', {
+          describe: 'The base Pydantic class from which all the generated Pydantic models will extend.',
+          type: 'string',
+          demandOption: false,
+        })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
@@ -53,7 +58,7 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { definition, platform, outFile, indentation, debug } = args;
+      const { definition, platform, outFile, indentation, customPydanticBase, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -62,6 +67,7 @@ await yargs(hideBin(process.argv))
           platform,
           outFile: pathToOutputFile,
           indentation,
+          customPydanticBase,
           debug,
         });
 

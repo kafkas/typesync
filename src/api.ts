@@ -39,11 +39,14 @@ export function getPlatforms(): GenerationPlatform[] {
   return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms()];
 }
 
+export type TypesyncGenerateOption = keyof TypesyncGenerateOptions;
+
 export interface TypesyncGenerateOptions {
   definition: string;
   platform: GenerationPlatform;
   outFile: string;
   indentation: number;
+  customPydanticBase?: string;
   debug: boolean;
 }
 
