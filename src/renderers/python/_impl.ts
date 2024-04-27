@@ -60,7 +60,7 @@ class PythonRendererImpl implements PythonRenderer {
     const b = new StringBuilder();
 
     b.append(this.generateStaticDeclarationsForUndefinedSentinel());
-    b.append(`\n`);
+    b.append(`\n\n`);
     b.append(this.generateStaticDeclarationsForTypesyncModel());
 
     return b.toString();
@@ -70,12 +70,15 @@ class PythonRendererImpl implements PythonRenderer {
     const b = new StringBuilder();
 
     b.append(`${this.indent(0)}class ${UNDEFINED_SENTINEL_CLASS}:\n`);
+    b.append(
+      `${this.indent(1)}"""Do not use this class in your code. Use the \`${UNDEFINED_SENTINEL_NAME}\` sentinel instead."""\n`
+    );
     b.append(`${this.indent(1)}_instance = None\n\n`);
 
     b.append(`${this.indent(1)}def __init__(self):\n`);
     b.append(`${this.indent(2)}if ${UNDEFINED_SENTINEL_CLASS}._instance is not None:\n`);
     b.append(
-      `${this.indent(3)}raise RuntimeError("${UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${UNDEFINED_SENTINEL_NAME} variable instead.")\n`
+      `${this.indent(3)}raise RuntimeError("${UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${UNDEFINED_SENTINEL_NAME} sentinel instead.")\n`
     );
     b.append(`${this.indent(2)}else:\n`);
     b.append(`${this.indent(3)}${UNDEFINED_SENTINEL_CLASS}._instance = self\n\n`);
@@ -91,6 +94,9 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`${this.indent(2)}return value\n\n`);
 
     b.append(`${this.indent(0)}${UNDEFINED_SENTINEL_NAME} = ${UNDEFINED_SENTINEL_CLASS}()\n`);
+    b.append(
+      `${this.indent(0)}"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`${UNDEFINED_SENTINEL_NAME}\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""`
+    );
 
     return b.toString();
   }
