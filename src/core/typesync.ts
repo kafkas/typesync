@@ -1,13 +1,18 @@
 import { globSync } from 'glob';
 
 import type {
+  GenerationPlatform,
   Typesync,
   TypesyncGenerateOptions,
   TypesyncGenerateResult,
   TypesyncValidateOptions,
   TypesyncValidateResult,
 } from '../api.js';
-import { DefinitionFilesNotFoundError, InvalidIndentationOption } from '../errors/index.js';
+import {
+  DefinitionFilesNotFoundError,
+  InvalidCustomPydanticBaseOption,
+  InvalidIndentationOption,
+} from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
@@ -17,15 +22,29 @@ import { schema } from '../schema/index.js';
 import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
+import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
 import { createDefinitionParser } from './definition-parser.js';
 import { createLogger } from './logger.js';
 
-class TypesyncImpl implements Typesync {
-  public async generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult> {
-    const logger = createLogger(opts.debug);
-    this.validateOpts(opts);
+interface NormalizedGenerateOptions {
+  definitionGlobPattern: string;
+  platform: GenerationPlatform;
+  pathToOutputFile: string;
+  indentation: number;
+  customPydanticBase?: {
+    importPath: string;
+    className: string;
+  };
+  debug: boolean;
+}
 
-    const { definition: definitionGlobPattern, outFile: pathToOutputFile } = opts;
+class TypesyncImpl implements Typesync {
+  public async generate(rawOpts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult> {
+    const opts = this.validateAndNormalizeOpts(rawOpts);
+
+    const { definitionGlobPattern, pathToOutputFile, debug } = opts;
+
+    const logger = createLogger(debug);
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
     const parser = createDefinitionParser(logger);
@@ -45,11 +64,30 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  private validateOpts(opts: TypesyncGenerateOptions) {
-    const { indentation } = opts;
+  private validateAndNormalizeOpts(opts: TypesyncGenerateOptions): NormalizedGenerateOptions {
+    const { definition, platform, outFile, indentation, customPydanticBase: customPydanticBaseRaw, debug } = opts;
+
+    let customPydanticBase;
+
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
     }
+    if (typeof customPydanticBaseRaw === 'string') {
+      try {
+        customPydanticBase = parsePythonClassImportPath(customPydanticBaseRaw);
+      } catch {
+        throw new InvalidCustomPydanticBaseOption(customPydanticBaseRaw);
+      }
+    }
+
+    return {
+      definitionGlobPattern: definition,
+      platform,
+      pathToOutputFile: outFile,
+      indentation,
+      customPydanticBase,
+      debug,
+    };
   }
 
   public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
@@ -75,7 +113,7 @@ class TypesyncImpl implements Typesync {
     return filePaths as [string, ...string[]];
   }
 
-  private createGenerator(opts: TypesyncGenerateOptions): Generator {
+  private createGenerator(opts: NormalizedGenerateOptions): Generator {
     const { platform } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
@@ -92,8 +130,8 @@ class TypesyncImpl implements Typesync {
     }
   }
 
-  private createRenderer(opts: TypesyncGenerateOptions): renderers.Renderer {
-    const { platform, indentation } = opts;
+  private createRenderer(opts: NormalizedGenerateOptions): renderers.Renderer {
+    const { platform, indentation, customPydanticBase } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
@@ -103,7 +141,11 @@ class TypesyncImpl implements Typesync {
       case 'swift:firebase:10':
         return renderers.createSwiftRenderer({ platform, indentation });
       case 'py:firebase-admin:6':
-        return renderers.createPythonRenderer({ platform, indentation });
+        return renderers.createPythonRenderer({
+          platform,
+          indentation,
+          customPydanticBase,
+        });
       default:
         assertNever(platform);
     }
