@@ -57,4 +57,33 @@ describe('PythonRendererImpl', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  it('extends from custom base class if `customPydanticBase` is provided', async () => {
+    const renderer = createPythonRenderer({
+      indentation: 2,
+      platform: 'py:firebase-admin:6',
+      customPydanticBase: {
+        importPath: 'x.y',
+        className: 'CustomModel',
+      },
+    });
+
+    const generation: PythonGeneration = {
+      type: 'python',
+      declarations: [
+        {
+          type: 'alias',
+          modelName: 'Username',
+          modelType: {
+            type: 'str',
+          },
+          modelDocs: undefined,
+        },
+      ],
+    };
+
+    const result = await renderer.render(generation);
+
+    expect(result).toMatchSnapshot();
+  });
 });
