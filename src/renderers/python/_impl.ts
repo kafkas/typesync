@@ -97,7 +97,9 @@ class PythonRendererImpl implements PythonRenderer {
   private generateStaticDeclarationsForTypesyncModel() {
     const b = new StringBuilder();
 
-    b.append(`${this.indent(0)}class TypesyncModel(pydantic.BaseModel):\n`);
+    const baseModel = this.config.customPydanticBase?.className ?? 'pydantic.BaseModel';
+
+    b.append(`${this.indent(0)}class TypesyncModel(${baseModel}):\n`);
     b.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
     b.append(`${this.indent(2)}processed = {}\n`);
     b.append(`${this.indent(2)}for field_name, field_value in dict(self).items():\n`);
