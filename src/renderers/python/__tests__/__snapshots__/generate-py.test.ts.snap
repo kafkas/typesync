@@ -12,11 +12,12 @@ from pydantic_core import core_schema
 from typing_extensions import Annotated
 
 class TypesyncUndefined:
+    """Do not use this class in your code. Use the \`UNDEFINED\` sentinel instead."""
     _instance = None
 
     def __init__(self):
         if TypesyncUndefined._instance is not None:
-            raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+            raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED sentinel instead.")
         else:
             TypesyncUndefined._instance = self
 
@@ -31,6 +32,7 @@ class TypesyncUndefined:
         return value
 
 UNDEFINED = TypesyncUndefined()
+"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`UNDEFINED\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""
 
 class TypesyncModel(pydantic.BaseModel):
     def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
@@ -85,11 +87,12 @@ from typing_extensions import Annotated
 from x.y import CustomModel
 
 class TypesyncUndefined:
+  """Do not use this class in your code. Use the \`UNDEFINED\` sentinel instead."""
   _instance = None
 
   def __init__(self):
     if TypesyncUndefined._instance is not None:
-      raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED variable instead.")
+      raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED sentinel instead.")
     else:
       TypesyncUndefined._instance = self
 
@@ -104,6 +107,7 @@ class TypesyncUndefined:
     return value
 
 UNDEFINED = TypesyncUndefined()
+"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`UNDEFINED\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""
 
 class TypesyncModel(CustomModel):
   def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
