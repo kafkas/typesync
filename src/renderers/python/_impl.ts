@@ -49,6 +49,10 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`import pydantic\n`);
     b.append(`from pydantic_core import core_schema\n`);
     b.append(`from typing_extensions import Annotated`);
+    if (this.config.customPydanticBase) {
+      const { importPath, className } = this.config.customPydanticBase;
+      b.append(`\nfrom ${importPath} import ${className}`);
+    }
     return b.toString();
   }
 
