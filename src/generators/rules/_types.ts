@@ -1,9 +1,9 @@
-import type { ts } from '../../platforms/ts/index.js';
+import type { rules } from '../../platforms/rules/index.js';
 
 export interface RulesValidatorDeclaration {
   type: 'validator';
   modelName: string;
-  modelType: ts.Object;
+  modelType: rules.Object;
 }
 
 export type RulesDeclaration = RulesValidatorDeclaration;

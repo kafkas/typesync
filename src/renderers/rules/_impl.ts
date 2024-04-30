@@ -43,8 +43,9 @@ class RulesRendererImpl implements RulesRenderer {
     // TODO: Make dynamic with according to the `pattern` input
     b.append(`${this.indent(1)}function is${modelName}Valid() {` + `\n`);
     // TODO: Implement
-    b.append(`${this.indent(2)}return true;`);
+    b.append(`${this.indent(2)}return true;` + `\n`);
     b.append(`${this.indent(1)}}`);
+    return b.toString();
   }
 
   private indent(count: number) {
