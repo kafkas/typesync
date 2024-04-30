@@ -125,6 +125,9 @@ class TypesyncImpl implements Typesync {
         return createSwiftGenerator({ platform });
       case 'py:firebase-admin:6':
         return createPythonGenerator({ platform });
+      case 'rules:2':
+        // TODO: Implement
+        throw new Error('Unimplemented');
       default:
         assertNever(platform);
     }
@@ -137,14 +140,25 @@ class TypesyncImpl implements Typesync {
       case 'ts:firebase-admin:11':
       case 'ts:firebase:10':
       case 'ts:firebase:9':
-        return renderers.createTSRenderer({ platform, indentation });
+        return renderers.createTSRenderer({
+          platform,
+          indentation,
+        });
       case 'swift:firebase:10':
-        return renderers.createSwiftRenderer({ platform, indentation });
+        return renderers.createSwiftRenderer({
+          platform,
+          indentation,
+        });
       case 'py:firebase-admin:6':
         return renderers.createPythonRenderer({
           platform,
           indentation,
           customPydanticBase,
+        });
+      case 'rules:2':
+        return renderers.createRulesRenderer({
+          platform,
+          indentation,
         });
       default:
         assertNever(platform);

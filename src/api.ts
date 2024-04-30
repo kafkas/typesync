@@ -15,13 +15,23 @@ const PYTHON_PLATFORMS = {
   'py:firebase-admin:6': true,
 };
 
+const RULES_PLATFORMS = {
+  'rules:2': true,
+};
+
 export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
 
 export type SwiftGenerationPlatform = keyof typeof SWIFT_PLATFORMS;
 
 export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
 
-export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform | PythonGenerationPlatform;
+export type RulesGenerationPlatform = keyof typeof RULES_PLATFORMS;
+
+export type GenerationPlatform =
+  | TSGenerationPlatform
+  | SwiftGenerationPlatform
+  | PythonGenerationPlatform
+  | RulesGenerationPlatform;
 
 export function getTSPlatforms() {
   return objectKeys(TS_PLATFORMS);
@@ -35,8 +45,12 @@ export function getPythonPlatforms() {
   return objectKeys(PYTHON_PLATFORMS);
 }
 
+export function getRulesPlatforms() {
+  return objectKeys(RULES_PLATFORMS);
+}
+
 export function getPlatforms(): GenerationPlatform[] {
-  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms()];
+  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms(), ...getRulesPlatforms()];
 }
 
 export type TypesyncGenerateOption = keyof TypesyncGenerateOptions;
