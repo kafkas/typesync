@@ -55,6 +55,8 @@ class RulesRendererImpl implements RulesRenderer {
         return `(${predicate.varName} == ${predicate.varValue})`;
       case 'type-equality':
         return `(${predicate.varName} is ${predicate.varType.type})`;
+      case 'type-validator':
+        return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
       case 'literal':
         return predicate.value;
       case 'or':

@@ -72,6 +72,11 @@ export interface SimpleUnion {
   readonly variants: Type[];
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | DiscriminatedUnion | SimpleUnion;
+export interface Alias {
+  readonly type: 'alias';
+  readonly name: string;
+}
+
+export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | DiscriminatedUnion | SimpleUnion | Alias;
 
 export type RulesDataType = String | Bool | Float | Int | Timestamp | List | Map;

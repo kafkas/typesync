@@ -1,5 +1,6 @@
 import { assertNever } from '../../util/assert.js';
 import type {
+  Alias,
   Any,
   Bool,
   DiscriminatedUnion,
@@ -30,6 +31,12 @@ export interface TypeEqualityPredicate {
   varType: RulesDataType;
 }
 
+export interface TypeValidatorPredicate {
+  type: 'type-validator';
+  varName: string;
+  varModelName: string;
+}
+
 export interface LiteralPredicate {
   type: 'literal';
   value: string;
@@ -45,7 +52,13 @@ export interface AndPredicate {
   innerPredicates: Predicate[];
 }
 
-export type Predicate = ValueEqualityPredicate | TypeEqualityPredicate | LiteralPredicate | OrPredicate | AndPredicate;
+export type Predicate =
+  | ValueEqualityPredicate
+  | TypeEqualityPredicate
+  | TypeValidatorPredicate
+  | LiteralPredicate
+  | OrPredicate
+  | AndPredicate;
 
 export function predicateForAnyType(_t: Any): Predicate {
   return { type: 'literal', value: `true` };
@@ -138,6 +151,14 @@ export function predicateForSimpleUnionType(t: SimpleUnion, varName: string): Pr
   };
 }
 
+export function predicateForAliasType(t: Alias, varName: string): Predicate {
+  return {
+    type: 'type-validator',
+    varName,
+    varModelName: t.name,
+  };
+}
+
 export function predicateForType(t: Type, varName: string): Predicate {
   switch (t.type) {
     case 'any':
@@ -168,6 +189,8 @@ export function predicateForType(t: Type, varName: string): Predicate {
       return predicateForDiscriminatedUnionType(t, varName);
     case 'simple-union':
       return predicateForSimpleUnionType(t, varName);
+    case 'alias':
+      return predicateForAliasType(t, varName);
     default:
       assertNever(t);
   }

@@ -97,8 +97,6 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       case 'timestamp':
       case 'literal':
         return type;
-      case 'alias':
-        return flattenAliasType(type);
       case 'enum':
         return type;
       case 'tuple':
@@ -113,6 +111,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
         return flattenDiscriminatedUnionType(type);
       case 'simple-union':
         return flattenSimpleUnionType(type);
+      case 'alias':
+        return flattenAliasType(type);
       default:
         assertNever(type);
     }

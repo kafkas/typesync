@@ -18,6 +18,7 @@ export function isRulesDataType(t: Type): t is RulesDataType {
     case 'tuple':
     case 'discriminated-union':
     case 'simple-union':
+    case 'alias':
       return false;
     default:
       assertNever(t);
