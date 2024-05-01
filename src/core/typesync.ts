@@ -15,6 +15,7 @@ import {
 } from '../errors/index.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
+import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
@@ -126,8 +127,7 @@ class TypesyncImpl implements Typesync {
       case 'py:firebase-admin:6':
         return createPythonGenerator({ platform });
       case 'rules:2':
-        // TODO: Implement
-        throw new Error('Unimplemented');
+        return createRulesGenerator({ platform });
       default:
         assertNever(platform);
     }

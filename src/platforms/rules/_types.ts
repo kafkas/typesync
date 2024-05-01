@@ -1,9 +1,5 @@
-export interface Unknown {
-  readonly type: 'unknown';
-}
-
-export interface Null {
-  readonly type: 'null';
+export interface Any {
+  readonly type: 'any';
 }
 
 export interface String {
@@ -26,7 +22,7 @@ export interface Timestamp {
   readonly type: 'timestamp';
 }
 
-export type Primitive = Unknown | Null | String | Bool | Float | Int | Timestamp;
+export type Primitive = Any | String | Bool | Float | Int | Timestamp;
 
 export interface Literal {
   readonly type: 'literal';
@@ -65,9 +61,15 @@ export interface ObjectField {
   readonly name: string;
 }
 
-export interface Union {
-  readonly type: 'union';
+export interface DiscriminatedUnion {
+  readonly type: 'discriminated-union';
+  readonly discriminant: string;
+  readonly variants: Object[];
+}
+
+export interface SimpleUnion {
+  readonly type: 'simple-union';
   readonly variants: Type[];
 }
 
-export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | Union;
+export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | DiscriminatedUnion | SimpleUnion;
