@@ -30,14 +30,15 @@ export type FlatType =
   | FlatMapType
   | FlatObjectType
   | FlatDiscriminatedUnionType
-  | FlatSimpleUnionType;
+  | FlatSimpleUnionType
+  | schema.types.Alias;
 
 export type FlatTupleType = TupleType<FlatType>;
 export type FlatListType = ListType<FlatType>;
 export type FlatMapType = MapType<FlatType>;
 export type FlatObjectType = ObjectType<FlatType>;
 export type FlatObjectFieldType = ObjectFieldType<FlatType>;
-export type FlatDiscriminatedUnionType = DiscriminatedUnionType<FlatObjectType>;
+export type FlatDiscriminatedUnionType = DiscriminatedUnionType<schema.types.Alias | FlatObjectType>;
 export type FlatSimpleUnionType = SimpleUnionType<FlatType>;
 export type FlatAliasModel = AliasModel<FlatType>;
 export type FlatDocumentModel = DocumentModel<FlatObjectType>;

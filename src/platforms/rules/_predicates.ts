@@ -136,7 +136,16 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
 }
 
 export function predicateForDiscriminatedUnionType(t: DiscriminatedUnion, varName: string): Predicate {
-  const variantPredicates = t.variants.map(variantType => predicateForObjectType(variantType, varName));
+  const variantPredicates = t.variants.map(variantType => {
+    switch (variantType.type) {
+      case 'object':
+        return predicateForObjectType(variantType, varName);
+      case 'alias':
+        return predicateForAliasType(variantType, varName);
+      default:
+        assertNever(variantType);
+    }
+  });
   return {
     type: 'or',
     innerPredicates: variantPredicates,
@@ -144,7 +153,9 @@ export function predicateForDiscriminatedUnionType(t: DiscriminatedUnion, varNam
 }
 
 export function predicateForSimpleUnionType(t: SimpleUnion, varName: string): Predicate {
-  const variantPredicates = t.variants.map(variantType => predicateForType(variantType, varName));
+  const variantPredicates = t.variants.map(variantType => {
+    return predicateForType(variantType, varName);
+  });
   return {
     type: 'or',
     innerPredicates: variantPredicates,

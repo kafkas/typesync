@@ -64,7 +64,7 @@ export interface ObjectField {
 export interface DiscriminatedUnion {
   readonly type: 'discriminated-union';
   readonly discriminant: string;
-  readonly variants: Object[];
+  readonly variants: (Object | Alias)[];
 }
 
 export interface SimpleUnion {

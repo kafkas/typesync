@@ -68,11 +68,28 @@ export function flatObjectFieldTypeToRules(t: FlatObjectFieldType): rules.Object
 }
 
 export function flatDiscriminatedUnionTypeToRules(t: FlatDiscriminatedUnionType): rules.DiscriminatedUnion {
-  return { type: 'discriminated-union', discriminant: t.discriminant, variants: t.variants.map(flatObjectTypeToRules) };
+  return {
+    type: 'discriminated-union',
+    discriminant: t.discriminant,
+    variants: t.variants.map(vt => {
+      switch (vt.type) {
+        case 'object':
+          return flatObjectTypeToRules(vt);
+        case 'alias':
+          return flatAliasTypeToRules(vt);
+        default:
+          assertNever(vt);
+      }
+    }),
+  };
 }
 
 export function flatSimpleUnionTypeToRules(t: FlatSimpleUnionType): rules.SimpleUnion {
   return { type: 'simple-union', variants: t.variants.map(flatTypeToRules) };
+}
+
+export function flatAliasTypeToRules(t: schema.types.Alias): rules.Alias {
+  return { type: 'alias', name: t.name };
 }
 
 export function flatTypeToRules(t: FlatType): rules.Type {
@@ -105,6 +122,8 @@ export function flatTypeToRules(t: FlatType): rules.Type {
       return flatDiscriminatedUnionTypeToRules(t);
     case 'simple-union':
       return flatSimpleUnionTypeToRules(t);
+    case 'alias':
+      return flatAliasTypeToRules(t);
     default:
       assertNever(t);
   }
