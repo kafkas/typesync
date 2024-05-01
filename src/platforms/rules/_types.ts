@@ -73,3 +73,5 @@ export interface SimpleUnion {
 }
 
 export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | DiscriminatedUnion | SimpleUnion;
+
+export type RulesDataType = String | Bool | Float | Int | Timestamp | List | Map;
