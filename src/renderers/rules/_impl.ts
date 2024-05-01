@@ -16,9 +16,8 @@ class RulesRendererImpl implements RulesRenderer {
     b.append(`rules_version = '2';` + `\n`);
     b.append(`service cloud.firestore {` + `\n`);
 
-    g.declarations.forEach(declaration => {
-      b.append(`${this.renderDeclaration(declaration)}\n\n`);
-    });
+    const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
+    b.append(renderedDeclarations + `\n`);
 
     b.append('}');
 
@@ -53,15 +52,15 @@ class RulesRendererImpl implements RulesRenderer {
   private renderPredicate(predicate: rules.Predicate): string {
     switch (predicate.type) {
       case 'value-equality':
-        return `${predicate.varName} == ${predicate.varValue}`;
+        return `(${predicate.varName} == ${predicate.varValue})`;
       case 'type-equality':
-        return `${predicate.varName} is ${predicate.varType.type}`;
+        return `(${predicate.varName} is ${predicate.varType.type})`;
       case 'literal':
         return predicate.value;
       case 'or':
-        return predicate.innerPredicates.map(innerPredicate => this.renderPredicate(innerPredicate)).join(' || ');
+        return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
       case 'and':
-        return predicate.innerPredicates.map(innerPredicate => this.renderPredicate(innerPredicate)).join(' && ');
+        return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
       default:
         assertNever(predicate);
     }
