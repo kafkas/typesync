@@ -49,6 +49,7 @@ export interface OrPredicate {
 
 export interface AndPredicate {
   type: 'and';
+  alignment: 'vertical' | 'horizontal';
   innerPredicates: Predicate[];
 }
 
@@ -110,6 +111,7 @@ export function predicateForTupleType(t: Tuple, varName: string): Predicate {
   );
   return {
     type: 'and',
+    alignment: 'horizontal',
     innerPredicates: [primaryPredicate, ...elementPredicates],
   };
 }
@@ -131,6 +133,7 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
   const fieldPredicates = t.fields.map(field => predicateForType(field.type, `${varName}.${field.name}`));
   return {
     type: 'and',
+    alignment: 'vertical',
     innerPredicates: [primaryPredicate, ...fieldPredicates],
   };
 }

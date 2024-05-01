@@ -62,7 +62,16 @@ class RulesRendererImpl implements RulesRenderer {
       case 'or':
         return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
       case 'and':
-        return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
+        if (predicate.alignment === 'vertical') {
+          return (
+            `(\n` +
+            `${predicate.innerPredicates.map(p => `${this.indent(3)}${this.renderPredicate(p)}`).join(' &&\n')}` +
+            `\n${this.indent(2)})`
+          );
+        } else {
+          return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
+        }
+
       default:
         assertNever(predicate);
     }
