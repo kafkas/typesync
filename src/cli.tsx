@@ -10,6 +10,21 @@ import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
 import { ValidationSuccessful } from './components/ValidationSuccessful.js';
+import {
+  DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
+  DEFAULT_PY_DEBUG,
+  DEFAULT_PY_INDENTATION,
+  DEFAULT_RULES_DEBUG,
+  DEFAULT_RULES_END_MARKER,
+  DEFAULT_RULES_INDENTATION,
+  DEFAULT_RULES_START_MARKER,
+  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_SWIFT_DEBUG,
+  DEFAULT_SWIFT_INDENTATION,
+  DEFAULT_TS_DEBUG,
+  DEFAULT_TS_INDENTATION,
+} from './constants.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
 import { extractPackageJsonVersion } from './util/extract-package-json-version.js';
 
@@ -44,13 +59,13 @@ await yargs(hideBin(process.argv))
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
+          default: DEFAULT_TS_INDENTATION,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_TS_DEBUG,
         }),
     async args => {
       const { definition, platform, outFile, indentation, debug } = args;
@@ -103,13 +118,13 @@ await yargs(hideBin(process.argv))
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
+          default: DEFAULT_SWIFT_INDENTATION,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_SWIFT_DEBUG,
         }),
     async args => {
       const { definition, platform, outFile, indentation, debug } = args;
@@ -162,18 +177,19 @@ await yargs(hideBin(process.argv))
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
+          default: DEFAULT_PY_INDENTATION,
         })
         .option('customPydanticBase', {
           describe: 'The base Pydantic class from which all the generated Pydantic models will extend.',
           type: 'string',
           demandOption: false,
+          default: DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_PY_DEBUG,
         }),
     async args => {
       const { definition, platform, outFile, indentation, customPydanticBase, debug } = args;
@@ -227,37 +243,37 @@ await yargs(hideBin(process.argv))
           describe: 'A marker that indicates the line after which the generated code should be inserted.',
           type: 'string',
           demandOption: false,
-          default: 'typesync-start',
+          default: DEFAULT_RULES_START_MARKER,
         })
         .option('endMarker', {
           describe: 'A marker that indicates the line before which the generated code should be inserted.',
           type: 'string',
           demandOption: false,
-          default: 'typesync-end',
+          default: DEFAULT_RULES_END_MARKER,
         })
         .option('validatorNamePattern', {
           describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring. For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
-          default: 'isValid{modelName}',
+          default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
         })
         .option('validatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
           type: 'string',
           demandOption: false,
-          default: 'data',
+          default: DEFAULT_RULES_VALIDATOR_PARAM_NAME,
         })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
+          default: DEFAULT_RULES_INDENTATION,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_RULES_DEBUG,
         }),
     async args => {
       const {
