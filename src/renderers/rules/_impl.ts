@@ -52,34 +52,70 @@ class RulesRendererImpl implements RulesRenderer {
   private renderPredicate(predicate: rules.Predicate): string {
     switch (predicate.type) {
       case 'value-equality':
-        return `(${predicate.varName} == ${predicate.varValue})`;
+        return this.renderValueEqualityPredicate(predicate);
       case 'type-equality':
-        return `(${predicate.varName} is ${predicate.varType.type})`;
+        return this.renderTypeEqualityPredicate(predicate);
       case 'type-validator':
-        return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
+        return this.renderTypeValidatorPredicate(predicate);
       case 'map-has-key':
-        return `('${predicate.key}' in ${predicate.varName})`;
+        return this.renderMapHasKeyPredicate(predicate);
       case 'map-has-only-keys':
-        return `(${predicate.varName}.keys().hasOnly([${predicate.keys.map(k => `'${k}'`).join(', ')}]))`;
+        return this.renderMapHasOnlyKeysPredicate(predicate);
       case 'literal':
-        return predicate.value;
+        return this.renderLiteralPredicate(predicate);
       case 'or':
-        return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+        return this.renderOrPredicate(predicate);
       case 'and':
-        if (predicate.alignment === 'vertical') {
-          return (
-            `(\n` +
-            `${predicate.innerPredicates.map(p => `${this.indent(3)}${this.renderPredicate(p)}`).join(' &&\n')}` +
-            `\n${this.indent(2)})`
-          );
-        } else {
-          return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
-        }
+        return this.renderAndPredicate(predicate);
       case 'negation':
-        return `!${this.renderPredicate(predicate.originalPredicate)}`;
+        return this.renderNegationPredicate(predicate);
       default:
         assertNever(predicate);
     }
+  }
+
+  private renderValueEqualityPredicate(predicate: rules.ValueEqualityPredicate) {
+    return `(${predicate.varName} == ${predicate.varValue})`;
+  }
+
+  private renderTypeEqualityPredicate(predicate: rules.TypeEqualityPredicate) {
+    return `(${predicate.varName} is ${predicate.varType.type})`;
+  }
+
+  private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
+    return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
+  }
+
+  private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
+    return `('${predicate.key}' in ${predicate.varName})`;
+  }
+
+  private renderMapHasOnlyKeysPredicate(predicate: rules.MapHasOnlyKeysPredicate) {
+    return `(${predicate.varName}.keys().hasOnly([${predicate.keys.map(k => `'${k}'`).join(', ')}]))`;
+  }
+
+  private renderLiteralPredicate(predicate: rules.LiteralPredicate) {
+    return predicate.value;
+  }
+
+  private renderOrPredicate(predicate: rules.OrPredicate) {
+    return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+  }
+
+  private renderAndPredicate(predicate: rules.AndPredicate) {
+    if (predicate.alignment === 'vertical') {
+      return (
+        `(\n` +
+        `${predicate.innerPredicates.map(p => `${this.indent(3)}${this.renderPredicate(p)}`).join(' &&\n')}` +
+        `\n${this.indent(2)})`
+      );
+    } else {
+      return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
+    }
+  }
+
+  private renderNegationPredicate(predicate: rules.NegationPredicate) {
+    return `!${this.renderPredicate(predicate.originalPredicate)}`;
   }
 
   private validatorPredicate(modelName: string) {
