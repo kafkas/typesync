@@ -41,7 +41,7 @@ jobs:
       platform:
         description: Target platform and version
         type: enum
-        enum: ['ts:firebase-admin:12', 'ts:firebase-admin:11', 'ts:firebase:10', 'ts:firebase:9', 'py:firebase-admin:6']
+        enum: ['py:firebase-admin:6']
     steps:
       - checkout-build-yarn-project:
           checkout_path: ~/project
@@ -49,7 +49,7 @@ jobs:
           name: Generate types from the model schema
           command: |
             PYTHON_OUTPUT_MODEL_PATH=<< parameters.output_folder_path >>/models.py
-            yarn tsx src/cli.tsx generate --definition << parameters.model_path >> \
+            yarn tsx src/cli.tsx generate-py --definition << parameters.model_path >> \
             --platform << parameters.platform >> \
             --outFile $PYTHON_OUTPUT_MODEL_PATH
       - persist_to_workspace:

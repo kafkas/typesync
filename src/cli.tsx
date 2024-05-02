@@ -5,11 +5,26 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPlatforms, getRulesPlatforms } from './api.js';
+import { createTypesync, getPythonPlatforms, getRulesPlatforms, getSwiftPlatforms, getTSPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
 import { ValidationSuccessful } from './components/ValidationSuccessful.js';
+import {
+  DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
+  DEFAULT_PY_DEBUG,
+  DEFAULT_PY_INDENTATION,
+  DEFAULT_RULES_DEBUG,
+  DEFAULT_RULES_END_MARKER,
+  DEFAULT_RULES_INDENTATION,
+  DEFAULT_RULES_START_MARKER,
+  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_SWIFT_DEBUG,
+  DEFAULT_SWIFT_INDENTATION,
+  DEFAULT_TS_DEBUG,
+  DEFAULT_TS_INDENTATION,
+} from './constants.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
 import { extractPackageJsonVersion } from './util/extract-package-json-version.js';
 
@@ -19,13 +34,13 @@ const cliVersion = extractPackageJsonVersion();
 
 await yargs(hideBin(process.argv))
   .command(
-    'generate',
-    'Generates models from a definition file',
+    'generate-ts',
+    'Generates TypeScript type definitions for the specified schema and writes them to the specified file.',
     y =>
       y
         .option('definition', {
           describe:
-            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
@@ -33,7 +48,7 @@ await yargs(hideBin(process.argv))
           describe: 'Target platform and version.',
           type: 'string',
           demandOption: true,
-          choices: getPlatforms(),
+          choices: getTSPlatforms(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',
@@ -44,25 +59,132 @@ await yargs(hideBin(process.argv))
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
-        })
-        .option('customPydanticBase', {
-          describe: 'The base Pydantic class from which all the generated Pydantic models will extend.',
-          type: 'string',
-          demandOption: false,
+          default: DEFAULT_TS_INDENTATION,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_TS_DEBUG,
+        }),
+    async args => {
+      const { definition, platform, outFile, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateTs({
+          definition: resolve(process.cwd(), definition),
+          platform,
+          outFile: pathToOutputFile,
+          indentation,
+          debug,
+        });
+
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
+      } catch (e) {
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'generate-swift',
+    'Generates Swift type definitions for the specified schema and writes them to the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('platform', {
+          describe: 'Target platform and version.',
+          type: 'string',
+          demandOption: true,
+          choices: getSwiftPlatforms(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: DEFAULT_SWIFT_INDENTATION,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_SWIFT_DEBUG,
+        }),
+    async args => {
+      const { definition, platform, outFile, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateSwift({
+          definition: resolve(process.cwd(), definition),
+          platform,
+          outFile: pathToOutputFile,
+          indentation,
+          debug,
+        });
+
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
+      } catch (e) {
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'generate-py',
+    'Generates Python/Pydantic type definitions for the specified schema and writes them to the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('platform', {
+          describe: 'Target platform and version.',
+          type: 'string',
+          demandOption: true,
+          choices: getPythonPlatforms(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: DEFAULT_PY_INDENTATION,
+        })
+        .option('customPydanticBase', {
+          describe: 'The base Pydantic class from which all the generated Pydantic models will extend.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_PY_DEBUG,
         }),
     async args => {
       const { definition, platform, outFile, indentation, customPydanticBase, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
-        const result = await typesync.generate({
+        const result = await typesync.generatePy({
           definition: resolve(process.cwd(), definition),
           platform,
           outFile: pathToOutputFile,
@@ -71,13 +193,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
@@ -90,7 +206,7 @@ await yargs(hideBin(process.argv))
       y
         .option('definition', {
           describe:
-            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
@@ -109,37 +225,37 @@ await yargs(hideBin(process.argv))
           describe: 'A marker that indicates the line after which the generated code should be inserted.',
           type: 'string',
           demandOption: false,
-          default: 'typesync-start',
+          default: DEFAULT_RULES_START_MARKER,
         })
         .option('endMarker', {
           describe: 'A marker that indicates the line before which the generated code should be inserted.',
           type: 'string',
           demandOption: false,
-          default: 'typesync-end',
+          default: DEFAULT_RULES_END_MARKER,
         })
         .option('validatorNamePattern', {
           describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring. For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
-          default: 'isValid{modelName}',
+          default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
         })
         .option('validatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
           type: 'string',
           demandOption: false,
-          default: 'data',
+          default: DEFAULT_RULES_VALIDATOR_PARAM_NAME,
         })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
-          default: 2,
+          default: DEFAULT_RULES_INDENTATION,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_RULES_DEBUG,
         }),
     async args => {
       const {
@@ -168,13 +284,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
@@ -182,7 +292,7 @@ await yargs(hideBin(process.argv))
   )
   .command(
     'validate',
-    'Validates definition syntax',
+    'Checks if the specified definition is syntactically valid.',
     y =>
       y
         .option('definition', {

@@ -1,3 +1,4 @@
+import { schema } from './schema/index.js';
 import { objectKeys } from './util/object-keys.js';
 
 const TS_PLATFORMS = {
@@ -27,8 +28,6 @@ export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
 
 export type RulesGenerationPlatform = keyof typeof RULES_PLATFORMS;
 
-export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform | PythonGenerationPlatform;
-
 export function getTSPlatforms() {
   return objectKeys(TS_PLATFORMS);
 }
@@ -45,43 +44,69 @@ export function getRulesPlatforms() {
   return objectKeys(RULES_PLATFORMS);
 }
 
-export function getPlatforms(): GenerationPlatform[] {
-  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms()];
-}
-
-export type TypesyncGenerateOption = keyof TypesyncGenerateOptions;
-
-export interface TypesyncGenerateOptions {
+export interface TypesyncGenerateTsOptions {
   definition: string;
-  platform: GenerationPlatform;
+  platform: TSGenerationPlatform;
   outFile: string;
-  indentation: number;
+  indentation?: number;
+  debug?: boolean;
+}
+
+export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;
+
+export interface TypesyncGenerateTsResult {
+  type: 'ts';
+  schema: schema.Schema;
+}
+
+export interface TypesyncGenerateSwiftOptions {
+  definition: string;
+  platform: SwiftGenerationPlatform;
+  outFile: string;
+  indentation?: number;
+  debug?: boolean;
+}
+
+export type TypesyncGenerateSwiftOption = keyof TypesyncGenerateSwiftOptions;
+
+export interface TypesyncGenerateSwiftResult {
+  type: 'swift';
+  schema: schema.Schema;
+}
+
+export interface TypesyncGeneratePyOptions {
+  definition: string;
+  platform: PythonGenerationPlatform;
+  outFile: string;
+  indentation?: number;
   customPydanticBase?: string;
-  debug: boolean;
+  debug?: boolean;
 }
 
-export interface TypesyncGenerateResult {
-  aliasModelCount: number;
-  documentModelCount: number;
-}
+export type TypesyncGeneratePyOption = keyof TypesyncGeneratePyOptions;
 
-export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
+export interface TypesyncGeneratePyResult {
+  type: 'python';
+  schema: schema.Schema;
+}
 
 export interface TypesyncGenerateRulesOptions {
   definition: string;
   platform: RulesGenerationPlatform;
   outFile: string;
-  startMarker: string;
-  endMarker: string;
-  validatorNamePattern: string;
-  validatorParamName: string;
-  indentation: number;
-  debug: boolean;
+  startMarker?: string;
+  endMarker?: string;
+  validatorNamePattern?: string;
+  validatorParamName?: string;
+  indentation?: number;
+  debug?: boolean;
 }
 
+export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
+
 export interface TypesyncGenerateRulesResult {
-  aliasModelCount: number;
-  documentModelCount: number;
+  type: 'rules';
+  schema: schema.Schema;
 }
 
 export interface TypesyncValidateOptions {
@@ -99,11 +124,21 @@ export type TypesyncValidateResult =
     };
 
 export interface Typesync {
-  generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult>;
+  generateTs(opts: TypesyncGenerateTsOptions): Promise<TypesyncGenerateTsResult>;
+
+  generateSwift(opts: TypesyncGenerateSwiftOptions): Promise<TypesyncGenerateSwiftResult>;
+
+  generatePy(opts: TypesyncGeneratePyOptions): Promise<TypesyncGeneratePyResult>;
 
   generateRules(opts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult>;
 
   validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult>;
 }
+
+export type TypesyncGenerateResult =
+  | TypesyncGenerateTsResult
+  | TypesyncGenerateSwiftResult
+  | TypesyncGeneratePyResult
+  | TypesyncGenerateRulesResult;
 
 export { createTypesync } from './core/typesync.js';

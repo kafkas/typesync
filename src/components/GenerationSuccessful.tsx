@@ -2,16 +2,36 @@ import { Box, Text } from 'ink';
 import pluralize from 'pluralize';
 import React from 'react';
 
+import type { TypesyncGenerateResult } from '../api.js';
+import { assertNever } from '../util/assert.js';
+
 type Props = {
-  aliasModelCount: number;
-  documentModelCount: number;
+  result: TypesyncGenerateResult;
   pathToOutputFile: string;
 };
 
-export function GenerationSuccessful({ aliasModelCount, documentModelCount, pathToOutputFile }: Props) {
+function getMessageForResult(result: TypesyncGenerateResult) {
+  switch (result.type) {
+    case 'ts':
+      return 'Successfully generated TypeScript type definitions for the specified schema.';
+    case 'swift':
+      return 'Successfully generated Swift type definitions for the specified schema.';
+    case 'python':
+      return 'Successfully generated Python/Pydantic type definitions for the specified schema.';
+    case 'rules':
+      return 'Successfully generated validator functions for Firestore Security Rules.';
+    default:
+      assertNever(result);
+  }
+}
+
+export function GenerationSuccessful({ result, pathToOutputFile }: Props) {
+  const message = getMessageForResult(result);
+  const aliasModelCount = result.schema.aliasModels.length;
+  const documentModelCount = result.schema.documentModels.length;
   return (
     <Box flexDirection="column">
-      <Text color="green">✔ Successfully generated type definitions for models.</Text>
+      <Text color="green">✔ {message}</Text>
       <Text> - {pluralize('alias model', aliasModelCount, true)}</Text>
       <Text> - {pluralize('document model', documentModelCount, true)}</Text>
       <Box>
