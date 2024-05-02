@@ -28,7 +28,7 @@ describe('RulesRendererImpl', () => {
               },
               {
                 type: {
-                  type: 'union',
+                  type: 'simple-union',
                   variants: [{ type: 'string' }, { type: 'list' }],
                 },
                 optional: false,

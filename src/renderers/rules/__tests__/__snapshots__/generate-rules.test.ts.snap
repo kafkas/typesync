@@ -4,10 +4,17 @@ exports[`RulesRendererImpl correctly renders a Security Rules generation 1`] = `
 {
   "content": "rules_version = '2';
 service cloud.firestore {
-  function isUserValid() {
-    return true;
-  };
-
+  function isValidUser(data) {
+    return (
+      (data is map) &&
+      (data.username is string) &&
+      ((data.role == "owner") || (data.role == "admin") || (data.role == "member")) &&
+      ((data.path is string) || (data.path is list)) &&
+      (data.pets is list) &&
+      ((data.website_url is string) || !('website_url' in data)) &&
+      (data.created_at is timestamp)
+    );
+  }
 }",
 }
 `;
