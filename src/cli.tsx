@@ -5,7 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPlatforms } from './api.js';
+import { createTypesync, getPlatforms, getRulesPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
@@ -68,6 +68,79 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           indentation,
           customPydanticBase,
+          debug,
+        });
+
+        render(
+          <GenerationSuccessful
+            aliasModelCount={result.aliasModelCount}
+            documentModelCount={result.documentModelCount}
+            pathToOutputFile={pathToOutputFile}
+          />
+        );
+      } catch (e) {
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'generate-rules',
+    'Generates validator functions for Firestore Security Rules and injects them into the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('platform', {
+          describe: 'Target platform and version.',
+          type: 'string',
+          demandOption: true,
+          choices: getRulesPlatforms(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('startMarker', {
+          describe: 'A marker that indicates the line after which the generated code should be inserted.',
+          type: 'string',
+          demandOption: false,
+          default: 'typesync-start',
+        })
+        .option('endMarker', {
+          describe: 'A marker that indicates the line before which the generated code should be inserted.',
+          type: 'string',
+          demandOption: false,
+          default: 'typesync-end',
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: 2,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
+        }),
+    async args => {
+      const { definition, platform, outFile, startMarker, endMarker, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateRules({
+          definition: resolve(process.cwd(), definition),
+          platform,
+          outFile: pathToOutputFile,
+          startMarker,
+          endMarker,
+          indentation,
           debug,
         });
 

@@ -6,6 +6,8 @@ export interface RulesRendererConfig {
   platform: RulesGenerationPlatform;
   indentation: number;
   pathToOutputFile: string;
+  startMarker: string;
+  endMarker: string;
 }
 
 export interface RulesRenderer {

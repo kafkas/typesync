@@ -10,7 +10,6 @@ export function isGenerationPlatform(candidate: string): candidate is Generation
     case 'ts:firebase:9':
     case 'swift:firebase:10':
     case 'py:firebase-admin:6':
-    case 'rules:2':
       return true;
     default:
       assertNeverNoThrow(c);

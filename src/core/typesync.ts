@@ -2,9 +2,12 @@ import { globSync } from 'glob';
 
 import type {
   GenerationPlatform,
+  RulesGenerationPlatform,
   Typesync,
   TypesyncGenerateOptions,
   TypesyncGenerateResult,
+  TypesyncGenerateRulesOptions,
+  TypesyncGenerateRulesResult,
   TypesyncValidateOptions,
   TypesyncValidateResult,
 } from '../api.js';
@@ -36,6 +39,16 @@ interface NormalizedGenerateOptions {
   debug: boolean;
 }
 
+interface NormalizedGenerateRulesOptions {
+  definitionGlobPattern: string;
+  platform: RulesGenerationPlatform;
+  pathToOutputFile: string;
+  startMarker: string;
+  endMarker: string;
+  indentation: number;
+  debug: boolean;
+}
+
 class TypesyncImpl implements Typesync {
   public async generate(rawOpts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult> {
     const opts = this.validateAndNormalizeOpts(rawOpts);
@@ -45,6 +58,39 @@ class TypesyncImpl implements Typesync {
     const logger = createLogger(debug);
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
+    const parser = createDefinitionParser(logger);
+
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
+    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
+
+    const definition = parser.parseDefinition(definitionFilePaths);
+    const s = schema.createFromDefinition(definition);
+    const generation = generator.generate(s);
+    const file = await renderer.render(generation);
+    await writeFile(pathToOutputFile, file.content);
+
+    return {
+      aliasModelCount: s.aliasModels.length,
+      documentModelCount: s.documentModels.length,
+    };
+  }
+
+  public async generateRules(rawOpts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult> {
+    const opts = this.validateAndNormalizeRulesOpts(rawOpts);
+
+    const { definitionGlobPattern, platform, pathToOutputFile, startMarker, endMarker, indentation, debug } = opts;
+
+    const logger = createLogger(debug);
+    const generator = createRulesGenerator({
+      platform,
+    });
+    const renderer = renderers.createRulesRenderer({
+      indentation,
+      pathToOutputFile,
+      startMarker,
+      endMarker,
+      platform,
+    });
     const parser = createDefinitionParser(logger);
 
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
@@ -88,6 +134,24 @@ class TypesyncImpl implements Typesync {
     };
   }
 
+  private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
+    const { definition, platform, outFile, startMarker, endMarker, indentation, debug } = opts;
+
+    if (!Number.isSafeInteger(indentation) || indentation < 1) {
+      throw new InvalidIndentationOption(indentation);
+    }
+
+    return {
+      definitionGlobPattern: definition,
+      platform,
+      pathToOutputFile: outFile,
+      startMarker,
+      endMarker,
+      indentation,
+      debug,
+    };
+  }
+
   public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
     const logger = createLogger(opts.debug);
 
@@ -123,15 +187,13 @@ class TypesyncImpl implements Typesync {
         return createSwiftGenerator({ platform });
       case 'py:firebase-admin:6':
         return createPythonGenerator({ platform });
-      case 'rules:2':
-        return createRulesGenerator({ platform });
       default:
         assertNever(platform);
     }
   }
 
   private createRenderer(opts: NormalizedGenerateOptions): renderers.Renderer {
-    const { platform, indentation, customPydanticBase, pathToOutputFile } = opts;
+    const { platform, indentation, customPydanticBase } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
@@ -151,12 +213,6 @@ class TypesyncImpl implements Typesync {
           platform,
           indentation,
           customPydanticBase,
-        });
-      case 'rules:2':
-        return renderers.createRulesRenderer({
-          platform,
-          indentation,
-          pathToOutputFile,
         });
       default:
         assertNever(platform);

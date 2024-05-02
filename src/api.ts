@@ -27,11 +27,7 @@ export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
 
 export type RulesGenerationPlatform = keyof typeof RULES_PLATFORMS;
 
-export type GenerationPlatform =
-  | TSGenerationPlatform
-  | SwiftGenerationPlatform
-  | PythonGenerationPlatform
-  | RulesGenerationPlatform;
+export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform | PythonGenerationPlatform;
 
 export function getTSPlatforms() {
   return objectKeys(TS_PLATFORMS);
@@ -50,7 +46,7 @@ export function getRulesPlatforms() {
 }
 
 export function getPlatforms(): GenerationPlatform[] {
-  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms(), ...getRulesPlatforms()];
+  return [...getTSPlatforms(), ...getSwiftPlatforms(), ...getPythonPlatforms()];
 }
 
 export type TypesyncGenerateOption = keyof TypesyncGenerateOptions;
@@ -65,6 +61,23 @@ export interface TypesyncGenerateOptions {
 }
 
 export interface TypesyncGenerateResult {
+  aliasModelCount: number;
+  documentModelCount: number;
+}
+
+export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
+
+export interface TypesyncGenerateRulesOptions {
+  definition: string;
+  platform: RulesGenerationPlatform;
+  outFile: string;
+  startMarker: string;
+  endMarker: string;
+  indentation: number;
+  debug: boolean;
+}
+
+export interface TypesyncGenerateRulesResult {
   aliasModelCount: number;
   documentModelCount: number;
 }
@@ -85,6 +98,8 @@ export type TypesyncValidateResult =
 
 export interface Typesync {
   generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult>;
+
+  generateRules(opts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult>;
 
   validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult>;
 }

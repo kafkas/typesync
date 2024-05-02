@@ -1,6 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 import { readFile } from 'fs/promises';
 
+import { MisplacedStartMarkerError, MissingEndMarkerError, MissingStartMarkerError } from '../../errors/renderer.js';
 import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
@@ -15,10 +16,10 @@ class RulesRendererImpl implements RulesRenderer {
   public async render(g: RulesGeneration): Promise<RenderedFile> {
     const b = new StringBuilder();
 
-    const { lines, startIndicatorLineIdx } = await this.getOutputFileIndicators();
+    const { lines, startMarkerLineIdx } = await this.preprocessOutputFile();
 
     lines.forEach((line, lineIdx) => {
-      if (lineIdx === startIndicatorLineIdx + 1) {
+      if (lineIdx === startMarkerLineIdx + 1) {
         const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
         b.append(renderedDeclarations + `\n`);
       }
@@ -35,34 +36,29 @@ class RulesRendererImpl implements RulesRenderer {
     return rootFile;
   }
 
-  private async getOutputFileIndicators() {
-    // TODO: Make dynamic
-    const startIndicator = 'typesync-start';
-    const endIndicator = 'typesync-end';
+  private async preprocessOutputFile() {
+    const { pathToOutputFile, startMarker, endMarker } = this.config;
 
-    const outputFileContent = (await readFile(this.config.pathToOutputFile)).toString();
+    const outputFileContent = (await readFile(pathToOutputFile)).toString();
     const lines = outputFileContent.split('\n');
-    const startIndicatorLineIdx = lines.findIndex(line => line.includes(startIndicator));
-    const endIndicatorLineIdx = lines.findIndex(line => line.includes(endIndicator));
+    const startMarkerLineIdx = lines.findIndex(line => line.includes(startMarker));
+    const endMarkerLineIdx = lines.findIndex(line => line.includes(endMarker));
 
-    if (startIndicatorLineIdx === -1) {
-      // TODO: Implement
-      throw new Error('Unimplemented');
+    if (startMarkerLineIdx === -1) {
+      throw new MissingStartMarkerError(pathToOutputFile, startMarker);
     }
 
-    if (endIndicatorLineIdx === -1) {
-      // TODO: Implement
-      throw new Error('Unimplemented');
+    if (endMarkerLineIdx === -1) {
+      throw new MissingEndMarkerError(pathToOutputFile, startMarker);
     }
 
-    if (startIndicatorLineIdx >= endIndicatorLineIdx) {
-      // TODO: Implement
-      throw new Error('Unimplemented');
+    if (startMarkerLineIdx >= endMarkerLineIdx) {
+      throw new MisplacedStartMarkerError(pathToOutputFile, startMarker, endMarker);
     }
 
-    lines.splice(startIndicatorLineIdx + 1, endIndicatorLineIdx - startIndicatorLineIdx - 1);
+    lines.splice(startMarkerLineIdx + 1, endMarkerLineIdx - startMarkerLineIdx - 1);
 
-    return { lines, startIndicatorLineIdx };
+    return { lines, startMarkerLineIdx };
   }
 
   private renderDeclaration(declaration: RulesDeclaration) {
