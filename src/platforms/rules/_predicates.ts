@@ -37,6 +37,12 @@ export interface TypeValidatorPredicate {
   varModelName: string;
 }
 
+export interface FieldExistsInMapPredicate {
+  type: 'field-exists-in-map';
+  varName: string;
+  fieldName: string;
+}
+
 export interface LiteralPredicate {
   type: 'literal';
   value: string;
@@ -53,13 +59,20 @@ export interface AndPredicate {
   innerPredicates: Predicate[];
 }
 
+export interface NegationPredicate {
+  type: 'negation';
+  originalPredicate: Predicate;
+}
+
 export type Predicate =
   | ValueEqualityPredicate
   | TypeEqualityPredicate
   | TypeValidatorPredicate
+  | FieldExistsInMapPredicate
   | LiteralPredicate
   | OrPredicate
-  | AndPredicate;
+  | AndPredicate
+  | NegationPredicate;
 
 export function predicateForAnyType(_t: Any): Predicate {
   return { type: 'literal', value: `true` };
@@ -130,7 +143,22 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
     varName,
     varType: { type: 'map' },
   };
-  const fieldPredicates = t.fields.map(field => predicateForType(field.type, `${varName}.${field.name}`));
+  const fieldPredicates: Predicate[] = t.fields.map(field => {
+    const p = predicateForType(field.type, `${varName}.${field.name}`);
+    if (field.optional) {
+      const optionalPredicate: Predicate = {
+        type: 'negation',
+        originalPredicate: {
+          type: 'field-exists-in-map',
+          varName,
+          fieldName: field.name,
+        },
+      };
+      return { type: 'or', innerPredicates: [p, optionalPredicate] };
+    } else {
+      return p;
+    }
+  });
   return {
     type: 'and',
     alignment: 'vertical',

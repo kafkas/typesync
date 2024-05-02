@@ -57,6 +57,8 @@ class RulesRendererImpl implements RulesRenderer {
         return `(${predicate.varName} is ${predicate.varType.type})`;
       case 'type-validator':
         return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
+      case 'field-exists-in-map':
+        return `('${predicate.fieldName}' in ${predicate.varName})`;
       case 'literal':
         return predicate.value;
       case 'or':
@@ -71,7 +73,8 @@ class RulesRendererImpl implements RulesRenderer {
         } else {
           return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' && ')})`;
         }
-
+      case 'negation':
+        return `!${this.renderPredicate(predicate.originalPredicate)}`;
       default:
         assertNever(predicate);
     }
