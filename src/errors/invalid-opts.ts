@@ -1,4 +1,9 @@
-import { TypesyncGenerateOption, TypesyncGenerateRulesOption } from '../api.js';
+import type {
+  TypesyncGeneratePyOption,
+  TypesyncGenerateRulesOption,
+  TypesyncGenerateSwiftOption,
+  TypesyncGenerateTsOption,
+} from '../api.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {
@@ -6,16 +11,37 @@ export class InvalidOptionsError extends Error {
   }
 }
 
-export class InvalidIndentationOption extends InvalidOptionsError {
+export class InvalidTSIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGenerateOption = 'indentation';
+    const option: TypesyncGenerateTsOption = 'indentation';
+    super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidSwiftIndentationOption extends InvalidOptionsError {
+  public constructor(indentation: number) {
+    const option: TypesyncGenerateSwiftOption = 'indentation';
+    super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidPyIndentationOption extends InvalidOptionsError {
+  public constructor(indentation: number) {
+    const option: TypesyncGeneratePyOption = 'indentation';
+    super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidRulesIndentationOption extends InvalidOptionsError {
+  public constructor(indentation: number) {
+    const option: TypesyncGenerateRulesOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
 
 export class InvalidCustomPydanticBaseOption extends InvalidOptionsError {
   public constructor(customPydanticBase: string) {
-    const option: TypesyncGenerateOption = 'customPydanticBase';
+    const option: TypesyncGeneratePyOption = 'customPydanticBase';
     super(
       `Expected '${option}' to be a valid class import path with the format "x.y.z.CustomModel". Received "${customPydanticBase}" instead.`
     );

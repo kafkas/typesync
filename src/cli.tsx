@@ -5,7 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPlatforms, getRulesPlatforms } from './api.js';
+import { createTypesync, getPythonPlatforms, getRulesPlatforms, getSwiftPlatforms, getTSPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
@@ -19,13 +19,13 @@ const cliVersion = extractPackageJsonVersion();
 
 await yargs(hideBin(process.argv))
   .command(
-    'generate',
-    'Generates models from a definition file',
+    'generate-ts',
+    'Generates TypeScript type definitions for the specified schema and writes them to the specified file.',
     y =>
       y
         .option('definition', {
           describe:
-            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
@@ -33,7 +33,125 @@ await yargs(hideBin(process.argv))
           describe: 'Target platform and version.',
           type: 'string',
           demandOption: true,
-          choices: getPlatforms(),
+          choices: getTSPlatforms(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: 2,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
+        }),
+    async args => {
+      const { definition, platform, outFile, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateTs({
+          definition: resolve(process.cwd(), definition),
+          platform,
+          outFile: pathToOutputFile,
+          indentation,
+          debug,
+        });
+
+        render(
+          <GenerationSuccessful
+            aliasModelCount={result.aliasModelCount}
+            documentModelCount={result.documentModelCount}
+            pathToOutputFile={pathToOutputFile}
+          />
+        );
+      } catch (e) {
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'generate-swift',
+    'Generates Swift type definitions for the specified schema and writes them to the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('platform', {
+          describe: 'Target platform and version.',
+          type: 'string',
+          demandOption: true,
+          choices: getSwiftPlatforms(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: 2,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
+        }),
+    async args => {
+      const { definition, platform, outFile, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateSwift({
+          definition: resolve(process.cwd(), definition),
+          platform,
+          outFile: pathToOutputFile,
+          indentation,
+          debug,
+        });
+
+        render(
+          <GenerationSuccessful
+            aliasModelCount={result.aliasModelCount}
+            documentModelCount={result.documentModelCount}
+            pathToOutputFile={pathToOutputFile}
+          />
+        );
+      } catch (e) {
+        render(<GenerationFailed message={extractErrorMessage(e)} />);
+      }
+    }
+  )
+  .command(
+    'generate-py',
+    'Generates Python type definitions for the specified schema and writes them to the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('platform', {
+          describe: 'Target platform and version.',
+          type: 'string',
+          demandOption: true,
+          choices: getPythonPlatforms(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',
@@ -62,7 +180,7 @@ await yargs(hideBin(process.argv))
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
-        const result = await typesync.generate({
+        const result = await typesync.generatePy({
           definition: resolve(process.cwd(), definition),
           platform,
           outFile: pathToOutputFile,
@@ -90,7 +208,7 @@ await yargs(hideBin(process.argv))
       y
         .option('definition', {
           describe:
-            'The exact path or a Glob pattern to the definition file or files. Each definition file must be a YAML file containing model definitions.',
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
           type: 'string',
           demandOption: true,
         })
