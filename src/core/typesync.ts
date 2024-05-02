@@ -300,6 +300,16 @@ class TypesyncImpl implements Typesync {
     };
   }
 
+  public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
+    const { definition: definitionGlobPattern, debug } = opts;
+    try {
+      this.createCoreObjects(definitionGlobPattern, debug);
+      return { success: true };
+    } catch (e) {
+      return { success: false, message: extractErrorMessage(e) };
+    }
+  }
+
   private createCoreObjects(definitionGlobPattern: string, debug: boolean) {
     const logger = createLogger(debug);
     const parser = createDefinitionParser(logger);
@@ -307,21 +317,6 @@ class TypesyncImpl implements Typesync {
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
     return { logger, schema: schema.createFromDefinition(definition) };
-  }
-
-  public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
-    const logger = createLogger(opts.debug);
-
-    const { definition: definitionGlobPattern } = opts;
-    const parser = createDefinitionParser(logger);
-    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-
-    try {
-      parser.parseDefinition(definitionFilePaths);
-      return { success: true };
-    } catch (e) {
-      return { success: false, message: extractErrorMessage(e) };
-    }
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {
