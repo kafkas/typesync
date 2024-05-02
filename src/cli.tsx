@@ -80,13 +80,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
@@ -139,13 +133,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
@@ -153,7 +141,7 @@ await yargs(hideBin(process.argv))
   )
   .command(
     'generate-py',
-    'Generates Python type definitions for the specified schema and writes them to the specified file.',
+    'Generates Python/Pydantic type definitions for the specified schema and writes them to the specified file.',
     y =>
       y
         .option('definition', {
@@ -205,13 +193,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }
@@ -302,13 +284,7 @@ await yargs(hideBin(process.argv))
           debug,
         });
 
-        render(
-          <GenerationSuccessful
-            aliasModelCount={result.aliasModelCount}
-            documentModelCount={result.documentModelCount}
-            pathToOutputFile={pathToOutputFile}
-          />
-        );
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
         render(<GenerationFailed message={extractErrorMessage(e)} />);
       }

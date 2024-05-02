@@ -111,8 +111,7 @@ class TypesyncImpl implements Typesync {
     await writeFile(pathToOutputFile, file.content);
     return {
       type: 'ts',
-      aliasModelCount: s.aliasModels.length,
-      documentModelCount: s.documentModels.length,
+      schema: s,
     };
   }
 
@@ -148,8 +147,7 @@ class TypesyncImpl implements Typesync {
     await writeFile(pathToOutputFile, file.content);
     return {
       type: 'swift',
-      aliasModelCount: s.aliasModels.length,
-      documentModelCount: s.documentModels.length,
+      schema: s,
     };
   }
 
@@ -192,8 +190,7 @@ class TypesyncImpl implements Typesync {
     await writeFile(pathToOutputFile, file.content);
     return {
       type: 'python',
-      aliasModelCount: s.aliasModels.length,
-      documentModelCount: s.documentModels.length,
+      schema: s,
     };
   }
 
@@ -261,8 +258,7 @@ class TypesyncImpl implements Typesync {
     await writeFile(pathToOutputFile, file.content);
     return {
       type: 'rules',
-      aliasModelCount: s.aliasModels.length,
-      documentModelCount: s.documentModels.length,
+      schema: s,
     };
   }
 

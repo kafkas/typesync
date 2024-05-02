@@ -1,3 +1,4 @@
+import { schema } from './schema/index.js';
 import { objectKeys } from './util/object-keys.js';
 
 const TS_PLATFORMS = {
@@ -55,8 +56,7 @@ export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;
 
 export interface TypesyncGenerateTsResult {
   type: 'ts';
-  aliasModelCount: number;
-  documentModelCount: number;
+  schema: schema.Schema;
 }
 
 export interface TypesyncGenerateSwiftOptions {
@@ -71,8 +71,7 @@ export type TypesyncGenerateSwiftOption = keyof TypesyncGenerateSwiftOptions;
 
 export interface TypesyncGenerateSwiftResult {
   type: 'swift';
-  aliasModelCount: number;
-  documentModelCount: number;
+  schema: schema.Schema;
 }
 
 export interface TypesyncGeneratePyOptions {
@@ -88,8 +87,7 @@ export type TypesyncGeneratePyOption = keyof TypesyncGeneratePyOptions;
 
 export interface TypesyncGeneratePyResult {
   type: 'python';
-  aliasModelCount: number;
-  documentModelCount: number;
+  schema: schema.Schema;
 }
 
 export interface TypesyncGenerateRulesOptions {
@@ -108,8 +106,7 @@ export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
 
 export interface TypesyncGenerateRulesResult {
   type: 'rules';
-  aliasModelCount: number;
-  documentModelCount: number;
+  schema: schema.Schema;
 }
 
 export interface TypesyncValidateOptions {
