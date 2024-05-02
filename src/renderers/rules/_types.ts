@@ -8,6 +8,7 @@ export interface RulesRendererConfig {
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
+  validatorParamName: string;
 }
 
 export interface RulesRenderer {

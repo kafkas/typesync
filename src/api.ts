@@ -73,6 +73,7 @@ export interface TypesyncGenerateRulesOptions {
   outFile: string;
   startMarker: string;
   endMarker: string;
+  validatorParamName: string;
   indentation: number;
   debug: boolean;
 }

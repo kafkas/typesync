@@ -117,6 +117,12 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: 'typesync-end',
         })
+        .option('validatorParamName', {
+          describe: 'The name of the parameter taken by each type validator.',
+          type: 'string',
+          demandOption: false,
+          default: 'data',
+        })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
@@ -130,7 +136,7 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { definition, platform, outFile, startMarker, endMarker, indentation, debug } = args;
+      const { definition, platform, outFile, startMarker, endMarker, validatorParamName, indentation, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -140,6 +146,7 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           startMarker,
           endMarker,
+          validatorParamName,
           indentation,
           debug,
         });

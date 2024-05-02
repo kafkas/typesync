@@ -45,6 +45,7 @@ interface NormalizedGenerateRulesOptions {
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
+  validatorParamName: string;
   indentation: number;
   debug: boolean;
 }
@@ -78,7 +79,16 @@ class TypesyncImpl implements Typesync {
   public async generateRules(rawOpts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult> {
     const opts = this.validateAndNormalizeRulesOpts(rawOpts);
 
-    const { definitionGlobPattern, platform, pathToOutputFile, startMarker, endMarker, indentation, debug } = opts;
+    const {
+      definitionGlobPattern,
+      platform,
+      pathToOutputFile,
+      startMarker,
+      endMarker,
+      validatorParamName,
+      indentation,
+      debug,
+    } = opts;
 
     const logger = createLogger(debug);
     const generator = createRulesGenerator({
@@ -89,6 +99,7 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile,
       startMarker,
       endMarker,
+      validatorParamName,
       platform,
     });
     const parser = createDefinitionParser(logger);
@@ -135,7 +146,7 @@ class TypesyncImpl implements Typesync {
   }
 
   private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
-    const { definition, platform, outFile, startMarker, endMarker, indentation, debug } = opts;
+    const { definition, platform, outFile, startMarker, endMarker, validatorParamName, indentation, debug } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
@@ -147,6 +158,7 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile: outFile,
       startMarker,
       endMarker,
+      validatorParamName,
       indentation,
       debug,
     };
