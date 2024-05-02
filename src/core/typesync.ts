@@ -97,10 +97,8 @@ interface NormalizedGenerateRulesOptions {
 class TypesyncImpl implements Typesync {
   public async generateTs(rawOpts: TypesyncGenerateTsOptions): Promise<TypesyncGenerateTsResult> {
     const opts = this.validateAndNormalizeTsOpts(rawOpts);
-
     const { definitionGlobPattern, pathToOutputFile, platform, indentation, debug } = opts;
-
-    const logger = createLogger(debug);
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createTSGenerator({
       platform,
     });
@@ -108,17 +106,9 @@ class TypesyncImpl implements Typesync {
       platform,
       indentation,
     });
-    const parser = createDefinitionParser(logger);
-
-    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
-
-    const definition = parser.parseDefinition(definitionFilePaths);
-    const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
@@ -143,10 +133,8 @@ class TypesyncImpl implements Typesync {
 
   public async generateSwift(rawOpts: TypesyncGenerateSwiftOptions): Promise<TypesyncGenerateSwiftResult> {
     const opts = this.validateAndNormalizeSwiftOpts(rawOpts);
-
     const { definitionGlobPattern, pathToOutputFile, platform, indentation, debug } = opts;
-
-    const logger = createLogger(debug);
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createSwiftGenerator({
       platform,
     });
@@ -154,17 +142,9 @@ class TypesyncImpl implements Typesync {
       platform,
       indentation,
     });
-    const parser = createDefinitionParser(logger);
-
-    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
-
-    const definition = parser.parseDefinition(definitionFilePaths);
-    const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
@@ -195,10 +175,8 @@ class TypesyncImpl implements Typesync {
 
   public async generatePy(rawOpts: TypesyncGeneratePyOptions): Promise<TypesyncGeneratePyResult> {
     const opts = this.validateAndNormalizePyOpts(rawOpts);
-
     const { definitionGlobPattern, pathToOutputFile, platform, customPydanticBase, indentation, debug } = opts;
-
-    const logger = createLogger(debug);
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createPythonGenerator({
       platform,
     });
@@ -207,17 +185,9 @@ class TypesyncImpl implements Typesync {
       customPydanticBase,
       indentation,
     });
-    const parser = createDefinitionParser(logger);
-
-    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
-
-    const definition = parser.parseDefinition(definitionFilePaths);
-    const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
@@ -259,7 +229,6 @@ class TypesyncImpl implements Typesync {
 
   public async generateRules(rawOpts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult> {
     const opts = this.validateAndNormalizeRulesOpts(rawOpts);
-
     const {
       definitionGlobPattern,
       platform,
@@ -271,8 +240,7 @@ class TypesyncImpl implements Typesync {
       indentation,
       debug,
     } = opts;
-
-    const logger = createLogger(debug);
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createRulesGenerator({
       platform,
     });
@@ -285,17 +253,9 @@ class TypesyncImpl implements Typesync {
       validatorParamName,
       platform,
     });
-    const parser = createDefinitionParser(logger);
-
-    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
-    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
-
-    const definition = parser.parseDefinition(definitionFilePaths);
-    const s = schema.createFromDefinition(definition);
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-
     return {
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
@@ -338,6 +298,15 @@ class TypesyncImpl implements Typesync {
       indentation,
       debug,
     };
+  }
+
+  private createCoreObjects(definitionGlobPattern: string, debug: boolean) {
+    const logger = createLogger(debug);
+    const parser = createDefinitionParser(logger);
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
+    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
+    const definition = parser.parseDefinition(definitionFilePaths);
+    return { logger, schema: schema.createFromDefinition(definition) };
   }
 
   public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
