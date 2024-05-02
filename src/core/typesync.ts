@@ -2,19 +2,25 @@ import { globSync } from 'glob';
 
 import type {
   GenerationPlatform,
+  RulesGenerationPlatform,
   Typesync,
   TypesyncGenerateOptions,
   TypesyncGenerateResult,
+  TypesyncGenerateRulesOptions,
+  TypesyncGenerateRulesResult,
   TypesyncValidateOptions,
   TypesyncValidateResult,
 } from '../api.js';
+import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
-  DefinitionFilesNotFoundError,
   InvalidCustomPydanticBaseOption,
   InvalidIndentationOption,
-} from '../errors/index.js';
+  InvalidValidatorNamePatternOption,
+  InvalidValidatorParamNameOption,
+} from '../errors/invalid-opts.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
+import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
@@ -38,6 +44,18 @@ interface NormalizedGenerateOptions {
   debug: boolean;
 }
 
+interface NormalizedGenerateRulesOptions {
+  definitionGlobPattern: string;
+  platform: RulesGenerationPlatform;
+  pathToOutputFile: string;
+  startMarker: string;
+  endMarker: string;
+  validatorNamePattern: string;
+  validatorParamName: string;
+  indentation: number;
+  debug: boolean;
+}
+
 class TypesyncImpl implements Typesync {
   public async generate(rawOpts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult> {
     const opts = this.validateAndNormalizeOpts(rawOpts);
@@ -47,6 +65,51 @@ class TypesyncImpl implements Typesync {
     const logger = createLogger(debug);
     const generator = this.createGenerator(opts);
     const renderer = this.createRenderer(opts);
+    const parser = createDefinitionParser(logger);
+
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
+    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
+
+    const definition = parser.parseDefinition(definitionFilePaths);
+    const s = schema.createFromDefinition(definition);
+    const generation = generator.generate(s);
+    const file = await renderer.render(generation);
+    await writeFile(pathToOutputFile, file.content);
+
+    return {
+      aliasModelCount: s.aliasModels.length,
+      documentModelCount: s.documentModels.length,
+    };
+  }
+
+  public async generateRules(rawOpts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult> {
+    const opts = this.validateAndNormalizeRulesOpts(rawOpts);
+
+    const {
+      definitionGlobPattern,
+      platform,
+      pathToOutputFile,
+      startMarker,
+      endMarker,
+      validatorNamePattern,
+      validatorParamName,
+      indentation,
+      debug,
+    } = opts;
+
+    const logger = createLogger(debug);
+    const generator = createRulesGenerator({
+      platform,
+    });
+    const renderer = renderers.createRulesRenderer({
+      indentation,
+      pathToOutputFile,
+      startMarker,
+      endMarker,
+      validatorNamePattern,
+      validatorParamName,
+      platform,
+    });
     const parser = createDefinitionParser(logger);
 
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
@@ -86,6 +149,44 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile: outFile,
       indentation,
       customPydanticBase,
+      debug,
+    };
+  }
+
+  private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
+    const {
+      definition,
+      platform,
+      outFile,
+      startMarker,
+      endMarker,
+      validatorNamePattern,
+      validatorParamName,
+      indentation,
+      debug,
+    } = opts;
+
+    if (!Number.isSafeInteger(indentation) || indentation < 1) {
+      throw new InvalidIndentationOption(indentation);
+    }
+
+    if (!validatorNamePattern.includes('{modelName}')) {
+      throw new InvalidValidatorNamePatternOption(validatorNamePattern);
+    }
+
+    if (validatorParamName.length === 0) {
+      throw new InvalidValidatorParamNameOption(validatorParamName);
+    }
+
+    return {
+      definitionGlobPattern: definition,
+      platform,
+      pathToOutputFile: outFile,
+      startMarker,
+      endMarker,
+      validatorNamePattern,
+      validatorParamName,
+      indentation,
       debug,
     };
   }
@@ -137,9 +238,15 @@ class TypesyncImpl implements Typesync {
       case 'ts:firebase-admin:11':
       case 'ts:firebase:10':
       case 'ts:firebase:9':
-        return renderers.createTSRenderer({ platform, indentation });
+        return renderers.createTSRenderer({
+          platform,
+          indentation,
+        });
       case 'swift:firebase:10':
-        return renderers.createSwiftRenderer({ platform, indentation });
+        return renderers.createSwiftRenderer({
+          platform,
+          indentation,
+        });
       case 'py:firebase-admin:6':
         return renderers.createPythonRenderer({
           platform,

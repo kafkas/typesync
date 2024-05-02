@@ -15,11 +15,17 @@ const PYTHON_PLATFORMS = {
   'py:firebase-admin:6': true,
 };
 
+const RULES_PLATFORMS = {
+  'rules:2': true,
+};
+
 export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
 
 export type SwiftGenerationPlatform = keyof typeof SWIFT_PLATFORMS;
 
 export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
+
+export type RulesGenerationPlatform = keyof typeof RULES_PLATFORMS;
 
 export type GenerationPlatform = TSGenerationPlatform | SwiftGenerationPlatform | PythonGenerationPlatform;
 
@@ -33,6 +39,10 @@ export function getSwiftPlatforms() {
 
 export function getPythonPlatforms() {
   return objectKeys(PYTHON_PLATFORMS);
+}
+
+export function getRulesPlatforms() {
+  return objectKeys(RULES_PLATFORMS);
 }
 
 export function getPlatforms(): GenerationPlatform[] {
@@ -55,6 +65,25 @@ export interface TypesyncGenerateResult {
   documentModelCount: number;
 }
 
+export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
+
+export interface TypesyncGenerateRulesOptions {
+  definition: string;
+  platform: RulesGenerationPlatform;
+  outFile: string;
+  startMarker: string;
+  endMarker: string;
+  validatorNamePattern: string;
+  validatorParamName: string;
+  indentation: number;
+  debug: boolean;
+}
+
+export interface TypesyncGenerateRulesResult {
+  aliasModelCount: number;
+  documentModelCount: number;
+}
+
 export interface TypesyncValidateOptions {
   definition: string;
   debug: boolean;
@@ -71,6 +100,8 @@ export type TypesyncValidateResult =
 
 export interface Typesync {
   generate(opts: TypesyncGenerateOptions): Promise<TypesyncGenerateResult>;
+
+  generateRules(opts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult>;
 
   validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult>;
 }
