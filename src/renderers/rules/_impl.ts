@@ -1,4 +1,5 @@
 import { StringBuilder } from '@proficient/ds';
+import { readFile } from 'fs/promises';
 
 import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
@@ -13,19 +14,55 @@ class RulesRendererImpl implements RulesRenderer {
 
   public async render(g: RulesGeneration): Promise<RenderedFile> {
     const b = new StringBuilder();
-    b.append(`rules_version = '2';` + `\n`);
-    b.append(`service cloud.firestore {` + `\n`);
 
-    const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
-    b.append(renderedDeclarations + `\n`);
+    const { lines, startIndicatorLineIdx } = await this.getOutputFileIndicators();
 
-    b.append('}');
+    lines.forEach((line, lineIdx) => {
+      if (lineIdx === startIndicatorLineIdx + 1) {
+        const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
+        b.append(renderedDeclarations + `\n`);
+      }
+      b.append(`${line}`);
+      if (lineIdx !== lines.length - 1) {
+        b.append('\n');
+      }
+    });
 
     const rootFile: RenderedFile = {
       content: b.toString(),
     };
 
     return rootFile;
+  }
+
+  private async getOutputFileIndicators() {
+    // TODO: Make dynamic
+    const startIndicator = 'typesync-start';
+    const endIndicator = 'typesync-end';
+
+    const outputFileContent = (await readFile(this.config.pathToOutputFile)).toString();
+    const lines = outputFileContent.split('\n');
+    const startIndicatorLineIdx = lines.findIndex(line => line.includes(startIndicator));
+    const endIndicatorLineIdx = lines.findIndex(line => line.includes(endIndicator));
+
+    if (startIndicatorLineIdx === -1) {
+      // TODO: Implement
+      throw new Error('Unimplemented');
+    }
+
+    if (endIndicatorLineIdx === -1) {
+      // TODO: Implement
+      throw new Error('Unimplemented');
+    }
+
+    if (startIndicatorLineIdx >= endIndicatorLineIdx) {
+      // TODO: Implement
+      throw new Error('Unimplemented');
+    }
+
+    lines.splice(startIndicatorLineIdx + 1, endIndicatorLineIdx - startIndicatorLineIdx - 1);
+
+    return { lines, startIndicatorLineIdx };
   }
 
   private renderDeclaration(declaration: RulesDeclaration) {

@@ -5,6 +5,7 @@ import type { RenderedFile } from '../_types.js';
 export interface RulesRendererConfig {
   platform: RulesGenerationPlatform;
   indentation: number;
+  pathToOutputFile: string;
 }
 
 export interface RulesRenderer {

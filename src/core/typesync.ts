@@ -8,11 +8,8 @@ import type {
   TypesyncValidateOptions,
   TypesyncValidateResult,
 } from '../api.js';
-import {
-  DefinitionFilesNotFoundError,
-  InvalidCustomPydanticBaseOption,
-  InvalidIndentationOption,
-} from '../errors/index.js';
+import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
+import { InvalidCustomPydanticBaseOption, InvalidIndentationOption } from '../errors/invalid-opts.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createRulesGenerator } from '../generators/rules/index.js';
@@ -134,7 +131,7 @@ class TypesyncImpl implements Typesync {
   }
 
   private createRenderer(opts: NormalizedGenerateOptions): renderers.Renderer {
-    const { platform, indentation, customPydanticBase } = opts;
+    const { platform, indentation, customPydanticBase, pathToOutputFile } = opts;
     switch (platform) {
       case 'ts:firebase-admin:12':
       case 'ts:firebase-admin:11':
@@ -159,6 +156,7 @@ class TypesyncImpl implements Typesync {
         return renderers.createRulesRenderer({
           platform,
           indentation,
+          pathToOutputFile,
         });
       default:
         assertNever(platform);

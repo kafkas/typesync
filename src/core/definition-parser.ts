@@ -7,7 +7,7 @@ import {
   DefinitionFileFieldNotValidError,
   DefinitionFileNotValidYamlOrJsonError,
   DuplicateModelNameError,
-} from '../errors/index.js';
+} from '../errors/invalid-def.js';
 import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import type { Logger } from './logger.js';
