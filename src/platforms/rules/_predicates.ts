@@ -37,10 +37,16 @@ export interface TypeValidatorPredicate {
   varModelName: string;
 }
 
-export interface FieldExistsInMapPredicate {
-  type: 'field-exists-in-map';
+export interface MapHasKeyPredicate {
+  type: 'map-has-key';
   varName: string;
-  fieldName: string;
+  key: string;
+}
+
+export interface MapHasOnlyKeysPredicate {
+  type: 'map-has-only-keys';
+  varName: string;
+  keys: string[];
 }
 
 export interface LiteralPredicate {
@@ -68,7 +74,8 @@ export type Predicate =
   | ValueEqualityPredicate
   | TypeEqualityPredicate
   | TypeValidatorPredicate
-  | FieldExistsInMapPredicate
+  | MapHasKeyPredicate
+  | MapHasOnlyKeysPredicate
   | LiteralPredicate
   | OrPredicate
   | AndPredicate
@@ -99,7 +106,7 @@ export function predicateForTimestampType(t: Timestamp, varName: string): Predic
 }
 
 export function predicateForLiteralType(t: Literal, varName: string): Predicate {
-  return { type: 'value-equality', varName, varValue: typeof t.value === 'string' ? `"${t.value}"` : `${t.value}` };
+  return { type: 'value-equality', varName, varValue: typeof t.value === 'string' ? `'${t.value}'` : `${t.value}` };
 }
 
 export function predicateForEnumType(t: Enum, varName: string): Predicate {
@@ -108,7 +115,7 @@ export function predicateForEnumType(t: Enum, varName: string): Predicate {
     innerPredicates: t.members.map(member => ({
       type: 'value-equality',
       varName,
-      varValue: typeof member.value === 'string' ? `"${member.value}"` : `${member.value}`,
+      varValue: typeof member.value === 'string' ? `'${member.value}'` : `${member.value}`,
     })),
   };
 }
@@ -138,10 +145,15 @@ export function predicateForMapType(t: Map, varName: string): Predicate {
 }
 
 export function predicateForObjectType(t: Object, varName: string): Predicate {
-  const primaryPredicate: Predicate = {
+  const mapTypePredicate: Predicate = {
     type: 'type-equality',
     varName,
     varType: { type: 'map' },
+  };
+  const hasOnlySpecifiedKeysPredicate: Predicate = {
+    type: 'map-has-only-keys',
+    varName,
+    keys: t.fields.map(f => f.name),
   };
   const fieldPredicates: Predicate[] = t.fields.map(field => {
     const p = predicateForType(field.type, `${varName}.${field.name}`);
@@ -149,9 +161,9 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
       const optionalPredicate: Predicate = {
         type: 'negation',
         originalPredicate: {
-          type: 'field-exists-in-map',
+          type: 'map-has-key',
           varName,
-          fieldName: field.name,
+          key: field.name,
         },
       };
       return { type: 'or', innerPredicates: [p, optionalPredicate] };
@@ -162,7 +174,11 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
   return {
     type: 'and',
     alignment: 'vertical',
-    innerPredicates: [primaryPredicate, ...fieldPredicates],
+    innerPredicates: [
+      mapTypePredicate,
+      ...(t.additionalFields ? [] : [hasOnlySpecifiedKeysPredicate]),
+      ...fieldPredicates,
+    ],
   };
 }
 

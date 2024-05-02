@@ -57,8 +57,10 @@ class RulesRendererImpl implements RulesRenderer {
         return `(${predicate.varName} is ${predicate.varType.type})`;
       case 'type-validator':
         return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
-      case 'field-exists-in-map':
-        return `('${predicate.fieldName}' in ${predicate.varName})`;
+      case 'map-has-key':
+        return `('${predicate.key}' in ${predicate.varName})`;
+      case 'map-has-only-keys':
+        return `(${predicate.varName}.keys().hasOnly([${predicate.keys.map(k => `'${k}'`).join(', ')}]))`;
       case 'literal':
         return predicate.value;
       case 'or':
