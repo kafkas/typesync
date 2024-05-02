@@ -54,6 +54,7 @@ export interface TypesyncGenerateTsOptions {
 export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;
 
 export interface TypesyncGenerateTsResult {
+  type: 'ts';
   aliasModelCount: number;
   documentModelCount: number;
 }
@@ -69,6 +70,7 @@ export interface TypesyncGenerateSwiftOptions {
 export type TypesyncGenerateSwiftOption = keyof TypesyncGenerateSwiftOptions;
 
 export interface TypesyncGenerateSwiftResult {
+  type: 'swift';
   aliasModelCount: number;
   documentModelCount: number;
 }
@@ -85,6 +87,7 @@ export interface TypesyncGeneratePyOptions {
 export type TypesyncGeneratePyOption = keyof TypesyncGeneratePyOptions;
 
 export interface TypesyncGeneratePyResult {
+  type: 'python';
   aliasModelCount: number;
   documentModelCount: number;
 }
@@ -104,6 +107,7 @@ export interface TypesyncGenerateRulesOptions {
 export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
 
 export interface TypesyncGenerateRulesResult {
+  type: 'rules';
   aliasModelCount: number;
   documentModelCount: number;
 }
@@ -133,5 +137,11 @@ export interface Typesync {
 
   validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult>;
 }
+
+export type TypesyncGenerateResult =
+  | TypesyncGenerateTsResult
+  | TypesyncGenerateSwiftResult
+  | TypesyncGeneratePyResult
+  | TypesyncGenerateRulesResult;
 
 export { createTypesync } from './core/typesync.js';

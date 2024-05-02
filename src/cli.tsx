@@ -316,7 +316,7 @@ await yargs(hideBin(process.argv))
   )
   .command(
     'validate',
-    'Validates definition syntax',
+    'Checks if the specified definition is syntactically valid.',
     y =>
       y
         .option('definition', {

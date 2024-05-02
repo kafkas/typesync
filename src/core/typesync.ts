@@ -110,6 +110,7 @@ class TypesyncImpl implements Typesync {
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
     return {
+      type: 'ts',
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
     };
@@ -146,6 +147,7 @@ class TypesyncImpl implements Typesync {
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
     return {
+      type: 'swift',
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
     };
@@ -189,6 +191,7 @@ class TypesyncImpl implements Typesync {
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
     return {
+      type: 'python',
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
     };
@@ -257,6 +260,7 @@ class TypesyncImpl implements Typesync {
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
     return {
+      type: 'rules',
       aliasModelCount: s.aliasModels.length,
       documentModelCount: s.documentModels.length,
     };
