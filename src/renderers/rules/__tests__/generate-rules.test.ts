@@ -1,11 +1,19 @@
+import { resolve } from 'node:path';
+
 import { RulesGeneration } from '../../../generators/rules/index.js';
+import { getDirName } from '../../../util/fs.js';
 import { createRulesRenderer } from '../_impl.js';
 
 describe('RulesRendererImpl', () => {
   it('correctly renders a Security Rules generation', async () => {
     const renderer = createRulesRenderer({
-      indentation: 2,
       platform: 'rules:2',
+      indentation: 2,
+      pathToOutputFile: resolve(getDirName(import.meta.url), `firestore.rules`),
+      startMarker: 't-start',
+      endMarker: 't-end',
+      validatorNamePattern: 'is{modelName}',
+      validatorParamName: 'data',
     });
 
     const generation: RulesGeneration = {

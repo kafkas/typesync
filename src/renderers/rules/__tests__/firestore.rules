@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  // t-start
+  // t-end
+  
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    match /users/{uid} {
+      allow read, write;
+    }
+  }
+}

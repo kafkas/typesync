@@ -4,7 +4,8 @@ exports[`RulesRendererImpl correctly renders a Security Rules generation 1`] = `
 {
   "content": "rules_version = '2';
 service cloud.firestore {
-  function isValidUser(data) {
+  // t-start
+  function isUser(data) {
     return (
       (data is map) &&
       (data.keys().hasOnly(['username', 'role', 'path', 'pets', 'website_url', 'created_at'])) &&
@@ -15,6 +16,17 @@ service cloud.firestore {
       ((data.website_url is string) || !('website_url' in data)) &&
       (data.created_at is timestamp)
     );
+  }
+  // t-end
+  
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    match /users/{uid} {
+      allow read, write;
+    }
   }
 }",
 }
