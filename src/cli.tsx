@@ -117,6 +117,12 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: 'typesync-end',
         })
+        .option('validatorNamePattern', {
+          describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring. For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
+          type: 'string',
+          demandOption: false,
+          default: 'isValid{modelName}',
+        })
         .option('validatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
           type: 'string',
@@ -136,7 +142,17 @@ await yargs(hideBin(process.argv))
           default: false,
         }),
     async args => {
-      const { definition, platform, outFile, startMarker, endMarker, validatorParamName, indentation, debug } = args;
+      const {
+        definition,
+        platform,
+        outFile,
+        startMarker,
+        endMarker,
+        validatorNamePattern,
+        validatorParamName,
+        indentation,
+        debug,
+      } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -146,6 +162,7 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           startMarker,
           endMarker,
+          validatorNamePattern,
           validatorParamName,
           indentation,
           debug,

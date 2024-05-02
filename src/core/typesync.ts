@@ -12,7 +12,12 @@ import type {
   TypesyncValidateResult,
 } from '../api.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
-import { InvalidCustomPydanticBaseOption, InvalidIndentationOption } from '../errors/invalid-opts.js';
+import {
+  InvalidCustomPydanticBaseOption,
+  InvalidIndentationOption,
+  InvalidValidatorNamePatternOption,
+  InvalidValidatorParamNameOption,
+} from '../errors/invalid-opts.js';
 import { type Generator } from '../generators/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createRulesGenerator } from '../generators/rules/index.js';
@@ -45,6 +50,7 @@ interface NormalizedGenerateRulesOptions {
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
+  validatorNamePattern: string;
   validatorParamName: string;
   indentation: number;
   debug: boolean;
@@ -85,6 +91,7 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile,
       startMarker,
       endMarker,
+      validatorNamePattern,
       validatorParamName,
       indentation,
       debug,
@@ -99,6 +106,7 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile,
       startMarker,
       endMarker,
+      validatorNamePattern,
       validatorParamName,
       platform,
     });
@@ -146,10 +154,28 @@ class TypesyncImpl implements Typesync {
   }
 
   private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
-    const { definition, platform, outFile, startMarker, endMarker, validatorParamName, indentation, debug } = opts;
+    const {
+      definition,
+      platform,
+      outFile,
+      startMarker,
+      endMarker,
+      validatorNamePattern,
+      validatorParamName,
+      indentation,
+      debug,
+    } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidIndentationOption(indentation);
+    }
+
+    if (!validatorNamePattern.includes('{modelName}')) {
+      throw new InvalidValidatorNamePatternOption(validatorNamePattern);
+    }
+
+    if (validatorParamName.length === 0) {
+      throw new InvalidValidatorParamNameOption(validatorParamName);
     }
 
     return {
@@ -158,6 +184,7 @@ class TypesyncImpl implements Typesync {
       pathToOutputFile: outFile,
       startMarker,
       endMarker,
+      validatorNamePattern,
       validatorParamName,
       indentation,
       debug,

@@ -74,7 +74,7 @@ class RulesRendererImpl implements RulesRenderer {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
     const varName = this.config.validatorParamName;
-    b.append(`${this.indent(1)}function ${this.validatorPredicate(modelName)}(${varName}) {` + `\n`);
+    b.append(`${this.indent(1)}function ${this.validatorName(modelName)}(${varName}) {` + `\n`);
     const predicate = rules.predicateForType(modelType, varName);
     b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
     b.append(`${this.indent(1)}}`);
@@ -115,7 +115,7 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
-    return `${this.validatorPredicate(predicate.varModelName)}(${predicate.varName})`;
+    return `${this.validatorName(predicate.varModelName)}(${predicate.varName})`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
@@ -150,9 +150,8 @@ class RulesRendererImpl implements RulesRenderer {
     return `!${this.renderPredicate(predicate.originalPredicate)}`;
   }
 
-  private validatorPredicate(modelName: string) {
-    // TODO: Make dynamic with according to the `pattern` input
-    return `isValid${modelName}`;
+  private validatorName(modelName: string) {
+    return this.config.validatorNamePattern.replace('{modelName}', modelName);
   }
 
   private indent(count: number) {
