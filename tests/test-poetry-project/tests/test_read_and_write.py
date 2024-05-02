@@ -40,7 +40,7 @@ def generated_typesync_python_schema_file() -> Generator[Path, None, None]:
                 "yarn",
                 "tsx",
                 TYPESYNC_CLI_ENTRYPOINT_PATH.absolute().as_posix(),
-                "generate",
+                "generate-py",
                 "--platform",
                 "py:firebase-admin:6",
                 "--definition",
