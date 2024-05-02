@@ -7,23 +7,33 @@ import { assert } from '../src/util/assert.js';
 import { extractPackageJsonVersion } from '../src/util/extract-package-json-version.js';
 import { getDirName, writeFile } from '../src/util/fs.js';
 
-function getSchemaVersion() {
+function inferCurrentSchemaVersion() {
   const fullVersion = extractPackageJsonVersion();
   const [major, minor] = fullVersion.split('.');
   assert(major !== undefined && minor !== undefined, 'Expected package.json major and minor versions to be defined.');
   return `v${major}.${minor}`;
 }
 
-async function generateJsonSchema() {
-  const minorVersionName = getSchemaVersion();
-  const jsonSchemaForDefinition = zodToJsonSchema(definition.schemas.definition, minorVersionName);
-  const fileContent = JSON.stringify(jsonSchemaForDefinition);
-  const formattedContent = await format(fileContent, {
+function generateJsonSchema(minorVersionName: string) {
+  return zodToJsonSchema(definition.schemas.definition, minorVersionName);
+}
+
+type JsonSchema = ReturnType<typeof generateJsonSchema>;
+
+async function writeJsonSchemaToFile(jsonSchema: JsonSchema, outPath: string) {
+  const jsonSchemaAsString = JSON.stringify(jsonSchema);
+  const fileContent = await format(jsonSchemaAsString, {
     parser: 'json',
     tabWidth: 2,
   });
-  const outPath = resolve(getDirName(import.meta.url), `../public/${minorVersionName}.json`);
-  await writeFile(outPath, formattedContent);
+  await writeFile(outPath, fileContent);
 }
 
-await generateJsonSchema();
+async function main() {
+  const minorVersionName = inferCurrentSchemaVersion();
+  const jsonSchema = generateJsonSchema(minorVersionName);
+  const pathToOutputFile = resolve(getDirName(import.meta.url), `../public/${minorVersionName}.json`);
+  await writeJsonSchemaToFile(jsonSchema, pathToOutputFile);
+}
+
+await main();
