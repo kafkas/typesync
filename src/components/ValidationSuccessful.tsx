@@ -6,7 +6,7 @@ type Props = {};
 export function ValidationSuccessful(_: Props) {
   return (
     <Box flexDirection="column">
-      <Text color="green">✔ The specified Typesync definition is valid.</Text>
+      <Text color="green">✔ The specified Typesync schema definition is valid.</Text>
     </Box>
   );
 }

@@ -2,7 +2,6 @@ import { globSync } from 'glob';
 
 import type {
   PythonGenerationPlatform,
-  RulesGenerationPlatform,
   SwiftGenerationPlatform,
   TSGenerationPlatform,
   Typesync,
@@ -84,7 +83,6 @@ interface NormalizedGeneratePyOptions {
 
 interface NormalizedGenerateRulesOptions {
   definitionGlobPattern: string;
-  platform: RulesGenerationPlatform;
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
@@ -231,7 +229,6 @@ class TypesyncImpl implements Typesync {
     const opts = this.validateAndNormalizeRulesOpts(rawOpts);
     const {
       definitionGlobPattern,
-      platform,
       pathToOutputFile,
       startMarker,
       endMarker,
@@ -241,9 +238,7 @@ class TypesyncImpl implements Typesync {
       debug,
     } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({
-      platform,
-    });
+    const generator = createRulesGenerator({});
     const renderer = renderers.createRulesRenderer({
       indentation,
       pathToOutputFile,
@@ -251,7 +246,6 @@ class TypesyncImpl implements Typesync {
       endMarker,
       validatorNamePattern,
       validatorParamName,
-      platform,
     });
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
@@ -265,7 +259,6 @@ class TypesyncImpl implements Typesync {
   private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
     const {
       definition,
-      platform,
       outFile,
       startMarker = DEFAULT_RULES_START_MARKER,
       endMarker = DEFAULT_RULES_END_MARKER,
@@ -289,7 +282,6 @@ class TypesyncImpl implements Typesync {
 
     return {
       definitionGlobPattern: definition,
-      platform,
       pathToOutputFile: outFile,
       startMarker,
       endMarker,

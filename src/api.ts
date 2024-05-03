@@ -2,22 +2,18 @@ import { schema } from './schema/index.js';
 import { objectKeys } from './util/object-keys.js';
 
 const TS_PLATFORMS = {
-  'ts:firebase-admin:12': true,
-  'ts:firebase-admin:11': true,
-  'ts:firebase:10': true,
-  'ts:firebase:9': true,
+  'firebase-admin@12': true,
+  'firebase-admin@11': true,
+  'firebase@10': true,
+  'firebase@9': true,
 };
 
 const SWIFT_PLATFORMS = {
-  'swift:firebase:10': true,
+  'firebase@10': true,
 };
 
 const PYTHON_PLATFORMS = {
-  'py:firebase-admin:6': true,
-};
-
-const RULES_PLATFORMS = {
-  'rules:2': true,
+  'firebase-admin@6': true,
 };
 
 export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
@@ -25,8 +21,6 @@ export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
 export type SwiftGenerationPlatform = keyof typeof SWIFT_PLATFORMS;
 
 export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
-
-export type RulesGenerationPlatform = keyof typeof RULES_PLATFORMS;
 
 export function getTSPlatforms() {
   return objectKeys(TS_PLATFORMS);
@@ -38,10 +32,6 @@ export function getSwiftPlatforms() {
 
 export function getPythonPlatforms() {
   return objectKeys(PYTHON_PLATFORMS);
-}
-
-export function getRulesPlatforms() {
-  return objectKeys(RULES_PLATFORMS);
 }
 
 export interface TypesyncGenerateTsOptions {
@@ -92,7 +82,6 @@ export interface TypesyncGeneratePyResult {
 
 export interface TypesyncGenerateRulesOptions {
   definition: string;
-  platform: RulesGenerationPlatform;
   outFile: string;
   startMarker?: string;
   endMarker?: string;

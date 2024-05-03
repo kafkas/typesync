@@ -7,7 +7,6 @@ import { createRulesRenderer } from '../_impl.js';
 describe('RulesRendererImpl', () => {
   it('correctly renders a Security Rules generation', async () => {
     const renderer = createRulesRenderer({
-      platform: 'rules:2',
       indentation: 2,
       pathToOutputFile: resolve(getDirName(import.meta.url), `firestore.rules`),
       startMarker: 't-start',

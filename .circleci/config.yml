@@ -41,7 +41,7 @@ jobs:
       platform:
         description: Target platform and version
         type: enum
-        enum: ['py:firebase-admin:6']
+        enum: ['firebase-admin@6']
     steps:
       - checkout-build-yarn-project:
           checkout_path: ~/project
@@ -177,7 +177,7 @@ workflows:
       - generate-typesync-models:
           model_path: 'tests/test-poetry-project/test_poetry_project/models.yml'
           output_folder_path: 'tests/test-poetry-project/autogen'
-          platform: 'py:firebase-admin:6'
+          platform: 'firebase-admin@6'
       - test-typesync-python-end-to-end:
           requires: [generate-typesync-models]
           path_to_typesync_model_dir: 'tests/test-poetry-project/autogen'

@@ -111,7 +111,7 @@ User:
 You can now run `typesync generate` to generate the types for the relevant platform. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
 
 ```bash
-typesync generate --definition 'definition/**/*.yml' --platform ts:firebase-admin:11 --outFile models.ts
+typesync generate --definition 'definition/**/*.yml' --platform firebase-admin@11 --outFile models.ts
 ```
 
 This command tells Typesync to:
