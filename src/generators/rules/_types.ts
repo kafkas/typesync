@@ -1,4 +1,3 @@
-import type { RulesGenerationPlatform } from '../../api.js';
 import type { rules } from '../../platforms/rules/index.js';
 import type { schema } from '../../schema/index.js';
 
@@ -15,9 +14,7 @@ export interface RulesGeneration {
   declarations: RulesDeclaration[];
 }
 
-export interface RulesGeneratorConfig {
-  platform: RulesGenerationPlatform;
-}
+export interface RulesGeneratorConfig {}
 
 export interface RulesGenerator {
   generate(s: schema.Schema): RulesGeneration;

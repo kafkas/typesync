@@ -5,7 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPythonPlatforms, getRulesPlatforms, getSwiftPlatforms, getTSPlatforms } from './api.js';
+import { createTypesync, getPythonPlatforms, getSwiftPlatforms, getTSPlatforms } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
@@ -210,12 +210,6 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
-        .option('platform', {
-          describe: 'Target platform and version.',
-          type: 'string',
-          demandOption: true,
-          choices: getRulesPlatforms(),
-        })
         .option('outFile', {
           describe: 'The path to the output file.',
           type: 'string',
@@ -260,7 +254,6 @@ await yargs(hideBin(process.argv))
     async args => {
       const {
         definition,
-        platform,
         outFile,
         startMarker,
         endMarker,
@@ -274,7 +267,6 @@ await yargs(hideBin(process.argv))
       try {
         const result = await typesync.generateRules({
           definition: resolve(process.cwd(), definition),
-          platform,
           outFile: pathToOutputFile,
           startMarker,
           endMarker,
