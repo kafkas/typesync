@@ -5,7 +5,7 @@ describe('PythonRendererImpl', () => {
   it('correctly renders a Python generation', async () => {
     const renderer = createPythonRenderer({
       indentation: 4,
-      platform: 'py:firebase-admin:6',
+      platform: 'firebase-admin@6',
     });
 
     const generation: PythonGeneration = {
@@ -61,7 +61,7 @@ describe('PythonRendererImpl', () => {
   it('extends from custom base class if `customPydanticBase` is provided', async () => {
     const renderer = createPythonRenderer({
       indentation: 2,
-      platform: 'py:firebase-admin:6',
+      platform: 'firebase-admin@6',
       customPydanticBase: {
         importPath: 'x.y',
         className: 'CustomModel',

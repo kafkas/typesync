@@ -2,18 +2,18 @@ import { schema } from './schema/index.js';
 import { objectKeys } from './util/object-keys.js';
 
 const TS_PLATFORMS = {
-  'ts:firebase-admin:12': true,
-  'ts:firebase-admin:11': true,
-  'ts:firebase:10': true,
-  'ts:firebase:9': true,
+  'firebase-admin@12': true,
+  'firebase-admin@11': true,
+  'firebase@10': true,
+  'firebase@9': true,
 };
 
 const SWIFT_PLATFORMS = {
-  'swift:firebase:10': true,
+  'firebase@10': true,
 };
 
 const PYTHON_PLATFORMS = {
-  'py:firebase-admin:6': true,
+  'firebase-admin@6': true,
 };
 
 export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;

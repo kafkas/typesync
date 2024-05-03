@@ -5,7 +5,7 @@ import { SwiftGeneration } from '../_types.js';
 describe('SwiftGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {
     const generator = createSwiftGenerator({
-      platform: 'swift:firebase:10',
+      platform: 'firebase@10',
     });
     const s = schema.createFromDefinition({
       Username: {

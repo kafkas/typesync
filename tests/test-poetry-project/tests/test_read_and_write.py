@@ -42,7 +42,7 @@ def generated_typesync_python_schema_file() -> Generator[Path, None, None]:
                 TYPESYNC_CLI_ENTRYPOINT_PATH.absolute().as_posix(),
                 "generate-py",
                 "--platform",
-                "py:firebase-admin:6",
+                "firebase-admin@6",
                 "--definition",
                 TYPESYNC_MODEL_IN_PATH.absolute().as_posix(),
                 "--outFile",
