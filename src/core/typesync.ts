@@ -1,9 +1,9 @@
 import { globSync } from 'glob';
 
 import type {
-  PythonGenerationPlatform,
-  SwiftGenerationPlatform,
-  TSGenerationPlatform,
+  PythonGenerationTarget,
+  SwiftGenerationTarget,
+  TSGenerationTarget,
   Typesync,
   TypesyncGeneratePyOptions,
   TypesyncGeneratePyResult,
@@ -55,7 +55,7 @@ import { createLogger } from './logger.js';
 
 interface NormalizedGenerateTsOptions {
   definitionGlobPattern: string;
-  platform: TSGenerationPlatform;
+  target: TSGenerationTarget;
   pathToOutputFile: string;
   indentation: number;
   debug: boolean;
@@ -63,7 +63,7 @@ interface NormalizedGenerateTsOptions {
 
 interface NormalizedGenerateSwiftOptions {
   definitionGlobPattern: string;
-  platform: SwiftGenerationPlatform;
+  target: SwiftGenerationTarget;
   pathToOutputFile: string;
   indentation: number;
   debug: boolean;
@@ -71,7 +71,7 @@ interface NormalizedGenerateSwiftOptions {
 
 interface NormalizedGeneratePyOptions {
   definitionGlobPattern: string;
-  platform: PythonGenerationPlatform;
+  target: PythonGenerationTarget;
   pathToOutputFile: string;
   indentation: number;
   customPydanticBase?: {
@@ -95,15 +95,10 @@ interface NormalizedGenerateRulesOptions {
 class TypesyncImpl implements Typesync {
   public async generateTs(rawOpts: TypesyncGenerateTsOptions): Promise<TypesyncGenerateTsResult> {
     const opts = this.validateAndNormalizeTsOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, platform, indentation, debug } = opts;
+    const { definitionGlobPattern, pathToOutputFile, target, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createTSGenerator({
-      platform,
-    });
-    const renderer = renderers.createTSRenderer({
-      platform,
-      indentation,
-    });
+    const generator = createTSGenerator({ target });
+    const renderer = renderers.createTSRenderer({ target, indentation });
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
@@ -114,7 +109,7 @@ class TypesyncImpl implements Typesync {
   }
 
   private validateAndNormalizeTsOpts(opts: TypesyncGenerateTsOptions): NormalizedGenerateTsOptions {
-    const { definition, platform, outFile, indentation = DEFAULT_TS_INDENTATION, debug = DEFAULT_TS_DEBUG } = opts;
+    const { definition, target, outFile, indentation = DEFAULT_TS_INDENTATION, debug = DEFAULT_TS_DEBUG } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidTSIndentationOption(indentation);
@@ -122,7 +117,7 @@ class TypesyncImpl implements Typesync {
 
     return {
       definitionGlobPattern: definition,
-      platform,
+      target,
       pathToOutputFile: outFile,
       indentation,
       debug,
@@ -131,15 +126,10 @@ class TypesyncImpl implements Typesync {
 
   public async generateSwift(rawOpts: TypesyncGenerateSwiftOptions): Promise<TypesyncGenerateSwiftResult> {
     const opts = this.validateAndNormalizeSwiftOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, platform, indentation, debug } = opts;
+    const { definitionGlobPattern, pathToOutputFile, target, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createSwiftGenerator({
-      platform,
-    });
-    const renderer = renderers.createSwiftRenderer({
-      platform,
-      indentation,
-    });
+    const generator = createSwiftGenerator({ target });
+    const renderer = renderers.createSwiftRenderer({ target, indentation });
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
@@ -150,13 +140,7 @@ class TypesyncImpl implements Typesync {
   }
 
   private validateAndNormalizeSwiftOpts(opts: TypesyncGenerateSwiftOptions): NormalizedGenerateSwiftOptions {
-    const {
-      definition,
-      platform,
-      outFile,
-      indentation = DEFAULT_SWIFT_INDENTATION,
-      debug = DEFAULT_SWIFT_DEBUG,
-    } = opts;
+    const { definition, target, outFile, indentation = DEFAULT_SWIFT_INDENTATION, debug = DEFAULT_SWIFT_DEBUG } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidSwiftIndentationOption(indentation);
@@ -164,7 +148,7 @@ class TypesyncImpl implements Typesync {
 
     return {
       definitionGlobPattern: definition,
-      platform,
+      target,
       pathToOutputFile: outFile,
       indentation,
       debug,
@@ -173,13 +157,11 @@ class TypesyncImpl implements Typesync {
 
   public async generatePy(rawOpts: TypesyncGeneratePyOptions): Promise<TypesyncGeneratePyResult> {
     const opts = this.validateAndNormalizePyOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, platform, customPydanticBase, indentation, debug } = opts;
+    const { definitionGlobPattern, pathToOutputFile, target, customPydanticBase, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createPythonGenerator({
-      platform,
-    });
+    const generator = createPythonGenerator({ target });
     const renderer = renderers.createPythonRenderer({
-      platform,
+      target,
       customPydanticBase,
       indentation,
     });
@@ -195,7 +177,7 @@ class TypesyncImpl implements Typesync {
   private validateAndNormalizePyOpts(opts: TypesyncGeneratePyOptions): NormalizedGeneratePyOptions {
     const {
       definition,
-      platform,
+      target,
       outFile,
       indentation = DEFAULT_PY_INDENTATION,
       customPydanticBase: customPydanticBaseRaw = DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
@@ -217,7 +199,7 @@ class TypesyncImpl implements Typesync {
 
     return {
       definitionGlobPattern: definition,
-      platform,
+      target,
       pathToOutputFile: outFile,
       indentation,
       customPydanticBase,

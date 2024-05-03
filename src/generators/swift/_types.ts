@@ -1,4 +1,4 @@
-import type { SwiftGenerationPlatform } from '../../api.js';
+import type { SwiftGenerationTarget } from '../../api.js';
 import type { swift } from '../../platforms/swift/index.js';
 import type { schema } from '../../schema/index.js';
 
@@ -58,7 +58,7 @@ export interface SwiftGeneration {
 }
 
 export interface SwiftGeneratorConfig {
-  platform: SwiftGenerationPlatform;
+  target: SwiftGenerationTarget;
 }
 
 export interface SwiftGenerator {

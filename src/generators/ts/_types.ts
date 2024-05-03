@@ -1,4 +1,4 @@
-import type { TSGenerationPlatform } from '../../api.js';
+import type { TSGenerationTarget } from '../../api.js';
 import type { ts } from '../../platforms/ts/index.js';
 import type { schema } from '../../schema/index.js';
 
@@ -24,7 +24,7 @@ export interface TSGeneration {
 }
 
 export interface TSGeneratorConfig {
-  platform: TSGenerationPlatform;
+  target: TSGenerationTarget;
 }
 
 export interface TSGenerator {

@@ -1,42 +1,42 @@
 import { schema } from './schema/index.js';
 import { objectKeys } from './util/object-keys.js';
 
-const TS_PLATFORMS = {
+const TS_TARGETS = {
   'firebase-admin@12': true,
   'firebase-admin@11': true,
   'firebase@10': true,
   'firebase@9': true,
 };
 
-const SWIFT_PLATFORMS = {
+const SWIFT_TARGETS = {
   'firebase@10': true,
 };
 
-const PYTHON_PLATFORMS = {
+const PYTHON_TARGETS = {
   'firebase-admin@6': true,
 };
 
-export type TSGenerationPlatform = keyof typeof TS_PLATFORMS;
+export type TSGenerationTarget = keyof typeof TS_TARGETS;
 
-export type SwiftGenerationPlatform = keyof typeof SWIFT_PLATFORMS;
+export type SwiftGenerationTarget = keyof typeof SWIFT_TARGETS;
 
-export type PythonGenerationPlatform = keyof typeof PYTHON_PLATFORMS;
+export type PythonGenerationTarget = keyof typeof PYTHON_TARGETS;
 
-export function getTSPlatforms() {
-  return objectKeys(TS_PLATFORMS);
+export function getTSTargets() {
+  return objectKeys(TS_TARGETS);
 }
 
-export function getSwiftPlatforms() {
-  return objectKeys(SWIFT_PLATFORMS);
+export function getSwiftTargets() {
+  return objectKeys(SWIFT_TARGETS);
 }
 
-export function getPythonPlatforms() {
-  return objectKeys(PYTHON_PLATFORMS);
+export function getPythonTargets() {
+  return objectKeys(PYTHON_TARGETS);
 }
 
 export interface TypesyncGenerateTsOptions {
   definition: string;
-  platform: TSGenerationPlatform;
+  target: TSGenerationTarget;
   outFile: string;
   indentation?: number;
   debug?: boolean;
@@ -51,7 +51,7 @@ export interface TypesyncGenerateTsResult {
 
 export interface TypesyncGenerateSwiftOptions {
   definition: string;
-  platform: SwiftGenerationPlatform;
+  target: SwiftGenerationTarget;
   outFile: string;
   indentation?: number;
   debug?: boolean;
@@ -66,7 +66,7 @@ export interface TypesyncGenerateSwiftResult {
 
 export interface TypesyncGeneratePyOptions {
   definition: string;
-  platform: PythonGenerationPlatform;
+  target: PythonGenerationTarget;
   outFile: string;
   indentation?: number;
   customPydanticBase?: string;

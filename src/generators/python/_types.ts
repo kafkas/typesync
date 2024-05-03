@@ -1,4 +1,4 @@
-import type { PythonGenerationPlatform } from '../../api.js';
+import type { PythonGenerationTarget } from '../../api.js';
 import type { python } from '../../platforms/python/index.js';
 import type { schema } from '../../schema/index.js';
 
@@ -31,7 +31,7 @@ export interface PythonGeneration {
 }
 
 export interface PythonGeneratorConfig {
-  platform: PythonGenerationPlatform;
+  target: PythonGenerationTarget;
 }
 
 export interface PythonGenerator {

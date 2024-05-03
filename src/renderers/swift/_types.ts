@@ -1,9 +1,9 @@
-import type { SwiftGenerationPlatform } from '../../api.js';
+import type { SwiftGenerationTarget } from '../../api.js';
 import type { SwiftGeneration } from '../../generators/swift/index.js';
 import type { RenderedFile } from '../_types.js';
 
 export interface SwiftRendererConfig {
-  platform: SwiftGenerationPlatform;
+  target: SwiftGenerationTarget;
   indentation: number;
 }
 

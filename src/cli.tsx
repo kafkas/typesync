@@ -5,7 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPythonPlatforms, getSwiftPlatforms, getTSPlatforms } from './api.js';
+import { createTypesync, getPythonTargets, getSwiftTargets, getTSTargets } from './api.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
@@ -44,11 +44,12 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
-        .option('platform', {
-          describe: 'Target platform and version.',
+        .option('target', {
+          describe:
+            'The target environment for which the types are generated. This option specifies the target SDK and version, ensuring that the output is compatible with the chosen environment.',
           type: 'string',
           demandOption: true,
-          choices: getTSPlatforms(),
+          choices: getTSTargets(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',
@@ -68,13 +69,13 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_TS_DEBUG,
         }),
     async args => {
-      const { definition, platform, outFile, indentation, debug } = args;
+      const { definition, target, outFile, indentation, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
         const result = await typesync.generateTs({
           definition: resolve(process.cwd(), definition),
-          platform,
+          target,
           outFile: pathToOutputFile,
           indentation,
           debug,
@@ -97,11 +98,12 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
-        .option('platform', {
-          describe: 'Target platform and version.',
+        .option('target', {
+          describe:
+            'The target environment for which the types are generated. This option specifies the target SDK and version, ensuring that the output is compatible with the chosen environment.',
           type: 'string',
           demandOption: true,
-          choices: getSwiftPlatforms(),
+          choices: getSwiftTargets(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',
@@ -121,13 +123,13 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_SWIFT_DEBUG,
         }),
     async args => {
-      const { definition, platform, outFile, indentation, debug } = args;
+      const { definition, target, outFile, indentation, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
         const result = await typesync.generateSwift({
           definition: resolve(process.cwd(), definition),
-          platform,
+          target,
           outFile: pathToOutputFile,
           indentation,
           debug,
@@ -150,11 +152,12 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
-        .option('platform', {
-          describe: 'Target platform and version.',
+        .option('target', {
+          describe:
+            'The target environment for which the types are generated. This option specifies the target SDK and version, ensuring that the output is compatible with the chosen environment.',
           type: 'string',
           demandOption: true,
-          choices: getPythonPlatforms(),
+          choices: getPythonTargets(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',
@@ -180,13 +183,13 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_PY_DEBUG,
         }),
     async args => {
-      const { definition, platform, outFile, indentation, customPydanticBase, debug } = args;
+      const { definition, target, outFile, indentation, customPydanticBase, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
         const result = await typesync.generatePy({
           definition: resolve(process.cwd(), definition),
-          platform,
+          target,
           outFile: pathToOutputFile,
           indentation,
           customPydanticBase,
