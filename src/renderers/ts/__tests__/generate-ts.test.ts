@@ -5,7 +5,7 @@ describe('TSRendererImpl', () => {
   it('correctly renders a TS generation', async () => {
     const renderer = createTSRenderer({
       indentation: 4,
-      platform: 'firebase-admin@11',
+      target: 'firebase-admin@11',
     });
 
     const generation: TSGeneration = {

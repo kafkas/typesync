@@ -5,7 +5,7 @@ describe('SwiftRendererImpl', () => {
   it('correctly renders a Swift generation', async () => {
     const renderer = createSwiftRenderer({
       indentation: 4,
-      platform: 'firebase@10',
+      target: 'firebase@10',
     });
 
     const generation: SwiftGeneration = {

@@ -63,7 +63,7 @@ class TSRendererImpl implements TSRenderer {
   }
 
   private getImportFirestoreStatement() {
-    switch (this.config.platform) {
+    switch (this.config.target) {
       case 'firebase-admin@12':
         return `import type * as firestore from "firebase-admin/firestore"`;
       case 'firebase-admin@11':
@@ -72,7 +72,7 @@ class TSRendererImpl implements TSRenderer {
       case 'firebase@9':
         return `import type * as firestore from 'firebase/firestore';`;
       default:
-        assertNever(this.config.platform);
+        assertNever(this.config.target);
     }
   }
 }

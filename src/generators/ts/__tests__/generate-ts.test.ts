@@ -5,7 +5,7 @@ import { TSGeneration } from '../_types.js';
 describe('TSGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {
     const generator = createTSGenerator({
-      platform: 'firebase-admin@11',
+      target: 'firebase-admin@11',
     });
     const s = schema.createFromDefinition({
       Username: {

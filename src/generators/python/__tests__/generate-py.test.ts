@@ -5,7 +5,7 @@ import { PythonGeneration } from '../_types.js';
 describe('PythonGeneratorImpl', () => {
   it('produces the correct generation for a flat schema', async () => {
     const generator = createPythonGenerator({
-      platform: 'firebase-admin@6',
+      target: 'firebase-admin@6',
     });
     const s = schema.createFromDefinition({
       Username: {
