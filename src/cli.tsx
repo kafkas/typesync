@@ -201,7 +201,7 @@ await yargs(hideBin(process.argv))
   )
   .command(
     'generate-rules',
-    'Generates validator functions for Firestore Security Rules and injects them into the specified file.',
+    'Generates type validator functions for Firestore Security Rules and injects them into the specified file.',
     y =>
       y
         .option('definition', {
@@ -234,7 +234,7 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_RULES_END_MARKER,
         })
         .option('validatorNamePattern', {
-          describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring. For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
+          describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring (this is a literal value). For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
           default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
@@ -292,7 +292,7 @@ await yargs(hideBin(process.argv))
   )
   .command(
     'validate',
-    'Checks if the specified definition is syntactically valid.',
+    'Checks if the specified schema definition is syntactically valid.',
     y =>
       y
         .option('definition', {
