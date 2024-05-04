@@ -1,4 +1,4 @@
-import { type schema } from '../schema/index.js';
+import { GenerateRepresentationResult } from './_common.js';
 
 export interface GenerateRulesRepresentationOptions {
   definition: string;
@@ -16,9 +16,8 @@ export interface GenerateRulesOptions extends GenerateRulesRepresentationOptions
 
 export type GenerateRulesOption = keyof GenerateRulesOptions;
 
-export interface GenerateRulesRepresentationResult {
+export interface GenerateRulesRepresentationResult extends GenerateRepresentationResult {
   type: 'rules';
-  schema: schema.Schema;
 }
 
 export interface GenerateRulesResult extends GenerateRulesRepresentationResult {}

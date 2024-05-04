@@ -1,5 +1,5 @@
-import { schema } from '../schema/index.js';
 import { objectKeys } from '../util/object-keys.js';
+import { GenerateRepresentationResult } from './_common.js';
 
 const PYTHON_TARGETS = {
   'firebase-admin@6': true,
@@ -25,9 +25,8 @@ export interface GeneratePythonOptions extends GeneratePythonRepresentationOptio
 
 export type GeneratePythonOption = keyof GeneratePythonOptions;
 
-export interface GeneratePythonRepresentationResult {
+export interface GeneratePythonRepresentationResult extends GenerateRepresentationResult {
   type: 'python';
-  schema: schema.Schema;
 }
 
 export interface GeneratePythonResult extends GeneratePythonRepresentationResult {}
