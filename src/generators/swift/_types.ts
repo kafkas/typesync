@@ -1,4 +1,4 @@
-import type { SwiftGenerationTarget } from '../../api.js';
+import type { SwiftGenerationTarget } from '../../api/index.js';
 import type { swift } from '../../platforms/swift/index.js';
 import type { schema } from '../../schema/index.js';
 

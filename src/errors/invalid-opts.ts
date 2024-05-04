@@ -1,9 +1,4 @@
-import type {
-  TypesyncGeneratePyOption,
-  TypesyncGenerateRulesOption,
-  TypesyncGenerateSwiftOption,
-  TypesyncGenerateTsOption,
-} from '../api.js';
+import type { GeneratePythonOption, GenerateRulesOption, GenerateSwiftOption, GenerateTsOption } from '../api/index.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {
@@ -13,35 +8,35 @@ export class InvalidOptionsError extends Error {
 
 export class InvalidTSIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGenerateTsOption = 'indentation';
+    const option: GenerateTsOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
 
 export class InvalidSwiftIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGenerateSwiftOption = 'indentation';
+    const option: GenerateSwiftOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
 
 export class InvalidPyIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGeneratePyOption = 'indentation';
+    const option: GeneratePythonOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
 
 export class InvalidRulesIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGenerateRulesOption = 'indentation';
+    const option: GenerateRulesOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
 
 export class InvalidCustomPydanticBaseOption extends InvalidOptionsError {
   public constructor(customPydanticBase: string) {
-    const option: TypesyncGeneratePyOption = 'customPydanticBase';
+    const option: GeneratePythonOption = 'customPydanticBase';
     super(
       `Expected '${option}' to be a valid class import path with the format "x.y.z.CustomModel". Received "${customPydanticBase}" instead.`
     );
@@ -50,7 +45,7 @@ export class InvalidCustomPydanticBaseOption extends InvalidOptionsError {
 
 export class InvalidValidatorNamePatternOption extends InvalidOptionsError {
   public constructor(validatorNamePattern: string) {
-    const option: TypesyncGenerateRulesOption = 'validatorNamePattern';
+    const option: GenerateRulesOption = 'validatorNamePattern';
     super(
       `Expected '${option}' to be a string that contains a '{modelName}' substring. Received '${validatorNamePattern}'`
     );
@@ -59,7 +54,7 @@ export class InvalidValidatorNamePatternOption extends InvalidOptionsError {
 
 export class InvalidValidatorParamNameOption extends InvalidOptionsError {
   public constructor(validatorParamName: string) {
-    const option: TypesyncGenerateRulesOption = 'validatorParamName';
+    const option: GenerateRulesOption = 'validatorParamName';
     super(`Expected '${option}' to be a non-empty string. Received '${validatorParamName}'`);
   }
 }
