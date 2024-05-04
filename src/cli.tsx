@@ -162,17 +162,18 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
+        .option('customPydanticBase', {
+          describe:
+            'The base class from which all the generated Python models will extend. The base class must extend `pydantic.BaseModel` and the option must be provided in the format `x.y.ModelName`. If this option is not provided, the generated models will extend from `pydantic.BaseModel`.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
+        })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
           demandOption: false,
           default: DEFAULT_PY_INDENTATION,
-        })
-        .option('customPydanticBase', {
-          describe: 'The base Pydantic class from which all the generated Pydantic models will extend.',
-          type: 'string',
-          demandOption: false,
-          default: DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
         })
         .option('debug', {
           describe: 'Whether to enable debug logs.',

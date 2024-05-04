@@ -73,7 +73,7 @@ cd definition
 Next, create a YAML file named `models.yml` in the `definition` directory. This file will contain the schema definitions for your Firestore documents. Here's a sample schema:
 
 ```yaml models.yml
-# yaml-language-server: $schema=https://schema.typesync.org/v0.4.json
+# yaml-language-server: $schema=https://schema.typesync.org/v0.6.json
 
 UserRole:
   model: alias
@@ -108,24 +108,22 @@ User:
 
 ### Step 3: Generate type definitions
 
-You can now run `typesync generate` to generate the types for the relevant platform. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
+You can now generate the types for the relevant environment. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
 
 ```bash
-typesync generate --definition 'definition/**/*.yml' --target firebase-admin@11 --outFile models.ts
+typesync generate-ts --definition 'definition/**/*.yml' --target firebase-admin@11 --outFile models.ts
 ```
 
 This command tells Typesync to:
 
-- search for all `.yml` files in the `definition` directory
-- generate TypeScript interfaces for use with Firebase Admin SDK (version 11)
-- output the generated interfaces to a file named `models.ts`
+- take all `.yml` files in the `definition` directory as the schema definition
+- generate TypeScript interfaces for use with the Firebase Admin SDK (version 11)
+- write the generated types to the `models.ts` file in the current directory
 
 Here's what the generated TypeScript file might look like:
 
-```ts models.ts
+```ts models.ts (backend)
 import type { firestore } from 'firebase-admin';
-
-export type Username = string;
 
 /** Represents a user's role within a project. */
 export type UserRole = 'owner' | 'admin' | 'member';
@@ -133,7 +131,7 @@ export type UserRole = 'owner' | 'admin' | 'member';
 /** Represents a user that belongs to a project. */
 export interface User {
   /** A string that uniquely identifies the user within a project. */
-  username: Username;
+  username: string;
   role: UserRole;
   website_url?: string;
   created_at: firestore.Timestamp;
@@ -150,7 +148,7 @@ Decide if you want to version control the generated files. It can be beneficial 
 
 #### Multiple Files
 
-If your project grows, you might want to split your schema into multiple YAML/JSON files. Typesync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
+As your project grows, you might want to split your schema into multiple YAML/JSON files. Typesync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
 
 # License
 
