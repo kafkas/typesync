@@ -57,52 +57,52 @@ import { createLogger } from './logger.js';
 interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
   target: TSGenerationTarget;
-  indentation: number;
   debug: boolean;
 }
 
 interface NormalizedGenerateTsOptions extends NormalizedGenerateTsRepresentationOptions {
   pathToOutputFile: string;
+  indentation: number;
 }
 
 interface NormalizedGenerateSwiftRepresentationOptions {
   definitionGlobPattern: string;
   target: SwiftGenerationTarget;
-  indentation: number;
   debug: boolean;
 }
 
 interface NormalizedGenerateSwiftOptions extends NormalizedGenerateSwiftRepresentationOptions {
   pathToOutputFile: string;
+  indentation: number;
 }
 
 interface NormalizedGeneratePythonRepresentationOptions {
   definitionGlobPattern: string;
   target: PythonGenerationTarget;
-  indentation: number;
-  customPydanticBase?: {
-    importPath: string;
-    className: string;
-  };
   debug: boolean;
 }
 
 interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepresentationOptions {
   pathToOutputFile: string;
+  customPydanticBase?: {
+    importPath: string;
+    className: string;
+  };
+  indentation: number;
 }
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
   startMarker: string;
   endMarker: string;
-  validatorNamePattern: string;
-  validatorParamName: string;
-  indentation: number;
   debug: boolean;
 }
 
 interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresentationOptions {
   pathToOutputFile: string;
+  validatorNamePattern: string;
+  validatorParamName: string;
+  indentation: number;
 }
 
 class TypesyncImpl implements Typesync {
@@ -128,23 +128,20 @@ class TypesyncImpl implements Typesync {
   }
 
   private normalizeGenerateTsOpts(opts: TypesyncGenerateTsOptions): NormalizedGenerateTsOptions {
-    const { outFile, ...rest } = opts;
-    return { ...this.normalizeGenerateTsRepresentationOpts(rest), pathToOutputFile: outFile };
+    const { outFile, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
+    if (!Number.isSafeInteger(indentation) || indentation < 1) {
+      throw new InvalidTSIndentationOption(indentation);
+    }
+    return { ...this.normalizeGenerateTsRepresentationOpts(rest), pathToOutputFile: outFile, indentation };
   }
 
   private normalizeGenerateTsRepresentationOpts(
     opts: TypesyncGenerateTsRepresentationOptions
   ): NormalizedGenerateTsRepresentationOptions {
-    const { definition, target, indentation = DEFAULT_TS_INDENTATION, debug = DEFAULT_TS_DEBUG } = opts;
-
-    if (!Number.isSafeInteger(indentation) || indentation < 1) {
-      throw new InvalidTSIndentationOption(indentation);
-    }
-
+    const { definition, target, debug = DEFAULT_TS_DEBUG } = opts;
     return {
       definitionGlobPattern: definition,
       target,
-      indentation,
       debug,
     };
   }

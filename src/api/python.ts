@@ -14,13 +14,13 @@ export function getPythonTargets() {
 export interface TypesyncGeneratePythonRepresentationOptions {
   definition: string;
   target: PythonGenerationTarget;
-  indentation?: number;
-  customPydanticBase?: string;
   debug?: boolean;
 }
 
 export interface TypesyncGeneratePythonOptions extends TypesyncGeneratePythonRepresentationOptions {
   outFile: string;
+  customPydanticBase?: string;
+  indentation?: number;
 }
 
 export type TypesyncGeneratePythonOption = keyof TypesyncGeneratePythonOptions;

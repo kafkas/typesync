@@ -18,12 +18,12 @@ export function getTSTargets() {
 export interface TypesyncGenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
-  indentation?: number;
   debug?: boolean;
 }
 
 export interface TypesyncGenerateTsOptions extends TypesyncGenerateTsRepresentationOptions {
   outFile: string;
+  indentation?: number;
 }
 
 export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;

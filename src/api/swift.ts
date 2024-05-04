@@ -14,12 +14,12 @@ export function getSwiftTargets() {
 export interface TypesyncGenerateSwiftRepresentationOptions {
   definition: string;
   target: SwiftGenerationTarget;
-  indentation?: number;
   debug?: boolean;
 }
 
 export interface TypesyncGenerateSwiftOptions extends TypesyncGenerateSwiftRepresentationOptions {
   outFile: string;
+  indentation?: number;
 }
 
 export type TypesyncGenerateSwiftOption = keyof TypesyncGenerateSwiftOptions;

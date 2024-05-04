@@ -4,14 +4,14 @@ export interface TypesyncGenerateRulesRepresentationOptions {
   definition: string;
   startMarker?: string;
   endMarker?: string;
-  validatorNamePattern?: string;
-  validatorParamName?: string;
-  indentation?: number;
   debug?: boolean;
 }
 
 export interface TypesyncGenerateRulesOptions extends TypesyncGenerateRulesRepresentationOptions {
   outFile: string;
+  validatorNamePattern?: string;
+  validatorParamName?: string;
+  indentation?: number;
 }
 
 export type TypesyncGenerateRulesOption = keyof TypesyncGenerateRulesOptions;
