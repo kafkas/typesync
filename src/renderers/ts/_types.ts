@@ -1,4 +1,4 @@
-import type { TSGenerationTarget } from '../../api.js';
+import type { TSGenerationTarget } from '../../api/index.js';
 import type { TSGeneration } from '../../generators/ts/index.js';
 import type { RenderedFile } from '../_types.js';
 

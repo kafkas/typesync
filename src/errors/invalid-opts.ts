@@ -3,7 +3,7 @@ import type {
   TypesyncGenerateRulesOption,
   TypesyncGenerateSwiftOption,
   TypesyncGenerateTsOption,
-} from '../api.js';
+} from '../api/index.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {

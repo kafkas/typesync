@@ -5,7 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { createTypesync, getPythonTargets, getSwiftTargets, getTSTargets } from './api.js';
+import { getPythonTargets, getSwiftTargets, getTSTargets, typesync } from './api/index.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
@@ -27,8 +27,6 @@ import {
 } from './constants.js';
 import { extractErrorMessage } from './util/extract-error-message.js';
 import { extractPackageJsonVersion } from './util/extract-package-json-version.js';
-
-const typesync = createTypesync();
 
 const cliVersion = extractPackageJsonVersion();
 

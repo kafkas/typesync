@@ -15,7 +15,7 @@ import type {
   TypesyncGenerateTsResult,
   TypesyncValidateOptions,
   TypesyncValidateResult,
-} from '../api.js';
+} from '../api/index.js';
 import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,

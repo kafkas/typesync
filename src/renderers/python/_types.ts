@@ -1,4 +1,4 @@
-import type { PythonGenerationTarget } from '../../api.js';
+import type { PythonGenerationTarget } from '../../api/index.js';
 import type { PythonGeneration } from '../../generators/python/index.js';
 import type { RenderedFile } from '../_types.js';
 

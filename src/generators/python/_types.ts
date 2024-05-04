@@ -1,4 +1,4 @@
-import type { PythonGenerationTarget } from '../../api.js';
+import type { PythonGenerationTarget } from '../../api/index.js';
 import type { python } from '../../platforms/python/index.js';
 import type { schema } from '../../schema/index.js';
 

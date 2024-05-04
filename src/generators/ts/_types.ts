@@ -1,4 +1,4 @@
-import type { TSGenerationTarget } from '../../api.js';
+import type { TSGenerationTarget } from '../../api/index.js';
 import type { ts } from '../../platforms/ts/index.js';
 import type { schema } from '../../schema/index.js';
 

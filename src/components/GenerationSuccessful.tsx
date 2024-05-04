@@ -2,7 +2,7 @@ import { Box, Text } from 'ink';
 import pluralize from 'pluralize';
 import React from 'react';
 
-import type { TypesyncGenerateResult } from '../api.js';
+import type { TypesyncGenerateResult } from '../api/index.js';
 import { assertNever } from '../util/assert.js';
 
 type Props = {
