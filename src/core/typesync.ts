@@ -2,6 +2,8 @@ import { globSync } from 'glob';
 
 import type {
   GeneratePythonOptions,
+  GeneratePythonRepresentationOptions,
+  GeneratePythonRepresentationResult,
   GeneratePythonResult,
   GenerateRulesOptions,
   GenerateRulesResult,
@@ -190,7 +192,7 @@ class TypesyncImpl implements Typesync {
   }
 
   public async generatePy(rawOpts: GeneratePythonOptions): Promise<GeneratePythonResult> {
-    const opts = this.validateAndNormalizePyOpts(rawOpts);
+    const opts = this.normalizeGeneratePyOpts(rawOpts);
     const { definitionGlobPattern, pathToOutputFile, target, customPydanticBase, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createPythonGenerator({ target });
@@ -202,20 +204,26 @@ class TypesyncImpl implements Typesync {
     const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-    return {
-      type: 'python',
-      schema: s,
-    };
+    return { type: 'python', schema: s, generation };
   }
 
-  private validateAndNormalizePyOpts(opts: GeneratePythonOptions): NormalizedGeneratePythonOptions {
+  public async generatePyRepresentation(
+    rawOpts: GeneratePythonRepresentationOptions
+  ): Promise<GeneratePythonRepresentationResult> {
+    const opts = this.normalizeGeneratePyRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, target, debug } = opts;
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createPythonGenerator({ target });
+    const generation = generator.generate(s);
+    return { type: 'python', schema: s, generation };
+  }
+
+  private normalizeGeneratePyOpts(opts: GeneratePythonOptions): NormalizedGeneratePythonOptions {
     const {
-      definition,
-      target,
       outFile,
-      indentation = DEFAULT_PY_INDENTATION,
       customPydanticBase: customPydanticBaseRaw = DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
-      debug = DEFAULT_PY_DEBUG,
+      indentation = DEFAULT_PY_INDENTATION,
+      ...rest
     } = opts;
 
     let customPydanticBase;
@@ -232,11 +240,20 @@ class TypesyncImpl implements Typesync {
     }
 
     return {
+      ...this.normalizeGeneratePyRepresentationOpts(rest),
+      pathToOutputFile: outFile,
+      customPydanticBase,
+      indentation,
+    };
+  }
+
+  private normalizeGeneratePyRepresentationOpts(
+    opts: GeneratePythonRepresentationOptions
+  ): NormalizedGeneratePythonRepresentationOptions {
+    const { definition, target, debug = DEFAULT_PY_DEBUG } = opts;
+    return {
       definitionGlobPattern: definition,
       target,
-      pathToOutputFile: outFile,
-      indentation,
-      customPydanticBase,
       debug,
     };
   }

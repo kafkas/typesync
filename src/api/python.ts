@@ -1,3 +1,4 @@
+import { PythonGeneration } from '../generators/python/index.js';
 import { objectKeys } from '../util/object-keys.js';
 import { GenerateRepresentationResult } from './_common.js';
 
@@ -27,6 +28,7 @@ export type GeneratePythonOption = keyof GeneratePythonOptions;
 
 export interface GeneratePythonRepresentationResult extends GenerateRepresentationResult {
   type: 'python';
+  generation: PythonGeneration;
 }
 
 export interface GeneratePythonResult extends GeneratePythonRepresentationResult {}
