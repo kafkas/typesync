@@ -12,6 +12,7 @@ import type {
   TypesyncGenerateSwiftOptions,
   TypesyncGenerateSwiftResult,
   TypesyncGenerateTsOptions,
+  TypesyncGenerateTsRepresentationOptions,
   TypesyncGenerateTsResult,
   TypesyncValidateOptions,
   TypesyncValidateResult,
@@ -53,26 +54,31 @@ import { parsePythonClassImportPath } from '../util/parse-python-class-import-pa
 import { createDefinitionParser } from './definition-parser.js';
 import { createLogger } from './logger.js';
 
-interface NormalizedGenerateTsOptions {
+interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
   target: TSGenerationTarget;
-  pathToOutputFile: string;
   indentation: number;
   debug: boolean;
 }
 
-interface NormalizedGenerateSwiftOptions {
+interface NormalizedGenerateTsOptions extends NormalizedGenerateTsRepresentationOptions {
+  pathToOutputFile: string;
+}
+
+interface NormalizedGenerateSwiftRepresentationOptions {
   definitionGlobPattern: string;
   target: SwiftGenerationTarget;
-  pathToOutputFile: string;
   indentation: number;
   debug: boolean;
 }
 
-interface NormalizedGeneratePythonOptions {
+interface NormalizedGenerateSwiftOptions extends NormalizedGenerateSwiftRepresentationOptions {
+  pathToOutputFile: string;
+}
+
+interface NormalizedGeneratePythonRepresentationOptions {
   definitionGlobPattern: string;
   target: PythonGenerationTarget;
-  pathToOutputFile: string;
   indentation: number;
   customPydanticBase?: {
     importPath: string;
@@ -81,9 +87,12 @@ interface NormalizedGeneratePythonOptions {
   debug: boolean;
 }
 
-interface NormalizedGenerateRulesOptions {
-  definitionGlobPattern: string;
+interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepresentationOptions {
   pathToOutputFile: string;
+}
+
+interface NormalizedGenerateRulesRepresentationOptions {
+  definitionGlobPattern: string;
   startMarker: string;
   endMarker: string;
   validatorNamePattern: string;
@@ -92,24 +101,41 @@ interface NormalizedGenerateRulesOptions {
   debug: boolean;
 }
 
+interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresentationOptions {
+  pathToOutputFile: string;
+}
+
 class TypesyncImpl implements Typesync {
   public async generateTs(rawOpts: TypesyncGenerateTsOptions): Promise<TypesyncGenerateTsResult> {
-    const opts = this.validateAndNormalizeTsOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, target, indentation, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createTSGenerator({ target });
+    const opts = this.normalizeGenerateTsOpts(rawOpts);
+    const { target, pathToOutputFile, indentation } = opts;
+    const { schema: s, generation } = await this.generateTsRepresentation(rawOpts);
     const renderer = renderers.createTSRenderer({ target, indentation });
-    const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-    return {
-      type: 'ts',
-      schema: s,
-    };
+    return { type: 'ts', schema: s, generation };
   }
 
-  private validateAndNormalizeTsOpts(opts: TypesyncGenerateTsOptions): NormalizedGenerateTsOptions {
-    const { definition, target, outFile, indentation = DEFAULT_TS_INDENTATION, debug = DEFAULT_TS_DEBUG } = opts;
+  public async generateTsRepresentation(
+    rawOpts: TypesyncGenerateTsRepresentationOptions
+  ): Promise<TypesyncGenerateTsResult> {
+    const opts = this.normalizeGenerateTsRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, target, debug } = opts;
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createTSGenerator({ target });
+    const generation = generator.generate(s);
+    return { type: 'ts', schema: s, generation };
+  }
+
+  private normalizeGenerateTsOpts(opts: TypesyncGenerateTsOptions): NormalizedGenerateTsOptions {
+    const { outFile, ...rest } = opts;
+    return { ...this.normalizeGenerateTsRepresentationOpts(rest), pathToOutputFile: outFile };
+  }
+
+  private normalizeGenerateTsRepresentationOpts(
+    opts: TypesyncGenerateTsRepresentationOptions
+  ): NormalizedGenerateTsRepresentationOptions {
+    const { definition, target, indentation = DEFAULT_TS_INDENTATION, debug = DEFAULT_TS_DEBUG } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidTSIndentationOption(indentation);
@@ -118,7 +144,6 @@ class TypesyncImpl implements Typesync {
     return {
       definitionGlobPattern: definition,
       target,
-      pathToOutputFile: outFile,
       indentation,
       debug,
     };

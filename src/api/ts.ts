@@ -1,3 +1,4 @@
+import { TSGeneration } from '../generators/ts/index.js';
 import { type schema } from '../schema/index.js';
 import { objectKeys } from '../util/object-keys.js';
 
@@ -30,4 +31,5 @@ export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;
 export interface TypesyncGenerateTsResult {
   type: 'ts';
   schema: schema.Schema;
+  generation: TSGeneration;
 }
