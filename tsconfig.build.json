@@ -6,12 +6,12 @@
     "sourceMap": true
   },
   "exclude": [
+    "dist",
     "jest.config.global.ts",
     "jest.config.ts",
+    "playground/**/*",
+    "scripts",
     "src/**/__tests__/**/*",
     "test/**/*",
-    "playground/**/*",
-    "dist",
-    "scripts"
   ]
 }
