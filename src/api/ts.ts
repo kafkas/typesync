@@ -14,12 +14,15 @@ export function getTSTargets() {
   return objectKeys(TS_TARGETS);
 }
 
-export interface TypesyncGenerateTsOptions {
+export interface TypesyncGenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
-  outFile: string;
   indentation?: number;
   debug?: boolean;
+}
+
+export interface TypesyncGenerateTsOptions extends TypesyncGenerateTsRepresentationOptions {
+  outFile: string;
 }
 
 export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;

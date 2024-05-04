@@ -11,13 +11,16 @@ export function getPythonTargets() {
   return objectKeys(PYTHON_TARGETS);
 }
 
-export interface TypesyncGeneratePyOptions {
+export interface TypesyncGeneratePyRepresentationOptions {
   definition: string;
   target: PythonGenerationTarget;
-  outFile: string;
   indentation?: number;
   customPydanticBase?: string;
   debug?: boolean;
+}
+
+export interface TypesyncGeneratePyOptions extends TypesyncGeneratePyRepresentationOptions {
+  outFile: string;
 }
 
 export type TypesyncGeneratePyOption = keyof TypesyncGeneratePyOptions;
