@@ -6,9 +6,12 @@ import type {
   GenerateRulesOptions,
   GenerateRulesResult,
   GenerateSwiftOptions,
+  GenerateSwiftRepresentationOptions,
+  GenerateSwiftRepresentationResult,
   GenerateSwiftResult,
   GenerateTsOptions,
   GenerateTsRepresentationOptions,
+  GenerateTsRepresentationResult,
   GenerateTsResult,
   PythonGenerationTarget,
   SwiftGenerationTarget,
@@ -116,7 +119,9 @@ class TypesyncImpl implements Typesync {
     return { type: 'ts', schema: s, generation };
   }
 
-  public async generateTsRepresentation(rawOpts: GenerateTsRepresentationOptions): Promise<GenerateTsResult> {
+  public async generateTsRepresentation(
+    rawOpts: GenerateTsRepresentationOptions
+  ): Promise<GenerateTsRepresentationResult> {
     const opts = this.normalizeGenerateTsRepresentationOpts(rawOpts);
     const { definitionGlobPattern, target, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
@@ -145,32 +150,41 @@ class TypesyncImpl implements Typesync {
   }
 
   public async generateSwift(rawOpts: GenerateSwiftOptions): Promise<GenerateSwiftResult> {
-    const opts = this.validateAndNormalizeSwiftOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, target, indentation, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createSwiftGenerator({ target });
+    const opts = this.normalizeGenerateSwiftOpts(rawOpts);
+    const { pathToOutputFile, target, indentation } = opts;
+    const { schema: s, generation } = await this.generateSwiftRepresentation(rawOpts);
     const renderer = renderers.createSwiftRenderer({ target, indentation });
-    const generation = generator.generate(s);
     const file = await renderer.render(generation);
     await writeFile(pathToOutputFile, file.content);
-    return {
-      type: 'swift',
-      schema: s,
-    };
+    return { type: 'swift', schema: s, generation };
   }
 
-  private validateAndNormalizeSwiftOpts(opts: GenerateSwiftOptions): NormalizedGenerateSwiftOptions {
-    const { definition, target, outFile, indentation = DEFAULT_SWIFT_INDENTATION, debug = DEFAULT_SWIFT_DEBUG } = opts;
+  public async generateSwiftRepresentation(
+    rawOpts: GenerateSwiftRepresentationOptions
+  ): Promise<GenerateSwiftRepresentationResult> {
+    const opts = this.normalizeGenerateSwiftRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, target, debug } = opts;
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createSwiftGenerator({ target });
+    const generation = generator.generate(s);
+    return { type: 'swift', schema: s, generation };
+  }
 
+  private normalizeGenerateSwiftOpts(opts: GenerateSwiftOptions): NormalizedGenerateSwiftOptions {
+    const { outFile, indentation = DEFAULT_SWIFT_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidSwiftIndentationOption(indentation);
     }
+    return { ...this.normalizeGenerateSwiftRepresentationOpts(rest), pathToOutputFile: outFile, indentation };
+  }
 
+  private normalizeGenerateSwiftRepresentationOpts(
+    opts: GenerateSwiftRepresentationOptions
+  ): NormalizedGenerateSwiftRepresentationOptions {
+    const { definition, target, debug = DEFAULT_SWIFT_DEBUG } = opts;
     return {
       definitionGlobPattern: definition,
       target,
-      pathToOutputFile: outFile,
-      indentation,
       debug,
     };
   }

@@ -29,11 +29,23 @@ export interface Typesync {
   generateTs(opts: GenerateTsOptions): Promise<GenerateTsResult>;
 
   /**
-   * Generates TypeScript type definitions for the specified schema and returns the generation and the internal representation without writing anything to the filesystem.
+   * Generates TypeScript type definitions for the specified schema and returns the generation and the internal representation of the schema without writing anything to the filesystem.
    */
   generateTsRepresentation(opts: GenerateTsRepresentationOptions): Promise<GenerateTsResult>;
 
+  /**
+   * Generates Swift type definitions for the specified schema and writes them to the specified file.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync generate-swift` command.
+   */
   generateSwift(opts: GenerateSwiftOptions): Promise<GenerateSwiftResult>;
+
+  /**
+   * Generates Swift type definitions for the specified schema and returns the generation and the internal representation of the schema without writing anything to the filesystem.
+   */
+  generateSwiftRepresentation(opts: GenerateSwiftOptions): Promise<GenerateSwiftResult>;
 
   generatePy(opts: GeneratePythonOptions): Promise<GeneratePythonResult>;
 

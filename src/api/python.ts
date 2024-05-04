@@ -25,7 +25,9 @@ export interface GeneratePythonOptions extends GeneratePythonRepresentationOptio
 
 export type GeneratePythonOption = keyof GeneratePythonOptions;
 
-export interface GeneratePythonResult {
+export interface GeneratePythonRepresentationResult {
   type: 'python';
   schema: schema.Schema;
 }
+
+export interface GeneratePythonResult extends GeneratePythonRepresentationResult {}

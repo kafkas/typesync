@@ -1,3 +1,4 @@
+import { SwiftGeneration } from '../generators/swift/index.js';
 import { type schema } from '../schema/index.js';
 import { objectKeys } from '../util/object-keys.js';
 
@@ -24,7 +25,10 @@ export interface GenerateSwiftOptions extends GenerateSwiftRepresentationOptions
 
 export type GenerateSwiftOption = keyof GenerateSwiftOptions;
 
-export interface GenerateSwiftResult {
+export interface GenerateSwiftRepresentationResult {
   type: 'swift';
   schema: schema.Schema;
+  generation: SwiftGeneration;
 }
+
+export interface GenerateSwiftResult extends GenerateSwiftRepresentationResult {}

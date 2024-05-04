@@ -16,7 +16,9 @@ export interface GenerateRulesOptions extends GenerateRulesRepresentationOptions
 
 export type GenerateRulesOption = keyof GenerateRulesOptions;
 
-export interface GenerateRulesResult {
+export interface GenerateRulesRepresentationResult {
   type: 'rules';
   schema: schema.Schema;
 }
+
+export interface GenerateRulesResult extends GenerateRulesRepresentationResult {}

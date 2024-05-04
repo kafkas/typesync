@@ -28,8 +28,10 @@ export interface GenerateTsOptions extends GenerateTsRepresentationOptions {
 
 export type GenerateTsOption = keyof GenerateTsOptions;
 
-export interface GenerateTsResult {
+export interface GenerateTsRepresentationResult {
   type: 'ts';
   schema: schema.Schema;
   generation: TSGeneration;
 }
+
+export interface GenerateTsResult extends GenerateTsRepresentationResult {}
