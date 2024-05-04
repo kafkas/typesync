@@ -1,5 +1,5 @@
 import type {
-  TypesyncGeneratePyOption,
+  TypesyncGeneratePythonOption,
   TypesyncGenerateRulesOption,
   TypesyncGenerateSwiftOption,
   TypesyncGenerateTsOption,
@@ -27,7 +27,7 @@ export class InvalidSwiftIndentationOption extends InvalidOptionsError {
 
 export class InvalidPyIndentationOption extends InvalidOptionsError {
   public constructor(indentation: number) {
-    const option: TypesyncGeneratePyOption = 'indentation';
+    const option: TypesyncGeneratePythonOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
   }
 }
@@ -41,7 +41,7 @@ export class InvalidRulesIndentationOption extends InvalidOptionsError {
 
 export class InvalidCustomPydanticBaseOption extends InvalidOptionsError {
   public constructor(customPydanticBase: string) {
-    const option: TypesyncGeneratePyOption = 'customPydanticBase';
+    const option: TypesyncGeneratePythonOption = 'customPydanticBase';
     super(
       `Expected '${option}' to be a valid class import path with the format "x.y.z.CustomModel". Received "${customPydanticBase}" instead.`
     );

@@ -1,5 +1,5 @@
 import { createTypesync } from '../core/typesync.js';
-import type { TypesyncGeneratePyOptions, TypesyncGeneratePyResult } from './python.js';
+import type { TypesyncGeneratePythonOptions, TypesyncGeneratePythonResult } from './python.js';
 import type { TypesyncGenerateRulesOptions, TypesyncGenerateRulesResult } from './rules.js';
 import type { TypesyncGenerateSwiftOptions, TypesyncGenerateSwiftResult } from './swift.js';
 import type { TypesyncGenerateTsOptions, TypesyncGenerateTsResult } from './ts.js';
@@ -23,7 +23,7 @@ export interface Typesync {
 
   generateSwift(opts: TypesyncGenerateSwiftOptions): Promise<TypesyncGenerateSwiftResult>;
 
-  generatePy(opts: TypesyncGeneratePyOptions): Promise<TypesyncGeneratePyResult>;
+  generatePy(opts: TypesyncGeneratePythonOptions): Promise<TypesyncGeneratePythonResult>;
 
   generateRules(opts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult>;
 
@@ -33,7 +33,7 @@ export interface Typesync {
 export type TypesyncGenerateResult =
   | TypesyncGenerateTsResult
   | TypesyncGenerateSwiftResult
-  | TypesyncGeneratePyResult
+  | TypesyncGeneratePythonResult
   | TypesyncGenerateRulesResult;
 
 /**

@@ -5,8 +5,8 @@ import type {
   SwiftGenerationTarget,
   TSGenerationTarget,
   Typesync,
-  TypesyncGeneratePyOptions,
-  TypesyncGeneratePyResult,
+  TypesyncGeneratePythonOptions,
+  TypesyncGeneratePythonResult,
   TypesyncGenerateRulesOptions,
   TypesyncGenerateRulesResult,
   TypesyncGenerateSwiftOptions,
@@ -69,7 +69,7 @@ interface NormalizedGenerateSwiftOptions {
   debug: boolean;
 }
 
-interface NormalizedGeneratePyOptions {
+interface NormalizedGeneratePythonOptions {
   definitionGlobPattern: string;
   target: PythonGenerationTarget;
   pathToOutputFile: string;
@@ -155,7 +155,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  public async generatePy(rawOpts: TypesyncGeneratePyOptions): Promise<TypesyncGeneratePyResult> {
+  public async generatePy(rawOpts: TypesyncGeneratePythonOptions): Promise<TypesyncGeneratePythonResult> {
     const opts = this.validateAndNormalizePyOpts(rawOpts);
     const { definitionGlobPattern, pathToOutputFile, target, customPydanticBase, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
@@ -174,7 +174,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  private validateAndNormalizePyOpts(opts: TypesyncGeneratePyOptions): NormalizedGeneratePyOptions {
+  private validateAndNormalizePyOpts(opts: TypesyncGeneratePythonOptions): NormalizedGeneratePythonOptions {
     const {
       definition,
       target,

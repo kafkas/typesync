@@ -11,7 +11,7 @@ export function getPythonTargets() {
   return objectKeys(PYTHON_TARGETS);
 }
 
-export interface TypesyncGeneratePyRepresentationOptions {
+export interface TypesyncGeneratePythonRepresentationOptions {
   definition: string;
   target: PythonGenerationTarget;
   indentation?: number;
@@ -19,13 +19,13 @@ export interface TypesyncGeneratePyRepresentationOptions {
   debug?: boolean;
 }
 
-export interface TypesyncGeneratePyOptions extends TypesyncGeneratePyRepresentationOptions {
+export interface TypesyncGeneratePythonOptions extends TypesyncGeneratePythonRepresentationOptions {
   outFile: string;
 }
 
-export type TypesyncGeneratePyOption = keyof TypesyncGeneratePyOptions;
+export type TypesyncGeneratePythonOption = keyof TypesyncGeneratePythonOptions;
 
-export interface TypesyncGeneratePyResult {
+export interface TypesyncGeneratePythonResult {
   type: 'python';
   schema: schema.Schema;
 }
