@@ -15,20 +15,20 @@ export function getTSTargets() {
   return objectKeys(TS_TARGETS);
 }
 
-export interface TypesyncGenerateTsRepresentationOptions {
+export interface GenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
   debug?: boolean;
 }
 
-export interface TypesyncGenerateTsOptions extends TypesyncGenerateTsRepresentationOptions {
+export interface GenerateTsOptions extends GenerateTsRepresentationOptions {
   outFile: string;
   indentation?: number;
 }
 
-export type TypesyncGenerateTsOption = keyof TypesyncGenerateTsOptions;
+export type GenerateTsOption = keyof GenerateTsOptions;
 
-export interface TypesyncGenerateTsResult {
+export interface GenerateTsResult {
   type: 'ts';
   schema: schema.Schema;
   generation: TSGeneration;

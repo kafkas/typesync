@@ -1,21 +1,21 @@
 import { globSync } from 'glob';
 
 import type {
+  GeneratePythonOptions,
+  GeneratePythonResult,
+  GenerateRulesOptions,
+  GenerateRulesResult,
+  GenerateSwiftOptions,
+  GenerateSwiftResult,
+  GenerateTsOptions,
+  GenerateTsRepresentationOptions,
+  GenerateTsResult,
   PythonGenerationTarget,
   SwiftGenerationTarget,
   TSGenerationTarget,
   Typesync,
-  TypesyncGeneratePythonOptions,
-  TypesyncGeneratePythonResult,
-  TypesyncGenerateRulesOptions,
-  TypesyncGenerateRulesResult,
-  TypesyncGenerateSwiftOptions,
-  TypesyncGenerateSwiftResult,
-  TypesyncGenerateTsOptions,
-  TypesyncGenerateTsRepresentationOptions,
-  TypesyncGenerateTsResult,
-  TypesyncValidateOptions,
-  TypesyncValidateResult,
+  ValidateOptions,
+  ValidateResult,
 } from '../api/index.js';
 import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
@@ -106,7 +106,7 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
 }
 
 class TypesyncImpl implements Typesync {
-  public async generateTs(rawOpts: TypesyncGenerateTsOptions): Promise<TypesyncGenerateTsResult> {
+  public async generateTs(rawOpts: GenerateTsOptions): Promise<GenerateTsResult> {
     const opts = this.normalizeGenerateTsOpts(rawOpts);
     const { target, pathToOutputFile, indentation } = opts;
     const { schema: s, generation } = await this.generateTsRepresentation(rawOpts);
@@ -116,9 +116,7 @@ class TypesyncImpl implements Typesync {
     return { type: 'ts', schema: s, generation };
   }
 
-  public async generateTsRepresentation(
-    rawOpts: TypesyncGenerateTsRepresentationOptions
-  ): Promise<TypesyncGenerateTsResult> {
+  public async generateTsRepresentation(rawOpts: GenerateTsRepresentationOptions): Promise<GenerateTsResult> {
     const opts = this.normalizeGenerateTsRepresentationOpts(rawOpts);
     const { definitionGlobPattern, target, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
@@ -127,7 +125,7 @@ class TypesyncImpl implements Typesync {
     return { type: 'ts', schema: s, generation };
   }
 
-  private normalizeGenerateTsOpts(opts: TypesyncGenerateTsOptions): NormalizedGenerateTsOptions {
+  private normalizeGenerateTsOpts(opts: GenerateTsOptions): NormalizedGenerateTsOptions {
     const { outFile, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidTSIndentationOption(indentation);
@@ -136,7 +134,7 @@ class TypesyncImpl implements Typesync {
   }
 
   private normalizeGenerateTsRepresentationOpts(
-    opts: TypesyncGenerateTsRepresentationOptions
+    opts: GenerateTsRepresentationOptions
   ): NormalizedGenerateTsRepresentationOptions {
     const { definition, target, debug = DEFAULT_TS_DEBUG } = opts;
     return {
@@ -146,7 +144,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  public async generateSwift(rawOpts: TypesyncGenerateSwiftOptions): Promise<TypesyncGenerateSwiftResult> {
+  public async generateSwift(rawOpts: GenerateSwiftOptions): Promise<GenerateSwiftResult> {
     const opts = this.validateAndNormalizeSwiftOpts(rawOpts);
     const { definitionGlobPattern, pathToOutputFile, target, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
@@ -161,7 +159,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  private validateAndNormalizeSwiftOpts(opts: TypesyncGenerateSwiftOptions): NormalizedGenerateSwiftOptions {
+  private validateAndNormalizeSwiftOpts(opts: GenerateSwiftOptions): NormalizedGenerateSwiftOptions {
     const { definition, target, outFile, indentation = DEFAULT_SWIFT_INDENTATION, debug = DEFAULT_SWIFT_DEBUG } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
@@ -177,7 +175,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  public async generatePy(rawOpts: TypesyncGeneratePythonOptions): Promise<TypesyncGeneratePythonResult> {
+  public async generatePy(rawOpts: GeneratePythonOptions): Promise<GeneratePythonResult> {
     const opts = this.validateAndNormalizePyOpts(rawOpts);
     const { definitionGlobPattern, pathToOutputFile, target, customPydanticBase, indentation, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
@@ -196,7 +194,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  private validateAndNormalizePyOpts(opts: TypesyncGeneratePythonOptions): NormalizedGeneratePythonOptions {
+  private validateAndNormalizePyOpts(opts: GeneratePythonOptions): NormalizedGeneratePythonOptions {
     const {
       definition,
       target,
@@ -229,7 +227,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  public async generateRules(rawOpts: TypesyncGenerateRulesOptions): Promise<TypesyncGenerateRulesResult> {
+  public async generateRules(rawOpts: GenerateRulesOptions): Promise<GenerateRulesResult> {
     const opts = this.validateAndNormalizeRulesOpts(rawOpts);
     const {
       definitionGlobPattern,
@@ -260,7 +258,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  private validateAndNormalizeRulesOpts(opts: TypesyncGenerateRulesOptions): NormalizedGenerateRulesOptions {
+  private validateAndNormalizeRulesOpts(opts: GenerateRulesOptions): NormalizedGenerateRulesOptions {
     const {
       definition,
       outFile,
@@ -296,7 +294,7 @@ class TypesyncImpl implements Typesync {
     };
   }
 
-  public async validate(opts: TypesyncValidateOptions): Promise<TypesyncValidateResult> {
+  public async validate(opts: ValidateOptions): Promise<ValidateResult> {
     const { definition: definitionGlobPattern, debug } = opts;
     try {
       this.createCoreObjects(definitionGlobPattern, debug);

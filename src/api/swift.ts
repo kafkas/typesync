@@ -11,20 +11,20 @@ export function getSwiftTargets() {
   return objectKeys(SWIFT_TARGETS);
 }
 
-export interface TypesyncGenerateSwiftRepresentationOptions {
+export interface GenerateSwiftRepresentationOptions {
   definition: string;
   target: SwiftGenerationTarget;
   debug?: boolean;
 }
 
-export interface TypesyncGenerateSwiftOptions extends TypesyncGenerateSwiftRepresentationOptions {
+export interface GenerateSwiftOptions extends GenerateSwiftRepresentationOptions {
   outFile: string;
   indentation?: number;
 }
 
-export type TypesyncGenerateSwiftOption = keyof TypesyncGenerateSwiftOptions;
+export type GenerateSwiftOption = keyof GenerateSwiftOptions;
 
-export interface TypesyncGenerateSwiftResult {
+export interface GenerateSwiftResult {
   type: 'swift';
   schema: schema.Schema;
 }

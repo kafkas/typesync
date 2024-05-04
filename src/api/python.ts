@@ -11,21 +11,21 @@ export function getPythonTargets() {
   return objectKeys(PYTHON_TARGETS);
 }
 
-export interface TypesyncGeneratePythonRepresentationOptions {
+export interface GeneratePythonRepresentationOptions {
   definition: string;
   target: PythonGenerationTarget;
   debug?: boolean;
 }
 
-export interface TypesyncGeneratePythonOptions extends TypesyncGeneratePythonRepresentationOptions {
+export interface GeneratePythonOptions extends GeneratePythonRepresentationOptions {
   outFile: string;
   customPydanticBase?: string;
   indentation?: number;
 }
 
-export type TypesyncGeneratePythonOption = keyof TypesyncGeneratePythonOptions;
+export type GeneratePythonOption = keyof GeneratePythonOptions;
 
-export interface TypesyncGeneratePythonResult {
+export interface GeneratePythonResult {
   type: 'python';
   schema: schema.Schema;
 }
