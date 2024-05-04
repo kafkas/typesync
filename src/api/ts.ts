@@ -30,6 +30,10 @@ export type GenerateTsOption = keyof GenerateTsOptions;
 
 export interface GenerateTsRepresentationResult extends GenerateRepresentationResult {
   type: 'ts';
+
+  /**
+   * A structured representation of the generated TypeScript types.
+   */
   generation: TSGeneration;
 }
 

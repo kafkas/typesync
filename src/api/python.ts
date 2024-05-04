@@ -28,6 +28,10 @@ export type GeneratePythonOption = keyof GeneratePythonOptions;
 
 export interface GeneratePythonRepresentationResult extends GenerateRepresentationResult {
   type: 'python';
+
+  /**
+   * A structured representation of the generated Python/Pydantic types.
+   */
   generation: PythonGeneration;
 }
 

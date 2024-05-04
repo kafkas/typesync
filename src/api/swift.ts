@@ -27,6 +27,10 @@ export type GenerateSwiftOption = keyof GenerateSwiftOptions;
 
 export interface GenerateSwiftRepresentationResult extends GenerateRepresentationResult {
   type: 'swift';
+
+  /**
+   * A structured representation of the generated Swift types.
+   */
   generation: SwiftGeneration;
 }
 

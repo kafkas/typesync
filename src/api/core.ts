@@ -5,7 +5,12 @@ import type {
   GeneratePythonRepresentationResult,
   GeneratePythonResult,
 } from './python.js';
-import type { GenerateRulesOptions, GenerateRulesResult } from './rules.js';
+import type {
+  GenerateRulesOptions,
+  GenerateRulesRepresentationOptions,
+  GenerateRulesRepresentationResult,
+  GenerateRulesResult,
+} from './rules.js';
 import type { GenerateSwiftOptions, GenerateSwiftResult } from './swift.js';
 import type { GenerateTsOptions, GenerateTsRepresentationOptions, GenerateTsResult } from './ts.js';
 
@@ -66,8 +71,27 @@ export interface Typesync {
    */
   generatePyRepresentation(opts: GeneratePythonRepresentationOptions): Promise<GeneratePythonRepresentationResult>;
 
+  /**
+   * Generates type validator functions for Firestore Security Rules and injects them into the specified file.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync generate-rules` command.
+   */
   generateRules(opts: GenerateRulesOptions): Promise<GenerateRulesResult>;
 
+  /**
+   * Generates type validator functions for Firestore Security Rules and returns the generation and the internal representation of the schema without writing anything to the filesystem.
+   */
+  generateRulesRepresentation(opts: GenerateRulesRepresentationOptions): Promise<GenerateRulesRepresentationResult>;
+
+  /**
+   * Checks if the specified schema definition is syntactically valid.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync validate` command.
+   */
   validate(opts: ValidateOptions): Promise<ValidateResult>;
 }
 

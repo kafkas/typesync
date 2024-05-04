@@ -6,6 +6,8 @@ import type {
   GeneratePythonRepresentationResult,
   GeneratePythonResult,
   GenerateRulesOptions,
+  GenerateRulesRepresentationOptions,
+  GenerateRulesRepresentationResult,
   GenerateRulesResult,
   GenerateSwiftOptions,
   GenerateSwiftRepresentationOptions,
@@ -98,13 +100,13 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
-  startMarker: string;
-  endMarker: string;
   debug: boolean;
 }
 
 interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresentationOptions {
   pathToOutputFile: string;
+  startMarker: string;
+  endMarker: string;
   validatorNamePattern: string;
   validatorParamName: string;
   indentation: number;
@@ -113,11 +115,10 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
 class TypesyncImpl implements Typesync {
   public async generateTs(rawOpts: GenerateTsOptions): Promise<GenerateTsResult> {
     const opts = this.normalizeGenerateTsOpts(rawOpts);
-    const { target, pathToOutputFile, indentation } = opts;
     const { schema: s, generation } = await this.generateTsRepresentation(rawOpts);
-    const renderer = renderers.createTSRenderer({ target, indentation });
+    const renderer = renderers.createTSRenderer(opts);
     const file = await renderer.render(generation);
-    await writeFile(pathToOutputFile, file.content);
+    await writeFile(opts.pathToOutputFile, file.content);
     return { type: 'ts', schema: s, generation };
   }
 
@@ -153,11 +154,10 @@ class TypesyncImpl implements Typesync {
 
   public async generateSwift(rawOpts: GenerateSwiftOptions): Promise<GenerateSwiftResult> {
     const opts = this.normalizeGenerateSwiftOpts(rawOpts);
-    const { pathToOutputFile, target, indentation } = opts;
     const { schema: s, generation } = await this.generateSwiftRepresentation(rawOpts);
-    const renderer = renderers.createSwiftRenderer({ target, indentation });
+    const renderer = renderers.createSwiftRenderer(opts);
     const file = await renderer.render(generation);
-    await writeFile(pathToOutputFile, file.content);
+    await writeFile(opts.pathToOutputFile, file.content);
     return { type: 'swift', schema: s, generation };
   }
 
@@ -193,17 +193,10 @@ class TypesyncImpl implements Typesync {
 
   public async generatePy(rawOpts: GeneratePythonOptions): Promise<GeneratePythonResult> {
     const opts = this.normalizeGeneratePyOpts(rawOpts);
-    const { definitionGlobPattern, pathToOutputFile, target, customPydanticBase, indentation, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createPythonGenerator({ target });
-    const renderer = renderers.createPythonRenderer({
-      target,
-      customPydanticBase,
-      indentation,
-    });
-    const generation = generator.generate(s);
+    const { schema: s, generation } = await this.generatePyRepresentation(rawOpts);
+    const renderer = renderers.createPythonRenderer(opts);
     const file = await renderer.render(generation);
-    await writeFile(pathToOutputFile, file.content);
+    await writeFile(opts.pathToOutputFile, file.content);
     return { type: 'python', schema: s, generation };
   }
 
@@ -259,46 +252,34 @@ class TypesyncImpl implements Typesync {
   }
 
   public async generateRules(rawOpts: GenerateRulesOptions): Promise<GenerateRulesResult> {
-    const opts = this.validateAndNormalizeRulesOpts(rawOpts);
-    const {
-      definitionGlobPattern,
-      pathToOutputFile,
-      startMarker,
-      endMarker,
-      validatorNamePattern,
-      validatorParamName,
-      indentation,
-      debug,
-    } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({});
-    const renderer = renderers.createRulesRenderer({
-      indentation,
-      pathToOutputFile,
-      startMarker,
-      endMarker,
-      validatorNamePattern,
-      validatorParamName,
-    });
-    const generation = generator.generate(s);
+    const opts = this.normalizeGenerateRulesOpts(rawOpts);
+    const { schema: s, generation } = await this.generateRulesRepresentation(rawOpts);
+    const renderer = renderers.createRulesRenderer(opts);
     const file = await renderer.render(generation);
-    await writeFile(pathToOutputFile, file.content);
-    return {
-      type: 'rules',
-      schema: s,
-    };
+    await writeFile(opts.pathToOutputFile, file.content);
+    return { type: 'rules', schema: s, generation };
   }
 
-  private validateAndNormalizeRulesOpts(opts: GenerateRulesOptions): NormalizedGenerateRulesOptions {
+  public async generateRulesRepresentation(
+    rawOpts: GenerateRulesRepresentationOptions
+  ): Promise<GenerateRulesRepresentationResult> {
+    const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, debug } = opts;
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createRulesGenerator({});
+    const generation = generator.generate(s);
+    return { type: 'rules', schema: s, generation };
+  }
+
+  private normalizeGenerateRulesOpts(opts: GenerateRulesOptions): NormalizedGenerateRulesOptions {
     const {
-      definition,
       outFile,
       startMarker = DEFAULT_RULES_START_MARKER,
       endMarker = DEFAULT_RULES_END_MARKER,
       validatorNamePattern = DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
       validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
       indentation = DEFAULT_RULES_INDENTATION,
-      debug = DEFAULT_RULES_DEBUG,
+      ...rest
     } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
@@ -314,13 +295,22 @@ class TypesyncImpl implements Typesync {
     }
 
     return {
-      definitionGlobPattern: definition,
+      ...this.normalizeGenerateRulesRepresentationOpts(rest),
       pathToOutputFile: outFile,
       startMarker,
       endMarker,
       validatorNamePattern,
       validatorParamName,
       indentation,
+    };
+  }
+
+  private normalizeGenerateRulesRepresentationOpts(
+    opts: GenerateRulesRepresentationOptions
+  ): NormalizedGenerateRulesRepresentationOptions {
+    const { definition, debug = DEFAULT_RULES_DEBUG } = opts;
+    return {
+      definitionGlobPattern: definition,
       debug,
     };
   }
