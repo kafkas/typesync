@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- 339c4a7: [BREAKING] Renamed `platform` option to `target`.
+- b82f2ae: [BREAKING] Changed platform names to remove the language prefix and change the last `:` to `@` (e.g. `ts:firebase:10` -> `firebase@10`)
+- 7612def: Implemented a programmatic API which allows developers to import `typesync-cli` in their Node applications and generate types programmatically.
+- d48bd06: [BREAKING] Split `generate` into `generate-ts`, `generate-swift` and `generate-py` commands.
+- 59c4a29: Implemented the Security Rules generator. The `generate-rules` command will generate and inject type validators for a given definition into the specified Security Rules file.
+
+### Patch Changes
+
+- 79d2420: Improved `validate` command to capture more error types.
+
 ## 0.5.0
 
 ### Minor Changes
