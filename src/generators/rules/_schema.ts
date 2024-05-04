@@ -51,10 +51,7 @@ class FlatSchemaImpl extends AbstractSchema<FlatAliasModel, FlatDocumentModel> i
   }
 }
 
-class FlatAliasModelImpl
-  extends AbstractAliasModel<FlatType | FlatObjectType | schema.types.Enum>
-  implements FlatAliasModel
-{
+class FlatAliasModelImpl extends AbstractAliasModel<FlatType> implements FlatAliasModel {
   public clone() {
     return new FlatAliasModelImpl(this.name, this.docs, this.cloneType());
   }

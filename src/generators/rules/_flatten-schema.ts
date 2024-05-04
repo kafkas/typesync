@@ -1,5 +1,5 @@
 import { schema } from '../../schema/index.js';
-import { assert, assertNever } from '../../util/assert.js';
+import { assertNever } from '../../util/assert.js';
 import {
   FlatDiscriminatedUnionType,
   FlatListType,
@@ -55,14 +55,8 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       discriminant: unionType.discriminant,
       variants: unionType.variants.map(vt => {
         switch (vt.type) {
-          case 'alias': {
-            const flattenedType = flattenAliasType(vt);
-            assert(
-              flattenedType.type === 'object',
-              `Expected all variants of the discriminated union to be 'object' types.`
-            );
-            return flattenedType;
-          }
+          case 'alias':
+            return vt;
           case 'object':
             return flattenObjectType(vt);
           default:
@@ -77,12 +71,6 @@ export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
       type: 'simple-union',
       variants: unionType.variants.map(flattenType),
     };
-  }
-
-  function flattenAliasType(aliasType: schema.types.Alias): FlatType {
-    const aliasModel = prevSchema.getAliasModel(aliasType.name);
-    assert(aliasModel !== undefined, `Expected the alias model '${aliasType.name}' to exist in the schema.`);
-    return flattenType(aliasModel.type);
   }
 
   function flattenType(type: schema.types.Type): FlatType {
