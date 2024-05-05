@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.3
+
+### Patch Changes
+
+- ea55bee: Implemented a change that exposes the programmatic API as CommonJS.
+
 ## 0.6.2
 
 ### Patch Changes
