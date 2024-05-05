@@ -81,7 +81,9 @@ await yargs(hideBin(process.argv))
 
         render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
-        render(<GenerationFailed message={extractErrorMessage(e)} />);
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
       }
     }
   )
@@ -135,7 +137,9 @@ await yargs(hideBin(process.argv))
 
         render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
-        render(<GenerationFailed message={extractErrorMessage(e)} />);
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
       }
     }
   )
@@ -197,7 +201,9 @@ await yargs(hideBin(process.argv))
 
         render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
-        render(<GenerationFailed message={extractErrorMessage(e)} />);
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
       }
     }
   )
@@ -280,7 +286,9 @@ await yargs(hideBin(process.argv))
 
         render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
       } catch (e) {
-        render(<GenerationFailed message={extractErrorMessage(e)} />);
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
       }
     }
   )
@@ -313,6 +321,7 @@ await yargs(hideBin(process.argv))
         render(<ValidationSuccessful />);
       } else {
         render(<ValidationFailed message={result.message} />);
+        yargs().exit(1, new Error(result.message));
       }
     }
   )
