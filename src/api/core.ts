@@ -16,7 +16,7 @@ import type { GenerateTsOptions, GenerateTsRepresentationOptions, GenerateTsResu
 
 export interface ValidateOptions {
   definition: string;
-  debug: boolean;
+  debug?: boolean;
 }
 
 export type ValidateResult =

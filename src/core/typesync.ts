@@ -38,6 +38,7 @@ import {
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
+  DEFAULT_VALIDATE_DEBUG,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -316,7 +317,7 @@ class TypesyncImpl implements Typesync {
   }
 
   public async validate(opts: ValidateOptions): Promise<ValidateResult> {
-    const { definition: definitionGlobPattern, debug } = opts;
+    const { definition: definitionGlobPattern, debug = DEFAULT_VALIDATE_DEBUG } = opts;
     try {
       this.createCoreObjects(definitionGlobPattern, debug);
       return { success: true };
