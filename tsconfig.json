@@ -8,6 +8,6 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": false,
     "strict": true,
-    "target": "es2017"
+    "target": "ES2022"
   }
 }
