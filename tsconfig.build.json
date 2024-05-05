@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "lib",
     "rootDir": "src",
     "sourceMap": true
   },
@@ -9,9 +9,11 @@
     "dist",
     "jest.config.global.ts",
     "jest.config.ts",
+    "lib",
     "playground/**/*",
     "scripts",
     "src/**/__tests__/**/*",
     "test/**/*",
+    "tsup.config.ts"
   ]
 }
