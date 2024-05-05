@@ -53,11 +53,11 @@ export abstract class AbstractSchema<
   private readonly documentModelsById: Map<string, D>;
 
   public get aliasModels() {
-    return Array.from(this.aliasModelsById.values());
+    return Array.from(this.aliasModelsById.values()).sort((m1, m2) => m1.name.localeCompare(m2.name));
   }
 
   public get documentModels() {
-    return Array.from(this.documentModelsById.values());
+    return Array.from(this.documentModelsById.values()).sort((m1, m2) => m1.name.localeCompare(m2.name));
   }
 
   public constructor() {
