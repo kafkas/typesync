@@ -17,3 +17,5 @@ export const DEFAULT_RULES_VALIDATOR_NAME_PATTERN = 'isValid{modelName}';
 export const DEFAULT_RULES_VALIDATOR_PARAM_NAME = 'data';
 export const DEFAULT_RULES_INDENTATION = 2;
 export const DEFAULT_RULES_DEBUG = false;
+
+export const DEFAULT_VALIDATE_DEBUG = false;
