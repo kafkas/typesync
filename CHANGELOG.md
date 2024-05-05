@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- f76f431: Models are now sorted alphabetically in the schema.
+
 ## 0.6.0
 
 ### Minor Changes
