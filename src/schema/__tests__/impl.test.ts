@@ -189,6 +189,46 @@ describe('createSchemaFromDefinition()', () => {
       expect(create).toThrow(InvalidModelError);
     });
 
+    it(`throws 'InvalidModelError' if a discriminant field is optional`, async () => {
+      const create = () =>
+        createSchemaFromDefinition({
+          Pet: {
+            model: 'alias',
+            type: {
+              type: 'union',
+              discriminant: 'type',
+              variants: [
+                {
+                  type: 'object',
+                  fields: {
+                    type: {
+                      type: { type: 'literal', value: 'cat' },
+                      optional: true,
+                    },
+                    lives_left: {
+                      type: 'int',
+                    },
+                  },
+                },
+                {
+                  type: 'object',
+                  fields: {
+                    type: {
+                      type: { type: 'literal', value: 'dog' },
+                    },
+                    breed: {
+                      type: 'string',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        });
+
+      expect(create).toThrow(InvalidModelError);
+    });
+
     it(`does not throw if the discriminated union is valid`, async () => {
       const create = () =>
         createSchemaFromDefinition({
