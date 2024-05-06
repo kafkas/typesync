@@ -42,7 +42,7 @@ export {
   createAliasModel,
   createDocumentModel,
 } from '../schema/impl.js';
-export { types } from '../schema/types/index.js';
+export { type types } from '../schema/types/index.js';
 export {
   type GenerationResult,
   type Typesync,
