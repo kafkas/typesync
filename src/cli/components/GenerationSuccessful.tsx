@@ -2,8 +2,8 @@ import { Box, Text } from 'ink';
 import pluralize from 'pluralize';
 import React from 'react';
 
-import type { GenerateResult } from '../api/index.js';
-import { assertNever } from '../util/assert.js';
+import type { GenerateResult } from '../../api/index.js';
+import { assertNever } from '../../util/assert.js';
 
 type Props = {
   result: GenerateResult;

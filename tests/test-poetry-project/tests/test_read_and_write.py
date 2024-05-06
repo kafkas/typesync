@@ -18,7 +18,7 @@ REPO_ROOT = PROJECT_ROOT.parent.parent
 
 TYPESYNC_MODEL_IN_PATH = PACKAGE_ROOT / "models.yml"
 
-TYPESYNC_CLI_ENTRYPOINT_PATH = REPO_ROOT / "src" / "cli.tsx"
+TYPESYNC_CLI_ENTRYPOINT_PATH = REPO_ROOT / "src" / "cli" / "index.tsx"
 
 
 def is_running_on_ci_machine() -> bool:

@@ -5,11 +5,7 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { getPythonTargets, getSwiftTargets, getTSTargets, typesync } from './api/index.js';
-import { GenerationFailed } from './components/GenerationFailed.js';
-import { GenerationSuccessful } from './components/GenerationSuccessful.js';
-import { ValidationFailed } from './components/ValidationFailed.js';
-import { ValidationSuccessful } from './components/ValidationSuccessful.js';
+import { getPythonTargets, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
 import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
@@ -24,9 +20,13 @@ import {
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
-} from './constants.js';
-import { extractErrorMessage } from './util/extract-error-message.js';
-import { extractPackageJsonVersion } from './util/extract-package-json-version.js';
+} from '../constants.js';
+import { extractErrorMessage } from '../util/extract-error-message.js';
+import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
+import { GenerationFailed } from './components/GenerationFailed.js';
+import { GenerationSuccessful } from './components/GenerationSuccessful.js';
+import { ValidationFailed } from './components/ValidationFailed.js';
+import { ValidationSuccessful } from './components/ValidationSuccessful.js';
 
 const cliVersion = extractPackageJsonVersion();
 

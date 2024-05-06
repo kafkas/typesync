@@ -49,7 +49,7 @@ jobs:
           name: Generate types from the model schema
           command: |
             PYTHON_OUTPUT_MODEL_PATH=<< parameters.output_folder_path >>/models.py
-            yarn tsx src/cli.tsx generate-py --definition << parameters.model_path >> \
+            yarn tsx src/cli/index.tsx generate-py --definition << parameters.model_path >> \
             --target << parameters.target >> \
             --outFile $PYTHON_OUTPUT_MODEL_PATH
       - persist_to_workspace:

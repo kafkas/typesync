@@ -25,17 +25,17 @@
   "main": "dist/cjs/index.cjs",
   "types": "dist/cjs/index.d.cts",
   "bin": {
-    "typesync": "dist/esm/cli.js"
+    "typesync": "dist/esm/index.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "yarn run compile && yarn run bundle",
-    "build-local": "tsc -p tsconfig.build.json && chmod +x lib/cli.js",
+    "build-local": "tsc -p tsconfig.build.json && chmod +x lib/cli/index.js",
     "bundle": "yarn run bundle:api && yarn bundle:cli",
     "bundle:api": "tsup src/api/index.ts --format cjs --dts --sourcemap --outDir dist/cjs",
-    "bundle:cli": "tsup src/cli.tsx --format esm --outDir dist/esm",
+    "bundle:cli": "tsup src/cli/index.tsx --format esm --outDir dist/esm",
     "compile": "tsc -p tsconfig.build.json --noEmit",
     "dev": "tsc --watch -p tsconfig.build.json",
     "format": "yarn run format:src && yarn run format:package-json",
