@@ -1,11 +1,11 @@
 import { InvalidModelError } from '../../errors/invalid-model.js';
-import { schema } from '../index.js';
+import { createSchemaFromDefinition } from '../index.js';
 
-describe('schema.createFromDefinition()', () => {
+describe('createSchemaFromDefinition()', () => {
   describe(`'enum' types`, () => {
     it(`throws 'InvalidModelError' if there are 0 members`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           UserRole: {
             model: 'alias',
             type: {
@@ -20,7 +20,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`throws 'InvalidModelError' if there are duplicate member values`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           UserRole: {
             model: 'alias',
             type: {
@@ -39,7 +39,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`throws 'InvalidModelError' if there are duplicate member labels`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           UserRole: {
             model: 'alias',
             type: {
@@ -58,7 +58,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`does not throw if there are multiple members with distinct values`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           UserRole: {
             model: 'alias',
             type: {
@@ -79,7 +79,7 @@ describe('schema.createFromDefinition()', () => {
   describe(`'discriminated-union' types`, () => {
     it(`throws 'InvalidModelError' if a discriminated union alias variant does not resolve to 'object'`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           Cat: {
             model: 'alias',
             type: {
@@ -116,7 +116,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`throws 'InvalidModelError' if a discriminated union variant is missing the discriminant field`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           Pet: {
             model: 'alias',
             type: {
@@ -152,7 +152,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`throws 'InvalidModelError' if a discriminant field is not a literal string`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           Pet: {
             model: 'alias',
             type: {
@@ -191,7 +191,7 @@ describe('schema.createFromDefinition()', () => {
 
     it(`does not throw if the discriminated union is valid`, async () => {
       const create = () =>
-        schema.createFromDefinition({
+        createSchemaFromDefinition({
           Cat: {
             model: 'alias',
             type: {

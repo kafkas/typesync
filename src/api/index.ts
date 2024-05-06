@@ -1,5 +1,52 @@
-export { typesync, type GenerationResult, type Typesync, type ValidateOptions, type ValidateResult } from './core.js';
-export * from './python.js';
-export * from './rules.js';
-export * from './swift.js';
-export * from './ts.js';
+export {
+  type GeneratePythonOption,
+  type GeneratePythonOptions,
+  type GeneratePythonRepresentationOptions,
+  type GeneratePythonRepresentationResult,
+  type GeneratePythonResult,
+  type PythonGenerationTarget,
+  getPythonTargets,
+} from './python.js';
+export type {
+  GenerateRulesOption,
+  GenerateRulesOptions,
+  GenerateRulesRepresentationOptions,
+  GenerateRulesRepresentationResult,
+  GenerateRulesResult,
+} from './rules.js';
+export {
+  type GenerateSwiftOption,
+  type GenerateSwiftOptions,
+  type GenerateSwiftRepresentationOptions,
+  type GenerateSwiftRepresentationResult,
+  type GenerateSwiftResult,
+  type SwiftGenerationTarget,
+  getSwiftTargets,
+} from './swift.js';
+export {
+  type GenerateTsOption,
+  type GenerateTsOptions,
+  type GenerateTsRepresentationOptions,
+  type GenerateTsRepresentationResult,
+  type GenerateTsResult,
+  type TSGenerationTarget,
+  getTSTargets,
+} from './ts.js';
+export { Definition } from '../definition/impl.js';
+export {
+  type Schema,
+  type AliasModel,
+  type DocumentModel,
+  createSchema,
+  createSchemaFromDefinition,
+  createAliasModel,
+  createDocumentModel,
+} from '../schema/impl.js';
+export { types } from '../schema/types/index.js';
+export {
+  type GenerationResult,
+  type Typesync,
+  type ValidateOptions,
+  type ValidateResult,
+  typesync,
+} from './typesync.js';

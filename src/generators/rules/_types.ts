@@ -1,5 +1,5 @@
 import type { rules } from '../../platforms/rules/index.js';
-import type { schema } from '../../schema/index.js';
+import type { Schema } from '../../schema/index.js';
 
 export interface RulesValidatorDeclaration {
   type: 'validator';
@@ -17,5 +17,5 @@ export interface RulesGeneration {
 export interface RulesGeneratorConfig {}
 
 export interface RulesGenerator {
-  generate(s: schema.Schema): RulesGeneration;
+  generate(s: Schema): RulesGeneration;
 }

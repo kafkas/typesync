@@ -1,4 +1,4 @@
-import { schema } from '../../schema/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { pascalCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
@@ -59,7 +59,7 @@ interface FlattenTypeResult {
  *
  * @returns A new schema object.
  */
-export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
+export function flattenSchema(prevSchema: Schema): FlatSchema {
   function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
     const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
       flattenType(valueType, `${aliasName}_${valueTypeIdx + 1}`)

@@ -1,4 +1,4 @@
-import { schema } from '../../../schema/index.js';
+import { createSchemaFromDefinition } from '../../../schema/index.js';
 import { createSwiftGenerator } from '../_impl.js';
 import { SwiftGeneration } from '../_types.js';
 
@@ -7,7 +7,7 @@ describe('SwiftGeneratorImpl', () => {
     const generator = createSwiftGenerator({
       target: 'firebase@10',
     });
-    const s = schema.createFromDefinition({
+    const s = createSchemaFromDefinition({
       Username: {
         model: 'alias',
         type: 'string',

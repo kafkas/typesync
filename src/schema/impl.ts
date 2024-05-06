@@ -13,6 +13,14 @@ export type AliasModel = AliasModelGeneric<types.Type>;
 
 export type DocumentModel = DocumentModelGeneric<types.Object>;
 
+/**
+ * Represents a structured model of a database schema. The `Schema` interface provides a higher-level, organized representation of the database
+ * schema, facilitating easier manipulation and interaction with the Typesync generators.
+ *
+ * A `Schema` object is typically derived from a `Definition` but can also be created and modified imperatively when needed. It provides a clear,
+ * structured format that aligns closely with development practices, making it easy to understand and utilize in generating type definitions
+ * across various platforms.
+ */
 export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
 
 class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
@@ -33,11 +41,17 @@ class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements D
   }
 }
 
-export function create(): schema.Schema {
-  return createFromDefinition({});
+/**
+ * Creates a new Typesync schema.
+ */
+export function createSchema(): Schema {
+  return createSchemaFromDefinition({});
 }
 
-export function createFromDefinition(def: definition.Definition): schema.Schema {
+/**
+ * Creates a new Typesync schema from the specified definition.
+ */
+export function createSchemaFromDefinition(def: definition.Definition): Schema {
   const s = new SchemaImpl();
 
   const models = Object.entries(def).map(([modelName, defModel]) => {
@@ -66,7 +80,7 @@ interface CreateAliasModelParams {
   value: schema.types.Type;
 }
 
-export function createAliasModel(params: CreateAliasModelParams): schema.AliasModel {
+export function createAliasModel(params: CreateAliasModelParams): AliasModel {
   const { name, docs, value } = params;
   return new AliasModelImpl(name, docs, value);
 }
@@ -77,7 +91,7 @@ interface CreateDocumentModelParams {
   type: schema.types.Object;
 }
 
-export function createDocumentModel(params: CreateDocumentModelParams): schema.DocumentModel {
+export function createDocumentModel(params: CreateDocumentModelParams): DocumentModel {
   const { name, docs, type } = params;
   return new DocumentModelImpl(name, docs, type);
 }
