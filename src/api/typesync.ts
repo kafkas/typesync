@@ -11,8 +11,18 @@ import type {
   GenerateRulesRepresentationResult,
   GenerateRulesResult,
 } from './rules.js';
-import type { GenerateSwiftOptions, GenerateSwiftResult } from './swift.js';
-import type { GenerateTsOptions, GenerateTsRepresentationOptions, GenerateTsResult } from './ts.js';
+import type {
+  GenerateSwiftOptions,
+  GenerateSwiftRepresentationOptions,
+  GenerateSwiftRepresentationResult,
+  GenerateSwiftResult,
+} from './swift.js';
+import type {
+  GenerateTsOptions,
+  GenerateTsRepresentationOptions,
+  GenerateTsRepresentationResult,
+  GenerateTsResult,
+} from './ts.js';
 
 export interface ValidateOptions {
   definition: string;
@@ -41,7 +51,7 @@ export interface Typesync {
   /**
    * Generates TypeScript type definitions for the specified schema and returns the generation and the internal representation of the schema without writing anything to the filesystem.
    */
-  generateTsRepresentation(opts: GenerateTsRepresentationOptions): Promise<GenerateTsResult>;
+  generateTsRepresentation(opts: GenerateTsRepresentationOptions): Promise<GenerateTsRepresentationResult>;
 
   /**
    * Generates Swift type definitions for the specified schema and writes them to the specified file.
@@ -55,7 +65,7 @@ export interface Typesync {
   /**
    * Generates Swift type definitions for the specified schema and returns the generation and the internal representation of the schema without writing anything to the filesystem.
    */
-  generateSwiftRepresentation(opts: GenerateSwiftOptions): Promise<GenerateSwiftResult>;
+  generateSwiftRepresentation(opts: GenerateSwiftRepresentationOptions): Promise<GenerateSwiftRepresentationResult>;
 
   /**
    * Generates Python/Pydantic type definitions for the specified schema and writes them to the specified file.
@@ -95,7 +105,7 @@ export interface Typesync {
   validate(opts: ValidateOptions): Promise<ValidateResult>;
 }
 
-export type GenerateResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
+export type GenerationResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
 
 /**
  * The programmatic interface for the Typesync CLI.

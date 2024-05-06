@@ -1,6 +1,6 @@
 import type { PythonGenerationTarget } from '../../api/index.js';
 import type { python } from '../../platforms/python/index.js';
-import type { schema } from '../../schema/index.js';
+import type { Schema } from '../../schema/index.js';
 
 export interface PythonAliasDeclaration {
   type: 'alias';
@@ -35,5 +35,5 @@ export interface PythonGeneratorConfig {
 }
 
 export interface PythonGenerator {
-  generate(s: schema.Schema): PythonGeneration;
+  generate(s: Schema): PythonGeneration;
 }

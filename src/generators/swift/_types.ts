@@ -1,6 +1,6 @@
 import type { SwiftGenerationTarget } from '../../api/index.js';
 import type { swift } from '../../platforms/swift/index.js';
-import type { schema } from '../../schema/index.js';
+import type { Schema } from '../../schema/index.js';
 
 export interface SwiftTypealiasDeclaration {
   type: 'typealias';
@@ -62,5 +62,5 @@ export interface SwiftGeneratorConfig {
 }
 
 export interface SwiftGenerator {
-  generate(s: schema.Schema): SwiftGeneration;
+  generate(s: Schema): SwiftGeneration;
 }

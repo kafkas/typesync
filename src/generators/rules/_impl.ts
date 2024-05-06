@@ -1,4 +1,4 @@
-import { schema } from '../../schema/index.js';
+import { Schema } from '../../schema/index.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
 import { flattenSchema } from './_flatten-schema.js';
 import { FlatAliasModel, FlatDocumentModel } from './_schema.js';
@@ -13,7 +13,7 @@ import type {
 class RulesGeneratorImpl implements RulesGenerator {
   public constructor(private readonly config: RulesGeneratorConfig) {}
 
-  public generate(s: schema.Schema): RulesGeneration {
+  public generate(s: Schema): RulesGeneration {
     const flattenedSchema = flattenSchema(s);
     const { aliasModels, documentModels } = flattenedSchema;
     const declarations: RulesDeclaration[] = [];

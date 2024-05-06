@@ -1,4 +1,4 @@
-import { schema } from '../../schema/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import {
   FlatDiscriminatedUnionType,
@@ -14,7 +14,7 @@ import {
   createFlatSchema,
 } from './_schema.js';
 
-export function flattenSchema(prevSchema: schema.Schema): FlatSchema {
+export function flattenSchema(prevSchema: Schema): FlatSchema {
   function flattenTupleType(tupleType: schema.types.Tuple): FlatTupleType {
     return {
       type: 'tuple',

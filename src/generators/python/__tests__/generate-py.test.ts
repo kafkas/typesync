@@ -1,4 +1,4 @@
-import { schema } from '../../../schema/index.js';
+import { createSchemaFromDefinition } from '../../../schema/index.js';
 import { createPythonGenerator } from '../_impl.js';
 import { PythonGeneration } from '../_types.js';
 
@@ -7,7 +7,7 @@ describe('PythonGeneratorImpl', () => {
     const generator = createPythonGenerator({
       target: 'firebase-admin@6',
     });
-    const s = schema.createFromDefinition({
+    const s = createSchemaFromDefinition({
       Username: {
         model: 'alias',
         type: 'string',

@@ -1,6 +1,6 @@
 import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
-import { schema } from '../../schema/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assert, assertNever } from '../../util/assert.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
@@ -30,7 +30,7 @@ import type {
 class SwiftGeneratorImpl implements SwiftGenerator {
   public constructor(private readonly config: SwiftGeneratorConfig) {}
 
-  public generate(s: schema.Schema): SwiftGeneration {
+  public generate(s: Schema): SwiftGeneration {
     const flattenedSchema = flattenSchema(s);
     const { aliasModels, documentModels } = flattenedSchema;
     const declarations: SwiftDeclaration[] = [];
