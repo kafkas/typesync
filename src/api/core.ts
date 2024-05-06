@@ -95,7 +95,7 @@ export interface Typesync {
   validate(opts: ValidateOptions): Promise<ValidateResult>;
 }
 
-export type GenerateResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
+export type GenerationResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
 
 /**
  * The programmatic interface for the Typesync CLI.

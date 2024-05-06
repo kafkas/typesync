@@ -2,15 +2,15 @@ import { Box, Text } from 'ink';
 import pluralize from 'pluralize';
 import React from 'react';
 
-import type { GenerateResult } from '../../api/index.js';
+import type { GenerationResult } from '../../api/index.js';
 import { assertNever } from '../../util/assert.js';
 
 type Props = {
-  result: GenerateResult;
+  result: GenerationResult;
   pathToOutputFile: string;
 };
 
-function getMessageForResult(result: GenerateResult) {
+function getMessageForResult(result: GenerationResult) {
   switch (result.type) {
     case 'ts':
       return 'Successfully generated TypeScript type definitions for the specified schema.';
