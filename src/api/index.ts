@@ -32,7 +32,7 @@ export {
   type TSGenerationTarget,
   getTSTargets,
 } from './ts.js';
-export { Definition } from '../definition/impl.js';
+export { type Definition } from '../definition/impl.js';
 export {
   type Schema,
   type AliasModel,
