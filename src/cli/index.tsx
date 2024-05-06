@@ -224,13 +224,15 @@ await yargs(hideBin(process.argv))
           demandOption: true,
         })
         .option('startMarker', {
-          describe: 'A marker that indicates the line after which the generated code should be inserted.',
+          describe:
+            'A marker that indicates the line after which the generated code should be inserted. Make sure to use a string that is unique within the file.',
           type: 'string',
           demandOption: false,
           default: DEFAULT_RULES_START_MARKER,
         })
         .option('endMarker', {
-          describe: 'A marker that indicates the line before which the generated code should be inserted.',
+          describe:
+            'A marker that indicates the line before which the generated code should be inserted. Make sure to use a string that is unique within the file.',
           type: 'string',
           demandOption: false,
           default: DEFAULT_RULES_END_MARKER,
