@@ -44,7 +44,7 @@ export class InvalidDiscriminantFieldError extends InvalidSchemaTypeError {
       typeof variantIdxOrAliasName === 'number'
         ? `the ${ordinalSuffixOf(variantIdxOrAliasName + 1)} discriminated union variant`
         : `the variant '${variantIdxOrAliasName}'`;
-    super(`The discriminant field of ${variantIdentifier} must be a string 'literal' type.`);
+    super(`The discriminant field of ${variantIdentifier} must be a non-optional string 'literal' type.`);
   }
 }
 
