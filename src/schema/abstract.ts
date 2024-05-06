@@ -204,7 +204,11 @@ export abstract class AbstractSchema<
         if (discriminantField === undefined) {
           throw new MissingDiscriminantFieldError(discriminant, variantIdx);
         }
-        if (discriminantField.type.type !== 'literal' || typeof discriminantField.type.value !== 'string') {
+        if (
+          discriminantField.type.type !== 'literal' ||
+          discriminantField.optional ||
+          typeof discriminantField.type.value !== 'string'
+        ) {
           throw new InvalidDiscriminantFieldError(variantIdx);
         }
       } else if (variantType.type === 'alias') {
@@ -220,7 +224,11 @@ export abstract class AbstractSchema<
         if (discriminantField === undefined) {
           throw new MissingDiscriminantFieldError(discriminant, variantType.name);
         }
-        if (discriminantField.type.type !== 'literal' || typeof discriminantField.type.value !== 'string') {
+        if (
+          discriminantField.type.type !== 'literal' ||
+          discriminantField.optional ||
+          typeof discriminantField.type.value !== 'string'
+        ) {
           throw new InvalidDiscriminantFieldError(variantType.name);
         }
       } else {
