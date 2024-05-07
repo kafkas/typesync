@@ -1,39 +1,43 @@
 import { z } from 'zod';
 
 import { assertEmpty } from '../../util/assert.js';
+import { createSchema } from '../impl.js';
 import { types } from '../types/index.js';
-import {
-  aliasType,
-  booleanLiteralType,
-  booleanType,
-  discriminantUnionAliasVariantType,
-  discriminantUnionObjectVariantType,
-  discriminantUnionVariantType,
-  discriminatedUnionType,
-  doubleType,
-  enumType,
-  intEnumMemberType,
-  intEnumType,
-  intLiteralType,
-  intType,
-  listType,
-  literalType,
-  mapType,
+import { schemaParsers } from '../types/zod-schemas.js';
+
+const s = createSchema();
+const {
+  unknownType,
   nilType,
-  objectField,
-  objectType,
+  stringType,
+  booleanType,
+  intType,
+  doubleType,
+  timestampType,
   primitiveType,
-  simpleUnionType,
+  stringLiteralType,
+  intLiteralType,
+  booleanLiteralType,
+  literalType,
   stringEnumMemberType,
   stringEnumType,
-  stringLiteralType,
-  stringType,
-  timestampType,
+  intEnumMemberType,
+  intEnumType,
+  enumType,
   tupleType,
-  type,
+  listType,
+  mapType,
+  objectType,
+  aliasType,
+  discriminantUnionObjectVariantType,
+  discriminantUnionAliasVariantType,
+  discriminantUnionVariantType,
+  discriminatedUnionType,
+  simpleUnionType,
   unionType,
-  unknownType,
-} from '../types/zod-schemas.js';
+  type,
+  objectField,
+} = schemaParsers(s);
 
 type IsExact<T, U> = [Required<T>] extends [Required<U>] ? ([Required<U>] extends [Required<T>] ? true : false) : false;
 
