@@ -93,4 +93,31 @@ describe('schema type validator', () => {
       expect(() => validateType(t)).not.toThrow();
     });
   });
+
+  describe('discriminated-union', () => {
+    it(`throws if an alias variant does not resolve to 'object'`, () => {
+      // TODO: Implement
+      expect(true).toBe(false);
+    });
+
+    it(`throws if a variant is missing the discriminant field`, async () => {
+      // TODO: Implement
+      expect(true).toBe(false);
+    });
+
+    it(`throws if the discriminant field of a variant is not a literal string`, async () => {
+      // TODO: Implement
+      expect(true).toBe(false);
+    });
+
+    it(`throws if the discriminant field of a variant is optional`, async () => {
+      // TODO: Implement
+      expect(true).toBe(false);
+    });
+
+    it(`does not throw if the discriminated union is valid`, async () => {
+      // TODO: Implement
+      expect(true).toBe(false);
+    });
+  });
 });

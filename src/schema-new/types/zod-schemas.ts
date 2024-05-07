@@ -201,13 +201,66 @@ export const objectType = z.lazy(() =>
     .strict()
 );
 
+export const aliasType = z
+  .object({
+    type: z.literal('alias'),
+    name: z.string(),
+  })
+  .strict();
+
+export const discriminantUnionObjectVariantType = z
+  .object({
+    type: z.literal('object-variant'),
+    objectType,
+    discriminantType: stringLiteralType,
+  })
+  .strict();
+
+export const discriminantUnionAliasVariantType = z
+  .object({
+    type: z.literal('alias-variant'),
+    aliasType,
+    originalObjectType: objectType,
+    discriminantType: stringLiteralType,
+  })
+  .strict();
+
+export const discriminantUnionVariantType = z.discriminatedUnion('type', [
+  discriminantUnionObjectVariantType,
+  discriminantUnionAliasVariantType,
+]);
+
+export const discriminatedUnionType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('discriminated-union'),
+      discriminant: z.string(),
+      variants: z.array(discriminantUnionVariantType),
+    })
+    .strict()
+);
+
+export const simpleUnionType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('simple-union'),
+      variants: z.array(type),
+    })
+    .strict()
+);
+
+export const unionType = discriminatedUnionType.or(simpleUnionType);
+
+// TODO: This should be a discriminated union
 export const type: z.ZodType<Type> = primitiveType
   .or(literalType)
   .or(enumType)
   .or(tupleType)
   .or(listType)
   .or(mapType)
-  .or(objectType);
+  .or(objectType)
+  .or(unionType)
+  .or(aliasType);
 
 export const objectField = z
   .object({

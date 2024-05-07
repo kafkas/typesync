@@ -3,8 +3,13 @@ import { z } from 'zod';
 import { assertEmpty } from '../../util/assert.js';
 import { types } from '../types/index.js';
 import {
+  aliasType,
   booleanLiteralType,
   booleanType,
+  discriminantUnionAliasVariantType,
+  discriminantUnionObjectVariantType,
+  discriminantUnionVariantType,
+  discriminatedUnionType,
   doubleType,
   enumType,
   intEnumMemberType,
@@ -18,6 +23,7 @@ import {
   objectField,
   objectType,
   primitiveType,
+  simpleUnionType,
   stringEnumMemberType,
   stringEnumType,
   stringLiteralType,
@@ -25,6 +31,7 @@ import {
   timestampType,
   tupleType,
   type,
+  unionType,
   unknownType,
 } from '../types/zod-schemas.js';
 
@@ -154,6 +161,48 @@ describe('type declarations are consistent with zod schemas', () => {
   it('Object', () => {
     type DeclaredType = types.Object;
     type InferredType = z.infer<typeof objectType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('Alias', () => {
+    type DeclaredType = types.Alias;
+    type InferredType = z.infer<typeof aliasType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('DiscriminatedUnionObjectVariant', () => {
+    type DeclaredType = types.DiscriminatedUnionObjectVariant;
+    type InferredType = z.infer<typeof discriminantUnionObjectVariantType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('DiscriminatedUnionAliasVariant', () => {
+    type DeclaredType = types.DiscriminatedUnionAliasVariant;
+    type InferredType = z.infer<typeof discriminantUnionAliasVariantType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('DiscriminatedUnionVariant', () => {
+    type DeclaredType = types.DiscriminatedUnionVariant;
+    type InferredType = z.infer<typeof discriminantUnionVariantType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('DiscriminatedUnion', () => {
+    type DeclaredType = types.DiscriminatedUnion;
+    type InferredType = z.infer<typeof discriminatedUnionType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('SimpleUnion', () => {
+    type DeclaredType = types.SimpleUnion;
+    type InferredType = z.infer<typeof simpleUnionType>;
+    assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+  });
+
+  it('Union', () => {
+    type DeclaredType = types.Union;
+    type InferredType = z.infer<typeof unionType>;
     assertEmpty<IsExact<DeclaredType, InferredType>>(true);
   });
 

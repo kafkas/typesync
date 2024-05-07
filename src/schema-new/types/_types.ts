@@ -86,11 +86,10 @@ export type Map = MapType<Type>;
 // TODO: Confirm. This was previously ObjectType<Type>
 export type Object = ObjectType<ObjectField>;
 
-export type ObjectField = ObjectFieldType<Type>;
-
-export type DiscriminatedUnion = DiscriminatedUnionType<DiscriminatedUnionVariant>;
-
-export type DiscriminatedUnionVariant = DiscriminatedUnionObjectVariant | DiscriminatedUnionAliasVariant;
+export interface Alias {
+  type: 'alias';
+  name: string;
+}
 
 export interface DiscriminatedUnionObjectVariant {
   type: 'object-variant';
@@ -105,13 +104,14 @@ export interface DiscriminatedUnionAliasVariant {
   discriminantType: StringLiteral;
 }
 
+export type DiscriminatedUnionVariant = DiscriminatedUnionObjectVariant | DiscriminatedUnionAliasVariant;
+
+export type DiscriminatedUnion = DiscriminatedUnionType<DiscriminatedUnionVariant>;
+
 export type SimpleUnion = SimpleUnionType<Type>;
 
 export type Union = DiscriminatedUnion | SimpleUnion;
 
-export interface Alias {
-  type: 'alias';
-  name: string;
-}
-
 export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | Union | Alias;
+
+export type ObjectField = ObjectFieldType<Type>;
