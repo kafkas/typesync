@@ -23,7 +23,7 @@ export interface ObjectFieldType<T> {
   type: T;
   optional: boolean;
   name: string;
-  docs: string | undefined;
+  docs: string | null;
 }
 
 export interface DiscriminatedUnionType<T> {
@@ -40,7 +40,7 @@ export interface SimpleUnionType<T> {
 export interface AliasModel<T> {
   model: 'alias';
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   type: T;
   clone(): AliasModel<T>;
 }
@@ -48,7 +48,7 @@ export interface AliasModel<T> {
 export interface DocumentModel<T> {
   model: 'document';
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   type: T;
   clone(): DocumentModel<T>;
 }

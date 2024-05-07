@@ -59,11 +59,11 @@ export function createSchemaFromDefinition(def: definition.Definition): Schema {
     switch (defModel.model) {
       case 'alias': {
         const schemaType = converters.definition(def).typeToSchema(defModel.type);
-        return new AliasModelImpl(modelName, defModel.docs, schemaType);
+        return new AliasModelImpl(modelName, defModel.docs ?? null, schemaType);
       }
       case 'document': {
         const schemaType = converters.definition(def).objectTypeToSchema(defModel.type);
-        return new DocumentModelImpl(modelName, defModel.docs, schemaType);
+        return new DocumentModelImpl(modelName, defModel.docs ?? null, schemaType);
       }
       default:
         assertNever(defModel);
@@ -77,7 +77,7 @@ export function createSchemaFromDefinition(def: definition.Definition): Schema {
 
 interface CreateAliasModelParams {
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   value: schema.types.Type;
 }
 
@@ -88,7 +88,7 @@ export function createAliasModel(params: CreateAliasModelParams): AliasModel {
 
 interface CreateDocumentModelParams {
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   type: schema.types.Object;
 }
 

@@ -10,7 +10,7 @@ export abstract class AbstractAliasModel<T> {
 
   public constructor(
     public readonly name: string,
-    public readonly docs: string | undefined,
+    public readonly docs: string | null,
     public readonly type: T
   ) {}
 
@@ -24,7 +24,7 @@ export abstract class AbstractDocumentModel<T> {
 
   public constructor(
     public readonly name: string,
-    public readonly docs: string | undefined,
+    public readonly docs: string | null,
     public readonly type: T
   ) {}
 

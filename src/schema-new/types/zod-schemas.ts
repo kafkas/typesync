@@ -1,18 +1,92 @@
 import { z } from 'zod';
 
 import { getDuplicateElements } from '../../util/list.js';
+import { type Type } from './_types.js';
+
+export const unknownType = z
+  .object({
+    type: z.literal('unknown'),
+  })
+  .strict();
+
+export const nilType = z
+  .object({
+    type: z.literal('nil'),
+  })
+  .strict();
+
+export const stringType = z
+  .object({
+    type: z.literal('string'),
+  })
+  .strict();
+
+export const booleanType = z
+  .object({
+    type: z.literal('boolean'),
+  })
+  .strict();
+
+export const intType = z
+  .object({
+    type: z.literal('int'),
+  })
+  .strict();
+
+export const doubleType = z
+  .object({
+    type: z.literal('double'),
+  })
+  .strict();
+
+export const timestampType = z
+  .object({
+    type: z.literal('timestamp'),
+  })
+  .strict();
+
+export const primitiveType = unknownType
+  .or(nilType)
+  .or(stringType)
+  .or(booleanType)
+  .or(intType)
+  .or(doubleType)
+  .or(timestampType);
+
+export const stringLiteralType = z
+  .object({
+    type: z.literal('string-literal'),
+    value: z.string(),
+  })
+  .strict();
+
+export const intLiteralType = z
+  .object({
+    type: z.literal('int-literal'),
+    value: z.number().int(),
+  })
+  .strict();
+
+export const booleanLiteralType = z
+  .object({
+    type: z.literal('boolean-literal'),
+    value: z.boolean(),
+  })
+  .strict();
+
+export const literalType = stringLiteralType.or(intLiteralType).or(booleanLiteralType);
+
+export const stringEnumMemberType = z
+  .object({
+    label: z.string(),
+    value: z.string(),
+  })
+  .strict();
 
 export const stringEnumType = z
   .object({
     type: z.literal('string-enum'),
-    members: z.array(
-      z
-        .object({
-          label: z.string(),
-          value: z.string(),
-        })
-        .strict()
-    ),
+    members: z.array(stringEnumMemberType),
   })
   .strict()
   .superRefine((candidate, ctx) => {
@@ -45,17 +119,17 @@ export const stringEnumType = z
     }
   });
 
+export const intEnumMemberType = z
+  .object({
+    label: z.string(),
+    value: z.number().int(),
+  })
+  .strict();
+
 export const intEnumType = z
   .object({
     type: z.literal('int-enum'),
-    members: z.array(
-      z
-        .object({
-          label: z.string(),
-          value: z.number().int(),
-        })
-        .strict()
-    ),
+    members: z.array(intEnumMemberType),
   })
   .strict()
   .superRefine((candidate, ctx) => {
@@ -90,4 +164,56 @@ export const intEnumType = z
 
 export const enumType = stringEnumType.or(intEnumType);
 
-export const type = enumType;
+export const tupleType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('tuple'),
+      elements: z.array(type),
+    })
+    .strict()
+);
+
+export const listType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('list'),
+      elementType: type,
+    })
+    .strict()
+);
+
+export const mapType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('map'),
+      valueType: type,
+    })
+    .strict()
+);
+
+export const objectType = z.lazy(() =>
+  z
+    .object({
+      type: z.literal('object'),
+      fields: z.array(objectField),
+      additionalFields: z.boolean(),
+    })
+    .strict()
+);
+
+export const type: z.ZodType<Type> = primitiveType
+  .or(literalType)
+  .or(enumType)
+  .or(tupleType)
+  .or(listType)
+  .or(mapType)
+  .or(objectType);
+
+export const objectField = z
+  .object({
+    type,
+    optional: z.boolean(),
+    name: z.string(),
+    docs: z.string().nullable(),
+  })
+  .strict();

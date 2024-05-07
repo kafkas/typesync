@@ -100,7 +100,7 @@ export function definitionConverters(def: definition.Definition) {
     return {
       type: typeToSchema(field.type),
       optional: !!field.optional,
-      docs: field.docs,
+      docs: field.docs ?? null,
       name: fieldName,
     };
   }

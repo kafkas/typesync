@@ -24,7 +24,7 @@ export interface Boolean {
   type: 'boolean';
 }
 
-export interface Integer {
+export interface Int {
   type: 'int';
 }
 
@@ -36,7 +36,7 @@ export interface Timestamp {
   type: 'timestamp';
 }
 
-export type Primitive = Unknown | Nil | String | Boolean | Integer | Double | Timestamp;
+export type Primitive = Unknown | Nil | String | Boolean | Int | Double | Timestamp;
 
 export interface StringLiteral {
   type: 'string-literal';
@@ -55,24 +55,24 @@ export interface BooleanLiteral {
 
 export type Literal = StringLiteral | IntLiteral | BooleanLiteral;
 
-export interface StringEnum {
-  type: 'string-enum';
-  members: StringEnumMember[];
-}
-
 export interface StringEnumMember {
   label: string;
   value: string;
 }
 
-export interface IntEnum {
-  type: 'int-enum';
-  members: IntEnumMember[];
+export interface StringEnum {
+  type: 'string-enum';
+  members: StringEnumMember[];
 }
 
 export interface IntEnumMember {
   label: string;
   value: number;
+}
+
+export interface IntEnum {
+  type: 'int-enum';
+  members: IntEnumMember[];
 }
 
 export type Enum = StringEnum | IntEnum;
