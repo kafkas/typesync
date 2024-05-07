@@ -58,11 +58,11 @@ export function createSchemaFromDefinition(def: definition.Definition): Schema {
   const models = Object.entries(def).map(([modelName, defModel]) => {
     switch (defModel.model) {
       case 'alias': {
-        const schemaType = converters.definition.typeToSchema(defModel.type);
+        const schemaType = converters.definition(def).typeToSchema(defModel.type);
         return new AliasModelImpl(modelName, defModel.docs, schemaType);
       }
       case 'document': {
-        const schemaType = converters.definition.objectTypeToSchema(defModel.type);
+        const schemaType = converters.definition(def).objectTypeToSchema(defModel.type);
         return new DocumentModelImpl(modelName, defModel.docs, schemaType);
       }
       default:

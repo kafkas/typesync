@@ -1,7 +1,7 @@
 import { InvalidSchemaTypeError } from '../../errors/invalid-schema-type.js';
 import { type } from './zod-schemas.js';
 
-export function parseType(t: unknown) {
+export function validateType(t: unknown) {
   const parseRes = type.safeParse(t);
 
   if (!parseRes.success) {
