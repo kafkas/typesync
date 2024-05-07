@@ -1,4 +1,4 @@
-import { createAliasModel, createSchema } from '../impl.js';
+import { createAliasModel, createSchema, createSchemaWithModels } from '../impl.js';
 import type { types } from '../types/index.js';
 import { validateType } from '../types/parse.js';
 
@@ -104,60 +104,45 @@ describe('schema type validator', () => {
   });
 
   describe('discriminated-union', () => {
-    it(`throws if an alias variant does not resolve to 'object'`, () => {
-      const catObject: types.Object = {
-        type: 'object',
-        fields: [
-          { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
-          { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
-        ],
-        additionalFields: false,
+    it(`throws if the union has 0 variants`, () => {
+      const schema = createSchema();
+      const t: types.DiscriminatedUnion = {
+        type: 'discriminated-union',
+        discriminant: 'type',
+        variants: [],
       };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it(`throws if an alias variant does not resolve to 'object'`, () => {
       const catModel = createAliasModel({
         name: 'Cat',
         docs: null,
-        value: catObject,
+        value: {
+          type: 'object',
+          fields: [
+            { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+            { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
+          ],
+          additionalFields: false,
+        },
       });
-
-      const dogMap: types.Map = {
-        type: 'map',
-        valueType: { type: 'string' },
-      };
-      const dogObject: types.Object = {
-        type: 'object',
-        fields: [
-          { name: 'type', type: { type: 'string-literal', value: 'dog' }, docs: null, optional: false },
-          { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
-        ],
-        additionalFields: false,
-      };
       const dogModel = createAliasModel({
         name: 'Dog',
         docs: null,
-        value: dogMap,
+        value: {
+          type: 'map',
+          valueType: { type: 'string' },
+        },
       });
-
-      const schema = createSchema();
-
-      schema.addModelGroup([catModel, dogModel]);
+      const schema = createSchemaWithModels([catModel, dogModel]);
 
       const t: types.DiscriminatedUnion = {
         type: 'discriminated-union',
         discriminant: 'type',
         variants: [
-          {
-            type: 'alias-variant',
-            aliasType: { type: 'alias', name: 'Cat' },
-            discriminantType: { type: 'string-literal', value: 'cat' },
-            originalObjectType: catObject,
-          },
-          {
-            type: 'alias-variant',
-            aliasType: { type: 'alias', name: 'Dog' },
-            discriminantType: { type: 'string-literal', value: 'dog' },
-            // TODO: This is weird. Probably need to refactor
-            originalObjectType: dogObject,
-          },
+          { type: 'alias', name: catModel.name },
+          { type: 'alias', name: dogModel.name },
         ],
       };
 

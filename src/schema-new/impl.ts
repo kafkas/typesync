@@ -46,23 +46,21 @@ class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements D
  * Creates a new Typesync schema.
  */
 export function createSchema(): Schema {
-  return createSchemaFromDefinition({});
+  return createSchemaWithModels([]);
 }
 
 /**
  * Creates a new Typesync schema from the specified definition.
  */
 export function createSchemaFromDefinition(def: definition.Definition): Schema {
-  const s = new SchemaImpl();
-
   const models = Object.entries(def).map(([modelName, defModel]) => {
     switch (defModel.model) {
       case 'alias': {
-        const schemaType = converters.definition(def).typeToSchema(defModel.type);
+        const schemaType = converters.definition.typeToSchema(defModel.type);
         return new AliasModelImpl(modelName, defModel.docs ?? null, schemaType);
       }
       case 'document': {
-        const schemaType = converters.definition(def).objectTypeToSchema(defModel.type);
+        const schemaType = converters.definition.objectTypeToSchema(defModel.type);
         return new DocumentModelImpl(modelName, defModel.docs ?? null, schemaType);
       }
       default:
@@ -70,8 +68,15 @@ export function createSchemaFromDefinition(def: definition.Definition): Schema {
     }
   });
 
-  s.addModelGroup(models);
+  return createSchemaWithModels(models);
+}
 
+/**
+ * Creates a new Typesync schema with the specified models.
+ */
+export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]): Schema {
+  const s = new SchemaImpl();
+  s.addModelGroup(models);
   return s;
 }
 

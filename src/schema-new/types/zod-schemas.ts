@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
+import { assertNever } from '../../util/assert.js';
 import { getDuplicateElements } from '../../util/list.js';
+import { ordinalSuffixOf } from '../../util/ordinal-suffix.js';
 import { type Schema } from '../impl.js';
 import { type Type } from './_types.js';
 
@@ -118,7 +120,9 @@ export function schemaParsers(schema: Schema) {
           message: `The enum member value "${duplicateValue}" has been used more than once. Each enum member must have a distinct value.`,
           fatal: true,
         });
+        return z.NEVER;
       }
+      return true;
     });
 
   const intEnumMemberType = z
@@ -161,7 +165,9 @@ export function schemaParsers(schema: Schema) {
           message: `The enum member value ${duplicateValue} has been used more than once. Each enum member must have a distinct value.`,
           fatal: true,
         });
+        return z.NEVER;
       }
+      return true;
     });
 
   const enumType = stringEnumType.or(intEnumType);
@@ -210,38 +216,91 @@ export function schemaParsers(schema: Schema) {
     })
     .strict();
 
-  const discriminantUnionObjectVariantType = z
-    .object({
-      type: z.literal('object-variant'),
-      objectType,
-      discriminantType: stringLiteralType,
-    })
-    .strict();
+  const discriminatedUnionType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('discriminated-union'),
+          discriminant: z.string(),
+          variants: z.array(objectType.or(aliasType)),
+        })
+        .strict()
+    )
+    .superRefine((candidate, ctx) => {
+      if (candidate.variants.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'A discriminated union type must have at least one variant.',
+          fatal: true,
+        });
+        return z.NEVER;
+      }
+      for (let i = 0; i < candidate.variants.length; i++) {
+        const variant = candidate.variants[i]!;
+        const variantIdx = i;
 
-  const discriminantUnionAliasVariantType = z
-    .object({
-      type: z.literal('alias-variant'),
-      aliasType,
-      originalObjectType: objectType,
-      discriminantType: stringLiteralType,
-    })
-    .strict();
+        if (variant.type === 'object') {
+          const { fields } = variant;
+          const discriminantField = fields.find(f => f.name === candidate.discriminant);
+          if (discriminantField === undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The ${ordinalSuffixOf(variantIdx + 1)} discriminated union variant does not contain a field matching the discriminant '${candidate.discriminant}'.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+          if (discriminantField.type.type !== 'string-literal' || discriminantField.optional) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The discriminant field of the ${ordinalSuffixOf(variantIdx + 1)} discriminated union variant must be a non-optional string 'literal' type.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+        } else if (variant.type === 'alias') {
+          const aliasModel = schema.getAliasModel(variant.name);
+          if (aliasModel === undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The variant '${variant.name}' does not exist in the schema as a model.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+          if (aliasModel.type.type !== 'object') {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The variant '${variant.name}' must be an 'object' type.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+          const { fields } = aliasModel.type;
+          const discriminantField = fields.find(f => f.name === candidate.discriminant);
+          if (discriminantField === undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The variant '${variant.name}' does not contain a field matching the discriminant '${candidate.discriminant}'.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+          if (discriminantField.type.type !== 'string-literal' || discriminantField.optional) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `The discriminant field of the variant '${variant.name}' must be a non-optional string 'literal' type.`,
+              fatal: true,
+            });
+            return z.NEVER;
+          }
+        } else {
+          assertNever(variant);
+        }
+      }
 
-  const discriminantUnionVariantType = z.discriminatedUnion('type', [
-    discriminantUnionObjectVariantType,
-    discriminantUnionAliasVariantType,
-  ]);
-
-  const discriminatedUnionType = z.lazy(() =>
-    z
-      .object({
-        type: z.literal('discriminated-union'),
-        discriminant: z.string(),
-        variants: z.array(discriminantUnionVariantType),
-      })
-      .strict()
-  );
-
+      return true;
+    });
   const simpleUnionType = z.lazy(() =>
     z
       .object({
@@ -297,9 +356,6 @@ export function schemaParsers(schema: Schema) {
     mapType,
     objectType,
     aliasType,
-    discriminantUnionObjectVariantType,
-    discriminantUnionAliasVariantType,
-    discriminantUnionVariantType,
     discriminatedUnionType,
     simpleUnionType,
     unionType,
