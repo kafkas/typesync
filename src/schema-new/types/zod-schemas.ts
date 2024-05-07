@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { getDuplicateElements } from '../../util/list.js';
 
-const stringEnumType = z
+export const stringEnumType = z
   .object({
     type: z.literal('string-enum'),
     members: z.array(
@@ -45,7 +45,7 @@ const stringEnumType = z
     }
   });
 
-const intEnumType = z
+export const intEnumType = z
   .object({
     type: z.literal('int-enum'),
     members: z.array(
@@ -88,6 +88,6 @@ const intEnumType = z
     }
   });
 
-const enumType = stringEnumType.or(intEnumType);
+export const enumType = stringEnumType.or(intEnumType);
 
 export const type = enumType;
