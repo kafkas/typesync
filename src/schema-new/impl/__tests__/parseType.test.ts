@@ -6,7 +6,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Unknown = { type: 'unknown' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -14,7 +14,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Nil = { type: 'nil' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -22,7 +22,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.String = { type: 'string' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -30,7 +30,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Boolean = { type: 'boolean' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -38,7 +38,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Int = { type: 'int' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -46,7 +46,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Double = { type: 'double' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -54,7 +54,7 @@ describe('schema.parseType()', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Timestamp = { type: 'timestamp' };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -65,7 +65,7 @@ describe('schema.parseType()', () => {
         type: 'string-literal',
         value: 'abc',
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -76,7 +76,7 @@ describe('schema.parseType()', () => {
         type: 'int-literal',
         value: Math.PI,
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
@@ -85,7 +85,7 @@ describe('schema.parseType()', () => {
         type: 'int-literal',
         value: 1,
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -96,7 +96,7 @@ describe('schema.parseType()', () => {
         type: 'boolean-literal',
         value: false,
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -107,7 +107,7 @@ describe('schema.parseType()', () => {
         type: 'string-enum',
         members: [],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if there are duplicate member values`, () => {
@@ -120,7 +120,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 'value3' },
         ],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if there are duplicate member labels`, () => {
@@ -133,7 +133,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 'value3' },
         ],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`does not throw if the type is valid`, () => {
@@ -146,7 +146,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 'value3' },
         ],
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -157,7 +157,7 @@ describe('schema.parseType()', () => {
         type: 'int-enum',
         members: [],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if there are duplicate member values`, () => {
@@ -170,7 +170,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 2 },
         ],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if there are duplicate member labels`, () => {
@@ -183,7 +183,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 3 },
         ],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if a member value is not an integer`, () => {
@@ -195,7 +195,7 @@ describe('schema.parseType()', () => {
           { label: 'label2', value: 2.1 },
         ],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`does not throw if the type is valid`, () => {
@@ -208,7 +208,7 @@ describe('schema.parseType()', () => {
           { label: 'label3', value: 3 },
         ],
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -219,13 +219,13 @@ describe('schema.parseType()', () => {
         type: 'tuple',
         elements: [{ type: 'int-enum', members: [{ label: 'a', value: 1.23 }] }, { type: 'int' }],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Tuple = { type: 'tuple', elements: [{ type: 'int' }, { type: 'int' }] };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -239,13 +239,13 @@ describe('schema.parseType()', () => {
           members: [{ label: 'a', value: 1.23 }],
         },
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.List = { type: 'list', elementType: { type: 'string' } };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -259,13 +259,13 @@ describe('schema.parseType()', () => {
           members: [{ label: 'a', value: 1.23 }],
         },
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
       const t: types.Map = { type: 'map', valueType: { type: 'string' } };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -287,7 +287,7 @@ describe('schema.parseType()', () => {
         ],
         additionalFields: false,
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
@@ -307,7 +307,7 @@ describe('schema.parseType()', () => {
         ],
         additionalFields: false,
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -318,7 +318,7 @@ describe('schema.parseType()', () => {
         type: 'alias',
         name: 'User',
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it('does not throw if the type is valid', () => {
@@ -336,7 +336,7 @@ describe('schema.parseType()', () => {
         type: 'alias',
         name: 'User',
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -348,7 +348,7 @@ describe('schema.parseType()', () => {
         discriminant: 'type',
         variants: [],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if an alias variant does not resolve to 'object'`, () => {
@@ -383,7 +383,7 @@ describe('schema.parseType()', () => {
         ],
       };
 
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if a variant is missing the discriminant field`, () => {
@@ -409,7 +409,7 @@ describe('schema.parseType()', () => {
         ],
       };
 
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if the discriminant field of a variant is not a literal string`, () => {
@@ -430,7 +430,7 @@ describe('schema.parseType()', () => {
         ],
       };
 
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`throws if the discriminant field of a variant is optional`, () => {
@@ -451,7 +451,7 @@ describe('schema.parseType()', () => {
         ],
       };
 
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`does not throw if the type is valid`, () => {
@@ -480,7 +480,7 @@ describe('schema.parseType()', () => {
         ],
       };
 
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 
@@ -491,7 +491,7 @@ describe('schema.parseType()', () => {
         type: 'simple-union',
         variants: [],
       };
-      expect(() => schema.parseType(t)).toThrow(Error);
+      expect(() => schema.validateType(t)).toThrow(Error);
     });
 
     it(`does not throw if the type is valid`, () => {
@@ -500,7 +500,7 @@ describe('schema.parseType()', () => {
         type: 'simple-union',
         variants: [{ type: 'string' }, { type: 'int' }],
       };
-      expect(() => schema.parseType(t)).not.toThrow();
+      expect(() => schema.validateType(t)).not.toThrow();
     });
   });
 });

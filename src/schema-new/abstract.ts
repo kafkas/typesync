@@ -106,12 +106,12 @@ export abstract class AbstractSchema<T, A extends AliasModel<unknown>, D extends
 
   private validateModel(model: A | D): void {
     try {
-      this.parseType(model.type);
+      this.validateType(model.type);
     } catch (e) {
       const message = extractErrorMessage(e);
       throw new InvalidModelError(model.name, message);
     }
   }
 
-  protected abstract parseType(type: unknown): T;
+  protected abstract validateType(type: unknown): void;
 }
