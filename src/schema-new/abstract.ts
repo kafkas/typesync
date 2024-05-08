@@ -1,9 +1,9 @@
 import lodash from 'lodash';
 
-import { DuplicateModelError } from '../errors/invalid-model.js';
+import { DuplicateModelError, InvalidModelError } from '../errors/invalid-model.js';
 import { assertNever } from '../util/assert.js';
+import { extractErrorMessage } from '../util/extract-error-message.js';
 import type { AliasModel, DocumentModel } from './generic.js';
-import type { schema } from './index.js';
 
 export abstract class AbstractAliasModel<T> {
   public readonly model = 'alias';
@@ -33,10 +33,7 @@ export abstract class AbstractDocumentModel<T> {
   }
 }
 
-export abstract class AbstractSchema<
-  A extends AliasModel<schema.types.Type>,
-  D extends DocumentModel<schema.types.Type>,
-> {
+export abstract class AbstractSchema<T, A extends AliasModel<unknown>, D extends DocumentModel<unknown>> {
   private readonly aliasModelsById: Map<string, A>;
   private readonly documentModelsById: Map<string, D>;
 
@@ -92,7 +89,7 @@ export abstract class AbstractSchema<
     return this.aliasModelsById.get(modelName);
   }
 
-  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
+  protected cloneModels<S extends AbstractSchema<T, A, D>>(toSchema: S) {
     const aliasModelClones = Array.from(this.aliasModelsById.values()).map(m => m.clone() as A);
     const documentModelClones = Array.from(this.documentModels.values()).map(m => m.clone() as D);
     toSchema.addModelGroup([...aliasModelClones, ...documentModelClones]);
@@ -107,7 +104,14 @@ export abstract class AbstractSchema<
     }
   }
 
-  private validateModel(_model: A | D): void {
-    // TODO: Implement
+  private validateModel(model: A | D): void {
+    try {
+      this.parseType(model.type);
+    } catch (e) {
+      const message = extractErrorMessage(e);
+      throw new InvalidModelError(model.name, message);
+    }
   }
+
+  protected abstract parseType(type: unknown): T;
 }

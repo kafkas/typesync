@@ -25,7 +25,7 @@ export type DocumentModel = DocumentModelGeneric<types.Object>;
  */
 export type Schema = SchemaGeneric<types.Type, AliasModel, DocumentModel>;
 
-class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
+class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> implements Schema {
   private zodSchemas = createZodSchemasForSchema(this);
 
   public clone() {
