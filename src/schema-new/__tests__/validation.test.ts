@@ -150,23 +150,100 @@ describe('schema type validator', () => {
     });
 
     it(`throws if a variant is missing the discriminant field`, () => {
-      // TODO: Implement
-      expect(true).toBe(true);
+      const schema = createSchema();
+
+      const t: types.DiscriminatedUnion = {
+        type: 'discriminated-union',
+        discriminant: 'type',
+        variants: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+              { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
+            ],
+            additionalFields: false,
+          },
+          {
+            type: 'object',
+            fields: [{ name: 'breed', type: { type: 'string' }, docs: null, optional: false }],
+            additionalFields: false,
+          },
+        ],
+      };
+
+      expect(() => validateType(t, schema)).toThrow(Error);
     });
 
     it(`throws if the discriminant field of a variant is not a literal string`, () => {
-      // TODO: Implement
-      expect(true).toBe(true);
+      const schema = createSchema();
+
+      const t: types.DiscriminatedUnion = {
+        type: 'discriminated-union',
+        discriminant: 'type',
+        variants: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'type', type: { type: 'string' }, docs: null, optional: false },
+              { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
+            ],
+            additionalFields: false,
+          },
+        ],
+      };
+
+      expect(() => validateType(t, schema)).toThrow(Error);
     });
 
     it(`throws if the discriminant field of a variant is optional`, () => {
-      // TODO: Implement
-      expect(true).toBe(true);
+      const schema = createSchema();
+
+      const t: types.DiscriminatedUnion = {
+        type: 'discriminated-union',
+        discriminant: 'type',
+        variants: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'type', type: { type: 'string-literal', value: 'cat' }, optional: true, docs: null },
+              { name: 'lives_left', type: { type: 'int' }, optional: false, docs: null },
+            ],
+            additionalFields: false,
+          },
+        ],
+      };
+
+      expect(() => validateType(t, schema)).toThrow(Error);
     });
 
     it(`does not throw if the discriminated union is valid`, () => {
-      // TODO: Implement
-      expect(true).toBe(true);
+      const schema = createSchema();
+
+      const t: types.DiscriminatedUnion = {
+        type: 'discriminated-union',
+        discriminant: 'type',
+        variants: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'type', type: { type: 'string-literal', value: 'cat' }, optional: false, docs: null },
+              { name: 'lives_left', type: { type: 'int' }, optional: false, docs: null },
+            ],
+            additionalFields: false,
+          },
+          {
+            type: 'object',
+            fields: [
+              { name: 'type', type: { type: 'string-literal', value: 'dog' }, optional: false, docs: null },
+              { name: 'breed', type: { type: 'string' }, optional: false, docs: null },
+            ],
+            additionalFields: false,
+          },
+        ],
+      };
+
+      expect(() => validateType(t, schema)).not.toThrow();
     });
   });
 });
