@@ -2,7 +2,7 @@ import { python } from '../../platforms/python/index.js';
 import { Schema, schema } from '../../schema-new/index.js';
 import { assertNever } from '../../util/assert.js';
 import { pascalCase } from '../../util/casing.js';
-import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
+import { extractDiscriminantValueNew } from '../../util/extract-discriminant-value.js';
 
 interface FlattenTupleTypeResult {
   flattenedType: python.schema.types.Tuple;
@@ -108,7 +108,7 @@ export function flattenSchema(prevSchema: Schema): python.schema.Schema {
 
     unionType.variants.forEach(variantType => {
       if (variantType.type === 'object') {
-        const discriminantValue = extractDiscriminantValue(unionType, variantType);
+        const discriminantValue = extractDiscriminantValueNew(unionType, variantType);
         const name = `${aliasName}${pascalCase(discriminantValue)}`;
         const res = flattenObjectType(variantType, name);
         const aliasModel = python.schema.createAliasModel({ name, docs: null, value: res.flattenedType });

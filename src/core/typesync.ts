@@ -55,6 +55,7 @@ import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
+import { createSchemaFromDefinition as createSchemaFromDefinitionNew } from '../schema-new/index.js';
 import { createSchemaFromDefinition } from '../schema/index.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
@@ -206,7 +207,7 @@ class TypesyncImpl implements Typesync {
   ): Promise<GeneratePythonRepresentationResult> {
     const opts = this.normalizeGeneratePyRepresentationOpts(rawOpts);
     const { definitionGlobPattern, target, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const { schema: s } = this.createCoreObjectsNew(definitionGlobPattern, debug);
     const generator = createPythonGenerator({ target });
     const generation = generator.generate(s);
     return { type: 'python', schema: s, generation };
@@ -333,6 +334,15 @@ class TypesyncImpl implements Typesync {
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
     return { logger, schema: createSchemaFromDefinition(definition) };
+  }
+
+  private createCoreObjectsNew(definitionGlobPattern: string, debug: boolean) {
+    const logger = createLogger(debug);
+    const parser = createDefinitionParser(logger);
+    const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
+    logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
+    const definition = parser.parseDefinitionNew(definitionFilePaths);
+    return { logger, schema: createSchemaFromDefinitionNew(definition) };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {

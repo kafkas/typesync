@@ -90,5 +90,5 @@ export interface ObjectClassAttribute {
   type: Type;
   name: string;
   optional: boolean;
-  docs: string | undefined;
+  docs: string | null;
 }

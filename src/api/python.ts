@@ -1,6 +1,6 @@
 import { PythonGeneration } from '../generators/python/index.js';
+import { Schema } from '../schema-new/index.js';
 import { objectKeys } from '../util/object-keys.js';
-import { GenerateRepresentationResult } from './_common.js';
 
 const PYTHON_TARGETS = {
   'firebase-admin@6': true,
@@ -26,8 +26,11 @@ export interface GeneratePythonOptions extends GeneratePythonRepresentationOptio
 
 export type GeneratePythonOption = keyof GeneratePythonOptions;
 
-export interface GeneratePythonRepresentationResult extends GenerateRepresentationResult {
+// TODO: Should extend GenerateRepresentationResult
+export interface GeneratePythonRepresentationResult {
   type: 'python';
+
+  schema: Schema;
 
   /**
    * A structured representation of the generated Python/Pydantic types.

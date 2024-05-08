@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 
+import { definition as definitionNew } from '../definition-new/index.js';
 import { definition } from '../definition/index.js';
 import {
   DefinitionFileFieldNotValidError,
@@ -14,6 +15,7 @@ import type { Logger } from './logger.js';
 
 export interface DefinitionParser {
   parseDefinition(filePaths: string[]): definition.Definition;
+  parseDefinitionNew(filePaths: string[]): definitionNew.Definition;
 }
 
 interface RawDefinitionFile {
@@ -23,6 +25,20 @@ interface RawDefinitionFile {
 
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger?: Logger) {}
+
+  public parseDefinitionNew(filePaths: string[]): definitionNew.Definition {
+    const rawDefinitionFiles: RawDefinitionFile[] = filePaths.map(path => ({
+      path,
+      contentJson: this.parseDefinitionFileAsJson(path),
+    }));
+    return rawDefinitionFiles.reduce<definitionNew.Definition>((acc, rawFile) => {
+      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definitionNew.zodSchema);
+      Object.entries(parsedFile.content).forEach(([modelName, model]) => {
+        acc[modelName] = model;
+      });
+      return acc;
+    }, {});
+  }
 
   public parseDefinition(filePaths: string[]): definition.Definition {
     const rawDefinitionFiles: RawDefinitionFile[] = filePaths.map(path => ({
