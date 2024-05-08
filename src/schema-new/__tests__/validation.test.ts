@@ -3,6 +3,104 @@ import type { types } from '../types/index.js';
 import { validateType } from '../types/parse.js';
 
 describe('schema type validator', () => {
+  describe('unknown', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Unknown = { type: 'unknown' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('nil', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Nil = { type: 'nil' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('string', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.String = { type: 'string' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('boolean', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Boolean = { type: 'boolean' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('int', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Int = { type: 'int' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('double', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Double = { type: 'double' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('timestamp', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Timestamp = { type: 'timestamp' };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('string-literal', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.StringLiteral = {
+        type: 'string-literal',
+        value: 'abc',
+      };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('int-literal', () => {
+    it('throws if the literal value is not an integer', () => {
+      const schema = createSchema();
+      const t: types.IntLiteral = {
+        type: 'int-literal',
+        value: Math.PI,
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.IntLiteral = {
+        type: 'int-literal',
+        value: 1,
+      };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('boolean-literal', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.BooleanLiteral = {
+        type: 'boolean-literal',
+        value: false,
+      };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
   describe('string-enum', () => {
     it('throws if there are 0 members', () => {
       const schema = createSchema();
@@ -39,7 +137,7 @@ describe('schema type validator', () => {
       expect(() => validateType(t, schema)).toThrow(Error);
     });
 
-    it(`does not throw if there are multiple members with distinct values`, () => {
+    it(`does not throw if the type is valid`, () => {
       const schema = createSchema();
       const t: types.StringEnum = {
         type: 'string-enum',
@@ -89,7 +187,19 @@ describe('schema type validator', () => {
       expect(() => validateType(t, schema)).toThrow(Error);
     });
 
-    it(`does not throw if there are multiple members with distinct values`, () => {
+    it(`throws if a member value is not an integer`, () => {
+      const schema = createSchema();
+      const t: types.IntEnum = {
+        type: 'int-enum',
+        members: [
+          { label: 'label1', value: 1 },
+          { label: 'label2', value: 2.1 },
+        ],
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it(`does not throw if the type is valid`, () => {
       const schema = createSchema();
       const t: types.IntEnum = {
         type: 'int-enum',
@@ -98,6 +208,134 @@ describe('schema type validator', () => {
           { label: 'label2', value: 2 },
           { label: 'label3', value: 3 },
         ],
+      };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('tuple', () => {
+    it('throws if an element type is invalid', () => {
+      const schema = createSchema();
+      const t: types.Tuple = {
+        type: 'tuple',
+        elements: [{ type: 'int-enum', members: [{ label: 'a', value: 1.23 }] }, { type: 'int' }],
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Tuple = { type: 'tuple', elements: [{ type: 'int' }, { type: 'int' }] };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('list', () => {
+    it('throws if the element type is invalid', () => {
+      const schema = createSchema();
+      const t: types.List = {
+        type: 'list',
+        elementType: {
+          type: 'int-enum',
+          members: [{ label: 'a', value: 1.23 }],
+        },
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.List = { type: 'list', elementType: { type: 'string' } };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('map', () => {
+    it('throws if the value type is invalid', () => {
+      const schema = createSchema();
+      const t: types.Map = {
+        type: 'map',
+        valueType: {
+          type: 'int-enum',
+          members: [{ label: 'a', value: 1.23 }],
+        },
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Map = { type: 'map', valueType: { type: 'string' } };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('object', () => {
+    it('throws if a field type is invalid', () => {
+      const schema = createSchema();
+      const t: types.Object = {
+        type: 'object',
+        fields: [
+          {
+            name: 'name',
+            type: {
+              type: 'int-enum',
+              members: [{ label: 'a', value: 1.23 }],
+            },
+            optional: false,
+            docs: null,
+          },
+        ],
+        additionalFields: false,
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Object = {
+        type: 'object',
+        fields: [
+          {
+            name: 'name',
+            type: {
+              type: 'int-enum',
+              members: [{ label: 'a', value: 1 }],
+            },
+            optional: false,
+            docs: null,
+          },
+        ],
+        additionalFields: false,
+      };
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('alias', () => {
+    it(`throws if 'name' refers to a nonexistent model`, () => {
+      const schema = createSchema();
+      const t: types.Alias = {
+        type: 'alias',
+        name: 'User',
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it('does not throw if the type is valid', () => {
+      const userModel = createAliasModel({
+        name: 'User',
+        docs: null,
+        value: {
+          type: 'object',
+          fields: [{ name: 'name', type: { type: 'string' }, docs: null, optional: false }],
+          additionalFields: false,
+        },
+      });
+      const schema = createSchemaWithModels([userModel]);
+      const t: types.Alias = {
+        type: 'alias',
+        name: 'User',
       };
       expect(() => validateType(t, schema)).not.toThrow();
     });
@@ -217,7 +455,7 @@ describe('schema type validator', () => {
       expect(() => validateType(t, schema)).toThrow(Error);
     });
 
-    it(`does not throw if the discriminated union is valid`, () => {
+    it(`does not throw if the type is valid`, () => {
       const schema = createSchema();
 
       const t: types.DiscriminatedUnion = {
@@ -243,6 +481,26 @@ describe('schema type validator', () => {
         ],
       };
 
+      expect(() => validateType(t, schema)).not.toThrow();
+    });
+  });
+
+  describe('simple-union', () => {
+    it(`throws if the union has 0 variants`, () => {
+      const schema = createSchema();
+      const t: types.SimpleUnion = {
+        type: 'simple-union',
+        variants: [],
+      };
+      expect(() => validateType(t, schema)).toThrow(Error);
+    });
+
+    it(`does not throw if the type is valid`, () => {
+      const schema = createSchema();
+      const t: types.SimpleUnion = {
+        type: 'simple-union',
+        variants: [{ type: 'string' }, { type: 'int' }],
+      };
       expect(() => validateType(t, schema)).not.toThrow();
     });
   });
