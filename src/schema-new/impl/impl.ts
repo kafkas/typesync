@@ -1,7 +1,7 @@
 import { converters } from '../../converters/index.js';
 import { definition } from '../../definition-new/index.js';
 import { InvalidSchemaTypeError } from '../../errors/invalid-schema-type.js';
-import { assertNever } from '../../util/assert.js';
+import { assert, assertNever } from '../../util/assert.js';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';
 import {
   AliasModel as AliasModelGeneric,
@@ -15,6 +15,23 @@ export type AliasModel = AliasModelGeneric<types.Type>;
 
 export type DocumentModel = DocumentModelGeneric<types.Object>;
 
+interface ResolvedDiscriminatedUnionObjectVariant {
+  type: 'object-variant';
+  objectType: types.Object;
+  discriminantType: types.StringLiteral;
+}
+
+interface ResolvedDiscriminatedUnionAliasVariant {
+  type: 'alias-variant';
+  aliasType: types.Alias;
+  originalObjectType: types.Object;
+  discriminantType: types.StringLiteral;
+}
+
+type ResolvedDiscriminatedUnionVariant =
+  | ResolvedDiscriminatedUnionObjectVariant
+  | ResolvedDiscriminatedUnionAliasVariant;
+
 /**
  * Represents a structured model of a database schema. The `Schema` interface provides a higher-level, organized representation of the database
  * schema, facilitating easier manipulation and interaction with the Typesync generators.
@@ -23,7 +40,9 @@ export type DocumentModel = DocumentModelGeneric<types.Object>;
  * structured format that aligns closely with development practices, making it easy to understand and utilize in generating type definitions
  * across various platforms.
  */
-export type Schema = SchemaGeneric<types.Type, AliasModel, DocumentModel>;
+export interface Schema extends SchemaGeneric<types.Type, AliasModel, DocumentModel> {
+  resolveDiscriminatedUnionVariants(type: types.DiscriminatedUnion): ResolvedDiscriminatedUnionVariant[];
+}
 
 class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> implements Schema {
   private zodSchemas = createZodSchemasForSchema(this);
@@ -32,7 +51,35 @@ class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> i
     return this.cloneModels(new SchemaImpl());
   }
 
-  public parseType(t: unknown) {
+  public resolveDiscriminatedUnionVariants(t: types.DiscriminatedUnion) {
+    return t.variants.map((variant): ResolvedDiscriminatedUnionVariant => {
+      if (variant.type === 'object') {
+        const { fields } = variant;
+        const discriminantField = fields.find(f => f.name === t.discriminant);
+        assert(discriminantField?.type.type === 'string-literal');
+        return {
+          type: 'object-variant',
+          objectType: variant,
+          discriminantType: discriminantField.type,
+        };
+      } else if (variant.type === 'alias') {
+        const aliasModel = this.getAliasModel(variant.name);
+        assert(aliasModel?.type.type === 'object');
+        const discriminantField = aliasModel.type.fields.find(f => f.name === t.discriminant);
+        assert(discriminantField?.type.type === 'string-literal');
+        return {
+          type: 'alias-variant',
+          aliasType: variant,
+          originalObjectType: aliasModel.type,
+          discriminantType: discriminantField.type,
+        };
+      } else {
+        assertNever(variant);
+      }
+    });
+  }
+
+  protected parseType(t: unknown) {
     const { type } = this.zodSchemas;
     const parseRes = type.safeParse(t);
     if (!parseRes.success) {

@@ -91,22 +91,6 @@ export interface Alias {
   name: string;
 }
 
-//  TODO: Reimplement
-// interface DiscriminatedUnionObjectVariant {
-//   type: 'object-variant';
-//   objectType: Object;
-//   discriminantType: StringLiteral;
-// }
-
-// interface DiscriminatedUnionAliasVariant {
-//   type: 'alias-variant';
-//   aliasType: Alias;
-//   originalObjectType: Object;
-//   discriminantType: StringLiteral;
-// }
-
-// type DiscriminatedUnionVariant = DiscriminatedUnionObjectVariant | DiscriminatedUnionAliasVariant;
-
 export type DiscriminatedUnion = DiscriminatedUnionType<Object | Alias>;
 
 export type SimpleUnion = SimpleUnionType<Type>;
