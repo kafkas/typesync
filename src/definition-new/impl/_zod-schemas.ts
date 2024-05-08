@@ -1,35 +1,49 @@
 import { z } from 'zod';
 
-import type { types } from './types/index.js';
+import type { types } from '../types/index.js';
 
-const primitiveType = z
-  .enum(['unknown', 'nil', 'string', 'boolean', 'int', 'double', 'timestamp'])
+export const unknownType = z.literal('unknown').describe('An unknown type.');
+
+export const nilType = z.literal('nil').describe('A nil type.');
+
+export const stringType = z.literal('string').describe('A string type.');
+
+export const booleanType = z.literal('boolean').describe('A boolean type.');
+
+export const intType = z.literal('int').describe('An integer type.');
+
+export const doubleType = z.literal('double').describe('A double type.');
+
+export const timestampType = z.literal('timestamp').describe('A timestamp type.');
+
+export const primitiveType = z
+  .union([unknownType, nilType, stringType, booleanType, intType, doubleType, timestampType])
   .describe('A primitive type');
 
-const stringLiteralType = z
+export const stringLiteralType = z
   .object({
     type: z.literal('literal'),
     value: z.string().describe('The literal value.'),
   })
   .describe('A string literal type');
 
-const intLiteralType = z
+export const intLiteralType = z
   .object({
     type: z.literal('literal'),
     value: z.number().int().describe('The literal value.'),
   })
   .describe('An int literal type');
 
-const booleanLiteralType = z
+export const booleanLiteralType = z
   .object({
     type: z.literal('literal'),
     value: z.boolean().describe('The literal value.'),
   })
   .describe('A boolean literal type');
 
-const literalType = stringLiteralType.or(intLiteralType).or(booleanLiteralType).describe('A literal type');
+export const literalType = stringLiteralType.or(intLiteralType).or(booleanLiteralType).describe('A literal type');
 
-const stringEnumType = z
+export const stringEnumType = z
   .object({
     type: z.literal('enum'),
     members: z
@@ -45,7 +59,7 @@ const stringEnumType = z
   })
   .describe('A string enum type');
 
-const intEnumType = z
+export const intEnumType = z
   .object({
     type: z.literal('enum'),
     members: z
@@ -61,9 +75,9 @@ const intEnumType = z
   })
   .describe('An int enum type');
 
-const enumType = stringEnumType.or(intEnumType).describe('An enum type');
+export const enumType = stringEnumType.or(intEnumType).describe('An enum type');
 
-const tupleType = z
+export const tupleType = z
   .lazy(() =>
     z
       .object({
@@ -74,7 +88,7 @@ const tupleType = z
   )
   .describe('A tuple type');
 
-const listType = z
+export const listType = z
   .lazy(() =>
     z
       .object({
@@ -85,7 +99,7 @@ const listType = z
   )
   .describe('A list type');
 
-const mapType = z
+export const mapType = z
   .lazy(() =>
     z
       .object({
@@ -96,12 +110,12 @@ const mapType = z
   )
   .describe('An arbitrary mapping from strings to any valid types.');
 
-const objectType = z
+export const objectType = z
   .lazy(() =>
     z
       .object({
         type: z.literal('object'),
-        fields: z.record(field).describe('The fields that belong to this object.'),
+        fields: z.record(objectField).describe('The fields that belong to this object.'),
         additionalFields: z
           .boolean()
           .optional()
@@ -113,7 +127,7 @@ const objectType = z
   )
   .describe('An object type.');
 
-const discriminatedUnionType = z
+export const discriminatedUnionType = z
   .lazy(() =>
     z
       .object({
@@ -125,7 +139,7 @@ const discriminatedUnionType = z
   )
   .describe('A discriminated union type.');
 
-const simpleUnionType = z
+export const simpleUnionType = z
   .lazy(() =>
     z
       .object({
@@ -136,11 +150,11 @@ const simpleUnionType = z
   )
   .describe('A simple union type.');
 
-const unionType = discriminatedUnionType.or(simpleUnionType).describe('A union type.');
+export const unionType = discriminatedUnionType.or(simpleUnionType).describe('A union type.');
 
-const aliasType = z.string().describe('An alias type.');
+export const aliasType = z.string().describe('An alias type.');
 
-const type: z.ZodType<types.Type> = primitiveType
+export const type: z.ZodType<types.Type> = primitiveType
   .or(literalType)
   .or(enumType)
   .or(tupleType)
@@ -151,7 +165,7 @@ const type: z.ZodType<types.Type> = primitiveType
   .or(aliasType)
   .describe('Any valid type.');
 
-const field: z.ZodType<types.ObjectField> = z
+export const objectField: z.ZodType<types.ObjectField> = z
   .object({
     type: type,
     optional: z.boolean().optional().describe('Whether this field is optional. Defaults to false.'),
@@ -160,7 +174,7 @@ const field: z.ZodType<types.ObjectField> = z
   .strict()
   .describe('An object field.');
 
-const aliasModel = z
+export const aliasModel = z
   .object({
     model: z.literal('alias').describe(`A literal field indicating that this is an 'alias' model.`),
     docs: z.string().optional().describe('Optional documentation for the model.'),
@@ -169,7 +183,7 @@ const aliasModel = z
   .strict()
   .describe('An alias model');
 
-const documentModel = z
+export const documentModel = z
   .object({
     model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
     docs: z.string().optional().describe('Optional documentation for the model.'),
@@ -178,6 +192,6 @@ const documentModel = z
   .strict()
   .describe('A document model.');
 
-const model = z.discriminatedUnion('model', [aliasModel, documentModel]);
+export const model = z.discriminatedUnion('model', [aliasModel, documentModel]);
 
 export const definition = z.record(model);

@@ -1,4 +1,18 @@
-export type Primitive = 'unknown' | 'nil' | 'string' | 'boolean' | 'int' | 'double' | 'timestamp';
+export type Unknown = 'unknown';
+
+export type Nil = 'nil';
+
+export type String = 'string';
+
+export type Boolean = 'boolean';
+
+export type Int = 'int';
+
+export type Double = 'double';
+
+export type Timestamp = 'timestamp';
+
+export type Primitive = Unknown | Nil | String | Boolean | Int | Double | Timestamp;
 
 export interface StringLiteral {
   type: 'literal';

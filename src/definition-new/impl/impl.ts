@@ -1,4 +1,4 @@
-import type { types } from './types/index.js';
+import type { types } from '../types/index.js';
 
 export interface AliasModel {
   model: 'alias';
