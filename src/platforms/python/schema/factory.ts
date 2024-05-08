@@ -14,7 +14,7 @@ export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]): 
 interface CreateAliasModelParams {
   name: string;
   docs: string | null;
-  value: types.Type;
+  value: types.Type | types.Object | types.Enum;
 }
 
 export function createAliasModel(params: CreateAliasModelParams): AliasModel {

@@ -1,26 +1,26 @@
 import type { PythonGenerationTarget } from '../../api/index.js';
 import type { python } from '../../platforms/python/index.js';
-import type { Schema } from '../../schema/index.js';
+import type { Schema } from '../../schema-new/index.js';
 
 export interface PythonAliasDeclaration {
   type: 'alias';
   modelName: string;
   modelType: python.Type;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface PythonEnumClassDeclaration {
   type: 'enum-class';
   modelName: string;
   modelType: python.EnumClass;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface PythonPydanticClassDeclaration {
   type: 'pydantic-class';
   modelName: string;
   modelType: python.ObjectClass;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export type PythonDeclaration = PythonAliasDeclaration | PythonEnumClassDeclaration | PythonPydanticClassDeclaration;

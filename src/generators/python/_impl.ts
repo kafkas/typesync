@@ -1,9 +1,8 @@
 import { python } from '../../platforms/python/index.js';
-import { Schema, schema } from '../../schema/index.js';
+import { Schema } from '../../schema-new/index.js';
 import { assertNever } from '../../util/assert.js';
 import { flatTypeToPython } from './_converters.js';
 import { flattenSchema } from './_flatten-schema.js';
-import type { FlatAliasModel, FlatDocumentModel, FlatObjectType, FlatType } from './_schema.js';
 import type {
   PythonAliasDeclaration,
   PythonDeclaration,
@@ -32,7 +31,7 @@ class PythonGeneratorImpl implements PythonGenerator {
     return { type: 'python', declarations };
   }
 
-  private createDeclarationForFlatAliasModel(model: FlatAliasModel): PythonDeclaration {
+  private createDeclarationForFlatAliasModel(model: python.schema.AliasModel): PythonDeclaration {
     switch (model.type.type) {
       case 'unknown':
       case 'nil':
@@ -41,7 +40,9 @@ class PythonGeneratorImpl implements PythonGenerator {
       case 'int':
       case 'double':
       case 'timestamp':
-      case 'literal':
+      case 'string-literal':
+      case 'int-literal':
+      case 'boolean-literal':
       case 'tuple':
       case 'list':
       case 'map':
@@ -49,7 +50,8 @@ class PythonGeneratorImpl implements PythonGenerator {
       case 'simple-union':
       case 'alias':
         return this.createDeclarationForFlatType(model.type, model.name, model.docs);
-      case 'enum':
+      case 'string-enum':
+      case 'int-enum':
         return this.createDeclarationForEnumType(model.type, model.name, model.docs);
       case 'object':
         return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
@@ -58,15 +60,15 @@ class PythonGeneratorImpl implements PythonGenerator {
     }
   }
 
-  private createDeclarationForFlatDocumentModel(model: FlatDocumentModel): PythonDeclaration {
+  private createDeclarationForFlatDocumentModel(model: python.schema.DocumentModel): PythonDeclaration {
     // A Firestore document can be considered an 'object' type
     return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
   }
 
   private createDeclarationForEnumType(
-    type: schema.types.Enum,
+    type: python.schema.types.Enum,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): PythonEnumClassDeclaration {
     const pythonType: python.EnumClass = {
       type: 'enum-class',
@@ -84,9 +86,9 @@ class PythonGeneratorImpl implements PythonGenerator {
   }
 
   private createDeclarationForFlatObjectType(
-    type: FlatObjectType,
+    type: python.schema.types.Object,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): PythonPydanticClassDeclaration {
     const pythonType: python.ObjectClass = {
       type: 'object-class',
@@ -107,9 +109,9 @@ class PythonGeneratorImpl implements PythonGenerator {
   }
 
   private createDeclarationForFlatType(
-    type: FlatType,
+    type: python.schema.types.Type,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): PythonAliasDeclaration {
     const pythonType = flatTypeToPython(type);
     return {
