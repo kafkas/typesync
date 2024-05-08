@@ -67,4 +67,5 @@ export interface Schema<T, A, D> {
   addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
   getAliasModel(modelName: string): A | undefined;
+  parseType(type: unknown): T;
 }

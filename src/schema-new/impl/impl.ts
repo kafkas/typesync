@@ -79,7 +79,7 @@ class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> i
     });
   }
 
-  protected parseType(t: unknown) {
+  public parseType(t: unknown) {
     const { type } = this.zodSchemas;
     const parseRes = type.safeParse(t);
     if (!parseRes.success) {
