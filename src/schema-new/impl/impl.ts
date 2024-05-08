@@ -1,15 +1,15 @@
-import { converters } from '../converters/index.js';
-import { definition } from '../definition-new/index.js';
-import { InvalidSchemaTypeError } from '../errors/invalid-schema-type.js';
-import { assertNever } from '../util/assert.js';
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract.js';
+import { converters } from '../../converters/index.js';
+import { definition } from '../../definition-new/index.js';
+import { InvalidSchemaTypeError } from '../../errors/invalid-schema-type.js';
+import { assertNever } from '../../util/assert.js';
+import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';
 import {
   AliasModel as AliasModelGeneric,
   DocumentModel as DocumentModelGeneric,
   Schema as SchemaGeneric,
-} from './generic.js';
-import type { types } from './types/index.js';
-import { schemaParsers } from './types/zod-schemas.js';
+} from '../generic.js';
+import type { types } from '../types/index.js';
+import { createZodSchemasForSchema } from './_zod-schemas.js';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 
@@ -26,12 +26,14 @@ export type DocumentModel = DocumentModelGeneric<types.Object>;
 export type Schema = SchemaGeneric<types.Type, AliasModel, DocumentModel>;
 
 class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
+  private zodSchemas = createZodSchemasForSchema(this);
+
   public clone() {
     return this.cloneModels(new SchemaImpl());
   }
 
   public parseType(t: unknown) {
-    const { type } = schemaParsers(this);
+    const { type } = this.zodSchemas;
     const parseRes = type.safeParse(t);
     if (!parseRes.success) {
       const { error } = parseRes;

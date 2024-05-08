@@ -3,10 +3,10 @@ import { z } from 'zod';
 import { assertNever } from '../../util/assert.js';
 import { getDuplicateElements } from '../../util/list.js';
 import { ordinalSuffixOf } from '../../util/ordinal-suffix.js';
-import { type Schema } from '../impl.js';
-import { type Type } from './_types.js';
+import { type types } from '../types/index.js';
+import { type Schema } from './impl.js';
 
-export function schemaParsers(schema: Schema) {
+export function createZodSchemasForSchema(schema: Schema) {
   const unknownType = z
     .object({
       type: z.literal('unknown'),
@@ -331,7 +331,7 @@ export function schemaParsers(schema: Schema) {
 
   const unionType = discriminatedUnionType.or(simpleUnionType);
 
-  const type: z.ZodType<Type> = z.union([
+  const type: z.ZodType<types.Type> = z.union([
     primitiveType,
     literalType,
     enumType,

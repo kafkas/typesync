@@ -1,1 +1,1 @@
-export type * as types from './_namespace.js';
+export type * as types from './_types.js';
