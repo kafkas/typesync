@@ -165,7 +165,7 @@ export const type: z.ZodType<types.Type> = primitiveType
   .or(aliasType)
   .describe('Any valid type.');
 
-export const objectField: z.ZodType<types.ObjectField> = z
+export const objectField = z
   .object({
     type: type,
     optional: z.boolean().optional().describe('Whether this field is optional. Defaults to false.'),
