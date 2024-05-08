@@ -122,7 +122,6 @@ export function schemaParsers(schema: Schema) {
         });
         return z.NEVER;
       }
-      return true;
     });
 
   const intEnumMemberType = z
@@ -167,7 +166,6 @@ export function schemaParsers(schema: Schema) {
         });
         return z.NEVER;
       }
-      return true;
     });
 
   const enumType = stringEnumType.or(intEnumType);
@@ -214,7 +212,18 @@ export function schemaParsers(schema: Schema) {
       type: z.literal('alias'),
       name: z.string(),
     })
-    .strict();
+    .strict()
+    .superRefine((candidate, ctx) => {
+      const aliasModel = schema.getAliasModel(candidate.name);
+      if (aliasModel === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `The alias name '${candidate.name}' does not refer to an existing model in this schema.`,
+          fatal: true,
+        });
+        return z.NEVER;
+      }
+    });
 
   const discriminatedUnionType = z
     .lazy(() =>
@@ -298,17 +307,27 @@ export function schemaParsers(schema: Schema) {
           assertNever(variant);
         }
       }
-
-      return true;
     });
-  const simpleUnionType = z.lazy(() =>
-    z
-      .object({
-        type: z.literal('simple-union'),
-        variants: z.array(type),
-      })
-      .strict()
-  );
+
+  const simpleUnionType = z
+    .lazy(() =>
+      z
+        .object({
+          type: z.literal('simple-union'),
+          variants: z.array(type),
+        })
+        .strict()
+    )
+    .superRefine((candidate, ctx) => {
+      if (candidate.variants.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'A simple union type must have at least one variant.',
+          fatal: true,
+        });
+        return z.NEVER;
+      }
+    });
 
   const unionType = discriminatedUnionType.or(simpleUnionType);
 
