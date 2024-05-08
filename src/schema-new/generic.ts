@@ -55,10 +55,10 @@ export interface DocumentModel<T> {
 
 export type Model<T> = AliasModel<T> | DocumentModel<T>;
 
-export interface Schema<A, D> {
+export interface Schema<T, A, D> {
   aliasModels: A[];
   documentModels: D[];
-  clone(): Schema<A, D>;
+  clone(): Schema<T, A, D>;
   /**
    * Similar to adding models to the schema one by one, with an important difference. Models are validated only
    * after the entire "group" has been added to the schema. This makes sure that the validation code doesn't fail
@@ -67,4 +67,5 @@ export interface Schema<A, D> {
   addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
   getAliasModel(modelName: string): A | undefined;
+  parseType(type: unknown): T;
 }

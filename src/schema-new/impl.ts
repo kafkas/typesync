@@ -23,11 +23,27 @@ export type DocumentModel = DocumentModelGeneric<types.Object>;
  * structured format that aligns closely with development practices, making it easy to understand and utilize in generating type definitions
  * across various platforms.
  */
-export type Schema = SchemaGeneric<AliasModel, DocumentModel>;
+export type Schema = SchemaGeneric<types.Type, AliasModel, DocumentModel>;
 
 class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
   public clone() {
     return this.cloneModels(new SchemaImpl());
+  }
+
+  public parseType(t: unknown) {
+    const { type } = schemaParsers(this);
+    const parseRes = type.safeParse(t);
+    if (!parseRes.success) {
+      const { error } = parseRes;
+      const [issue] = error.issues;
+      if (issue) {
+        const { message } = issue;
+        throw new InvalidSchemaTypeError(message);
+      } else {
+        throw new InvalidSchemaTypeError('Cannot parse type due to an unexpected error.');
+      }
+    }
+    return parseRes.data;
   }
 }
 
@@ -101,22 +117,4 @@ interface CreateDocumentModelParams {
 export function createDocumentModel(params: CreateDocumentModelParams): DocumentModel {
   const { name, docs, type } = params;
   return new DocumentModelImpl(name, docs, type);
-}
-
-export function validateType(t: unknown, schema: Schema) {
-  const { type } = schemaParsers(schema);
-  const parseRes = type.safeParse(t);
-
-  if (!parseRes.success) {
-    const { error } = parseRes;
-    const [issue] = error.issues;
-    if (issue) {
-      const { message } = issue;
-      throw new InvalidSchemaTypeError(message);
-    } else {
-      throw new InvalidSchemaTypeError('Cannot parse type due to an unexpected error.');
-    }
-  }
-
-  return parseRes.data;
 }
