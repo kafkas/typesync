@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { format } from 'prettier';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
-import { definition } from '../src/definition/index.js';
+import { definition } from '../src/definition-new/index.js';
 import { assert } from '../src/util/assert.js';
 import { extractPackageJsonVersion } from '../src/util/extract-package-json-version.js';
 import { getDirName, writeFile } from '../src/util/fs.js';
@@ -15,7 +15,7 @@ function inferCurrentSchemaVersion() {
 }
 
 function generateJsonSchema(minorVersionName: string) {
-  return zodToJsonSchema(definition.schemas.definition, minorVersionName);
+  return zodToJsonSchema(definition.zodSchema, minorVersionName);
 }
 
 type JsonSchema = ReturnType<typeof generateJsonSchema>;

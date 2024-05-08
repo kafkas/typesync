@@ -1,2 +1,2 @@
 export * from './impl.js';
-export { definition as definitionSchema } from './_zod-schemas.js';
+export { definition as zodSchema } from './_zod-schemas.js';
