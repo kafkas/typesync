@@ -1,5 +1,6 @@
 import { converters } from '../converters/index.js';
 import { definition } from '../definition-new/index.js';
+import { InvalidSchemaTypeError } from '../errors/invalid-schema-type.js';
 import { assertNever } from '../util/assert.js';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from './abstract.js';
 import {
@@ -7,8 +8,8 @@ import {
   DocumentModel as DocumentModelGeneric,
   Schema as SchemaGeneric,
 } from './generic.js';
-import { schema } from './index.js';
 import type { types } from './types/index.js';
+import { schemaParsers } from './types/zod-schemas.js';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 
@@ -83,7 +84,7 @@ export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]): 
 interface CreateAliasModelParams {
   name: string;
   docs: string | null;
-  value: schema.types.Type;
+  value: types.Type;
 }
 
 export function createAliasModel(params: CreateAliasModelParams): AliasModel {
@@ -94,10 +95,28 @@ export function createAliasModel(params: CreateAliasModelParams): AliasModel {
 interface CreateDocumentModelParams {
   name: string;
   docs: string | null;
-  type: schema.types.Object;
+  type: types.Object;
 }
 
 export function createDocumentModel(params: CreateDocumentModelParams): DocumentModel {
   const { name, docs, type } = params;
   return new DocumentModelImpl(name, docs, type);
+}
+
+export function validateType(t: unknown, schema: Schema) {
+  const { type } = schemaParsers(schema);
+  const parseRes = type.safeParse(t);
+
+  if (!parseRes.success) {
+    const { error } = parseRes;
+    const [issue] = error.issues;
+    if (issue) {
+      const { message } = issue;
+      throw new InvalidSchemaTypeError(message);
+    } else {
+      throw new InvalidSchemaTypeError('Cannot parse type due to an unexpected error.');
+    }
+  }
+
+  return parseRes.data;
 }

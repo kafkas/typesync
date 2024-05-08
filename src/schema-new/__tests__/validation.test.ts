@@ -1,6 +1,5 @@
-import { createAliasModel, createSchema, createSchemaWithModels } from '../impl.js';
+import { createAliasModel, createSchema, createSchemaWithModels, validateType } from '../impl.js';
 import type { types } from '../types/index.js';
-import { validateType } from '../types/parse.js';
 
 describe('schema type validator', () => {
   describe('unknown', () => {
