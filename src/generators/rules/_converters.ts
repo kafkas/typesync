@@ -1,61 +1,63 @@
 import { rules } from '../../platforms/rules/index.js';
-import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
-import type {
-  FlatDiscriminatedUnionType,
-  FlatListType,
-  FlatObjectFieldType,
-  FlatObjectType,
-  FlatSimpleUnionType,
-  FlatTupleType,
-  FlatType,
-} from './_schema.js';
 
-export function unknownTypeToRules(_t: schema.types.Unknown): rules.Any {
+export function unknownTypeToRules(_t: rules.schema.types.Unknown): rules.Any {
   return { type: 'any' };
 }
 
-export function stringTypeToRules(_t: schema.types.String): rules.String {
+export function stringTypeToRules(_t: rules.schema.types.String): rules.String {
   return { type: 'string' };
 }
 
-export function booleanTypeToRules(_t: schema.types.Boolean): rules.Bool {
+export function booleanTypeToRules(_t: rules.schema.types.Boolean): rules.Bool {
   return { type: 'bool' };
 }
 
-export function integerTypeToRules(_t: schema.types.Integer): rules.Int {
+export function integerTypeToRules(_t: rules.schema.types.Int): rules.Int {
   return { type: 'int' };
 }
 
-export function doubleTypeToRules(_t: schema.types.Double): rules.Float {
+export function doubleTypeToRules(_t: rules.schema.types.Double): rules.Float {
   return { type: 'float' };
 }
 
-export function timestampTypeToRules(_t: schema.types.Timestamp): rules.Timestamp {
+export function timestampTypeToRules(_t: rules.schema.types.Timestamp): rules.Timestamp {
   return { type: 'timestamp' };
 }
 
-export function literalTypeToRules(t: schema.types.Literal): rules.Literal {
+export function stringLiteralTypeToRules(t: rules.schema.types.StringLiteral): rules.Literal {
   return { type: 'literal', value: t.value };
 }
 
-export function enumTypeToRules(t: schema.types.Enum): rules.Enum {
+export function intLiteralTypeToRules(t: rules.schema.types.IntLiteral): rules.Literal {
+  return { type: 'literal', value: t.value };
+}
+
+export function booleanLiteralTypeToRules(t: rules.schema.types.BooleanLiteral): rules.Literal {
+  return { type: 'literal', value: t.value };
+}
+
+export function stringEnumTypeToRules(t: rules.schema.types.Enum): rules.Enum {
   return { type: 'enum', members: t.members };
 }
 
-export function flatTupleTypeToRules(t: FlatTupleType): rules.Tuple {
+export function intEnumTypeToRules(t: rules.schema.types.Enum): rules.Enum {
+  return { type: 'enum', members: t.members };
+}
+
+export function flatTupleTypeToRules(t: rules.schema.types.Tuple): rules.Tuple {
   return { type: 'tuple', elements: t.elements.map(flatTypeToRules) };
 }
 
-export function flatListTypeToRules(_t: FlatListType): rules.List {
+export function flatListTypeToRules(_t: rules.schema.types.List): rules.List {
   return { type: 'list' };
 }
 
-export function flatMapTypeToRules(_t: schema.types.Map): rules.Map {
+export function flatMapTypeToRules(_t: rules.schema.types.Map): rules.Map {
   return { type: 'map' };
 }
 
-export function flatObjectTypeToRules(t: FlatObjectType): rules.Object {
+export function flatObjectTypeToRules(t: rules.schema.types.Object): rules.Object {
   return {
     type: 'object',
     fields: t.fields.map(flatObjectFieldTypeToRules),
@@ -63,11 +65,11 @@ export function flatObjectTypeToRules(t: FlatObjectType): rules.Object {
   };
 }
 
-export function flatObjectFieldTypeToRules(t: FlatObjectFieldType): rules.ObjectField {
+export function flatObjectFieldTypeToRules(t: rules.schema.types.ObjectField): rules.ObjectField {
   return { type: flatTypeToRules(t.type), optional: t.optional, name: t.name };
 }
 
-export function flatDiscriminatedUnionTypeToRules(t: FlatDiscriminatedUnionType): rules.DiscriminatedUnion {
+export function flatDiscriminatedUnionTypeToRules(t: rules.schema.types.DiscriminatedUnion): rules.DiscriminatedUnion {
   return {
     type: 'discriminated-union',
     discriminant: t.discriminant,
@@ -84,15 +86,15 @@ export function flatDiscriminatedUnionTypeToRules(t: FlatDiscriminatedUnionType)
   };
 }
 
-export function flatSimpleUnionTypeToRules(t: FlatSimpleUnionType): rules.SimpleUnion {
+export function flatSimpleUnionTypeToRules(t: rules.schema.types.SimpleUnion): rules.SimpleUnion {
   return { type: 'simple-union', variants: t.variants.map(flatTypeToRules) };
 }
 
-export function flatAliasTypeToRules(t: schema.types.Alias): rules.Alias {
+export function flatAliasTypeToRules(t: rules.schema.types.Alias): rules.Alias {
   return { type: 'alias', name: t.name };
 }
 
-export function flatTypeToRules(t: FlatType): rules.Type {
+export function flatTypeToRules(t: rules.schema.types.Type): rules.Type {
   switch (t.type) {
     case 'unknown':
       return unknownTypeToRules(t);
@@ -106,10 +108,16 @@ export function flatTypeToRules(t: FlatType): rules.Type {
       return doubleTypeToRules(t);
     case 'timestamp':
       return timestampTypeToRules(t);
-    case 'literal':
-      return literalTypeToRules(t);
-    case 'enum':
-      return enumTypeToRules(t);
+    case 'string-literal':
+      return stringLiteralTypeToRules(t);
+    case 'int-literal':
+      return intLiteralTypeToRules(t);
+    case 'boolean-literal':
+      return booleanLiteralTypeToRules(t);
+    case 'string-enum':
+      return stringEnumTypeToRules(t);
+    case 'int-enum':
+      return intEnumTypeToRules(t);
     case 'tuple':
       return flatTupleTypeToRules(t);
     case 'list':

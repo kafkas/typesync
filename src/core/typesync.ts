@@ -267,7 +267,7 @@ class TypesyncImpl implements Typesync {
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
     const { definitionGlobPattern, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const { schema: s } = this.createCoreObjectsNew(definitionGlobPattern, debug);
     const generator = createRulesGenerator({});
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };

@@ -1,5 +1,5 @@
 import type { rules } from '../../platforms/rules/index.js';
-import type { Schema } from '../../schema/index.js';
+import type { Schema } from '../../schema-new/index.js';
 
 export interface RulesValidatorDeclaration {
   type: 'validator';

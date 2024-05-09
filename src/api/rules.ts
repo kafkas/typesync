@@ -1,5 +1,5 @@
 import { RulesGeneration } from '../generators/rules/index.js';
-import { GenerateRepresentationResult } from './_common.js';
+import { Schema } from '../schema-new/index.js';
 
 export interface GenerateRulesRepresentationOptions {
   definition: string;
@@ -17,8 +17,11 @@ export interface GenerateRulesOptions extends GenerateRulesRepresentationOptions
 
 export type GenerateRulesOption = keyof GenerateRulesOptions;
 
-export interface GenerateRulesRepresentationResult extends GenerateRepresentationResult {
+// TODO: Should extend GenerateRepresentationResult
+export interface GenerateRulesRepresentationResult {
   type: 'rules';
+
+  schema: Schema;
 
   /**
    * A structured representation of the generated Security Rules validators.
