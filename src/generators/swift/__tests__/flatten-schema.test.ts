@@ -59,7 +59,7 @@ describe('flatten-schema', () => {
     expect(flattenedSchema).not.toBe(inputSchema);
   });
 
-  it(`does nothing when the schema is "flat"`, () => {
+  it(`does nothing when the schema is already flat`, () => {
     const inputSchema = createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
