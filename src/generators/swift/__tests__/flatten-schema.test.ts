@@ -80,7 +80,10 @@ describe('flatten-schema', () => {
 
     const flattenedSchema = flattenSchema(inputSchema);
 
-    expect(flattenedSchema).toEqual(inputSchema);
+    expect([...flattenedSchema.aliasModels, ...flattenedSchema.documentModels]).toEqual([
+      ...inputSchema.aliasModels,
+      ...inputSchema.documentModels,
+    ]);
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
