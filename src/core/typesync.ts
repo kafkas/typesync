@@ -168,7 +168,7 @@ class TypesyncImpl implements Typesync {
   ): Promise<GenerateSwiftRepresentationResult> {
     const opts = this.normalizeGenerateSwiftRepresentationOpts(rawOpts);
     const { definitionGlobPattern, target, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const { schema: s } = this.createCoreObjectsNew(definitionGlobPattern, debug);
     const generator = createSwiftGenerator({ target });
     const generation = generator.generate(s);
     return { type: 'swift', schema: s, generation };

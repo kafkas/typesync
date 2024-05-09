@@ -1,12 +1,12 @@
+import { swift } from '../../../platforms/swift/index.js';
 import {
   createAliasModel,
   createDocumentModel,
   createSchema,
   createSchemaFromDefinition,
-} from '../../../schema/index.js';
+} from '../../../schema-new/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { flattenSchema } from '../_flatten-schema.js';
-import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFlatSchema } from '../_schema.js';
 
 describe('flatten-schema', () => {
   it('does not mutate input schema', () => {
@@ -84,19 +84,19 @@ describe('flatten-schema', () => {
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsObjectType: FlatObjectType = {
+    const credentialsObjectType: swift.schema.types.Object = {
       type: 'object',
       fields: [
         {
           type: { type: 'string' },
           name: 'email',
-          docs: undefined,
+          docs: null,
           optional: false,
         },
         {
           type: { type: 'string' },
           name: 'password',
-          docs: undefined,
+          docs: null,
           optional: false,
         },
       ],
@@ -107,14 +107,14 @@ describe('flatten-schema', () => {
       const s = createSchema();
       const userModel = createDocumentModel({
         name: 'User',
-        docs: undefined,
+        docs: null,
         type: {
           type: 'object',
           fields: [
             {
               name: 'name',
               type: { type: 'string' },
-              docs: undefined,
+              docs: null,
               optional: false,
             },
             {
@@ -134,23 +134,23 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = createFlatSchema();
-      const aliasModel = createFlatAliasModel({
+      const s = swift.schema.createSchema();
+      const aliasModel = swift.schema.createAliasModel({
         name: 'UserCredentials',
-        docs: undefined,
-        type: credentialsObjectType,
+        docs: null,
+        value: credentialsObjectType,
       });
 
-      const userModel = createFlatDocumentModel({
+      const userModel = swift.schema.createDocumentModel({
         name: 'User',
-        docs: undefined,
+        docs: null,
         type: {
           type: 'object',
           fields: [
             {
               name: 'name',
               type: { type: 'string' },
-              docs: undefined,
+              docs: null,
               optional: false,
             },
             {
@@ -182,7 +182,7 @@ describe('flatten-schema', () => {
       const s = createSchema();
       const petModel = createAliasModel({
         name: 'Pet',
-        docs: undefined,
+        docs: null,
         value: {
           type: 'discriminated-union',
           discriminant: 'type',
@@ -190,16 +190,16 @@ describe('flatten-schema', () => {
             {
               type: 'object',
               fields: [
-                { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
-                { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+                { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+                { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
               ],
               additionalFields: false,
             },
             {
               type: 'object',
               fields: [
-                { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
-                { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+                { name: 'type', type: { type: 'string-literal', value: 'dog' }, docs: null, optional: false },
+                { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
               ],
               additionalFields: false,
             },
@@ -212,37 +212,37 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = createFlatSchema();
-      const catModel = createFlatAliasModel({
+      const s = swift.schema.createSchema();
+      const catModel = swift.schema.createAliasModel({
         name: 'PetCat',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'object',
           fields: [
-            { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
-            { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+            { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+            { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
           ],
           additionalFields: false,
         },
       });
 
-      const dogModel = createFlatAliasModel({
+      const dogModel = swift.schema.createAliasModel({
         name: 'PetDog',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'object',
           fields: [
-            { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
-            { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+            { name: 'type', type: { type: 'string-literal', value: 'dog' }, docs: null, optional: false },
+            { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
           ],
           additionalFields: false,
         },
       });
 
-      const petModel = createFlatAliasModel({
+      const petModel = swift.schema.createAliasModel({
         name: 'Pet',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'discriminated-union',
           discriminant: 'type',
           variants: [

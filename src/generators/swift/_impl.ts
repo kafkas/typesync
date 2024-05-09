@@ -1,19 +1,10 @@
 import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
-import { Schema, schema } from '../../schema/index.js';
+import { Schema, schema } from '../../schema-new/index.js';
 import { assert, assertNever } from '../../util/assert.js';
-import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
+import { extractDiscriminantValueNew } from '../../util/extract-discriminant-value.js';
 import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
 import { flattenSchema } from './_flatten-schema.js';
-import {
-  FlatAliasModel,
-  FlatDiscriminatedUnionType,
-  FlatDocumentModel,
-  FlatObjectType,
-  FlatSchema,
-  FlatSimpleUnionType,
-  FlatType,
-} from './_schema.js';
 import type {
   SwiftDeclaration,
   SwiftDiscriminatedUnionEnumDeclaration,
@@ -45,7 +36,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     return { type: 'swift', declarations };
   }
 
-  private createDeclarationForFlatAliasModel(model: FlatAliasModel, s: FlatSchema): SwiftDeclaration {
+  private createDeclarationForFlatAliasModel(model: swift.schema.AliasModel, s: swift.schema.Schema): SwiftDeclaration {
     switch (model.type.type) {
       case 'unknown':
       case 'nil':
@@ -54,13 +45,16 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       case 'int':
       case 'double':
       case 'timestamp':
-      case 'literal':
+      case 'string-literal':
+      case 'int-literal':
+      case 'boolean-literal':
       case 'tuple':
       case 'list':
       case 'map':
       case 'alias':
         return this.createDeclarationForFlatType(model.type, model.name, model.docs);
-      case 'enum':
+      case 'string-enum':
+      case 'int-enum':
         return this.createDeclarationForEnumType(model.type, model.name, model.docs);
       case 'object':
         return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
@@ -73,7 +67,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     }
   }
 
-  private createDeclarationForFlatDocumentModel(model: FlatDocumentModel): SwiftDeclaration {
+  private createDeclarationForFlatDocumentModel(model: swift.schema.DocumentModel): SwiftDeclaration {
     // A Firestore document can be considered an 'object' type
     return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
   }
@@ -81,7 +75,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   private createDeclarationForEnumType(
     type: schema.types.Enum,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): SwiftStringEnumDeclaration | SwiftIntEnumDeclaration {
     const isStringEnum = type.members.every(member => typeof member.value === 'string');
     if (isStringEnum) {
@@ -121,15 +115,20 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatObjectType(
-    type: FlatObjectType,
+    type: swift.schema.types.Object,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): SwiftStructDeclaration {
     const literalProperties: swift.LiteralStructProperty[] = [];
     const regularProperties: swift.RegularStructProperty[] = [];
 
     type.fields.forEach(field => {
-      if (field.type.type === 'literal' && !field.optional) {
+      if (
+        (field.type.type === 'string-literal' ||
+          field.type.type === 'int-literal' ||
+          field.type.type === 'boolean-literal') &&
+        !field.optional
+      ) {
         literalProperties.push({
           originalName: field.name,
           docs: field.docs,
@@ -161,10 +160,10 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatDiscriminatedUnionType(
-    type: FlatDiscriminatedUnionType,
+    type: swift.schema.types.DiscriminatedUnion,
     modelName: string,
-    modelDocs: string | undefined,
-    s: FlatSchema
+    modelDocs: string | null,
+    s: swift.schema.Schema
   ): SwiftDiscriminatedUnionEnumDeclaration {
     const swiftType: swift.DiscriminatedUnionEnum = {
       type: 'discriminated-union-enum',
@@ -172,7 +171,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       values: type.variants.map(vt => {
         const model = s.getAliasModel(vt.name);
         assert(model?.type.type === 'object');
-        const discriminantValue = extractDiscriminantValue(type, model.type);
+        const discriminantValue = extractDiscriminantValueNew(type, model.type);
         return {
           structName: vt.name,
           discriminantValue,
@@ -188,9 +187,9 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatSimpleUnionType(
-    type: FlatSimpleUnionType,
+    type: swift.schema.types.SimpleUnion,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): SwiftSimpleUnionEnumDeclaration {
     const swiftType: swift.SimpleUnionEnum = {
       type: 'simple-union-enum',
@@ -207,9 +206,9 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForFlatType(
-    type: FlatType,
+    type: swift.schema.types.Type,
     modelName: string,
-    modelDocs: string | undefined
+    modelDocs: string | null
   ): SwiftTypealiasDeclaration {
     const swiftType = flatTypeToSwift(type);
     return {

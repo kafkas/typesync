@@ -153,12 +153,7 @@ export function flattenSchema(prevSchema: Schema): python.schema.Schema {
       case 'boolean-literal':
       case 'alias':
         return { flattenedType: type, extractedAliasModels: [] };
-      case 'string-enum': {
-        const name = aliasName;
-        const aliasModel = python.schema.createAliasModel({ name, docs: null, value: type });
-        const flattenedType: schema.types.Alias = { type: 'alias', name };
-        return { flattenedType, extractedAliasModels: [aliasModel] };
-      }
+      case 'string-enum':
       case 'int-enum': {
         const name = aliasName;
         const aliasModel = python.schema.createAliasModel({ name, docs: null, value: type });

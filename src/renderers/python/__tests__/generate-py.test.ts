@@ -25,7 +25,7 @@ describe('PythonRendererImpl', () => {
           modelType: {
             type: 'any',
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'pydantic-class',
@@ -37,7 +37,7 @@ describe('PythonRendererImpl', () => {
                 type: { type: 'str' },
                 name: 'name',
                 optional: false,
-                docs: undefined,
+                docs: null,
               },
               {
                 type: { type: 'bool' },
@@ -77,7 +77,7 @@ describe('PythonRendererImpl', () => {
           modelType: {
             type: 'str',
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
       ],
     };

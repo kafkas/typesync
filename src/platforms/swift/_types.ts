@@ -98,7 +98,7 @@ export interface Struct {
 
 export interface LiteralStructProperty {
   readonly originalName: string;
-  readonly docs: string | undefined;
+  readonly docs: string | null;
   readonly type: String | Bool | Int;
   readonly literalValue: string;
 }
@@ -106,6 +106,6 @@ export interface LiteralStructProperty {
 export interface RegularStructProperty {
   readonly originalName: string;
   readonly optional: boolean;
-  readonly docs: string | undefined;
+  readonly docs: string | null;
   readonly type: Type;
 }
