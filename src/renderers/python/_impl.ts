@@ -146,7 +146,7 @@ class PythonRendererImpl implements PythonRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const expression = python.expressionForType(modelType);
     let output = `${modelName} = ${expression.content}`;
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       output += `\n"""${modelDocs}"""`;
     }
     return output;
@@ -156,7 +156,7 @@ class PythonRendererImpl implements PythonRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(enum.Enum):\n`);
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
     }
     modelType.attributes.forEach((attribute, attributeIdx) => {
@@ -183,7 +183,7 @@ class PythonRendererImpl implements PythonRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(TypesyncModel):\n`);
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(`${this.indent(1)}"""${modelDocs}"""\n`);
     }
     modelType.attributes.forEach(attribute => {
@@ -197,7 +197,7 @@ class PythonRendererImpl implements PythonRenderer {
         const expression = python.expressionForType(attribute.type);
         b.append(`${this.indent(1)}${attribute.name}: ${expression.content}`);
       }
-      if (attribute.docs !== undefined) {
+      if (attribute.docs !== null) {
         b.append(`\n${this.indent(1)}"""${attribute.docs}"""`);
       }
       b.append(`\n`);
