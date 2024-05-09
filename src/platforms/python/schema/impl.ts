@@ -6,7 +6,9 @@ import {
 } from '../../../schema-new/generic.js';
 import type * as types from './types.js';
 
-export type AliasModel = AliasModelGeneric<types.Type | types.Object | types.Enum>;
+export type AliasParameterType = types.Type | types.Object | types.Enum;
+
+export type AliasModel = AliasModelGeneric<AliasParameterType>;
 
 export type DocumentModel = DocumentModelGeneric<types.Object>;
 
@@ -20,7 +22,7 @@ export class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentM
   public validateType(_t: unknown) {}
 }
 
-export class AliasModelImpl extends AbstractAliasModel<types.Type | types.Object | types.Enum> implements AliasModel {
+export class AliasModelImpl extends AbstractAliasModel<AliasParameterType> implements AliasModel {
   public clone() {
     return new AliasModelImpl(this.name, this.docs, this.cloneType());
   }

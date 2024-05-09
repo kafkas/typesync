@@ -1,4 +1,12 @@
-import { AliasModel, AliasModelImpl, DocumentModel, DocumentModelImpl, Schema, SchemaImpl } from './impl.js';
+import {
+  AliasModel,
+  AliasModelImpl,
+  AliasParameterType,
+  DocumentModel,
+  DocumentModelImpl,
+  Schema,
+  SchemaImpl,
+} from './impl.js';
 import type * as types from './types.js';
 
 export function createSchema(): Schema {
@@ -14,7 +22,7 @@ export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]): 
 interface CreateAliasModelParams {
   name: string;
   docs: string | null;
-  value: types.Type | types.Object | types.Enum;
+  value: AliasParameterType;
 }
 
 export function createAliasModel(params: CreateAliasModelParams): AliasModel {
