@@ -11,9 +11,13 @@ export type DocumentParameterType = types.Object;
 
 export interface AliasModel extends AliasModelClass<AliasParameterType> {}
 export interface DocumentModel extends DocumentModelClass<DocumentParameterType> {}
-export interface Schema extends SchemaClass<AliasParameterType, DocumentParameterType> {}
+export interface Schema
+  extends SchemaClass<types.Type, AliasParameterType, DocumentParameterType, types.Object, types.DiscriminatedUnion> {}
 
 export const { createAliasModel, createDocumentModel, createSchema, createSchemaWithModels } = new SchemaFactory<
+  types.Type,
   AliasParameterType,
-  DocumentParameterType
+  DocumentParameterType,
+  types.Object,
+  types.DiscriminatedUnion
 >();

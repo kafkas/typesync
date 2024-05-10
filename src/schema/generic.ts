@@ -115,6 +115,18 @@ export interface SimpleUnion<T> {
   variants: T[];
 }
 
+export type Type<T> =
+  | Primitive
+  | Literal
+  | Enum
+  | Tuple<T>
+  | List<T>
+  | Map<T>
+  | Object<ObjectField<T>>
+  | DiscriminatedUnion<T>
+  | SimpleUnion<T>
+  | Alias;
+
 /*
  * Models
  */
