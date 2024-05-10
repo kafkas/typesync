@@ -1,4 +1,4 @@
-import type { Schema } from '../schema-new/index.js';
+import type { Schema } from '../schema/index.js';
 
 export interface GenerateRepresentationResult {
   /**

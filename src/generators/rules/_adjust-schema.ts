@@ -1,5 +1,5 @@
 import { rules } from '../../platforms/rules/index.js';
-import { Schema, schema } from '../../schema-new/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
 export function adjustSchemaForRules(prevSchema: Schema): rules.schema.Schema {

@@ -1,5 +1,5 @@
 import { ts } from '../../platforms/ts/index.js';
-import { Schema } from '../../schema-new/index.js';
+import { Schema } from '../../schema/index.js';
 import { adjustSchemaForTS } from './_adjust-schema.js';
 import { objectTypeToTS, typeToTS } from './_converters.js';
 import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types.js';

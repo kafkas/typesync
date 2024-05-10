@@ -1,5 +1,5 @@
-import { definition } from '../definition-new/index.js';
-import { schema } from '../schema-new/index.js';
+import { definition } from '../definition/index.js';
+import { schema } from '../schema/index.js';
 import { assertNever } from '../util/assert.js';
 
 export function primitiveTypeToSchema(t: definition.types.Primitive): schema.types.Primitive {

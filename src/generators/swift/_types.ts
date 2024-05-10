@@ -1,6 +1,6 @@
 import type { SwiftGenerationTarget } from '../../api/index.js';
 import type { swift } from '../../platforms/swift/index.js';
-import type { Schema } from '../../schema-new/index.js';
+import type { Schema } from '../../schema/index.js';
 
 export interface SwiftTypealiasDeclaration {
   type: 'typealias';

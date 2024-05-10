@@ -1,8 +1,8 @@
 import { swift } from '../../platforms/swift/index.js';
-import { Schema, schema } from '../../schema-new/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { pascalCase } from '../../util/casing.js';
-import { extractDiscriminantValueNew } from '../../util/extract-discriminant-value.js';
+import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 
 interface FlattenTupleTypeResult {
   flattenedType: swift.schema.types.Tuple;
@@ -108,7 +108,7 @@ export function adjustSchemaForSwift(prevSchema: Schema): swift.schema.Schema {
 
     unionType.variants.forEach(variantType => {
       if (variantType.type === 'object') {
-        const discriminantValue = extractDiscriminantValueNew(unionType, variantType);
+        const discriminantValue = extractDiscriminantValue(unionType, variantType);
         const name = `${aliasName}${pascalCase(discriminantValue)}`;
         const res = flattenObjectType(variantType, name);
         const aliasModel = swift.schema.createAliasModel({ name, docs: null, value: res.flattenedType });

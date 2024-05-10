@@ -4,7 +4,7 @@ import {
   createDocumentModel,
   createSchema,
   createSchemaFromDefinition,
-} from '../../../schema-new/index.js';
+} from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForSwift } from '../_adjust-schema.js';
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 
-import { definition as definitionNew } from '../definition-new/index.js';
+import { definition } from '../definition/index.js';
 import {
   DefinitionFileFieldNotValidError,
   DefinitionFileNotValidYamlOrJsonError,
@@ -12,7 +12,7 @@ import { extractErrorMessage } from '../util/extract-error-message.js';
 import type { Logger } from './logger.js';
 
 export interface DefinitionParser {
-  parseDefinitionNew(filePaths: string[]): definitionNew.Definition;
+  parseDefinition(filePaths: string[]): definition.Definition;
 }
 
 interface RawDefinitionFile {
@@ -23,13 +23,13 @@ interface RawDefinitionFile {
 class DefinitionParserImpl implements DefinitionParser {
   public constructor(private readonly logger?: Logger) {}
 
-  public parseDefinitionNew(filePaths: string[]): definitionNew.Definition {
+  public parseDefinition(filePaths: string[]): definition.Definition {
     const rawDefinitionFiles: RawDefinitionFile[] = filePaths.map(path => ({
       path,
       contentJson: this.parseDefinitionFileAsJson(path),
     }));
-    return rawDefinitionFiles.reduce<definitionNew.Definition>((acc, rawFile) => {
-      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definitionNew.zodSchema);
+    return rawDefinitionFiles.reduce<definition.Definition>((acc, rawFile) => {
+      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definition.zodSchema);
       Object.entries(parsedFile.content).forEach(([modelName, model]) => {
         if (acc[modelName] !== undefined) {
           throw new DuplicateModelNameError(rawFile.path, modelName);

@@ -1,5 +1,5 @@
 import { python } from '../../platforms/python/index.js';
-import { Schema } from '../../schema-new/index.js';
+import { Schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { adjustSchemaForPython } from './_adjust-schema.js';
 import { flatTypeToPython } from './_converters.js';

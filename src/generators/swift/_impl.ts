@@ -1,8 +1,8 @@
 import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
-import { Schema, schema } from '../../schema-new/index.js';
+import { Schema, schema } from '../../schema/index.js';
 import { assert, assertNever } from '../../util/assert.js';
-import { extractDiscriminantValueNew } from '../../util/extract-discriminant-value.js';
+import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 import { adjustSchemaForSwift } from './_adjust-schema.js';
 import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
 import type {
@@ -171,7 +171,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       values: type.variants.map(vt => {
         const model = s.getAliasModel(vt.name);
         assert(model?.type.type === 'object');
-        const discriminantValue = extractDiscriminantValueNew(type, model.type);
+        const discriminantValue = extractDiscriminantValue(type, model.type);
         return {
           structName: vt.name,
           discriminantValue,

@@ -6,7 +6,7 @@ import type {
   ObjectType,
   SimpleUnionType,
   TupleType,
-} from '../../../schema-new/generic.js';
+} from '../../../schema/generic.js';
 
 export interface Unknown {
   type: 'unknown';

@@ -1,6 +1,6 @@
 import { SwiftGeneration } from '../generators/swift/index.js';
-import { Schema } from '../schema-new/index.js';
 import { objectKeys } from '../util/object-keys.js';
+import { GenerateRepresentationResult } from './_common.js';
 
 const SWIFT_TARGETS = {
   'firebase@10': true,
@@ -25,11 +25,8 @@ export interface GenerateSwiftOptions extends GenerateSwiftRepresentationOptions
 
 export type GenerateSwiftOption = keyof GenerateSwiftOptions;
 
-// TODO: Should extend GenerateRepresentationResult
-export interface GenerateSwiftRepresentationResult {
+export interface GenerateSwiftRepresentationResult extends GenerateRepresentationResult {
   type: 'swift';
-
-  schema: Schema;
 
   /**
    * A structured representation of the generated Swift types.

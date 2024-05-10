@@ -1,4 +1,4 @@
-import { createSchemaFromDefinition } from '../../../schema-new/index.js';
+import { createSchemaFromDefinition } from '../../../schema/index.js';
 import { createSwiftGenerator } from '../_impl.js';
 import { SwiftGeneration } from '../_types.js';
 

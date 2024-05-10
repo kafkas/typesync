@@ -1,5 +1,5 @@
 import { converters } from '../../converters/index.js';
-import { definition } from '../../definition-new/index.js';
+import { definition } from '../../definition/index.js';
 import { InvalidSchemaTypeError } from '../../errors/invalid-schema-type.js';
 import { assert, assertNever } from '../../util/assert.js';
 import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';

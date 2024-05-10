@@ -1,5 +1,5 @@
 import { rules } from '../../platforms/rules/index.js';
-import { Schema } from '../../schema-new/index.js';
+import { Schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
 import type {

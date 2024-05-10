@@ -1,4 +1,4 @@
-import { createSchemaFromDefinition } from '../../../schema-new/index.js';
+import { createSchemaFromDefinition } from '../../../schema/index.js';
 import { createPythonGenerator } from '../_impl.js';
 import { PythonGeneration } from '../_types.js';
 

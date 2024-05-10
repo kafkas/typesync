@@ -1,4 +1,4 @@
-import { createSchemaFromDefinition } from '../../../schema-new/index.js';
+import { createSchemaFromDefinition } from '../../../schema/index.js';
 import { createTSGenerator } from '../_impl.js';
 import { TSGeneration } from '../_types.js';
 
