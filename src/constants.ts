@@ -19,3 +19,5 @@ export const DEFAULT_RULES_INDENTATION = 2;
 export const DEFAULT_RULES_DEBUG = false;
 
 export const DEFAULT_VALIDATE_DEBUG = false;
+
+export const PYTHON_UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
