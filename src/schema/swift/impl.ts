@@ -1,37 +1,19 @@
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';
 import {
-  AliasModel as AliasModelGeneric,
-  DocumentModel as DocumentModelGeneric,
-  Schema as SchemaGeneric,
-} from '../generic.js';
+  type AliasModel as AliasModelClass,
+  DocumentModel as DocumentModelClass,
+  Schema as SchemaClass,
+  SchemaFactory,
+} from '../factory.js';
 import type * as types from './types.js';
 
 export type AliasParameterType = types.Type | types.Object | types.DiscriminatedUnion | types.SimpleUnion | types.Enum;
-
-export type AliasModel = AliasModelGeneric<AliasParameterType>;
-
 export type DocumentParameterType = types.Object;
 
-export type DocumentModel = DocumentModelGeneric<DocumentParameterType>;
+export interface AliasModel extends AliasModelClass<AliasParameterType> {}
+export interface DocumentModel extends DocumentModelClass<DocumentParameterType> {}
+export interface Schema extends SchemaClass<AliasParameterType, DocumentParameterType> {}
 
-export interface Schema extends SchemaGeneric<AliasModel, DocumentModel> {}
-
-export class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
-  public clone() {
-    return this.cloneModels(new SchemaImpl());
-  }
-
-  public validateType(_t: unknown) {}
-}
-
-export class AliasModelImpl extends AbstractAliasModel<AliasParameterType> implements AliasModel {
-  public clone() {
-    return new AliasModelImpl(this.name, this.docs, this.cloneType());
-  }
-}
-
-export class DocumentModelImpl extends AbstractDocumentModel<DocumentParameterType> implements DocumentModel {
-  public clone() {
-    return new DocumentModelImpl(this.name, this.docs, this.cloneType());
-  }
-}
+export const { createAliasModel, createDocumentModel, createSchema, createSchemaWithModels } = new SchemaFactory<
+  AliasParameterType,
+  DocumentParameterType
+>();

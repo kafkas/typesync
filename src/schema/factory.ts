@@ -5,13 +5,13 @@ import {
   Schema as SchemaGeneric,
 } from './generic.js';
 
-interface CreateAliasModelParams<AliasParameterType> {
+export interface CreateAliasModelParams<AliasParameterType> {
   name: string;
   docs: string | null;
   value: AliasParameterType;
 }
 
-interface CreateDocumentModelParams<DocumentParameterType> {
+export interface CreateDocumentModelParams<DocumentParameterType> {
   name: string;
   docs: string | null;
   type: DocumentParameterType;
