@@ -42,8 +42,8 @@ class RulesRendererImpl implements RulesRenderer {
 
     const outputFileContent = (await readFile(pathToOutputFile)).toString();
     const lines = outputFileContent.split('\n');
-    const startMarkerLineIdx = lines.findIndex(line => line.includes(startMarker));
-    const endMarkerLineIdx = lines.findIndex(line => line.includes(endMarker));
+    const startMarkerLineIdx = lines.findIndex(line => this.doesLineContainMarker(line, startMarker));
+    const endMarkerLineIdx = lines.findIndex(line => this.doesLineContainMarker(line, endMarker));
 
     if (startMarkerLineIdx === -1) {
       throw new MissingStartMarkerError(pathToOutputFile, startMarker);
@@ -60,6 +60,12 @@ class RulesRendererImpl implements RulesRenderer {
     lines.splice(startMarkerLineIdx + 1, endMarkerLineIdx - startMarkerLineIdx - 1);
 
     return { lines, startMarkerLineIdx };
+  }
+
+  private doesLineContainMarker(line: string, marker: string) {
+    if (!line.trimStart().startsWith('//')) return false;
+    const parts = line.split(' ');
+    return parts.some(part => part === marker);
   }
 
   private renderDeclaration(declaration: RulesDeclaration) {
