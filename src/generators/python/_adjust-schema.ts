@@ -3,36 +3,6 @@ import { assertNever } from '../../util/assert.js';
 import { pascalCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 
-interface FlattenTupleTypeResult {
-  flattenedType: schema.python.types.Tuple;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
-interface FlattenListTypeResult {
-  flattenedType: schema.python.types.List;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
-interface FlattenMapTypeResult {
-  flattenedType: schema.python.types.Map;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
-interface FlattenObjectTypeResult {
-  flattenedType: schema.python.types.Object;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
-interface FlattenDiscriminatedUnionTypeResult {
-  flattenedType: schema.python.types.DiscriminatedUnion;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
-interface FlattenSimpleUnionTypeResult {
-  flattenedType: schema.python.types.SimpleUnion;
-  extractedAliasModels: schema.python.AliasModel[];
-}
-
 interface FlattenTypeResult {
   flattenedType: schema.python.types.Type;
   extractedAliasModels: schema.python.AliasModel[];
@@ -45,7 +15,7 @@ interface FlattenTypeResult {
  * @returns A new schema object.
  */
 export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.Schema {
-  function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
+  function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string) {
     const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
       flattenType(valueType, `${aliasName}_${valueTypeIdx + 1}`)
     );
@@ -57,7 +27,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
+  function flattenListType(listType: schema.types.List, aliasName: string) {
     const resultForElementType = flattenType(listType.elementType, `${aliasName}Element`);
     const flattenedType: schema.python.types.List = {
       type: 'list',
@@ -66,7 +36,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
     return { flattenedType, extractedAliasModels: resultForElementType.extractedAliasModels };
   }
 
-  function flattenMapType(mapType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
+  function flattenMapType(mapType: schema.types.Map, aliasName: string) {
     const resultForValueType = flattenType(mapType.valueType, `${aliasName}Value`);
     const flattenedType: schema.python.types.Map = {
       type: 'map',
@@ -75,7 +45,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
     return { flattenedType, extractedAliasModels: resultForValueType.extractedAliasModels };
   }
 
-  function flattenObjectType(objectType: schema.types.Object, aliasName: string): FlattenObjectTypeResult {
+  function flattenObjectType(objectType: schema.types.Object, aliasName: string) {
     const resultsForFields = objectType.fields.map(field => {
       const flattenResult = flattenType(field.type, `${aliasName}${pascalCase(field.name)}`);
       return { field, flattenResult };
@@ -94,10 +64,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenDiscriminatedUnionType(
-    unionType: schema.types.DiscriminatedUnion,
-    aliasName: string
-  ): FlattenDiscriminatedUnionTypeResult {
+  function flattenDiscriminatedUnionType(unionType: schema.types.DiscriminatedUnion, aliasName: string) {
     const flattenedType: schema.python.types.DiscriminatedUnion = {
       type: 'discriminated-union',
       discriminant: unionType.discriminant,
@@ -123,10 +90,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
     return { flattenedType, extractedAliasModels };
   }
 
-  function flattenSimpleUnionType(
-    unionType: schema.types.SimpleUnion,
-    aliasName: string
-  ): FlattenSimpleUnionTypeResult {
+  function flattenSimpleUnionType(unionType: schema.types.SimpleUnion, aliasName: string) {
     const resultsForVariants = unionType.variants.map((variantType, variantIdx) =>
       flattenType(variantType, `${aliasName}_${variantIdx + 1}`)
     );
