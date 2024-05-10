@@ -50,7 +50,7 @@ class RulesRendererImpl implements RulesRenderer {
     }
 
     if (endMarkerLineIdx === -1) {
-      throw new MissingEndMarkerError(pathToOutputFile, startMarker);
+      throw new MissingEndMarkerError(pathToOutputFile, endMarker);
     }
 
     if (startMarkerLineIdx >= endMarkerLineIdx) {
