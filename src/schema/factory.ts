@@ -107,7 +107,10 @@ export class Schema<
   }
 
   public validateType(_t: unknown) {
-    // TODO: Implement
+    // Platform-adjusted schema types are assumed to be valid by default since they are derived from the 'core' schema.
+    // We only validate 'core' schema types. This is done in the 'core' schema subclass which overrides this method.
+    // This method is needed because `AbstractSchema` requires it. If needed, validation for platform-adjusted schema
+    // types can be done in each schema subclass by overriding this method.
   }
 }
 
