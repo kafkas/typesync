@@ -10,7 +10,7 @@ import type {
   Primitive,
   SimpleUnion as SimpleUnionGeneric,
   Tuple as TupleGeneric,
-} from '../../../schema/generic.js';
+} from '../generic.js';
 
 export {
   Unknown,
@@ -29,7 +29,7 @@ export {
   IntEnum,
   Enum,
   Alias,
-} from '../../../schema/generic.js';
+} from '../generic.js';
 export interface Tuple extends TupleGeneric<Type> {}
 export interface List extends ListGeneric<Type> {}
 export interface Map extends MapGeneric<Type> {}

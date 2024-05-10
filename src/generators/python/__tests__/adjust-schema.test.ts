@@ -1,9 +1,9 @@
-import { python } from '../../../platforms/python/index.js';
 import {
   createAliasModel,
   createDocumentModel,
   createSchema,
   createSchemaFromDefinition,
+  schema,
 } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForPython } from '../_adjust-schema.js';
@@ -87,7 +87,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsObjectType: python.schema.types.Object = {
+    const credentialsObjectType: schema.python.types.Object = {
       type: 'object',
       fields: [
         {
@@ -137,14 +137,14 @@ describe('adjustSchemaForPython()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = python.schema.createSchema();
-      const aliasModel = python.schema.createAliasModel({
+      const s = schema.python.createSchema();
+      const aliasModel = schema.python.createAliasModel({
         name: 'UserCredentials',
         docs: null,
         value: credentialsObjectType,
       });
 
-      const userModel = python.schema.createDocumentModel({
+      const userModel = schema.python.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -215,8 +215,8 @@ describe('adjustSchemaForPython()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = python.schema.createSchema();
-      const catModel = python.schema.createAliasModel({
+      const s = schema.python.createSchema();
+      const catModel = schema.python.createAliasModel({
         name: 'PetCat',
         docs: null,
         value: {
@@ -229,7 +229,7 @@ describe('adjustSchemaForPython()', () => {
         },
       });
 
-      const dogModel = python.schema.createAliasModel({
+      const dogModel = schema.python.createAliasModel({
         name: 'PetDog',
         docs: null,
         value: {
@@ -242,7 +242,7 @@ describe('adjustSchemaForPython()', () => {
         },
       });
 
-      const petModel = python.schema.createAliasModel({
+      const petModel = schema.python.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {

@@ -1,12 +1,12 @@
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../../../schema/abstract.js';
+import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';
 import {
   AliasModel as AliasModelGeneric,
   DocumentModel as DocumentModelGeneric,
   Schema as SchemaGeneric,
-} from '../../../schema/generic.js';
+} from '../generic.js';
 import type * as types from './types.js';
 
-export type AliasParameterType = types.Type | types.Object | types.DiscriminatedUnion | types.SimpleUnion | types.Enum;
+export type AliasParameterType = types.Type | types.Object | types.Enum;
 
 export type AliasModel = AliasModelGeneric<AliasParameterType>;
 
