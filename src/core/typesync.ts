@@ -28,6 +28,7 @@ import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
   DEFAULT_PY_INDENTATION,
+  DEFAULT_PY_UNDEFINED_SENTINEL_NAME,
   DEFAULT_RULES_DEBUG,
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
@@ -50,6 +51,7 @@ import {
   InvalidRulesStartMarkerOptionError,
   InvalidSwiftIndentationOptionError,
   InvalidTSIndentationOptionError,
+  InvalidUndefinedSentinelNameOptionError,
   InvalidValidatorNamePatternOptionError,
   InvalidValidatorParamNameOptionError,
   RulesMarkerOptionsNotDistinctError,
@@ -100,6 +102,7 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
     importPath: string;
     className: string;
   };
+  undefinedSentinelName: string;
   indentation: number;
 }
 
@@ -220,6 +223,7 @@ class TypesyncImpl implements Typesync {
     const {
       outFile,
       customPydanticBase: customPydanticBaseRaw = DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
+      undefinedSentinelName = DEFAULT_PY_UNDEFINED_SENTINEL_NAME,
       indentation = DEFAULT_PY_INDENTATION,
       ...rest
     } = opts;
@@ -236,11 +240,15 @@ class TypesyncImpl implements Typesync {
         throw new InvalidCustomPydanticBaseOptionError(customPydanticBaseRaw);
       }
     }
+    if (undefinedSentinelName.length === 0) {
+      throw new InvalidUndefinedSentinelNameOptionError();
+    }
 
     return {
       ...this.normalizeGeneratePyRepresentationOpts(rest),
       pathToOutputFile: outFile,
       customPydanticBase,
+      undefinedSentinelName,
       indentation,
     };
   }

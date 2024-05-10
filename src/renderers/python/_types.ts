@@ -13,6 +13,7 @@ export interface PythonRendererConfig {
   target: PythonGenerationTarget;
   indentation: number;
   customPydanticBase?: CustomPydanticBase;
+  undefinedSentinelName: string;
 }
 
 export interface PythonRenderer {

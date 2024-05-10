@@ -68,6 +68,13 @@ export class InvalidCustomPydanticBaseOptionError extends InvalidOptionsError {
   }
 }
 
+export class InvalidUndefinedSentinelNameOptionError extends InvalidOptionsError {
+  public constructor() {
+    const option: GeneratePythonOption = 'undefinedSentinelName';
+    super(`Expected '${option}' to be a non-empty string.`);
+  }
+}
+
 export class InvalidValidatorNamePatternOptionError extends InvalidOptionsError {
   public constructor(validatorNamePattern: string) {
     const option: GenerateRulesOption = 'validatorNamePattern';

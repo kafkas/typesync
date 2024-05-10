@@ -6,6 +6,7 @@ describe('PythonRendererImpl', () => {
     const renderer = createPythonRenderer({
       indentation: 4,
       target: 'firebase-admin@6',
+      undefinedSentinelName: 'UNDEFINED',
     });
 
     const generation: PythonGeneration = {
@@ -66,6 +67,7 @@ describe('PythonRendererImpl', () => {
         importPath: 'x.y',
         className: 'CustomModel',
       },
+      undefinedSentinelName: 'UNDEFINED',
     });
 
     const generation: PythonGeneration = {

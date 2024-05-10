@@ -11,6 +11,7 @@ export const DEFAULT_SWIFT_INDENTATION = 2;
 export const DEFAULT_SWIFT_DEBUG = false;
 
 export const DEFAULT_PY_CUSTOM_PYDANTIC_BASE = undefined;
+export const DEFAULT_PY_UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
 export const DEFAULT_PY_INDENTATION = 2;
 export const DEFAULT_PY_DEBUG = false;
 

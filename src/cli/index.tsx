@@ -10,6 +10,7 @@ import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
   DEFAULT_PY_INDENTATION,
+  DEFAULT_PY_UNDEFINED_SENTINEL_NAME,
   DEFAULT_RULES_DEBUG,
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
@@ -174,6 +175,13 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
         })
+        .option('undefinedSentinelName', {
+          describe:
+            'The name of the sentinel value used to indicate that a field should be missing from a given object. This is generated as a variable alongside your model definitions.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_PY_UNDEFINED_SENTINEL_NAME,
+        })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
@@ -187,7 +195,7 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_PY_DEBUG,
         }),
     async args => {
-      const { definition, target, outFile, indentation, customPydanticBase, debug } = args;
+      const { definition, target, outFile, indentation, customPydanticBase, undefinedSentinelName, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -197,6 +205,7 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           indentation,
           customPydanticBase,
+          undefinedSentinelName,
           debug,
         });
 
