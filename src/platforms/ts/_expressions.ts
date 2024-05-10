@@ -98,7 +98,7 @@ export function expressionForObjectType(t: Object): Expression {
 
   b.append(`{\n`);
   properties.forEach(prop => {
-    if (prop.docs !== undefined) {
+    if (prop.docs !== null) {
       b.append(`/** ${prop.docs} */\n`);
     }
     const expression = expressionForType(prop.type);

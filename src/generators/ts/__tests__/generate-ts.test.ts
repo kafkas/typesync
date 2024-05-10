@@ -1,4 +1,4 @@
-import { createSchemaFromDefinition } from '../../../schema/index.js';
+import { createSchemaFromDefinition } from '../../../schema-new/index.js';
 import { createTSGenerator } from '../_impl.js';
 import { TSGeneration } from '../_types.js';
 
@@ -46,7 +46,7 @@ describe('TSGeneratorImpl', () => {
               { label: 'User', value: 'user' },
             ],
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
       ],
     };

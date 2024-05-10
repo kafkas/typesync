@@ -129,7 +129,7 @@ class TypesyncImpl implements Typesync {
   ): Promise<GenerateTsRepresentationResult> {
     const opts = this.normalizeGenerateTsRepresentationOpts(rawOpts);
     const { definitionGlobPattern, target, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const { schema: s } = this.createCoreObjectsNew(definitionGlobPattern, debug);
     const generator = createTSGenerator({ target });
     const generation = generator.generate(s);
     return { type: 'ts', schema: s, generation };

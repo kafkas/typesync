@@ -1,6 +1,6 @@
 import { TSGeneration } from '../generators/ts/index.js';
+import { Schema } from '../schema-new/index.js';
 import { objectKeys } from '../util/object-keys.js';
-import { GenerateRepresentationResult } from './_common.js';
 
 const TS_TARGETS = {
   'firebase-admin@12': true,
@@ -28,8 +28,11 @@ export interface GenerateTsOptions extends GenerateTsRepresentationOptions {
 
 export type GenerateTsOption = keyof GenerateTsOptions;
 
-export interface GenerateTsRepresentationResult extends GenerateRepresentationResult {
+// TODO: Should extend GenerateRepresentationResult
+export interface GenerateTsRepresentationResult {
   type: 'ts';
+
+  schema: Schema;
 
   /**
    * A structured representation of the generated TypeScript types.

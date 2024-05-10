@@ -62,7 +62,7 @@ export interface ObjectProperty {
   readonly type: Type;
   readonly optional: boolean;
   readonly name: string;
-  readonly docs: string | undefined;
+  readonly docs: string | null;
 }
 
 export interface Union {

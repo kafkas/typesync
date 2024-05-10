@@ -1,19 +1,19 @@
 import type { TSGenerationTarget } from '../../api/index.js';
 import type { ts } from '../../platforms/ts/index.js';
-import type { Schema } from '../../schema/index.js';
+import type { Schema } from '../../schema-new/index.js';
 
 export interface TSAliasDeclaration {
   type: 'alias';
   modelName: string;
   modelType: ts.Type;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface TSInterfaceDeclaration {
   type: 'interface';
   modelName: string;
   modelType: ts.Object;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export type TSDeclaration = TSAliasDeclaration | TSInterfaceDeclaration;

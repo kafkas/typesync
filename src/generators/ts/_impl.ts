@@ -1,4 +1,5 @@
-import { AliasModel, DocumentModel, Schema } from '../../schema/index.js';
+import { ts } from '../../platforms/ts/index.js';
+import { Schema } from '../../schema-new/index.js';
 import { objectTypeToTS, typeToTS } from './_converters.js';
 import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types.js';
 
@@ -19,7 +20,7 @@ class TSGeneratorImpl implements TSGenerator {
     return { type: 'ts', declarations };
   }
 
-  private createDeclarationForAliasModel(model: AliasModel): TSDeclaration {
+  private createDeclarationForAliasModel(model: ts.schema.AliasModel): TSDeclaration {
     const tsType = typeToTS(model.type);
     return {
       type: 'alias',
@@ -29,7 +30,7 @@ class TSGeneratorImpl implements TSGenerator {
     };
   }
 
-  private createDeclarationForDocumentModel(model: DocumentModel): TSDeclaration {
+  private createDeclarationForDocumentModel(model: ts.schema.DocumentModel): TSDeclaration {
     // A Firestore document can be considered an 'object' type
     const tsType = objectTypeToTS(model.type);
     return {
