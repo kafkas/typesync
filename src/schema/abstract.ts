@@ -33,7 +33,7 @@ export abstract class AbstractDocumentModel<T> {
   }
 }
 
-export abstract class AbstractSchema<T, A extends AliasModel<unknown>, D extends DocumentModel<unknown>> {
+export abstract class AbstractSchema<A extends AliasModel<unknown>, D extends DocumentModel<unknown>> {
   private readonly aliasModelsById: Map<string, A>;
   private readonly documentModelsById: Map<string, D>;
 
@@ -89,7 +89,7 @@ export abstract class AbstractSchema<T, A extends AliasModel<unknown>, D extends
     return this.aliasModelsById.get(modelName);
   }
 
-  protected cloneModels<S extends AbstractSchema<T, A, D>>(toSchema: S) {
+  protected cloneModels<S extends AbstractSchema<A, D>>(toSchema: S) {
     const aliasModelClones = Array.from(this.aliasModelsById.values()).map(m => m.clone() as A);
     const documentModelClones = Array.from(this.documentModels.values()).map(m => m.clone() as D);
     toSchema.addModelGroup([...aliasModelClones, ...documentModelClones]);

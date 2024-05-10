@@ -1,65 +1,66 @@
 import { python } from '../../platforms/python/index.js';
+import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
-export function unknownTypeToPython(_t: python.schema.types.Unknown): python.Any {
+export function unknownTypeToPython(_t: schema.python.types.Unknown): python.Any {
   return { type: 'any' };
 }
 
-export function nilTypeToPython(_t: python.schema.types.Nil): python.None {
+export function nilTypeToPython(_t: schema.python.types.Nil): python.None {
   return { type: 'none' };
 }
 
-export function stringTypeToPython(_t: python.schema.types.String): python.Str {
+export function stringTypeToPython(_t: schema.python.types.String): python.Str {
   return { type: 'str' };
 }
 
-export function booleanTypeToPython(_t: python.schema.types.Boolean): python.Bool {
+export function booleanTypeToPython(_t: schema.python.types.Boolean): python.Bool {
   return { type: 'bool' };
 }
 
-export function integerTypeToPython(_t: python.schema.types.Int): python.Int {
+export function integerTypeToPython(_t: schema.python.types.Int): python.Int {
   return { type: 'int' };
 }
 
-export function doubleTypeToPython(_t: python.schema.types.Double): python.Float {
+export function doubleTypeToPython(_t: schema.python.types.Double): python.Float {
   return { type: 'float' };
 }
 
-export function timestampTypeToPython(_t: python.schema.types.Timestamp): python.Datetime {
+export function timestampTypeToPython(_t: schema.python.types.Timestamp): python.Datetime {
   return { type: 'datetime' };
 }
 
-export function literalTypeToPython(t: python.schema.types.Literal): python.Literal {
+export function literalTypeToPython(t: schema.python.types.Literal): python.Literal {
   return { type: 'literal', value: t.value };
 }
 
-export function flatTupleTypeToPython(t: python.schema.types.Tuple): python.Tuple {
+export function flatTupleTypeToPython(t: schema.python.types.Tuple): python.Tuple {
   return { type: 'tuple', elements: t.elements.map(flatTypeToPython) };
 }
 
-export function flatListTypeToPython(t: python.schema.types.List): python.List {
+export function flatListTypeToPython(t: schema.python.types.List): python.List {
   return { type: 'list', elementType: flatTypeToPython(t.elementType) };
 }
 
-export function flatMapTypeToPython(t: python.schema.types.Map): python.Dict {
+export function flatMapTypeToPython(t: schema.python.types.Map): python.Dict {
   return { type: 'dict', valueType: flatTypeToPython(t.valueType) };
 }
 
 export function flatDiscriminatedUnionTypeToPython(
-  t: python.schema.types.DiscriminatedUnion
+  t: schema.python.types.DiscriminatedUnion
 ): python.DiscriminatedUnion {
   return { type: 'discriminated-union', discriminant: t.discriminant, variants: t.variants };
 }
 
-export function flatSimpleUnionTypeToPython(t: python.schema.types.SimpleUnion): python.SimpleUnion {
+export function flatSimpleUnionTypeToPython(t: schema.python.types.SimpleUnion): python.SimpleUnion {
   return { type: 'simple-union', variants: t.variants.map(flatTypeToPython) };
 }
 
-export function flatAliasTypeToPython(t: python.schema.types.Alias): python.Alias {
+export function flatAliasTypeToPython(t: schema.python.types.Alias): python.Alias {
   return { type: 'alias', name: t.name };
 }
 
-export function flatTypeToPython(t: python.schema.types.Type): python.Type {
+export function flatTypeToPython(t: schema.python.types.Type): python.Type {
   switch (t.type) {
     case 'unknown':
       return unknownTypeToPython(t);

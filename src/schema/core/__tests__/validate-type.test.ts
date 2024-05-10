@@ -1,5 +1,5 @@
-import type { types } from '../../types/index.js';
 import { createAliasModel, createSchema, createSchemaWithModels } from '../impl.js';
+import type * as types from '../types.js';
 
 describe('schema.validateType()', () => {
   describe('unknown', () => {

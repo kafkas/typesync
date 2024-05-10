@@ -41,8 +41,8 @@ export {
   createSchemaFromDefinition,
   createAliasModel,
   createDocumentModel,
-} from '../schema/impl/index.js';
-export { type types } from '../schema/types/index.js';
+} from '../schema/core/impl.js';
+export type * as types from '../schema/core/types.js';
 export {
   type GenerationResult,
   type Typesync,

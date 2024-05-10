@@ -1,5 +1,6 @@
 import { StringBuilder } from '@proficient/ds';
 
+import { PYTHON_UNDEFINED_SENTINEL_CLASS } from '../../constants.js';
 import type {
   PythonAliasDeclaration,
   PythonDeclaration,
@@ -15,7 +16,6 @@ import type { RenderedFile } from '../_types.js';
 import type { PythonRenderer, PythonRendererConfig } from './_types.js';
 
 const UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
-const UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 
 class PythonRendererImpl implements PythonRenderer {
   public readonly type = 'python';
@@ -69,31 +69,31 @@ class PythonRendererImpl implements PythonRenderer {
   private generateStaticDeclarationsForUndefinedSentinel() {
     const b = new StringBuilder();
 
-    b.append(`${this.indent(0)}class ${UNDEFINED_SENTINEL_CLASS}:\n`);
+    b.append(`${this.indent(0)}class ${PYTHON_UNDEFINED_SENTINEL_CLASS}:\n`);
     b.append(
       `${this.indent(1)}"""Do not use this class in your code. Use the \`${UNDEFINED_SENTINEL_NAME}\` sentinel instead."""\n`
     );
     b.append(`${this.indent(1)}_instance = None\n\n`);
 
     b.append(`${this.indent(1)}def __init__(self):\n`);
-    b.append(`${this.indent(2)}if ${UNDEFINED_SENTINEL_CLASS}._instance is not None:\n`);
+    b.append(`${this.indent(2)}if ${PYTHON_UNDEFINED_SENTINEL_CLASS}._instance is not None:\n`);
     b.append(
-      `${this.indent(3)}raise RuntimeError("${UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${UNDEFINED_SENTINEL_NAME} sentinel instead.")\n`
+      `${this.indent(3)}raise RuntimeError("${PYTHON_UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${UNDEFINED_SENTINEL_NAME} sentinel instead.")\n`
     );
     b.append(`${this.indent(2)}else:\n`);
-    b.append(`${this.indent(3)}${UNDEFINED_SENTINEL_CLASS}._instance = self\n\n`);
+    b.append(`${this.indent(3)}${PYTHON_UNDEFINED_SENTINEL_CLASS}._instance = self\n\n`);
 
     b.append(`${this.indent(1)}@classmethod\n`);
     b.append(`${this.indent(1)}def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:\n`);
     b.append(`${this.indent(2)}return core_schema.with_info_plain_validator_function(cls.validate)\n\n`);
 
     b.append(`${this.indent(1)}@classmethod\n`);
-    b.append(`${this.indent(1)}def validate(cls, value: typing.Any, info) -> ${UNDEFINED_SENTINEL_CLASS}:\n`);
+    b.append(`${this.indent(1)}def validate(cls, value: typing.Any, info) -> ${PYTHON_UNDEFINED_SENTINEL_CLASS}:\n`);
     b.append(`${this.indent(2)}if not isinstance(value, cls):\n`);
     b.append(`${this.indent(3)}raise ValueError("Undefined field type is not valid")\n`);
     b.append(`${this.indent(2)}return value\n\n`);
 
-    b.append(`${this.indent(0)}${UNDEFINED_SENTINEL_NAME} = ${UNDEFINED_SENTINEL_CLASS}()\n`);
+    b.append(`${this.indent(0)}${UNDEFINED_SENTINEL_NAME} = ${PYTHON_UNDEFINED_SENTINEL_CLASS}()\n`);
     b.append(
       `${this.indent(0)}"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`${UNDEFINED_SENTINEL_NAME}\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""`
     );

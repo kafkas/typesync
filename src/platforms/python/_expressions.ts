@@ -1,3 +1,4 @@
+import { PYTHON_UNDEFINED_SENTINEL_CLASS } from '../../constants.js';
 import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
@@ -23,7 +24,7 @@ export interface Expression {
 }
 
 export function expressionForUndefinedType(_t: Undefined): Expression {
-  return { content: 'TypesyncUndefined' };
+  return { content: PYTHON_UNDEFINED_SENTINEL_CLASS };
 }
 
 export function expressionForAnyType(_t: Any): Expression {

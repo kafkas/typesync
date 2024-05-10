@@ -1,4 +1,3 @@
-export * as schema from './schema/index.js';
 export * from './_constants.js';
 export * from './_expressions.js';
 export * from './_guards.js';

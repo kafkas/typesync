@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { assertNever } from '../../util/assert.js';
 import { getDuplicateElements } from '../../util/list.js';
 import { ordinalSuffixOf } from '../../util/ordinal-suffix.js';
-import { type types } from '../types/index.js';
 import { type Schema } from './impl.js';
+import type * as types from './types.js';
 
 export function createZodSchemasForSchema(schema: Schema) {
   const unknownType = z

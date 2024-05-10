@@ -1,4 +1,5 @@
 import type { GeneratePythonOption, GenerateRulesOption, GenerateSwiftOption, GenerateTsOption } from '../api/index.js';
+import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../constants.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {
@@ -47,7 +48,7 @@ export class InvalidValidatorNamePatternOption extends InvalidOptionsError {
   public constructor(validatorNamePattern: string) {
     const option: GenerateRulesOption = 'validatorNamePattern';
     super(
-      `Expected '${option}' to be a string that contains a '{modelName}' substring. Received '${validatorNamePattern}'`
+      `Expected '${option}' to be a string that contains a '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${validatorNamePattern}'`
     );
   }
 }

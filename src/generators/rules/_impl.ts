@@ -1,5 +1,4 @@
-import { rules } from '../../platforms/rules/index.js';
-import { Schema } from '../../schema/index.js';
+import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
 import type {
@@ -13,7 +12,7 @@ import type {
 class RulesGeneratorImpl implements RulesGenerator {
   public constructor(private readonly config: RulesGeneratorConfig) {}
 
-  public generate(s: Schema): RulesGeneration {
+  public generate(s: schema.Schema): RulesGeneration {
     const adjustedSchema = adjustSchemaForRules(s);
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: RulesDeclaration[] = [];
@@ -28,7 +27,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     return { type: 'rules', declarations };
   }
 
-  private createValidatorDeclarationForFlatAliasModel(model: rules.schema.AliasModel): RulesValidatorDeclaration {
+  private createValidatorDeclarationForFlatAliasModel(model: schema.rules.AliasModel): RulesValidatorDeclaration {
     const rulesType = flatTypeToRules(model.type);
     return {
       type: 'validator',
@@ -37,7 +36,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     };
   }
 
-  private createValidatorDeclarationForFlatDocumentModel(model: rules.schema.DocumentModel): RulesValidatorDeclaration {
+  private createValidatorDeclarationForFlatDocumentModel(model: schema.rules.DocumentModel): RulesValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(model.type);
     return {
       type: 'validator',

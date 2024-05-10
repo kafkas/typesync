@@ -39,6 +39,7 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
+  RULES_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -55,7 +56,7 @@ import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
-import { createSchemaFromDefinition } from '../schema/index.js';
+import { schema } from '../schema/index.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
 import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
@@ -287,7 +288,7 @@ class TypesyncImpl implements Typesync {
       throw new InvalidRulesIndentationOption(indentation);
     }
 
-    if (!validatorNamePattern.includes('{modelName}')) {
+    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
       throw new InvalidValidatorNamePatternOption(validatorNamePattern);
     }
 
@@ -332,7 +333,7 @@ class TypesyncImpl implements Typesync {
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
-    return { logger, schema: createSchemaFromDefinition(definition) };
+    return { logger, schema: schema.createSchemaFromDefinition(definition) };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {

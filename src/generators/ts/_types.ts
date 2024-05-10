@@ -1,6 +1,6 @@
 import type { TSGenerationTarget } from '../../api/index.js';
 import type { ts } from '../../platforms/ts/index.js';
-import type { Schema } from '../../schema/index.js';
+import type { schema } from '../../schema/index.js';
 
 export interface TSAliasDeclaration {
   type: 'alias';
@@ -28,5 +28,5 @@ export interface TSGeneratorConfig {
 }
 
 export interface TSGenerator {
-  generate(s: Schema): TSGeneration;
+  generate(s: schema.Schema): TSGeneration;
 }

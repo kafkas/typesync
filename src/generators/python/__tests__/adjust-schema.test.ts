@@ -1,16 +1,10 @@
-import { python } from '../../../platforms/python/index.js';
-import {
-  createAliasModel,
-  createDocumentModel,
-  createSchema,
-  createSchemaFromDefinition,
-} from '../../../schema/index.js';
+import { schema } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForPython } from '../_adjust-schema.js';
 
 describe('adjustSchemaForPython()', () => {
   it('does not mutate input schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -36,7 +30,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it('returns a new schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -60,7 +54,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it(`does nothing when the schema is already flat`, () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -87,7 +81,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsObjectType: python.schema.types.Object = {
+    const credentialsObjectType: schema.python.types.Object = {
       type: 'object',
       fields: [
         {
@@ -107,8 +101,8 @@ describe('adjustSchemaForPython()', () => {
     };
 
     const inputSchema = (() => {
-      const s = createSchema();
-      const userModel = createDocumentModel({
+      const s = schema.createSchema();
+      const userModel = schema.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -137,14 +131,14 @@ describe('adjustSchemaForPython()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = python.schema.createSchema();
-      const aliasModel = python.schema.createAliasModel({
+      const s = schema.python.createSchema();
+      const aliasModel = schema.python.createAliasModel({
         name: 'UserCredentials',
         docs: null,
         value: credentialsObjectType,
       });
 
-      const userModel = python.schema.createDocumentModel({
+      const userModel = schema.python.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -182,8 +176,8 @@ describe('adjustSchemaForPython()', () => {
 
   it(`flattens discriminated union variants and creates new aliases`, () => {
     const inputSchema = (() => {
-      const s = createSchema();
-      const petModel = createAliasModel({
+      const s = schema.createSchema();
+      const petModel = schema.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {
@@ -215,8 +209,8 @@ describe('adjustSchemaForPython()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = python.schema.createSchema();
-      const catModel = python.schema.createAliasModel({
+      const s = schema.python.createSchema();
+      const catModel = schema.python.createAliasModel({
         name: 'PetCat',
         docs: null,
         value: {
@@ -229,7 +223,7 @@ describe('adjustSchemaForPython()', () => {
         },
       });
 
-      const dogModel = python.schema.createAliasModel({
+      const dogModel = schema.python.createAliasModel({
         name: 'PetDog',
         docs: null,
         value: {
@@ -242,7 +236,7 @@ describe('adjustSchemaForPython()', () => {
         },
       });
 
-      const petModel = python.schema.createAliasModel({
+      const petModel = schema.python.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {

@@ -1,16 +1,10 @@
-import { swift } from '../../../platforms/swift/index.js';
-import {
-  createAliasModel,
-  createDocumentModel,
-  createSchema,
-  createSchemaFromDefinition,
-} from '../../../schema/index.js';
+import { schema } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForSwift } from '../_adjust-schema.js';
 
 describe('adjustSchemaForSwift()', () => {
   it('does not mutate input schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -36,7 +30,7 @@ describe('adjustSchemaForSwift()', () => {
   });
 
   it('returns a new schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -60,7 +54,7 @@ describe('adjustSchemaForSwift()', () => {
   });
 
   it(`does nothing when the schema is already flat`, () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -87,7 +81,7 @@ describe('adjustSchemaForSwift()', () => {
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsObjectType: swift.schema.types.Object = {
+    const credentialsObjectType: schema.swift.types.Object = {
       type: 'object',
       fields: [
         {
@@ -107,8 +101,8 @@ describe('adjustSchemaForSwift()', () => {
     };
 
     const inputSchema = (() => {
-      const s = createSchema();
-      const userModel = createDocumentModel({
+      const s = schema.createSchema();
+      const userModel = schema.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -137,14 +131,14 @@ describe('adjustSchemaForSwift()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = swift.schema.createSchema();
-      const aliasModel = swift.schema.createAliasModel({
+      const s = schema.swift.createSchema();
+      const aliasModel = schema.swift.createAliasModel({
         name: 'UserCredentials',
         docs: null,
         value: credentialsObjectType,
       });
 
-      const userModel = swift.schema.createDocumentModel({
+      const userModel = schema.swift.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -182,8 +176,8 @@ describe('adjustSchemaForSwift()', () => {
 
   it(`flattens discriminated union variants and creates new aliases`, () => {
     const inputSchema = (() => {
-      const s = createSchema();
-      const petModel = createAliasModel({
+      const s = schema.createSchema();
+      const petModel = schema.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {
@@ -215,8 +209,8 @@ describe('adjustSchemaForSwift()', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = swift.schema.createSchema();
-      const catModel = swift.schema.createAliasModel({
+      const s = schema.swift.createSchema();
+      const catModel = schema.swift.createAliasModel({
         name: 'PetCat',
         docs: null,
         value: {
@@ -229,7 +223,7 @@ describe('adjustSchemaForSwift()', () => {
         },
       });
 
-      const dogModel = swift.schema.createAliasModel({
+      const dogModel = schema.swift.createAliasModel({
         name: 'PetDog',
         docs: null,
         value: {
@@ -242,7 +236,7 @@ describe('adjustSchemaForSwift()', () => {
         },
       });
 
-      const petModel = swift.schema.createAliasModel({
+      const petModel = schema.swift.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {
