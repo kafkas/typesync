@@ -1,4 +1,6 @@
 import { createTypesync } from '../core/typesync.js';
+import { definition } from '../definition/index.js';
+import { schema } from '../schema/index.js';
 import type {
   GeneratePythonOptions,
   GeneratePythonRepresentationOptions,
@@ -23,6 +25,17 @@ import type {
   GenerateTsRepresentationResult,
   GenerateTsResult,
 } from './ts.js';
+
+export interface GenerateRepresentationOptions {
+  definition: string;
+}
+
+export interface GenerateRepresentationResult {
+  /** The parsed definition. */
+  definition: definition.Definition;
+  /** The internal representation of the schema. */
+  schema: schema.Schema;
+}
 
 export interface ValidateOptions {
   definition: string;
@@ -103,6 +116,11 @@ export interface Typesync {
    * This is the programmatic API for the `typesync validate` command.
    */
   validate(opts: ValidateOptions): Promise<ValidateResult>;
+
+  /**
+   * Build and returns the internal representation for the specified schema definition.
+   */
+  generateRepresentation(opts: GenerateRepresentationOptions): GenerateRepresentationResult;
 }
 
 export type GenerationResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
