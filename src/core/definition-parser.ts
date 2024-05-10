@@ -8,7 +8,6 @@ import {
   DefinitionFileNotValidYamlOrJsonError,
   DuplicateModelNameError,
 } from '../errors/invalid-def.js';
-import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import type { Logger } from './logger.js';
 
@@ -29,11 +28,12 @@ class DefinitionParserImpl implements DefinitionParser {
       path,
       contentJson: this.parseDefinitionFileAsJson(path),
     }));
-    const { aliasModelNames } = this.extractModelNamesFromDefinitionFiles(rawDefinitionFiles);
-    const definitionFileSchema = definition.schemas.definitionWithKnownAliases(aliasModelNames);
     return rawDefinitionFiles.reduce<definition.Definition>((acc, rawFile) => {
-      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definitionFileSchema);
+      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definition.zodSchema);
       Object.entries(parsedFile.content).forEach(([modelName, model]) => {
+        if (acc[modelName] !== undefined) {
+          throw new DuplicateModelNameError(rawFile.path, modelName);
+        }
         acc[modelName] = model;
       });
       return acc;
@@ -52,33 +52,6 @@ class DefinitionParserImpl implements DefinitionParser {
       this.logger?.error(extractErrorMessage(e));
       throw new DefinitionFileNotValidYamlOrJsonError(pathToFile);
     }
-  }
-
-  private extractModelNamesFromDefinitionFiles(rawDefinitionFiles: RawDefinitionFile[]) {
-    const aliasModelNameSet = new Set<string>();
-    const documentModelNameSet = new Set<string>();
-
-    rawDefinitionFiles.forEach(rawFile => {
-      const { path } = rawFile;
-      const parsedFile = this.parseDefinitionFileWithSchema(rawFile, definition.schemas.definition);
-      Object.entries(parsedFile.content).forEach(([modelName, model]) => {
-        if (aliasModelNameSet.has(modelName) || documentModelNameSet.has(modelName)) {
-          throw new DuplicateModelNameError(path, modelName);
-        }
-        if (model.model === 'alias') {
-          aliasModelNameSet.add(modelName);
-        } else if (model.model === 'document') {
-          documentModelNameSet.add(modelName);
-        } else {
-          assertNever(model);
-        }
-      });
-    });
-
-    return {
-      aliasModelNames: Array.from(aliasModelNameSet.values()),
-      documentModelNames: Array.from(documentModelNameSet.values()),
-    };
   }
 
   private parseDefinitionFileWithSchema<T>(rawFile: RawDefinitionFile, zodSchema: z.Schema<T>) {

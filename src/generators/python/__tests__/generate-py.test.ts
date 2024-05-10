@@ -62,7 +62,7 @@ describe('PythonGeneratorImpl', () => {
               { key: 'User', value: 'user' },
             ],
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'pydantic-class',

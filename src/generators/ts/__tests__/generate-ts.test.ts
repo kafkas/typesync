@@ -46,7 +46,7 @@ describe('TSGeneratorImpl', () => {
               { label: 'User', value: 'user' },
             ],
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
       ],
     };

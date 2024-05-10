@@ -1,42 +1,30 @@
+import { rules } from '../../platforms/rules/index.js';
 import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
-import {
-  FlatDiscriminatedUnionType,
-  FlatListType,
-  FlatMapType,
-  FlatObjectType,
-  FlatSchema,
-  FlatSimpleUnionType,
-  FlatTupleType,
-  FlatType,
-  createFlatAliasModel,
-  createFlatDocumentModel,
-  createFlatSchema,
-} from './_schema.js';
 
-export function flattenSchema(prevSchema: Schema): FlatSchema {
-  function flattenTupleType(tupleType: schema.types.Tuple): FlatTupleType {
+export function adjustSchemaForRules(prevSchema: Schema): rules.schema.Schema {
+  function flattenTupleType(tupleType: schema.types.Tuple): rules.schema.types.Tuple {
     return {
       type: 'tuple',
       elements: tupleType.elements.map(valueType => flattenType(valueType)),
     };
   }
 
-  function flattenListType(listType: schema.types.List): FlatListType {
+  function flattenListType(listType: schema.types.List): rules.schema.types.List {
     return {
       type: 'list',
       elementType: flattenType(listType.elementType),
     };
   }
 
-  function flattenMapType(mapType: schema.types.Map): FlatMapType {
+  function flattenMapType(mapType: schema.types.Map): rules.schema.types.Map {
     return {
       type: 'map',
       valueType: flattenType(mapType.valueType),
     };
   }
 
-  function flattenObjectType(objectType: schema.types.Object): FlatObjectType {
+  function flattenObjectType(objectType: schema.types.Object): rules.schema.types.Object {
     return {
       type: 'object',
       fields: objectType.fields.map(field => ({
@@ -49,7 +37,9 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
     };
   }
 
-  function flattenDiscriminatedUnionType(unionType: schema.types.DiscriminatedUnion): FlatDiscriminatedUnionType {
+  function flattenDiscriminatedUnionType(
+    unionType: schema.types.DiscriminatedUnion
+  ): rules.schema.types.DiscriminatedUnion {
     return {
       type: 'discriminated-union',
       discriminant: unionType.discriminant,
@@ -66,14 +56,14 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
     };
   }
 
-  function flattenSimpleUnionType(unionType: schema.types.SimpleUnion): FlatSimpleUnionType {
+  function flattenSimpleUnionType(unionType: schema.types.SimpleUnion): rules.schema.types.SimpleUnion {
     return {
       type: 'simple-union',
       variants: unionType.variants.map(flattenType),
     };
   }
 
-  function flattenType(type: schema.types.Type): FlatType {
+  function flattenType(type: schema.types.Type): rules.schema.types.Type {
     switch (type.type) {
       case 'unknown':
       case 'nil':
@@ -83,8 +73,11 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
       case 'int':
       case 'double':
       case 'timestamp':
-      case 'literal':
-      case 'enum':
+      case 'string-literal':
+      case 'int-literal':
+      case 'boolean-literal':
+      case 'string-enum':
+      case 'int-enum':
       case 'alias':
         return type;
       case 'tuple':
@@ -104,19 +97,19 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
     }
   }
 
-  const newSchema = createFlatSchema();
+  const newSchema = rules.schema.createSchema();
   const prevSchemaClone = prevSchema.clone();
   const { aliasModels, documentModels } = prevSchemaClone;
 
   const newSchemaAliasModels = aliasModels.map(aliasModel =>
-    createFlatAliasModel({
+    rules.schema.createAliasModel({
       name: aliasModel.name,
       docs: aliasModel.docs,
-      type: flattenType(aliasModel.type),
+      value: flattenType(aliasModel.type),
     })
   );
   const newSchemaDocumentModels = documentModels.map(aliasModel =>
-    createFlatDocumentModel({
+    rules.schema.createDocumentModel({
       name: aliasModel.name,
       docs: aliasModel.docs,
       type: flattenObjectType(aliasModel.type),

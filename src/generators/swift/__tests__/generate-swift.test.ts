@@ -62,7 +62,7 @@ describe('SwiftGeneratorImpl', () => {
               { key: 'User', value: 'user' },
             ],
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'struct',

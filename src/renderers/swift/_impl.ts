@@ -68,7 +68,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const expression = swift.expressionForType(modelType);
     const b = new StringBuilder();
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`typealias ${modelName} = ${expression.content}`);
@@ -79,7 +79,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['String', 'Codable'].join(', ');
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
@@ -94,7 +94,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Int', 'Codable'].join(', ');
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
@@ -109,7 +109,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
@@ -180,7 +180,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`enum ${modelName}: ${conformedProtocolsAsString} {` + '\n');
@@ -246,13 +246,13 @@ class SwiftRendererImpl implements SwiftRenderer {
     const hasNonCamelCaseOriginalName = propertyOriginalNames.some(name => camelCase(name) !== name);
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
-    if (modelDocs !== undefined) {
+    if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
     modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
-      if (property.docs !== undefined) {
+      if (property.docs !== null) {
         b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
       b.append(
@@ -262,7 +262,7 @@ class SwiftRendererImpl implements SwiftRenderer {
     });
     modelType.regularProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
-      if (property.docs !== undefined) {
+      if (property.docs !== null) {
         b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
       b.append(

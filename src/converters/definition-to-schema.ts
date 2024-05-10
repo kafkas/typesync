@@ -23,18 +23,37 @@ export function primitiveTypeToSchema(t: definition.types.Primitive): schema.typ
   }
 }
 
+export function stringLiteralTypeToSchema(t: definition.types.StringLiteral): schema.types.StringLiteral {
+  return { type: 'string-literal', value: t.value };
+}
+
+export function intLiteralTypeToSchema(t: definition.types.IntLiteral): schema.types.IntLiteral {
+  return { type: 'int-literal', value: t.value };
+}
+
+export function booleanLiteralTypeToSchema(t: definition.types.BooleanLiteral): schema.types.BooleanLiteral {
+  return { type: 'boolean-literal', value: t.value };
+}
+
 export function literalTypeToSchema(t: definition.types.Literal): schema.types.Literal {
-  return {
-    type: 'literal',
-    value: t.value,
-  };
+  if (definition.isStringLiteralType(t)) return stringLiteralTypeToSchema(t);
+  else if (definition.isIntLiteralType(t)) return intLiteralTypeToSchema(t);
+  else if (definition.isBooleanLiteralType(t)) return booleanLiteralTypeToSchema(t);
+  else assertNever(t);
+}
+
+export function stringEnumTypeToSchema(t: definition.types.StringEnum): schema.types.StringEnum {
+  return { type: 'string-enum', members: t.members };
+}
+
+export function intEnumTypeToSchema(t: definition.types.IntEnum): schema.types.IntEnum {
+  return { type: 'int-enum', members: t.members };
 }
 
 export function enumTypeToSchema(t: definition.types.Enum): schema.types.Enum {
-  return {
-    type: 'enum',
-    members: t.members,
-  };
+  if (definition.isStringEnumType(t)) return stringEnumTypeToSchema(t);
+  else if (definition.isIntEnumType(t)) return intEnumTypeToSchema(t);
+  else assertNever(t);
 }
 
 export function tupleTypeToSchema(t: definition.types.Tuple): schema.types.Tuple {
@@ -70,7 +89,7 @@ export function fieldToSchema(fieldName: string, field: definition.types.ObjectF
   return {
     type: typeToSchema(field.type),
     optional: !!field.optional,
-    docs: field.docs,
+    docs: field.docs ?? null,
     name: fieldName,
   };
 }
@@ -82,9 +101,13 @@ export function discriminatedUnionTypeToSchema(
     type: 'discriminated-union',
     discriminant: t.discriminant,
     variants: t.variants.map(vt => {
-      if (definition.isAliasType(vt)) return aliasTypeToSchema(vt);
-      if (vt.type === 'object') return objectTypeToSchema(vt);
-      assertNever(vt.type);
+      if (definition.isAliasType(vt)) {
+        return aliasTypeToSchema(vt);
+      } else if (vt.type === 'object') {
+        return objectTypeToSchema(vt);
+      } else {
+        assertNever(vt.type);
+      }
     }),
   };
 }

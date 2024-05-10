@@ -42,7 +42,7 @@ class TSRendererImpl implements TSRenderer {
       case 'alias': {
         const { modelName, modelType, modelDocs } = declaration;
         const expression = ts.expressionForType(modelType);
-        if (modelDocs !== undefined) {
+        if (modelDocs !== null) {
           output += `/** ${modelDocs} */\n`;
         }
         output += `export type ${modelName} = ${expression.content};`;
@@ -51,7 +51,7 @@ class TSRendererImpl implements TSRenderer {
       case 'interface': {
         const { modelName, modelType, modelDocs } = declaration;
         const expression = ts.expressionForType(modelType);
-        if (modelDocs !== undefined) {
+        if (modelDocs !== null) {
           output += `/** ${modelDocs} */\n`;
         }
         output += `export interface ${modelName} ${expression.content}`;

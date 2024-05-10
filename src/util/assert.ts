@@ -15,3 +15,5 @@ export function assertNever(val: never): never {
 }
 
 export function assertNeverNoThrow(_val: never): void {}
+
+export function assertEmpty<T extends true | false>(_t: T) {}

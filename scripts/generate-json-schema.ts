@@ -15,7 +15,7 @@ function inferCurrentSchemaVersion() {
 }
 
 function generateJsonSchema(minorVersionName: string) {
-  return zodToJsonSchema(definition.schemas.definition, minorVersionName);
+  return zodToJsonSchema(definition.zodSchema, minorVersionName);
 }
 
 type JsonSchema = ReturnType<typeof generateJsonSchema>;

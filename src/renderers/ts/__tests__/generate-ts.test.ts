@@ -17,7 +17,7 @@ describe('TSRendererImpl', () => {
           modelType: {
             type: 'string',
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'alias',
@@ -25,7 +25,7 @@ describe('TSRendererImpl', () => {
           modelType: {
             type: 'unknown',
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'interface',
@@ -33,12 +33,12 @@ describe('TSRendererImpl', () => {
           modelType: {
             type: 'object',
             properties: [
-              { type: { type: 'string' }, name: 'name', docs: undefined, optional: false },
-              { type: { type: 'string' }, name: 'breed', docs: undefined, optional: false },
+              { type: { type: 'string' }, name: 'name', docs: null, optional: false },
+              { type: { type: 'string' }, name: 'breed', docs: null, optional: false },
             ],
             additionalProperties: false,
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
       ],
     };

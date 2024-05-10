@@ -13,9 +13,9 @@ export interface MapType<T> {
   valueType: T;
 }
 
-export interface ObjectType<T> {
+export interface ObjectType<F extends ObjectFieldType<unknown>> {
   type: 'object';
-  fields: ObjectFieldType<T>[];
+  fields: F[];
   additionalFields: boolean;
 }
 
@@ -23,7 +23,7 @@ export interface ObjectFieldType<T> {
   type: T;
   optional: boolean;
   name: string;
-  docs: string | undefined;
+  docs: string | null;
 }
 
 export interface DiscriminatedUnionType<T> {
@@ -37,12 +37,10 @@ export interface SimpleUnionType<T> {
   variants: T[];
 }
 
-export type AliasType = string;
-
 export interface AliasModel<T> {
   model: 'alias';
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   type: T;
   clone(): AliasModel<T>;
 }
@@ -50,17 +48,17 @@ export interface AliasModel<T> {
 export interface DocumentModel<T> {
   model: 'document';
   name: string;
-  docs: string | undefined;
+  docs: string | null;
   type: T;
   clone(): DocumentModel<T>;
 }
 
 export type Model<T> = AliasModel<T> | DocumentModel<T>;
 
-export interface Schema<A, D> {
+export interface Schema<T, A, D> {
   aliasModels: A[];
   documentModels: D[];
-  clone(): Schema<A, D>;
+  clone(): Schema<T, A, D>;
   /**
    * Similar to adding models to the schema one by one, with an important difference. Models are validated only
    * after the entire "group" has been added to the schema. This makes sure that the validation code doesn't fail
@@ -69,4 +67,5 @@ export interface Schema<A, D> {
   addModelGroup(models: (A | D)[]): void;
   addModel(model: A | D): void;
   getAliasModel(modelName: string): A | undefined;
+  validateType(type: unknown): void;
 }

@@ -25,7 +25,7 @@ describe('SwiftRendererImpl', () => {
           modelType: {
             type: 'any',
           },
-          modelDocs: undefined,
+          modelDocs: null,
         },
         {
           type: 'struct',
@@ -38,7 +38,7 @@ describe('SwiftRendererImpl', () => {
                 type: { type: 'string' },
                 originalName: 'name',
                 optional: false,
-                docs: undefined,
+                docs: null,
               },
               {
                 type: { type: 'bool' },

@@ -1,3 +1,4 @@
+import { python } from '../../../platforms/python/index.js';
 import {
   createAliasModel,
   createDocumentModel,
@@ -5,10 +6,9 @@ import {
   createSchemaFromDefinition,
 } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
-import { flattenSchema } from '../_flatten-schema.js';
-import { FlatObjectType, createFlatAliasModel, createFlatDocumentModel, createFlatSchema } from '../_schema.js';
+import { adjustSchemaForPython } from '../_adjust-schema.js';
 
-describe('flatten-schema', () => {
+describe('adjustSchemaForPython()', () => {
   it('does not mutate input schema', () => {
     const inputSchema = createSchemaFromDefinition({
       SomeAliasModel: {
@@ -31,7 +31,7 @@ describe('flatten-schema', () => {
     deepFreeze(inputSchema);
 
     expect(() => {
-      flattenSchema(inputSchema);
+      adjustSchemaForPython(inputSchema);
     }).not.toThrow();
   });
 
@@ -54,12 +54,12 @@ describe('flatten-schema', () => {
       },
     });
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).not.toBe(inputSchema);
   });
 
-  it(`does nothing when the schema is "flat"`, () => {
+  it(`does nothing when the schema is already flat`, () => {
     const inputSchema = createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
@@ -78,25 +78,28 @@ describe('flatten-schema', () => {
       },
     });
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
-    expect(flattenedSchema).toEqual(inputSchema);
+    expect([...flattenedSchema.aliasModels, ...flattenedSchema.documentModels]).toEqual([
+      ...inputSchema.aliasModels,
+      ...inputSchema.documentModels,
+    ]);
   });
 
   it(`flattens nested object types and creates new aliases`, () => {
-    const credentialsObjectType: FlatObjectType = {
+    const credentialsObjectType: python.schema.types.Object = {
       type: 'object',
       fields: [
         {
           type: { type: 'string' },
           name: 'email',
-          docs: undefined,
+          docs: null,
           optional: false,
         },
         {
           type: { type: 'string' },
           name: 'password',
-          docs: undefined,
+          docs: null,
           optional: false,
         },
       ],
@@ -107,14 +110,14 @@ describe('flatten-schema', () => {
       const s = createSchema();
       const userModel = createDocumentModel({
         name: 'User',
-        docs: undefined,
+        docs: null,
         type: {
           type: 'object',
           fields: [
             {
               name: 'name',
               type: { type: 'string' },
-              docs: undefined,
+              docs: null,
               optional: false,
             },
             {
@@ -134,23 +137,23 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = createFlatSchema();
-      const aliasModel = createFlatAliasModel({
+      const s = python.schema.createSchema();
+      const aliasModel = python.schema.createAliasModel({
         name: 'UserCredentials',
-        docs: undefined,
-        type: credentialsObjectType,
+        docs: null,
+        value: credentialsObjectType,
       });
 
-      const userModel = createFlatDocumentModel({
+      const userModel = python.schema.createDocumentModel({
         name: 'User',
-        docs: undefined,
+        docs: null,
         type: {
           type: 'object',
           fields: [
             {
               name: 'name',
               type: { type: 'string' },
-              docs: undefined,
+              docs: null,
               optional: false,
             },
             {
@@ -172,7 +175,7 @@ describe('flatten-schema', () => {
       return s;
     })();
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).toEqual(expectedFlattenedSchema);
   });
@@ -182,7 +185,7 @@ describe('flatten-schema', () => {
       const s = createSchema();
       const petModel = createAliasModel({
         name: 'Pet',
-        docs: undefined,
+        docs: null,
         value: {
           type: 'discriminated-union',
           discriminant: 'type',
@@ -190,16 +193,16 @@ describe('flatten-schema', () => {
             {
               type: 'object',
               fields: [
-                { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
-                { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+                { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+                { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
               ],
               additionalFields: false,
             },
             {
               type: 'object',
               fields: [
-                { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
-                { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+                { name: 'type', type: { type: 'string-literal', value: 'dog' }, docs: null, optional: false },
+                { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
               ],
               additionalFields: false,
             },
@@ -212,37 +215,37 @@ describe('flatten-schema', () => {
     })();
 
     const expectedFlattenedSchema = (() => {
-      const s = createFlatSchema();
-      const catModel = createFlatAliasModel({
+      const s = python.schema.createSchema();
+      const catModel = python.schema.createAliasModel({
         name: 'PetCat',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'object',
           fields: [
-            { name: 'type', type: { type: 'literal', value: 'cat' }, docs: undefined, optional: false },
-            { name: 'lives_left', type: { type: 'int' }, docs: undefined, optional: false },
+            { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
+            { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
           ],
           additionalFields: false,
         },
       });
 
-      const dogModel = createFlatAliasModel({
+      const dogModel = python.schema.createAliasModel({
         name: 'PetDog',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'object',
           fields: [
-            { name: 'type', type: { type: 'literal', value: 'dog' }, docs: undefined, optional: false },
-            { name: 'breed', type: { type: 'string' }, docs: undefined, optional: false },
+            { name: 'type', type: { type: 'string-literal', value: 'dog' }, docs: null, optional: false },
+            { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
           ],
           additionalFields: false,
         },
       });
 
-      const petModel = createFlatAliasModel({
+      const petModel = python.schema.createAliasModel({
         name: 'Pet',
-        docs: undefined,
-        type: {
+        docs: null,
+        value: {
           type: 'discriminated-union',
           discriminant: 'type',
           variants: [
@@ -263,7 +266,7 @@ describe('flatten-schema', () => {
       return s;
     })();
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).toEqual(expectedFlattenedSchema);
   });

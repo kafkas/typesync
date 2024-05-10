@@ -2,7 +2,7 @@ import { ordinalSuffixOf } from '../util/ordinal-suffix.js';
 
 export class InvalidSchemaTypeError extends Error {
   public constructor(message: string) {
-    super(`The schema type is not valid. ${message}`);
+    super(`The schema type is invalid. ${message}`);
   }
 }
 

@@ -6,21 +6,21 @@ export interface PythonAliasDeclaration {
   type: 'alias';
   modelName: string;
   modelType: python.Type;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface PythonEnumClassDeclaration {
   type: 'enum-class';
   modelName: string;
   modelType: python.EnumClass;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface PythonPydanticClassDeclaration {
   type: 'pydantic-class';
   modelName: string;
   modelType: python.ObjectClass;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export type PythonDeclaration = PythonAliasDeclaration | PythonEnumClassDeclaration | PythonPydanticClassDeclaration;

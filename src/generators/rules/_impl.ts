@@ -1,7 +1,7 @@
+import { rules } from '../../platforms/rules/index.js';
 import { Schema } from '../../schema/index.js';
+import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
-import { flattenSchema } from './_flatten-schema.js';
-import { FlatAliasModel, FlatDocumentModel } from './_schema.js';
 import type {
   RulesDeclaration,
   RulesGeneration,
@@ -14,8 +14,8 @@ class RulesGeneratorImpl implements RulesGenerator {
   public constructor(private readonly config: RulesGeneratorConfig) {}
 
   public generate(s: Schema): RulesGeneration {
-    const flattenedSchema = flattenSchema(s);
-    const { aliasModels, documentModels } = flattenedSchema;
+    const adjustedSchema = adjustSchemaForRules(s);
+    const { aliasModels, documentModels } = adjustedSchema;
     const declarations: RulesDeclaration[] = [];
     aliasModels.forEach(model => {
       const d = this.createValidatorDeclarationForFlatAliasModel(model);
@@ -28,7 +28,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     return { type: 'rules', declarations };
   }
 
-  private createValidatorDeclarationForFlatAliasModel(model: FlatAliasModel): RulesValidatorDeclaration {
+  private createValidatorDeclarationForFlatAliasModel(model: rules.schema.AliasModel): RulesValidatorDeclaration {
     const rulesType = flatTypeToRules(model.type);
     return {
       type: 'validator',
@@ -37,7 +37,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     };
   }
 
-  private createValidatorDeclarationForFlatDocumentModel(model: FlatDocumentModel): RulesValidatorDeclaration {
+  private createValidatorDeclarationForFlatDocumentModel(model: rules.schema.DocumentModel): RulesValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(model.type);
     return {
       type: 'validator',

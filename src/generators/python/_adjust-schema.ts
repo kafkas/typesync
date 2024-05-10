@@ -1,56 +1,42 @@
+import { python } from '../../platforms/python/index.js';
 import { Schema, schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { pascalCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
-import {
-  FlatAliasModel,
-  FlatDiscriminatedUnionType,
-  FlatDocumentModel,
-  FlatListType,
-  FlatMapType,
-  FlatObjectType,
-  FlatSchema,
-  FlatSimpleUnionType,
-  FlatTupleType,
-  FlatType,
-  createFlatAliasModel,
-  createFlatDocumentModel,
-  createFlatSchema,
-} from './_schema.js';
 
 interface FlattenTupleTypeResult {
-  flattenedType: FlatTupleType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.Tuple;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenListTypeResult {
-  flattenedType: FlatListType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.List;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenMapTypeResult {
-  flattenedType: FlatMapType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.Map;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenObjectTypeResult {
-  flattenedType: FlatObjectType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.Object;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenDiscriminatedUnionTypeResult {
-  flattenedType: FlatDiscriminatedUnionType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.DiscriminatedUnion;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenSimpleUnionTypeResult {
-  flattenedType: FlatSimpleUnionType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.SimpleUnion;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 interface FlattenTypeResult {
-  flattenedType: FlatType;
-  extractedAliasModels: FlatAliasModel[];
+  flattenedType: python.schema.types.Type;
+  extractedAliasModels: python.schema.AliasModel[];
 }
 
 /**
@@ -59,12 +45,12 @@ interface FlattenTypeResult {
  *
  * @returns A new schema object.
  */
-export function flattenSchema(prevSchema: Schema): FlatSchema {
+export function adjustSchemaForPython(prevSchema: Schema): python.schema.Schema {
   function flattenTupleType(tupleType: schema.types.Tuple, aliasName: string): FlattenTupleTypeResult {
     const resultsForValues = tupleType.elements.map((valueType, valueTypeIdx) =>
       flattenType(valueType, `${aliasName}_${valueTypeIdx + 1}`)
     );
-    const flattenedType: FlatTupleType = {
+    const flattenedType: python.schema.types.Tuple = {
       type: 'tuple',
       elements: resultsForValues.map(res => res.flattenedType),
     };
@@ -74,7 +60,7 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
 
   function flattenListType(listType: schema.types.List, aliasName: string): FlattenListTypeResult {
     const resultForElementType = flattenType(listType.elementType, `${aliasName}Element`);
-    const flattenedType: FlatListType = {
+    const flattenedType: python.schema.types.List = {
       type: 'list',
       elementType: resultForElementType.flattenedType,
     };
@@ -83,7 +69,7 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
 
   function flattenMapType(mapType: schema.types.Map, aliasName: string): FlattenMapTypeResult {
     const resultForValueType = flattenType(mapType.valueType, `${aliasName}Value`);
-    const flattenedType: FlatMapType = {
+    const flattenedType: python.schema.types.Map = {
       type: 'map',
       valueType: resultForValueType.flattenedType,
     };
@@ -95,7 +81,7 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
       const flattenResult = flattenType(field.type, `${aliasName}${pascalCase(field.name)}`);
       return { field, flattenResult };
     });
-    const flattenedType: FlatObjectType = {
+    const flattenedType: python.schema.types.Object = {
       type: 'object',
       fields: resultsForFields.map(r => ({
         docs: r.field.docs,
@@ -113,19 +99,19 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
     unionType: schema.types.DiscriminatedUnion,
     aliasName: string
   ): FlattenDiscriminatedUnionTypeResult {
-    const flattenedType: FlatDiscriminatedUnionType = {
+    const flattenedType: python.schema.types.DiscriminatedUnion = {
       type: 'discriminated-union',
       discriminant: unionType.discriminant,
       variants: [],
     };
-    const extractedAliasModels: FlatAliasModel[] = [];
+    const extractedAliasModels: python.schema.AliasModel[] = [];
 
     unionType.variants.forEach(variantType => {
       if (variantType.type === 'object') {
         const discriminantValue = extractDiscriminantValue(unionType, variantType);
         const name = `${aliasName}${pascalCase(discriminantValue)}`;
         const res = flattenObjectType(variantType, name);
-        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: res.flattenedType });
+        const aliasModel = python.schema.createAliasModel({ name, docs: null, value: res.flattenedType });
         extractedAliasModels.push(...res.extractedAliasModels, aliasModel);
         flattenedType.variants.push({ type: 'alias', name });
       } else if (variantType.type === 'alias') {
@@ -145,7 +131,7 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
     const resultsForVariants = unionType.variants.map((variantType, variantIdx) =>
       flattenType(variantType, `${aliasName}_${variantIdx + 1}`)
     );
-    const flattenedType: FlatSimpleUnionType = {
+    const flattenedType: python.schema.types.SimpleUnion = {
       type: 'simple-union',
       variants: resultsForVariants.map(res => res.flattenedType),
     };
@@ -162,12 +148,15 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
       case 'int':
       case 'double':
       case 'timestamp':
-      case 'literal':
+      case 'string-literal':
+      case 'int-literal':
+      case 'boolean-literal':
       case 'alias':
         return { flattenedType: type, extractedAliasModels: [] };
-      case 'enum': {
+      case 'string-enum':
+      case 'int-enum': {
         const name = aliasName;
-        const aliasModel = createFlatAliasModel({ name, docs: undefined, type });
+        const aliasModel = python.schema.createAliasModel({ name, docs: null, value: type });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [aliasModel] };
       }
@@ -180,51 +169,33 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
       case 'object': {
         const result = flattenObjectType(type, aliasName);
         const name = aliasName;
-        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
+        const aliasModel = python.schema.createAliasModel({ name, docs: null, value: result.flattenedType });
         const flattenedType: schema.types.Alias = { type: 'alias', name };
         return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
       }
-      case 'discriminated-union': {
-        const result = flattenDiscriminatedUnionType(type, aliasName);
-        const name = aliasName;
-        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
-        const flattenedType: schema.types.Alias = { type: 'alias', name };
-        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
-      }
-      case 'simple-union': {
-        const result = flattenSimpleUnionType(type, aliasName);
-        const name = aliasName;
-        const aliasModel = createFlatAliasModel({ name, docs: undefined, type: result.flattenedType });
-        const flattenedType: schema.types.Alias = { type: 'alias', name };
-        return { flattenedType, extractedAliasModels: [...result.extractedAliasModels, aliasModel] };
-      }
+      case 'discriminated-union':
+        return flattenDiscriminatedUnionType(type, aliasName);
+      case 'simple-union':
+        return flattenSimpleUnionType(type, aliasName);
       default:
         assertNever(type);
     }
   }
 
-  const newSchema = createFlatSchema();
+  const newSchema = python.schema.createSchema();
   const prevSchemaClone = prevSchema.clone();
   const { aliasModels, documentModels } = prevSchemaClone;
 
-  const newSchemaAliasModels: FlatAliasModel[] = [];
-  const newSchemaDocumentModels: FlatDocumentModel[] = [];
+  const newSchemaAliasModels: python.schema.AliasModel[] = [];
+  const newSchemaDocumentModels: python.schema.DocumentModel[] = [];
 
   aliasModels.forEach(aliasModel => {
     let newModelType;
 
-    if (aliasModel.type.type === 'enum') {
+    if (aliasModel.type.type === 'string-enum' || aliasModel.type.type === 'int-enum') {
       newModelType = aliasModel.type;
     } else if (aliasModel.type.type === 'object') {
       const { flattenedType, extractedAliasModels } = flattenObjectType(aliasModel.type, aliasModel.name);
-      newSchemaAliasModels.push(...extractedAliasModels);
-      newModelType = flattenedType;
-    } else if (aliasModel.type.type === 'discriminated-union') {
-      const { flattenedType, extractedAliasModels } = flattenDiscriminatedUnionType(aliasModel.type, aliasModel.name);
-      newSchemaAliasModels.push(...extractedAliasModels);
-      newModelType = flattenedType;
-    } else if (aliasModel.type.type === 'simple-union') {
-      const { flattenedType, extractedAliasModels } = flattenSimpleUnionType(aliasModel.type, aliasModel.name);
       newSchemaAliasModels.push(...extractedAliasModels);
       newModelType = flattenedType;
     } else {
@@ -232,17 +203,17 @@ export function flattenSchema(prevSchema: Schema): FlatSchema {
       newSchemaAliasModels.push(...extractedAliasModels);
       newModelType = flattenedType;
     }
-    const flattenedModel = createFlatAliasModel({
+    const flattenedModel = python.schema.createAliasModel({
       name: aliasModel.name,
       docs: aliasModel.docs,
-      type: newModelType,
+      value: newModelType,
     });
     newSchemaAliasModels.push(flattenedModel);
   });
 
   documentModels.forEach(documentModel => {
     const { flattenedType, extractedAliasModels } = flattenObjectType(documentModel.type, documentModel.name);
-    const flattenedModel = createFlatDocumentModel({
+    const flattenedModel = python.schema.createDocumentModel({
       name: documentModel.name,
       docs: documentModel.docs,
       type: flattenedType,

@@ -6,14 +6,14 @@ export interface TSAliasDeclaration {
   type: 'alias';
   modelName: string;
   modelType: ts.Type;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export interface TSInterfaceDeclaration {
   type: 'interface';
   modelName: string;
   modelType: ts.Object;
-  modelDocs: string | undefined;
+  modelDocs: string | null;
 }
 
 export type TSDeclaration = TSAliasDeclaration | TSInterfaceDeclaration;

@@ -1,17 +1,57 @@
-export type Primitive = 'unknown' | 'nil' | 'string' | 'boolean' | 'int' | 'double' | 'timestamp';
+export type Unknown = 'unknown';
 
-export interface Literal {
+export type Nil = 'nil';
+
+export type String = 'string';
+
+export type Boolean = 'boolean';
+
+export type Int = 'int';
+
+export type Double = 'double';
+
+export type Timestamp = 'timestamp';
+
+export type Primitive = Unknown | Nil | String | Boolean | Int | Double | Timestamp;
+
+export interface StringLiteral {
   type: 'literal';
-  value: string | number | boolean;
+  value: string;
 }
 
-export interface Enum {
-  type: 'enum';
-  members: {
-    label: string;
-    value: string | number;
-  }[];
+export interface IntLiteral {
+  type: 'literal';
+  value: number;
 }
+
+export interface BooleanLiteral {
+  type: 'literal';
+  value: boolean;
+}
+
+export type Literal = StringLiteral | IntLiteral | BooleanLiteral;
+
+export interface StringEnum {
+  type: 'enum';
+  members: StringEnumMember[];
+}
+
+export interface StringEnumMember {
+  label: string;
+  value: string;
+}
+
+export interface IntEnum {
+  type: 'enum';
+  members: IntEnumMember[];
+}
+
+export interface IntEnumMember {
+  label: string;
+  value: number;
+}
+
+export type Enum = StringEnum | IntEnum;
 
 export interface Tuple {
   type: 'tuple';
