@@ -1,7 +1,7 @@
-import { Schema, schema } from '../../schema/index.js';
+import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
-export function adjustSchemaForRules(prevSchema: Schema): schema.rules.Schema {
+export function adjustSchemaForRules(prevSchema: schema.Schema): schema.rules.Schema {
   function flattenTupleType(tupleType: schema.types.Tuple): schema.rules.types.Tuple {
     return {
       type: 'tuple',

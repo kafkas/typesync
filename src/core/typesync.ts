@@ -55,7 +55,7 @@ import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
-import { createSchemaFromDefinition } from '../schema/index.js';
+import { schema } from '../schema/index.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
 import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
@@ -332,7 +332,7 @@ class TypesyncImpl implements Typesync {
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
-    return { logger, schema: createSchemaFromDefinition(definition) };
+    return { logger, schema: schema.createSchemaFromDefinition(definition) };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {

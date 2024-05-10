@@ -8,8 +8,8 @@ import {
   DocumentModel as DocumentModelGeneric,
   Schema as SchemaGeneric,
 } from '../generic.js';
-import type { types } from '../types/index.js';
 import { createZodSchemasForSchema } from './_zod-schemas.js';
+import type * as types from './types.js';
 
 export type AliasModel = AliasModelGeneric<types.Type>;
 

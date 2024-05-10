@@ -1,5 +1,4 @@
-import { rules } from '../../platforms/rules/index.js';
-import { Schema, schema } from '../../schema/index.js';
+import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
 import type {
@@ -13,7 +12,7 @@ import type {
 class RulesGeneratorImpl implements RulesGenerator {
   public constructor(private readonly config: RulesGeneratorConfig) {}
 
-  public generate(s: Schema): RulesGeneration {
+  public generate(s: schema.Schema): RulesGeneration {
     const adjustedSchema = adjustSchemaForRules(s);
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: RulesDeclaration[] = [];

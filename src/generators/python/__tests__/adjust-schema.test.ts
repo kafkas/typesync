@@ -1,16 +1,10 @@
-import {
-  createAliasModel,
-  createDocumentModel,
-  createSchema,
-  createSchemaFromDefinition,
-  schema,
-} from '../../../schema/index.js';
+import { schema } from '../../../schema/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForPython } from '../_adjust-schema.js';
 
 describe('adjustSchemaForPython()', () => {
   it('does not mutate input schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -36,7 +30,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it('returns a new schema', () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -60,7 +54,7 @@ describe('adjustSchemaForPython()', () => {
   });
 
   it(`does nothing when the schema is already flat`, () => {
-    const inputSchema = createSchemaFromDefinition({
+    const inputSchema = schema.createSchemaFromDefinition({
       SomeAliasModel: {
         model: 'alias',
         type: 'string',
@@ -107,8 +101,8 @@ describe('adjustSchemaForPython()', () => {
     };
 
     const inputSchema = (() => {
-      const s = createSchema();
-      const userModel = createDocumentModel({
+      const s = schema.createSchema();
+      const userModel = schema.createDocumentModel({
         name: 'User',
         docs: null,
         type: {
@@ -182,8 +176,8 @@ describe('adjustSchemaForPython()', () => {
 
   it(`flattens discriminated union variants and creates new aliases`, () => {
     const inputSchema = (() => {
-      const s = createSchema();
-      const petModel = createAliasModel({
+      const s = schema.createSchema();
+      const petModel = schema.createAliasModel({
         name: 'Pet',
         docs: null,
         value: {

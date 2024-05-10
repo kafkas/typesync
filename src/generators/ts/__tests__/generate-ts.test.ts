@@ -1,4 +1,4 @@
-import { createSchemaFromDefinition } from '../../../schema/index.js';
+import { schema } from '../../../schema/index.js';
 import { createTSGenerator } from '../_impl.js';
 import { TSGeneration } from '../_types.js';
 
@@ -7,7 +7,7 @@ describe('TSGeneratorImpl', () => {
     const generator = createTSGenerator({
       target: 'firebase-admin@11',
     });
-    const s = createSchemaFromDefinition({
+    const s = schema.createSchemaFromDefinition({
       Username: {
         model: 'alias',
         type: 'string',

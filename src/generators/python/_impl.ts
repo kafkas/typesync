@@ -1,5 +1,5 @@
 import { python } from '../../platforms/python/index.js';
-import { Schema, schema } from '../../schema/index.js';
+import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import { adjustSchemaForPython } from './_adjust-schema.js';
 import { flatTypeToPython } from './_converters.js';
@@ -16,7 +16,7 @@ import type {
 class PythonGeneratorImpl implements PythonGenerator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
-  public generate(s: Schema): PythonGeneration {
+  public generate(s: schema.Schema): PythonGeneration {
     const adjustedSchema = adjustSchemaForPython(s);
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: PythonDeclaration[] = [];

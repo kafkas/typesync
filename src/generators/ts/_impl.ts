@@ -1,4 +1,4 @@
-import { Schema, schema } from '../../schema/index.js';
+import { schema } from '../../schema/index.js';
 import { adjustSchemaForTS } from './_adjust-schema.js';
 import { objectTypeToTS, typeToTS } from './_converters.js';
 import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types.js';
@@ -6,7 +6,7 @@ import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from
 class TSGeneratorImpl implements TSGenerator {
   public constructor(private readonly config: TSGeneratorConfig) {}
 
-  public generate(s: Schema): TSGeneration {
+  public generate(s: schema.Schema): TSGeneration {
     const adjustedSchema = adjustSchemaForTS(s);
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: TSDeclaration[] = [];
