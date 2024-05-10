@@ -21,6 +21,7 @@ export interface GeneratePythonRepresentationOptions {
 export interface GeneratePythonOptions extends GeneratePythonRepresentationOptions {
   outFile: string;
   customPydanticBase?: string;
+  undefinedSentinelName?: string;
   indentation?: number;
 }
 
