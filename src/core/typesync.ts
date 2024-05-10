@@ -43,13 +43,16 @@ import {
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
-  InvalidCustomPydanticBaseOption,
-  InvalidPyIndentationOption,
-  InvalidRulesIndentationOption,
-  InvalidSwiftIndentationOption,
-  InvalidTSIndentationOption,
-  InvalidValidatorNamePatternOption,
-  InvalidValidatorParamNameOption,
+  InvalidCustomPydanticBaseOptionError,
+  InvalidPyIndentationOptionError,
+  InvalidRulesEndMarkerOptionError,
+  InvalidRulesIndentationOptionError,
+  InvalidRulesStartMarkerOptionError,
+  InvalidSwiftIndentationOptionError,
+  InvalidTSIndentationOptionError,
+  InvalidValidatorNamePatternOptionError,
+  InvalidValidatorParamNameOptionError,
+  RulesMarkerOptionsNotDistinctError,
 } from '../errors/invalid-opts.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createRulesGenerator } from '../generators/rules/index.js';
@@ -138,7 +141,7 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateTsOpts(opts: GenerateTsOptions): NormalizedGenerateTsOptions {
     const { outFile, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
-      throw new InvalidTSIndentationOption(indentation);
+      throw new InvalidTSIndentationOptionError(indentation);
     }
     return { ...this.normalizeGenerateTsRepresentationOpts(rest), pathToOutputFile: outFile, indentation };
   }
@@ -177,7 +180,7 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateSwiftOpts(opts: GenerateSwiftOptions): NormalizedGenerateSwiftOptions {
     const { outFile, indentation = DEFAULT_SWIFT_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
-      throw new InvalidSwiftIndentationOption(indentation);
+      throw new InvalidSwiftIndentationOptionError(indentation);
     }
     return { ...this.normalizeGenerateSwiftRepresentationOpts(rest), pathToOutputFile: outFile, indentation };
   }
@@ -224,13 +227,13 @@ class TypesyncImpl implements Typesync {
     let customPydanticBase;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
-      throw new InvalidPyIndentationOption(indentation);
+      throw new InvalidPyIndentationOptionError(indentation);
     }
     if (typeof customPydanticBaseRaw === 'string') {
       try {
         customPydanticBase = parsePythonClassImportPath(customPydanticBaseRaw);
       } catch {
-        throw new InvalidCustomPydanticBaseOption(customPydanticBaseRaw);
+        throw new InvalidCustomPydanticBaseOptionError(customPydanticBaseRaw);
       }
     }
 
@@ -285,15 +288,27 @@ class TypesyncImpl implements Typesync {
     } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
-      throw new InvalidRulesIndentationOption(indentation);
+      throw new InvalidRulesIndentationOptionError(indentation);
     }
 
     if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
-      throw new InvalidValidatorNamePatternOption(validatorNamePattern);
+      throw new InvalidValidatorNamePatternOptionError(validatorNamePattern);
+    }
+
+    if (startMarker.length === 0) {
+      throw new InvalidRulesStartMarkerOptionError();
+    }
+
+    if (endMarker.length === 0) {
+      throw new InvalidRulesEndMarkerOptionError();
+    }
+
+    if (startMarker === endMarker) {
+      throw new RulesMarkerOptionsNotDistinctError(startMarker);
     }
 
     if (validatorParamName.length === 0) {
-      throw new InvalidValidatorParamNameOption(validatorParamName);
+      throw new InvalidValidatorParamNameOptionError(validatorParamName);
     }
 
     return {

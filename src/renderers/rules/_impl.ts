@@ -1,8 +1,14 @@
 import { StringBuilder } from '@proficient/ds';
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 
 import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
-import { MisplacedStartMarkerError, MissingEndMarkerError, MissingStartMarkerError } from '../../errors/renderer.js';
+import {
+  MisplacedStartMarkerError,
+  MissingEndMarkerError,
+  MissingRulesOutputFileError,
+  MissingStartMarkerError,
+} from '../../errors/renderer.js';
 import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
@@ -40,17 +46,21 @@ class RulesRendererImpl implements RulesRenderer {
   private async preprocessOutputFile() {
     const { pathToOutputFile, startMarker, endMarker } = this.config;
 
+    if (!existsSync(pathToOutputFile)) {
+      throw new MissingRulesOutputFileError(pathToOutputFile);
+    }
+
     const outputFileContent = (await readFile(pathToOutputFile)).toString();
     const lines = outputFileContent.split('\n');
-    const startMarkerLineIdx = lines.findIndex(line => line.includes(startMarker));
-    const endMarkerLineIdx = lines.findIndex(line => line.includes(endMarker));
+    const startMarkerLineIdx = lines.findIndex(line => this.doesLineContainMarker(line, startMarker));
+    const endMarkerLineIdx = lines.findIndex(line => this.doesLineContainMarker(line, endMarker));
 
     if (startMarkerLineIdx === -1) {
       throw new MissingStartMarkerError(pathToOutputFile, startMarker);
     }
 
     if (endMarkerLineIdx === -1) {
-      throw new MissingEndMarkerError(pathToOutputFile, startMarker);
+      throw new MissingEndMarkerError(pathToOutputFile, endMarker);
     }
 
     if (startMarkerLineIdx >= endMarkerLineIdx) {
@@ -60,6 +70,12 @@ class RulesRendererImpl implements RulesRenderer {
     lines.splice(startMarkerLineIdx + 1, endMarkerLineIdx - startMarkerLineIdx - 1);
 
     return { lines, startMarkerLineIdx };
+  }
+
+  private doesLineContainMarker(line: string, marker: string) {
+    if (!line.trimStart().startsWith('//')) return false;
+    const parts = line.split(' ');
+    return parts.some(part => part === marker);
   }
 
   private renderDeclaration(declaration: RulesDeclaration) {
