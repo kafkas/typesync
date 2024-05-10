@@ -15,8 +15,6 @@ import { space } from '../../util/space.js';
 import type { RenderedFile } from '../_types.js';
 import type { PythonRenderer, PythonRendererConfig } from './_types.js';
 
-const UNDEFINED_SENTINEL_NAME = 'UNDEFINED';
-
 class PythonRendererImpl implements PythonRenderer {
   public readonly type = 'python';
 
@@ -67,18 +65,19 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private generateStaticDeclarationsForUndefinedSentinel() {
+    const { undefinedSentinelName } = this.config;
     const b = new StringBuilder();
 
     b.append(`${this.indent(0)}class ${PYTHON_UNDEFINED_SENTINEL_CLASS}:\n`);
     b.append(
-      `${this.indent(1)}"""Do not use this class in your code. Use the \`${UNDEFINED_SENTINEL_NAME}\` sentinel instead."""\n`
+      `${this.indent(1)}"""Do not use this class in your code. Use the \`${undefinedSentinelName}\` sentinel instead."""\n`
     );
     b.append(`${this.indent(1)}_instance = None\n\n`);
 
     b.append(`${this.indent(1)}def __init__(self):\n`);
     b.append(`${this.indent(2)}if ${PYTHON_UNDEFINED_SENTINEL_CLASS}._instance is not None:\n`);
     b.append(
-      `${this.indent(3)}raise RuntimeError("${PYTHON_UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${UNDEFINED_SENTINEL_NAME} sentinel instead.")\n`
+      `${this.indent(3)}raise RuntimeError("${PYTHON_UNDEFINED_SENTINEL_CLASS} instances cannot be created directly. Import and use the ${undefinedSentinelName} sentinel instead.")\n`
     );
     b.append(`${this.indent(2)}else:\n`);
     b.append(`${this.indent(3)}${PYTHON_UNDEFINED_SENTINEL_CLASS}._instance = self\n\n`);
@@ -93,17 +92,18 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(`${this.indent(3)}raise ValueError("Undefined field type is not valid")\n`);
     b.append(`${this.indent(2)}return value\n\n`);
 
-    b.append(`${this.indent(0)}${UNDEFINED_SENTINEL_NAME} = ${PYTHON_UNDEFINED_SENTINEL_CLASS}()\n`);
+    b.append(`${this.indent(0)}${undefinedSentinelName} = ${PYTHON_UNDEFINED_SENTINEL_CLASS}()\n`);
     b.append(
-      `${this.indent(0)}"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`${UNDEFINED_SENTINEL_NAME}\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""`
+      `${this.indent(0)}"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between \`${undefinedSentinelName}\` and \`None\` is that values that are set to \`None\` will serialize to explicit null."""`
     );
 
     return b.toString();
   }
   private generateStaticDeclarationsForTypesyncModel() {
-    const b = new StringBuilder();
-
+    const { undefinedSentinelName } = this.config;
     const baseModel = this.config.customPydanticBase?.className ?? 'pydantic.BaseModel';
+
+    const b = new StringBuilder();
 
     b.append(`${this.indent(0)}class TypesyncModel(${baseModel}):\n`);
     b.append(`${this.indent(1)}def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:\n`);
@@ -119,7 +119,7 @@ class PythonRendererImpl implements PythonRenderer {
     b.append(
       `${this.indent(4)}processed[field_name] = {key: value.model_dump(**kwargs) if isinstance(value, pydantic.BaseModel) else value for key, value in field_value.items()}\n`
     );
-    b.append(`${this.indent(3)}elif field_value is ${UNDEFINED_SENTINEL_NAME}:\n`);
+    b.append(`${this.indent(3)}elif field_value is ${undefinedSentinelName}:\n`);
     b.append(`${this.indent(4)}continue\n`);
     b.append(`${this.indent(3)}else:\n`);
     b.append(`${this.indent(4)}processed[field_name] = field_value\n`);
@@ -180,6 +180,7 @@ class PythonRendererImpl implements PythonRenderer {
   }
 
   private renderPydanticClassDeclaration(declaration: PythonPydanticClassDeclaration) {
+    const { undefinedSentinelName } = this.config;
     const { modelName, modelType, modelDocs } = declaration;
     const b = new StringBuilder();
     b.append(`class ${modelName}(TypesyncModel):\n`);
@@ -192,7 +193,7 @@ class PythonRendererImpl implements PythonRenderer {
           type: 'simple-union',
           variants: [python.UNDEFINED, attribute.type],
         });
-        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${UNDEFINED_SENTINEL_NAME}`);
+        b.append(`${this.indent(1)}${attribute.name}: ${expression.content} = ${undefinedSentinelName}`);
       } else {
         const expression = python.expressionForType(attribute.type);
         b.append(`${this.indent(1)}${attribute.name}: ${expression.content}`);
