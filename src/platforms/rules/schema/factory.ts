@@ -4,10 +4,10 @@ import {
   AliasParameterType,
   DocumentModel,
   DocumentModelImpl,
+  DocumentParameterType,
   Schema,
   SchemaImpl,
 } from './impl.js';
-import type * as types from './types.js';
 
 export function createSchema(): Schema {
   return createSchemaWithModels([]);
@@ -33,7 +33,7 @@ export function createAliasModel(params: CreateAliasModelParams): AliasModel {
 interface CreateDocumentModelParams {
   name: string;
   docs: string | null;
-  type: types.Object;
+  type: DocumentParameterType;
 }
 
 export function createDocumentModel(params: CreateDocumentModelParams): DocumentModel {

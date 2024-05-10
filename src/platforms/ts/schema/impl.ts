@@ -10,7 +10,9 @@ export type AliasParameterType = types.Type;
 
 export type AliasModel = AliasModelGeneric<AliasParameterType>;
 
-export type DocumentModel = DocumentModelGeneric<types.Object>;
+export type DocumentParameterType = types.Object;
+
+export type DocumentModel = DocumentModelGeneric<DocumentParameterType>;
 
 export interface Schema extends SchemaGeneric<types.Type, AliasModel, DocumentModel> {}
 
@@ -28,7 +30,7 @@ export class AliasModelImpl extends AbstractAliasModel<AliasParameterType> imple
   }
 }
 
-export class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements DocumentModel {
+export class DocumentModelImpl extends AbstractDocumentModel<DocumentParameterType> implements DocumentModel {
   public clone() {
     return new DocumentModelImpl(this.name, this.docs, this.cloneType());
   }
