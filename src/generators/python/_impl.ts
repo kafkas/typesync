@@ -1,8 +1,8 @@
 import { python } from '../../platforms/python/index.js';
 import { Schema } from '../../schema-new/index.js';
 import { assertNever } from '../../util/assert.js';
+import { adjustSchemaForPython } from './_adjust-schema.js';
 import { flatTypeToPython } from './_converters.js';
-import { flattenSchema } from './_flatten-schema.js';
 import type {
   PythonAliasDeclaration,
   PythonDeclaration,
@@ -17,8 +17,8 @@ class PythonGeneratorImpl implements PythonGenerator {
   public constructor(private readonly config: PythonGeneratorConfig) {}
 
   public generate(s: Schema): PythonGeneration {
-    const flattenedSchema = flattenSchema(s);
-    const { aliasModels, documentModels } = flattenedSchema;
+    const adjustedSchema = adjustSchemaForPython(s);
+    const { aliasModels, documentModels } = adjustedSchema;
     const declarations: PythonDeclaration[] = [];
     aliasModels.forEach(model => {
       const d = this.createDeclarationForFlatAliasModel(model);

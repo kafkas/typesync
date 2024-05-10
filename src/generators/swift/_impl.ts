@@ -3,8 +3,8 @@ import { swift } from '../../platforms/swift/index.js';
 import { Schema, schema } from '../../schema-new/index.js';
 import { assert, assertNever } from '../../util/assert.js';
 import { extractDiscriminantValueNew } from '../../util/extract-discriminant-value.js';
+import { adjustSchemaForSwift } from './_adjust-schema.js';
 import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
-import { flattenSchema } from './_flatten-schema.js';
 import type {
   SwiftDeclaration,
   SwiftDiscriminatedUnionEnumDeclaration,
@@ -22,11 +22,11 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   public constructor(private readonly config: SwiftGeneratorConfig) {}
 
   public generate(s: Schema): SwiftGeneration {
-    const flattenedSchema = flattenSchema(s);
-    const { aliasModels, documentModels } = flattenedSchema;
+    const adjustedSchema = adjustSchemaForSwift(s);
+    const { aliasModels, documentModels } = adjustedSchema;
     const declarations: SwiftDeclaration[] = [];
     aliasModels.forEach(model => {
-      const d = this.createDeclarationForFlatAliasModel(model, flattenedSchema);
+      const d = this.createDeclarationForFlatAliasModel(model, adjustedSchema);
       declarations.push(d);
     });
     documentModels.forEach(model => {

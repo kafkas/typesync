@@ -1,5 +1,6 @@
 import { ts } from '../../platforms/ts/index.js';
 import { Schema } from '../../schema-new/index.js';
+import { adjustSchemaForTS } from './_adjust-schema.js';
 import { objectTypeToTS, typeToTS } from './_converters.js';
 import type { TSDeclaration, TSGeneration, TSGenerator, TSGeneratorConfig } from './_types.js';
 
@@ -7,7 +8,8 @@ class TSGeneratorImpl implements TSGenerator {
   public constructor(private readonly config: TSGeneratorConfig) {}
 
   public generate(s: Schema): TSGeneration {
-    const { aliasModels, documentModels } = s;
+    const adjustedSchema = adjustSchemaForTS(s);
+    const { aliasModels, documentModels } = adjustedSchema;
     const declarations: TSDeclaration[] = [];
     aliasModels.forEach(model => {
       const d = this.createDeclarationForAliasModel(model);

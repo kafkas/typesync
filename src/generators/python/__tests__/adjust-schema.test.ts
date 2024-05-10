@@ -6,9 +6,9 @@ import {
   createSchemaFromDefinition,
 } from '../../../schema-new/index.js';
 import { deepFreeze } from '../../../util/deep-freeze.js';
-import { flattenSchema } from '../_flatten-schema.js';
+import { adjustSchemaForPython } from '../_adjust-schema.js';
 
-describe('flatten-schema', () => {
+describe('adjustSchemaForPython()', () => {
   it('does not mutate input schema', () => {
     const inputSchema = createSchemaFromDefinition({
       SomeAliasModel: {
@@ -31,7 +31,7 @@ describe('flatten-schema', () => {
     deepFreeze(inputSchema);
 
     expect(() => {
-      flattenSchema(inputSchema);
+      adjustSchemaForPython(inputSchema);
     }).not.toThrow();
   });
 
@@ -54,7 +54,7 @@ describe('flatten-schema', () => {
       },
     });
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).not.toBe(inputSchema);
   });
@@ -78,7 +78,7 @@ describe('flatten-schema', () => {
       },
     });
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect([...flattenedSchema.aliasModels, ...flattenedSchema.documentModels]).toEqual([
       ...inputSchema.aliasModels,
@@ -175,7 +175,7 @@ describe('flatten-schema', () => {
       return s;
     })();
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).toEqual(expectedFlattenedSchema);
   });
@@ -266,7 +266,7 @@ describe('flatten-schema', () => {
       return s;
     })();
 
-    const flattenedSchema = flattenSchema(inputSchema);
+    const flattenedSchema = adjustSchemaForPython(inputSchema);
 
     expect(flattenedSchema).toEqual(expectedFlattenedSchema);
   });
