@@ -5,6 +5,10 @@ export function unknownTypeToRules(_t: rules.schema.types.Unknown): rules.Any {
   return { type: 'any' };
 }
 
+export function nilTypeToRules(_t: rules.schema.types.Nil): rules.Any {
+  return { type: 'any' };
+}
+
 export function stringTypeToRules(_t: rules.schema.types.String): rules.String {
   return { type: 'string' };
 }
@@ -98,6 +102,8 @@ export function flatTypeToRules(t: rules.schema.types.Type): rules.Type {
   switch (t.type) {
     case 'unknown':
       return unknownTypeToRules(t);
+    case 'nil':
+      return nilTypeToRules(t);
     case 'string':
       return stringTypeToRules(t);
     case 'boolean':

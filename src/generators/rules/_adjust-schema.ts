@@ -67,7 +67,6 @@ export function adjustSchemaForRules(prevSchema: Schema): rules.schema.Schema {
     switch (type.type) {
       case 'unknown':
       case 'nil':
-        return { type: 'unknown' };
       case 'string':
       case 'boolean':
       case 'int':
