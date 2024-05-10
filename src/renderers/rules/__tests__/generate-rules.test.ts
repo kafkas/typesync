@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 
+import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../../constants.js';
 import { RulesGeneration } from '../../../generators/rules/index.js';
 import { getDirName } from '../../../util/fs.js';
 import { createRulesRenderer } from '../_impl.js';
@@ -11,7 +12,7 @@ describe('RulesRendererImpl', () => {
       pathToOutputFile: resolve(getDirName(import.meta.url), `firestore.rules`),
       startMarker: 't-start',
       endMarker: 't-end',
-      validatorNamePattern: 'is{modelName}',
+      validatorNamePattern: `is${RULES_VALIDATOR_NAME_PATTERN_PARAM}`,
       validatorParamName: 'data',
     });
 

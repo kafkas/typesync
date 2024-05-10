@@ -39,6 +39,7 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
+  RULES_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -287,7 +288,7 @@ class TypesyncImpl implements Typesync {
       throw new InvalidRulesIndentationOption(indentation);
     }
 
-    if (!validatorNamePattern.includes('{modelName}')) {
+    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
       throw new InvalidValidatorNamePatternOption(validatorNamePattern);
     }
 

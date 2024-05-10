@@ -1,6 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 import { readFile } from 'fs/promises';
 
+import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
 import { MisplacedStartMarkerError, MissingEndMarkerError, MissingStartMarkerError } from '../../errors/renderer.js';
 import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
@@ -151,7 +152,7 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private validatorName(modelName: string) {
-    return this.config.validatorNamePattern.replace('{modelName}', modelName);
+    return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
   private indent(count: number) {

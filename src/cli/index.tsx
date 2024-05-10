@@ -20,6 +20,7 @@ import {
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
+  RULES_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
@@ -238,7 +239,7 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_RULES_END_MARKER,
         })
         .option('validatorNamePattern', {
-          describe: `The pattern that specifies how the validators are named. The string must contain the '{modelName}' substring (this is a literal value). For example, providing 'isValid{modelName}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
+          describe: `The pattern that specifies how the validators are named. The string must contain the '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isValid${RULES_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
           default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
