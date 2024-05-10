@@ -40,11 +40,11 @@ type ResolvedDiscriminatedUnionVariant =
  * structured format that aligns closely with development practices, making it easy to understand and utilize in generating type definitions
  * across various platforms.
  */
-export interface Schema extends SchemaGeneric<types.Type, AliasModel, DocumentModel> {
+export interface Schema extends SchemaGeneric<AliasModel, DocumentModel> {
   resolveDiscriminatedUnionVariants(type: types.DiscriminatedUnion): ResolvedDiscriminatedUnionVariant[];
 }
 
-class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> implements Schema {
+class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
   private zodSchemas = createZodSchemasForSchema(this);
 
   public clone() {

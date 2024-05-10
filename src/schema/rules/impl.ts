@@ -14,9 +14,9 @@ export type DocumentParameterType = types.Object;
 
 export type DocumentModel = DocumentModelGeneric<DocumentParameterType>;
 
-export interface Schema extends SchemaGeneric<types.Type, AliasModel, DocumentModel> {}
+export interface Schema extends SchemaGeneric<AliasModel, DocumentModel> {}
 
-export class SchemaImpl extends AbstractSchema<types.Type, AliasModel, DocumentModel> implements Schema {
+export class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
   public clone() {
     return this.cloneModels(new SchemaImpl());
   }
