@@ -83,7 +83,6 @@ export type List = ListType<Type>;
 
 export type Map = MapType<Type>;
 
-// TODO: Confirm. This was previously ObjectType<Type>
 export type Object = ObjectType<ObjectField>;
 
 export interface Alias {

@@ -1,7 +1,7 @@
 import type { types } from '../../types/index.js';
 import { createAliasModel, createSchema, createSchemaWithModels } from '../impl.js';
 
-describe('schema.parseType()', () => {
+describe('schema.validateType()', () => {
   describe('unknown', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();
