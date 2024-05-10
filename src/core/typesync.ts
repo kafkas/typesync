@@ -24,6 +24,7 @@ import type {
   ValidateOptions,
   ValidateResult,
 } from '../api/index.js';
+import { GenerateRepresentationOptions, GenerateRepresentationResult } from '../api/typesync.js';
 import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
@@ -350,13 +351,19 @@ class TypesyncImpl implements Typesync {
     }
   }
 
+  public generateRepresentation(opts: GenerateRepresentationOptions): GenerateRepresentationResult {
+    const { definition: definitionGlobPattern } = opts;
+    const { definition, schema: s } = this.createCoreObjects(definitionGlobPattern, false);
+    return { definition, schema: s };
+  }
+
   private createCoreObjects(definitionGlobPattern: string, debug: boolean) {
     const logger = createLogger(debug);
     const parser = createDefinitionParser(logger);
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
-    return { logger, schema: schema.createSchemaFromDefinition(definition) };
+    return { logger, definition, schema: schema.createSchemaFromDefinition(definition) };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {
