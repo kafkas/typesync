@@ -1,8 +1,14 @@
 import { StringBuilder } from '@proficient/ds';
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 
 import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
-import { MisplacedStartMarkerError, MissingEndMarkerError, MissingStartMarkerError } from '../../errors/renderer.js';
+import {
+  MisplacedStartMarkerError,
+  MissingEndMarkerError,
+  MissingRulesOutputFileError,
+  MissingStartMarkerError,
+} from '../../errors/renderer.js';
 import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
@@ -39,6 +45,10 @@ class RulesRendererImpl implements RulesRenderer {
 
   private async preprocessOutputFile() {
     const { pathToOutputFile, startMarker, endMarker } = this.config;
+
+    if (!existsSync(pathToOutputFile)) {
+      throw new MissingRulesOutputFileError(pathToOutputFile);
+    }
 
     const outputFileContent = (await readFile(pathToOutputFile)).toString();
     const lines = outputFileContent.split('\n');
