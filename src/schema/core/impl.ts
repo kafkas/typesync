@@ -1,36 +1,53 @@
 import { converters } from '../../converters/index.js';
 import { definition } from '../../definition/index.js';
 import { InvalidSchemaTypeError } from '../../errors/invalid-schema-type.js';
-import { assert, assertNever } from '../../util/assert.js';
-import { AbstractAliasModel, AbstractDocumentModel, AbstractSchema } from '../abstract.js';
+import { assertNever } from '../../util/assert.js';
 import {
-  AliasModel as AliasModelGeneric,
-  DocumentModel as DocumentModelGeneric,
-  Schema as SchemaGeneric,
-} from '../generic.js';
+  AliasModel as AliasModelClass,
+  CreateAliasModelParams,
+  CreateDocumentModelParams,
+  DocumentModel as DocumentModelClass,
+  Schema as SchemaClass,
+} from '../factory.js';
 import { createZodSchemasForSchema } from './_zod-schemas.js';
 import type * as types from './types.js';
 
-export type AliasModel = AliasModelGeneric<types.Type>;
+export type AliasParameterType = types.Type;
+export type DocumentParameterType = types.Object;
 
-export type DocumentModel = DocumentModelGeneric<types.Object>;
+export class AliasModel extends AliasModelClass<AliasParameterType> {}
+export class DocumentModel extends DocumentModelClass<DocumentParameterType> {}
 
-interface ResolvedDiscriminatedUnionObjectVariant {
-  type: 'object-variant';
-  objectType: types.Object;
-  discriminantType: types.StringLiteral;
+export function createSchema() {
+  return createSchemaWithModels([]);
 }
 
-interface ResolvedDiscriminatedUnionAliasVariant {
-  type: 'alias-variant';
-  aliasType: types.Alias;
-  originalObjectType: types.Object;
-  discriminantType: types.StringLiteral;
+/**
+ * Creates a new Typesync schema from the specified definition.
+ */
+export function createSchemaFromDefinition(def: definition.Definition) {
+  const models = Object.entries(def).map(([modelName, defModel]) => {
+    switch (defModel.model) {
+      case 'alias': {
+        const schemaType = converters.definition.typeToSchema(defModel.type);
+        return new AliasModel(modelName, defModel.docs ?? null, schemaType);
+      }
+      case 'document': {
+        const schemaType = converters.definition.objectTypeToSchema(defModel.type);
+        return new DocumentModel(modelName, defModel.docs ?? null, schemaType);
+      }
+      default:
+        assertNever(defModel);
+    }
+  });
+  return createSchemaWithModels(models);
 }
 
-type ResolvedDiscriminatedUnionVariant =
-  | ResolvedDiscriminatedUnionObjectVariant
-  | ResolvedDiscriminatedUnionAliasVariant;
+export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]) {
+  const s = new Schema();
+  s.addModelGroup(models);
+  return s;
+}
 
 /**
  * Represents a structured model of a database schema. The `Schema` interface provides a higher-level, organized representation of the database
@@ -40,46 +57,17 @@ type ResolvedDiscriminatedUnionVariant =
  * structured format that aligns closely with development practices, making it easy to understand and utilize in generating type definitions
  * across various platforms.
  */
-export interface Schema extends SchemaGeneric<AliasModel, DocumentModel> {
-  resolveDiscriminatedUnionVariants(type: types.DiscriminatedUnion): ResolvedDiscriminatedUnionVariant[];
-}
 
-class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Schema {
+export class Schema extends SchemaClass<
+  types.Type,
+  AliasParameterType,
+  DocumentParameterType,
+  types.Object,
+  types.DiscriminatedUnion
+> {
   private zodSchemas = createZodSchemasForSchema(this);
 
-  public clone() {
-    return this.cloneModels(new SchemaImpl());
-  }
-
-  public resolveDiscriminatedUnionVariants(t: types.DiscriminatedUnion) {
-    return t.variants.map((variant): ResolvedDiscriminatedUnionVariant => {
-      if (variant.type === 'object') {
-        const { fields } = variant;
-        const discriminantField = fields.find(f => f.name === t.discriminant);
-        assert(discriminantField?.type.type === 'string-literal');
-        return {
-          type: 'object-variant',
-          objectType: variant,
-          discriminantType: discriminantField.type,
-        };
-      } else if (variant.type === 'alias') {
-        const aliasModel = this.getAliasModel(variant.name);
-        assert(aliasModel?.type.type === 'object');
-        const discriminantField = aliasModel.type.fields.find(f => f.name === t.discriminant);
-        assert(discriminantField?.type.type === 'string-literal');
-        return {
-          type: 'alias-variant',
-          aliasType: variant,
-          originalObjectType: aliasModel.type,
-          discriminantType: discriminantField.type,
-        };
-      } else {
-        assertNever(variant);
-      }
-    });
-  }
-
-  public validateType(t: unknown) {
+  public override validateType(t: unknown) {
     const { type } = this.zodSchemas;
     const parseRes = type.safeParse(t);
     if (!parseRes.success) {
@@ -96,74 +84,12 @@ class SchemaImpl extends AbstractSchema<AliasModel, DocumentModel> implements Sc
   }
 }
 
-class AliasModelImpl extends AbstractAliasModel<types.Type> implements AliasModel {
-  public clone() {
-    return new AliasModelImpl(this.name, this.docs, this.cloneType());
-  }
-}
-
-class DocumentModelImpl extends AbstractDocumentModel<types.Object> implements DocumentModel {
-  public clone() {
-    return new DocumentModelImpl(this.name, this.docs, this.cloneType());
-  }
-}
-
-/**
- * Creates a new Typesync schema.
- */
-export function createSchema(): Schema {
-  return createSchemaWithModels([]);
-}
-
-/**
- * Creates a new Typesync schema from the specified definition.
- */
-export function createSchemaFromDefinition(def: definition.Definition): Schema {
-  const models = Object.entries(def).map(([modelName, defModel]) => {
-    switch (defModel.model) {
-      case 'alias': {
-        const schemaType = converters.definition.typeToSchema(defModel.type);
-        return new AliasModelImpl(modelName, defModel.docs ?? null, schemaType);
-      }
-      case 'document': {
-        const schemaType = converters.definition.objectTypeToSchema(defModel.type);
-        return new DocumentModelImpl(modelName, defModel.docs ?? null, schemaType);
-      }
-      default:
-        assertNever(defModel);
-    }
-  });
-
-  return createSchemaWithModels(models);
-}
-
-/**
- * Creates a new Typesync schema with the specified models.
- */
-export function createSchemaWithModels(models: (AliasModel | DocumentModel)[]): Schema {
-  const s = new SchemaImpl();
-  s.addModelGroup(models);
-  return s;
-}
-
-interface CreateAliasModelParams {
-  name: string;
-  docs: string | null;
-  value: types.Type;
-}
-
-export function createAliasModel(params: CreateAliasModelParams): AliasModel {
+export function createAliasModel(params: CreateAliasModelParams<AliasParameterType>) {
   const { name, docs, value } = params;
-  return new AliasModelImpl(name, docs, value);
+  return new AliasModel(name, docs, value);
 }
 
-interface CreateDocumentModelParams {
-  name: string;
-  docs: string | null;
-  type: types.Object;
-}
-
-export function createDocumentModel(params: CreateDocumentModelParams): DocumentModel {
+export function createDocumentModel(params: CreateDocumentModelParams<DocumentParameterType>) {
   const { name, docs, type } = params;
-  return new DocumentModelImpl(name, docs, type);
+  return new DocumentModel(name, docs, type);
 }
