@@ -20,6 +20,7 @@ import type {
   PythonGenerationTarget,
   SwiftGenerationTarget,
   TSGenerationTarget,
+  TSObjectTypeFormat,
   Typesync,
   ValidateOptions,
   ValidateResult,
@@ -77,6 +78,7 @@ interface NormalizedGenerateTsRepresentationOptions {
 
 interface NormalizedGenerateTsOptions extends NormalizedGenerateTsRepresentationOptions {
   pathToOutputFile: string;
+  objectTypeFormat: TSObjectTypeFormat;
   indentation: number;
 }
 
@@ -143,11 +145,16 @@ class TypesyncImpl implements Typesync {
   }
 
   private normalizeGenerateTsOpts(opts: GenerateTsOptions): NormalizedGenerateTsOptions {
-    const { outFile, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
+    const { outFile, objectTypeFormat, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidTSIndentationOptionError(indentation);
     }
-    return { ...this.normalizeGenerateTsRepresentationOpts(rest), pathToOutputFile: outFile, indentation };
+    return {
+      ...this.normalizeGenerateTsRepresentationOpts(rest),
+      pathToOutputFile: outFile,
+      objectTypeFormat,
+      indentation,
+    };
   }
 
   private normalizeGenerateTsRepresentationOpts(

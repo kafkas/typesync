@@ -15,6 +15,17 @@ export function getTSTargets() {
   return objectKeys(TS_TARGETS);
 }
 
+const OBJECT_TYPE_FORMATS = {
+  interface: true,
+  'type-alias': true,
+};
+
+export type TSObjectTypeFormat = keyof typeof OBJECT_TYPE_FORMATS;
+
+export function getObjectTypeFormats() {
+  return objectKeys(OBJECT_TYPE_FORMATS);
+}
+
 export interface GenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
@@ -23,6 +34,7 @@ export interface GenerateTsRepresentationOptions {
 
 export interface GenerateTsOptions extends GenerateTsRepresentationOptions {
   outFile: string;
+  objectTypeFormat: 'interface' | 'type-alias';
   indentation?: number;
 }
 

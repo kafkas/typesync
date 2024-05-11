@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { getPythonTargets, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
+import { getObjectTypeFormats } from '../api/ts.js';
 import {
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
@@ -21,6 +22,7 @@ import {
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
+  DEFAULT_TS_OBJECT_TYPE_FORMAT,
   RULES_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
@@ -56,6 +58,14 @@ await yargs(hideBin(process.argv))
           type: 'string',
           demandOption: true,
         })
+        .option('objectTypeFormat', {
+          describe:
+            'Controls how objects are defined in the TypeScript output. Object types can be represented either by interfaces or type aliases.',
+          type: 'string',
+          demandOption: false,
+          choices: getObjectTypeFormats(),
+          default: DEFAULT_TS_OBJECT_TYPE_FORMAT,
+        })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
@@ -69,7 +79,7 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_TS_DEBUG,
         }),
     async args => {
-      const { definition, target, outFile, indentation, debug } = args;
+      const { definition, target, outFile, objectTypeFormat, indentation, debug } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -77,6 +87,7 @@ await yargs(hideBin(process.argv))
           definition: resolve(process.cwd(), definition),
           target,
           outFile: pathToOutputFile,
+          objectTypeFormat,
           indentation,
           debug,
         });
