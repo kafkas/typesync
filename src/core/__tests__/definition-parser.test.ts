@@ -20,4 +20,19 @@ describe('definition-parser', () => {
     const definition = parser.parseDefinition(filePaths);
     expect(definition).toMatchSnapshot();
   });
+
+  it(`ignores the '$schema' field in definition files`, () => {
+    const parser = createDefinitionParser();
+    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/with-$schema-key.json`);
+    const filePaths = globSync(definitionGlobPattern);
+    const definition = parser.parseDefinition(filePaths);
+    expect(definition).toMatchSnapshot();
+  });
+
+  it(`throws if the file contains an incorrect field`, () => {
+    const parser = createDefinitionParser();
+    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/bad-field.json`);
+    const filePaths = globSync(definitionGlobPattern);
+    expect(() => parser.parseDefinition(filePaths)).toThrow();
+  });
 });
