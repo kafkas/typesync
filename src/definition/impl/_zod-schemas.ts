@@ -196,4 +196,12 @@ export const documentModel = z
 
 export const model = z.discriminatedUnion('model', [aliasModel, documentModel]);
 
-export const definition = z.record(model);
+export const definition = z
+  .object({
+    $schema: z.string().optional(),
+  })
+  .catchall(model)
+  .transform(candidate => {
+    const { $schema: _, ...rest } = candidate;
+    return rest;
+  });
