@@ -7,6 +7,12 @@ import { type Schema } from './impl.js';
 import type * as types from './types.js';
 
 export function createZodSchemasForSchema(schema: Schema) {
+  const anyType = z
+    .object({
+      type: z.literal('any'),
+    })
+    .strict();
+
   const unknownType = z
     .object({
       type: z.literal('unknown'),
@@ -49,7 +55,8 @@ export function createZodSchemasForSchema(schema: Schema) {
     })
     .strict();
 
-  const primitiveType = unknownType
+  const primitiveType = anyType
+    .or(unknownType)
     .or(nilType)
     .or(stringType)
     .or(booleanType)
