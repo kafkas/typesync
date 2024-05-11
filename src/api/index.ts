@@ -30,6 +30,7 @@ export {
   type GenerateTsRepresentationResult,
   type GenerateTsResult,
   type TSGenerationTarget,
+  type TSObjectTypeFormat,
   getTSTargets,
 } from './ts.js';
 export { type Definition } from '../definition/impl/index.js';

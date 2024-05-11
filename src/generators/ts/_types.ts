@@ -1,4 +1,4 @@
-import type { TSGenerationTarget } from '../../api/index.js';
+import type { TSGenerationTarget, TSObjectTypeFormat } from '../../api/index.js';
 import type { ts } from '../../platforms/ts/index.js';
 import type { schema } from '../../schema/index.js';
 
@@ -25,6 +25,7 @@ export interface TSGeneration {
 
 export interface TSGeneratorConfig {
   target: TSGenerationTarget;
+  objectTypeFormat: TSObjectTypeFormat;
 }
 
 export interface TSGenerator {

@@ -1,9 +1,12 @@
+import type { TSObjectTypeFormat } from './api/ts.js';
+
 export const PYTHON_UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 export const RULES_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
 
 /*
  * Default values
  */
+export const DEFAULT_TS_OBJECT_TYPE_FORMAT: TSObjectTypeFormat = 'interface';
 export const DEFAULT_TS_INDENTATION = 2;
 export const DEFAULT_TS_DEBUG = false;
 

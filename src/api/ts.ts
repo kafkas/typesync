@@ -15,9 +15,21 @@ export function getTSTargets() {
   return objectKeys(TS_TARGETS);
 }
 
+const OBJECT_TYPE_FORMATS = {
+  interface: true,
+  'type-alias': true,
+};
+
+export type TSObjectTypeFormat = keyof typeof OBJECT_TYPE_FORMATS;
+
+export function getObjectTypeFormats() {
+  return objectKeys(OBJECT_TYPE_FORMATS);
+}
+
 export interface GenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
+  objectTypeFormat: TSObjectTypeFormat;
   debug?: boolean;
 }
 
