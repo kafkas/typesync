@@ -5,6 +5,7 @@ import { type types } from '../../types/index.js';
 import {
   aliasModel,
   aliasType,
+  anyType,
   booleanLiteralType,
   booleanType,
   definition,
@@ -36,6 +37,12 @@ import {
 import type { AliasModel, Definition, DocumentModel, Model } from '../impl.js';
 
 type IsExact<T, U> = [Required<T>] extends [Required<U>] ? ([Required<U>] extends [Required<T>] ? true : false) : false;
+
+(() => {
+  type DeclaredType = types.Any;
+  type InferredType = z.infer<typeof anyType>;
+  assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+})();
 
 (() => {
   type DeclaredType = types.Unknown;
