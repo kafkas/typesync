@@ -3,6 +3,7 @@ import type { Primitive, Type } from './_types.js';
 
 export function isPrimitiveType(t: Type): t is Primitive {
   switch (t.type) {
+    case 'any':
     case 'unknown':
     case 'null':
     case 'string':

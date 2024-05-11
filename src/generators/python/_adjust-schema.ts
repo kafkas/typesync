@@ -104,6 +104,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
 
   function flattenType(type: schema.types.Type, aliasName: string): FlattenTypeResult {
     switch (type.type) {
+      case 'any':
       case 'unknown':
       case 'nil':
       case 'string':

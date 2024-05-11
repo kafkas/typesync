@@ -33,6 +33,7 @@ class PythonGeneratorImpl implements PythonGenerator {
 
   private createDeclarationForFlatAliasModel(model: schema.python.AliasModel): PythonDeclaration {
     switch (model.type.type) {
+      case 'any':
       case 'unknown':
       case 'nil':
       case 'string':

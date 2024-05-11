@@ -2,6 +2,10 @@
  * Models
  */
 
+export interface Any {
+  type: 'any';
+}
+
 export interface Unknown {
   type: 'unknown';
 }
@@ -30,7 +34,7 @@ export interface Timestamp {
   type: 'timestamp';
 }
 
-export type Primitive = Unknown | Nil | String | Boolean | Int | Double | Timestamp;
+export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp;
 
 export interface StringLiteral {
   type: 'string-literal';

@@ -2,6 +2,14 @@ import { createAliasModel, createSchema, createSchemaWithModels } from '../impl.
 import type * as types from '../types.js';
 
 describe('schema.validateType()', () => {
+  describe('any', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Any = { type: 'any' };
+      expect(() => schema.validateType(t)).not.toThrow();
+    });
+  });
+
   describe('unknown', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();

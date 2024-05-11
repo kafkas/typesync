@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import type { types } from '../types/index.js';
 
+export const anyType = z.literal('any').describe('Any type.');
+
 export const unknownType = z.literal('unknown').describe('An unknown type.');
 
 export const nilType = z.literal('nil').describe('A nil type.');
@@ -17,7 +19,7 @@ export const doubleType = z.literal('double').describe('A double type.');
 export const timestampType = z.literal('timestamp').describe('A timestamp type.');
 
 export const primitiveType = z
-  .union([unknownType, nilType, stringType, booleanType, intType, doubleType, timestampType])
+  .union([anyType, unknownType, nilType, stringType, booleanType, intType, doubleType, timestampType])
   .describe('A primitive type');
 
 export const stringLiteralType = z

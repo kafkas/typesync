@@ -2,6 +2,10 @@ import { python } from '../../platforms/python/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
+export function anyTypeToPython(_t: schema.python.types.Any): python.Any {
+  return { type: 'any' };
+}
+
 export function unknownTypeToPython(_t: schema.python.types.Unknown): python.Any {
   return { type: 'any' };
 }
@@ -62,6 +66,8 @@ export function flatAliasTypeToPython(t: schema.python.types.Alias): python.Alia
 
 export function flatTypeToPython(t: schema.python.types.Type): python.Type {
   switch (t.type) {
+    case 'any':
+      return anyTypeToPython(t);
     case 'unknown':
       return unknownTypeToPython(t);
     case 'nil':
