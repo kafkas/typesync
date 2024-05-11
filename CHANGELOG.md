@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- 0706e1c: Implemented the `undefinedSentinelName` config option for Python.
+- 85476ec: Implemented a change to expose factory methods for schema and schema types.
+- 6a4f0bc: [BREAKING] Dropped support for mixed enums. Enum members must be either string or int.
+- bf3418f: Implemented `generateRepresentation()` in the programmatic API.
+
+### Patch Changes
+
+- 0effd25: The `debug` key in `ValidateOptions` key is now optional.
+- 441728a: The `startMarker` and `endMarker` options are now required to be distinct non-empty strings.
+- 441728a: Improved the check that searches for markers in Rules file.
+- fb2d7ba: Optional discriminant fields are now disallowed.
+
 ## 0.6.3
 
 ### Patch Changes
