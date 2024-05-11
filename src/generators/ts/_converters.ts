@@ -2,6 +2,10 @@ import { ts } from '../../platforms/ts/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
+export function anyTypeToTS(_t: schema.ts.types.Any): ts.Any {
+  return { type: 'any' };
+}
+
 export function unknownTypeToTS(_t: schema.ts.types.Unknown): ts.Unknown {
   return { type: 'unknown' };
 }
@@ -84,6 +88,8 @@ export function aliasTypeToTS(t: schema.ts.types.Alias): ts.Alias {
 
 export function typeToTS(t: schema.ts.types.Type): ts.Type {
   switch (t.type) {
+    case 'any':
+      return anyTypeToTS(t);
     case 'unknown':
       return unknownTypeToTS(t);
     case 'nil':

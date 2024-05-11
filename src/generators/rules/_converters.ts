@@ -2,6 +2,10 @@ import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
+export function anyTypeToRules(_t: schema.rules.types.Any): rules.Any {
+  return { type: 'any' };
+}
+
 export function unknownTypeToRules(_t: schema.rules.types.Unknown): rules.Any {
   return { type: 'any' };
 }
@@ -101,6 +105,8 @@ export function flatAliasTypeToRules(t: schema.rules.types.Alias): rules.Alias {
 
 export function flatTypeToRules(t: schema.rules.types.Type): rules.Type {
   switch (t.type) {
+    case 'any':
+      return anyTypeToRules(t);
     case 'unknown':
       return unknownTypeToRules(t);
     case 'nil':

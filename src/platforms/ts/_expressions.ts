@@ -3,6 +3,7 @@ import { StringBuilder } from '@proficient/ds';
 import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
+  Any,
   Boolean,
   Enum,
   List,
@@ -21,6 +22,10 @@ import type {
 
 export interface Expression {
   content: string;
+}
+
+export function expressionForAnyType(_t: Any): Expression {
+  return { content: 'any' };
 }
 
 export function expressionForUnknownType(_t: Unknown): Expression {
@@ -122,6 +127,8 @@ export function expressionForAliasType(t: Alias): Expression {
 
 export function expressionForType(t: Type): Expression {
   switch (t.type) {
+    case 'any':
+      return expressionForAnyType(t);
     case 'unknown':
       return expressionForUnknownType(t);
     case 'null':

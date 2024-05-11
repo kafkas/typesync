@@ -13,6 +13,7 @@ import type {
 } from '../generic.js';
 
 export {
+  Any,
   Unknown,
   Nil,
   String,

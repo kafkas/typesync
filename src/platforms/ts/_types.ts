@@ -1,3 +1,7 @@
+export interface Any {
+  readonly type: 'any';
+}
+
 export interface Unknown {
   readonly type: 'unknown';
 }
@@ -22,7 +26,7 @@ export interface Timestamp {
   readonly type: 'timestamp';
 }
 
-export type Primitive = Unknown | Null | String | Boolean | Number | Timestamp;
+export type Primitive = Any | Unknown | Null | String | Boolean | Number | Timestamp;
 
 export interface Literal {
   readonly type: 'literal';

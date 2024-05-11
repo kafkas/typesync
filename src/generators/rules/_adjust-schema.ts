@@ -64,6 +64,7 @@ export function adjustSchemaForRules(prevSchema: schema.Schema): schema.rules.Sc
 
   function flattenType(type: schema.types.Type): schema.rules.types.Type {
     switch (type.type) {
+      case 'any':
       case 'unknown':
       case 'nil':
       case 'string':

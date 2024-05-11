@@ -1,3 +1,5 @@
+export type Any = 'any';
+
 export type Unknown = 'unknown';
 
 export type Nil = 'nil';
@@ -12,7 +14,7 @@ export type Double = 'double';
 
 export type Timestamp = 'timestamp';
 
-export type Primitive = Unknown | Nil | String | Boolean | Int | Double | Timestamp;
+export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp;
 
 export interface StringLiteral {
   type: 'literal';

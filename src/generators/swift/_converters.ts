@@ -2,6 +2,10 @@ import { swift } from '../../platforms/swift/index.js';
 import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 
+export function anyTypeToSwift(_t: schema.swift.types.Any): swift.Any {
+  return { type: 'any' };
+}
+
 export function unknownTypeToSwift(_t: schema.swift.types.Unknown): swift.Any {
   return { type: 'any' };
 }
@@ -73,6 +77,8 @@ export function flatAliasTypeToSwift(t: schema.swift.types.Alias): swift.Alias {
 
 export function flatTypeToSwift(t: schema.swift.types.Type): swift.Type {
   switch (t.type) {
+    case 'any':
+      return anyTypeToSwift(t);
     case 'unknown':
       return unknownTypeToSwift(t);
     case 'nil':

@@ -38,6 +38,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
 
   private createDeclarationForFlatAliasModel(model: schema.swift.AliasModel, s: schema.swift.Schema): SwiftDeclaration {
     switch (model.type.type) {
+      case 'any':
       case 'unknown':
       case 'nil':
       case 'string':
