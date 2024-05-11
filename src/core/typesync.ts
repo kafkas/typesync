@@ -73,12 +73,12 @@ import { createLogger } from './logger.js';
 interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
   target: TSGenerationTarget;
+  objectTypeFormat: TSObjectTypeFormat;
   debug: boolean;
 }
 
 interface NormalizedGenerateTsOptions extends NormalizedGenerateTsRepresentationOptions {
   pathToOutputFile: string;
-  objectTypeFormat: TSObjectTypeFormat;
   indentation: number;
 }
 
@@ -137,22 +137,21 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateTsRepresentationOptions
   ): Promise<GenerateTsRepresentationResult> {
     const opts = this.normalizeGenerateTsRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, target, debug } = opts;
+    const { definitionGlobPattern, target, objectTypeFormat, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createTSGenerator({ target });
+    const generator = createTSGenerator({ target, objectTypeFormat });
     const generation = generator.generate(s);
     return { type: 'ts', schema: s, generation };
   }
 
   private normalizeGenerateTsOpts(opts: GenerateTsOptions): NormalizedGenerateTsOptions {
-    const { outFile, objectTypeFormat, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
+    const { outFile, indentation = DEFAULT_TS_INDENTATION, ...rest } = opts;
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidTSIndentationOptionError(indentation);
     }
     return {
       ...this.normalizeGenerateTsRepresentationOpts(rest),
       pathToOutputFile: outFile,
-      objectTypeFormat,
       indentation,
     };
   }
@@ -160,10 +159,11 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateTsRepresentationOpts(
     opts: GenerateTsRepresentationOptions
   ): NormalizedGenerateTsRepresentationOptions {
-    const { definition, target, debug = DEFAULT_TS_DEBUG } = opts;
+    const { definition, target, objectTypeFormat, debug = DEFAULT_TS_DEBUG } = opts;
     return {
       definitionGlobPattern: definition,
       target,
+      objectTypeFormat,
       debug,
     };
   }

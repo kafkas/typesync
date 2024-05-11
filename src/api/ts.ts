@@ -29,12 +29,12 @@ export function getObjectTypeFormats() {
 export interface GenerateTsRepresentationOptions {
   definition: string;
   target: TSGenerationTarget;
+  objectTypeFormat: TSObjectTypeFormat;
   debug?: boolean;
 }
 
 export interface GenerateTsOptions extends GenerateTsRepresentationOptions {
   outFile: string;
-  objectTypeFormat: 'interface' | 'type-alias';
   indentation?: number;
 }
 
