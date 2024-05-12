@@ -1,9 +1,11 @@
-import { buildMermaidGraph } from '../graph.js';
-import { GenericDocument, RootCollection, SubCollection } from '../nodes.js';
-import { MermaidGraph } from '../types.js';
+import { GraphGeneratorImpl } from '../_impl.js';
+import { MermaidGraph } from '../_types.js';
+import { GenericDocument, RootCollection, SubCollection } from '../schema-graph.js';
 
-describe('graph', () => {
-  it(`builds graph correctly`, () => {
+describe('GraphGeneratorImpl', () => {
+  it(`correctly builds a Mermaid graph from a SchemaGraph`, () => {
+    const generator = new GraphGeneratorImpl({ orientation: 'horizontal' });
+
     const booksCollection = new RootCollection('books', []);
     const genericBookDocument = new GenericDocument('bookId', booksCollection, []);
     booksCollection.documents.push(genericBookDocument);
@@ -11,7 +13,8 @@ describe('graph', () => {
     const chaptersCollection = new SubCollection('chapters', []);
     const translationsCollection = new SubCollection('translations', []);
     genericBookDocument.subCollections.push(reviewsSubCollection, chaptersCollection, translationsCollection);
-    const graph = buildMermaidGraph('horizontal', [booksCollection]);
+
+    const graph = generator.buildMermaidGraph({ rootCollections: [booksCollection] });
 
     const expectedGraph: MermaidGraph = {
       orientation: 'LR',

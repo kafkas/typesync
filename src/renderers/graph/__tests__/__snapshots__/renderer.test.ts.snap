@@ -1,10 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`graph renders graph correctly 1`] = `
-"graph LR
+exports[`GraphRendererImpl correctly renders a Mermaid graph generation 1`] = `
+{
+  "content": "graph LR
     books --> generic_bookId[bookId]
     generic_bookId[bookId] --> reviews
     generic_bookId[bookId] --> chapters
     generic_bookId[bookId] --> translations
-"
+",
+}
 `;

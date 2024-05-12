@@ -39,3 +39,7 @@ export class LiteralDocument {
 }
 
 export type Document = GenericDocument | LiteralDocument;
+
+export interface SchemaGraph {
+  rootCollections: RootCollection[];
+}
