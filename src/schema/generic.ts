@@ -148,6 +148,7 @@ export interface DocumentModel<T> {
   name: string;
   docs: string | null;
   type: T;
+  path: string;
   clone(): DocumentModel<T>;
 }
 

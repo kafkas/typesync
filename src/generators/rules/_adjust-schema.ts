@@ -107,11 +107,12 @@ export function adjustSchemaForRules(prevSchema: schema.Schema): schema.rules.Sc
       value: flattenType(aliasModel.type),
     })
   );
-  const newSchemaDocumentModels = documentModels.map(aliasModel =>
+  const newSchemaDocumentModels = documentModels.map(documentModel =>
     schema.rules.createDocumentModel({
-      name: aliasModel.name,
-      docs: aliasModel.docs,
-      type: flattenObjectType(aliasModel.type),
+      name: documentModel.name,
+      docs: documentModel.docs,
+      type: flattenObjectType(documentModel.type),
+      path: documentModel.path,
     })
   );
 

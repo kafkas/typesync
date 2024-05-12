@@ -199,6 +199,7 @@ export function adjustSchemaForSwift(prevSchema: schema.Schema): schema.swift.Sc
       name: documentModel.name,
       docs: documentModel.docs,
       type: flattenedType,
+      path: documentModel.path,
     });
     newSchemaAliasModels.push(...extractedAliasModels);
     newSchemaDocumentModels.push(flattenedModel);

@@ -190,6 +190,8 @@ export const documentModel = z
     model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
     docs: z.string().optional().describe('Optional documentation for the model.'),
     type: objectType.describe(`The type that represents the shape of the document model. Must be an 'object' type.`),
+    // TODO: Expand description
+    path: z.string().min(1).describe(`An exact or generic path to the document.`),
   })
   .strict()
   .describe('A document model.');

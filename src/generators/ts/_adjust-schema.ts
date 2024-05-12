@@ -7,7 +7,7 @@ export function adjustSchemaForTS(prevSchema: schema.Schema): schema.ts.Schema {
     schema.ts.createAliasModel({ name: m.name, docs: m.docs, value: m.type })
   );
   const newDocumentModels = documentModels.map(m =>
-    schema.ts.createDocumentModel({ name: m.name, docs: m.docs, type: m.type })
+    schema.ts.createDocumentModel({ name: m.name, docs: m.docs, type: m.type, path: m.path })
   );
   return schema.ts.createSchemaWithModels([...newAliasModels, ...newDocumentModels]);
 }

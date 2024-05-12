@@ -22,6 +22,7 @@ export interface CreateDocumentModelParams<DocumentParameterType> {
   name: string;
   docs: string | null;
   type: DocumentParameterType;
+  path: string;
 }
 
 export class AliasModel<AliasParameterType>
@@ -38,7 +39,7 @@ export class DocumentModel<DocumentParameterType>
   implements DocumentModelGeneric<DocumentParameterType>
 {
   public clone() {
-    return new DocumentModel(this.name, this.docs, this.cloneType());
+    return new DocumentModel(this.name, this.docs, this.cloneType(), this.path);
   }
 }
 
@@ -137,7 +138,7 @@ export class SchemaFactory<
   }
 
   public createDocumentModel(params: CreateDocumentModelParams<DocumentParameterType>) {
-    const { name, docs, type } = params;
-    return new DocumentModel(name, docs, type);
+    const { name, docs, type, path } = params;
+    return new DocumentModel(name, docs, type, path);
   }
 }

@@ -181,6 +181,7 @@ export function adjustSchemaForPython(prevSchema: schema.Schema): schema.python.
       name: documentModel.name,
       docs: documentModel.docs,
       type: flattenedType,
+      path: documentModel.path,
     });
     newSchemaAliasModels.push(...extractedAliasModels);
     newSchemaDocumentModels.push(flattenedModel);

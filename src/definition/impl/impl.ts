@@ -10,6 +10,7 @@ export interface DocumentModel {
   model: 'document';
   docs?: string;
   type: types.Object;
+  path: string;
 }
 
 export type Model = AliasModel | DocumentModel;
