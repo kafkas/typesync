@@ -19,6 +19,7 @@ describe('adjustSchemaForSwift()', () => {
             },
           },
         },
+        path: 'documents/{documentId}',
       },
     });
 
@@ -45,6 +46,7 @@ describe('adjustSchemaForSwift()', () => {
             },
           },
         },
+        path: 'documents/{documentId}',
       },
     });
 
@@ -69,6 +71,7 @@ describe('adjustSchemaForSwift()', () => {
             },
           },
         },
+        path: 'documents/{documentId}',
       },
     });
 
@@ -123,6 +126,7 @@ describe('adjustSchemaForSwift()', () => {
           ],
           additionalFields: false,
         },
+        path: 'users/{userId}',
       });
 
       s.addModel(userModel);
@@ -162,6 +166,7 @@ describe('adjustSchemaForSwift()', () => {
           ],
           additionalFields: false,
         },
+        path: 'users/{userId}',
       });
 
       s.addModelGroup([aliasModel, userModel]);
