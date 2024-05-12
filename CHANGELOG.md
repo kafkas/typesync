@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- 2f7c904: Implemented the `objectTypeFormat` config option for TypeScript.
+- bc61fd4: JSON definition files can now include a `$schema` key. This key will be ignored since it's used to load the JSON schema.
+- ad6c602: Added an `any` type to the spec.
+
 ## 0.7.0
 
 ### Minor Changes
