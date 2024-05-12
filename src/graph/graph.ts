@@ -1,71 +1,28 @@
-import { StringBuilder } from '@proficient/ds';
-
 import { assertNever } from '../util/assert.js';
+import type { Collection, RootCollection } from './nodes.js';
+import { MermaidGraph, MermaidGraphLink, MermaidGraphOrientation } from './types.js';
 
-export class RootCollection {
-  public readonly type = 'root-collection';
+type SchemaGraphOrientation = 'vertical' | 'horizontal';
 
-  public constructor(
-    public readonly id: string,
-    public readonly documents: Document[]
-  ) {}
-}
-
-export class SubCollection {
-  public readonly type = 'sub-collection';
-
-  public constructor(
-    public readonly id: string,
-    public readonly documents: Document[]
-  ) {}
-}
-
-type Collection = RootCollection | SubCollection;
-
-export class GenericDocument {
-  public readonly type = 'generic-document';
-
-  public constructor(
-    public readonly genericId: string,
-    public readonly parentCollection: Collection,
-    public readonly subCollections: SubCollection[]
-  ) {}
-}
-
-export class LiteralDocument {
-  public readonly type = 'literal-document';
-
-  public constructor(
-    public readonly id: string,
-    public readonly parentCollection: Collection,
-    public readonly subCollections: SubCollection[]
-  ) {}
-}
-
-export type Document = GenericDocument | LiteralDocument;
-
-const TAB = '    ';
-
-export function generateMermaidGraph(rootCollections: RootCollection[]): string {
-  const b = new StringBuilder();
-  b.append(`graph TD` + `\n`);
-
+export function buildMermaidGraph(
+  orientation: SchemaGraphOrientation,
+  rootCollections: RootCollection[]
+): MermaidGraph {
+  const links: MermaidGraphLink[] = [];
   rootCollections.forEach(rootCollection => {
-    b.append(buildLinks(rootCollection));
+    links.push(...buildLinks(rootCollection));
   });
-
-  return b.toString();
+  return { orientation: getMermaidOrientation(orientation), links };
 }
 
-function buildLinks(collection: Collection) {
-  const b = new StringBuilder();
-
+function buildLinks(collection: Collection): MermaidGraphLink[] {
+  const links: MermaidGraphLink[] = [];
   collection.documents.forEach(document => {
     if (document.type === 'generic-document') {
-      b.append(TAB + collection.id + ' --> ' + `generic_${document.genericId}[${document.genericId}]` + `\n`);
+      const documentNodeId = `generic_${document.genericId}[${document.genericId}]`;
+      links.push([collection.id, documentNodeId]);
       document.subCollections.forEach(subCollection => {
-        b.append(TAB + `generic_${document.genericId}[${document.genericId}]` + ' --> ' + subCollection.id + `\n`);
-        b.append(buildLinks(subCollection) + `\n`);
+        links.push([documentNodeId, subCollection.id]);
       });
     } else if (document.type === 'literal-document') {
       // TODO: Implement
@@ -74,6 +31,16 @@ function buildLinks(collection: Collection) {
       assertNever(document);
     }
   });
+  return links;
+}
 
-  return b.toString();
+function getMermaidOrientation(orientation: SchemaGraphOrientation): MermaidGraphOrientation {
+  switch (orientation) {
+    case 'vertical':
+      return 'TB';
+    case 'horizontal':
+      return 'LR';
+    default:
+      assertNever(orientation);
+  }
 }

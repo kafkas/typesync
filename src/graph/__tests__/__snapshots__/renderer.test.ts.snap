@@ -1,13 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`graph builds graph correctly 1`] = `
-"graph TD;
+exports[`graph renders graph correctly 1`] = `
+"graph LR
     books --> generic_bookId[bookId]
     generic_bookId[bookId] --> reviews
-
     generic_bookId[bookId] --> chapters
-
     generic_bookId[bookId] --> translations
-
 "
 `;
