@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../../public/v0.5.json
+# yaml-language-server: $schema=../../../../../public/v0.8.json
 
 Username:
   model: alias
