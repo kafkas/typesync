@@ -1,12 +1,14 @@
 export interface GenericRootCollection {
   type: 'generic-root-collection';
   genericId: string;
+  path: string;
   children: CollectionChildren;
 }
 
 export interface LiteralRootCollection {
   type: 'literal-root-collection';
   id: string;
+  path: string;
   children: CollectionChildren;
 }
 
@@ -14,6 +16,7 @@ export interface GenericSubCollection {
   type: 'generic-sub-collection';
   parent: Document;
   genericId: string;
+  path: string;
   children: CollectionChildren;
 }
 
@@ -21,6 +24,7 @@ export interface LiteralSubCollection {
   type: 'literal-sub-collection';
   parent: Document;
   id: string;
+  path: string;
   children: CollectionChildren;
 }
 
@@ -44,6 +48,7 @@ export interface GenericDocument {
   type: 'generic-document';
   genericId: string;
   parent: Collection;
+  path: string;
   children: DocumentChildren | null;
 }
 
@@ -51,8 +56,11 @@ export interface LiteralDocument {
   type: 'literal-document';
   id: string;
   parent: Collection;
+  path: string;
   children: DocumentChildren | null;
 }
+
+export type Document = GenericDocument | LiteralDocument;
 
 interface GenericDocumentChildren {
   type: 'generic-document-children';
