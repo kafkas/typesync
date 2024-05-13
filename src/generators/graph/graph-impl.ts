@@ -1,9 +1,11 @@
 import { assertNever } from '../../util/assert.js';
 import {
   GenericDocument,
+  GenericDocumentChildren,
   GenericRootCollection,
   GenericSubCollection,
   LiteralDocument,
+  LiteralDocumentChildren,
   LiteralRootCollection,
   LiteralSubCollection,
   SchemaGraph,
@@ -143,13 +145,12 @@ export class GenericDocumentImpl implements GenericDocument {
       if (this.children.type === 'generic-document-children') {
         throw new Error('Parent already has generic document children');
       } else if (this.children.type === 'literal-document-children') {
-        const prevCollections = this.children.collections;
-        this.children.collections = [...prevCollections, collection];
+        this.children.addCollection(collection);
       } else {
         assertNever(this.children);
       }
     } else {
-      this.children = { type: 'literal-document-children', collections: [collection] };
+      this.children = new LiteralDocumentChildrenImpl(new Map([[collection.id, collection]]));
     }
   }
 }
@@ -172,25 +173,37 @@ export class LiteralDocumentImpl implements LiteralDocument {
       if (this.children.type === 'generic-document-children') {
         throw new Error('Parent already has generic document children');
       } else if (this.children.type === 'literal-document-children') {
-        const prevCollections = this.children.collections;
-        this.children.collections = [...prevCollections, collection];
+        this.children.addCollection(collection);
       } else {
         assertNever(this.children);
       }
     } else {
-      this.children = { type: 'literal-document-children', collections: [collection] };
+      this.children = new LiteralDocumentChildrenImpl(new Map([[collection.id, collection]]));
     }
   }
 }
 
-interface GenericDocumentChildrenImpl {
-  type: 'generic-document-children';
-  collection: GenericSubCollectionImpl;
+class GenericDocumentChildrenImpl implements GenericDocumentChildren {
+  public readonly type = 'generic-document-children';
+
+  public constructor(public readonly collection: GenericSubCollectionImpl) {}
 }
 
-interface LiteralDocumentChildrenImpl {
-  type: 'literal-document-children';
-  collections: LiteralSubCollectionImpl[];
+class LiteralDocumentChildrenImpl implements LiteralDocumentChildren {
+  public readonly type = 'literal-document-children';
+
+  public get collections() {
+    return Array.from(this.collectionsById.values());
+  }
+
+  public constructor(private readonly collectionsById: Map<string, LiteralSubCollectionImpl>) {}
+
+  public addCollection(collection: LiteralSubCollectionImpl) {
+    if (this.collectionsById.has(collection.id)) {
+      throw new Error(`The collection ${collection.path} is already in this children object.`);
+    }
+    this.collectionsById.set(collection.id, collection);
+  }
 }
 
 type DocumentChildrenImpl = GenericDocumentChildrenImpl | LiteralDocumentChildrenImpl;

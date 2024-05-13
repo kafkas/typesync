@@ -2,17 +2,17 @@ export interface SchemaGraph {
   children: GraphChildren;
 }
 
-interface GenericGraphChildren {
+export interface GenericGraphChildren {
   type: 'generic-graph-children';
   collection: GenericRootCollection;
 }
 
-interface LiteralGraphChildren {
+export interface LiteralGraphChildren {
   type: 'literal-graph-children';
   collections: LiteralRootCollection[];
 }
 
-type GraphChildren = GenericGraphChildren | LiteralGraphChildren;
+export type GraphChildren = GenericGraphChildren | LiteralGraphChildren;
 
 export interface GenericRootCollection {
   type: 'generic-root-collection';
@@ -78,14 +78,14 @@ export interface LiteralDocument {
 
 export type Document = GenericDocument | LiteralDocument;
 
-interface GenericDocumentChildren {
+export interface GenericDocumentChildren {
   type: 'generic-document-children';
   collection: GenericSubCollection;
 }
 
-interface LiteralDocumentChildren {
+export interface LiteralDocumentChildren {
   type: 'literal-document-children';
   collections: LiteralSubCollection[];
 }
 
-type DocumentChildren = GenericDocumentChildren | LiteralDocumentChildren;
+export type DocumentChildren = GenericDocumentChildren | LiteralDocumentChildren;
