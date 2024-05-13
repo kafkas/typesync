@@ -66,6 +66,6 @@ interface LiteralDocumentChildren {
 
 type DocumentChildren = GenericDocumentChildren | LiteralDocumentChildren;
 
-export interface DatabaseGraph {
+export interface SchemaGraph {
   rootCollections: RootCollection[];
 }
