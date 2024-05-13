@@ -32,17 +32,17 @@ export type RootCollection = GenericRootCollection | LiteralRootCollection;
 export type SubCollection = GenericSubCollection | LiteralSubCollection;
 export type Collection = RootCollection | SubCollection;
 
-interface GenericCollectionChildren {
+export interface GenericCollectionChildren {
   type: 'generic-collection-children';
   document: GenericDocument;
 }
 
-interface LiteralCollectionChildren {
+export interface LiteralCollectionChildren {
   type: 'literal-collection-children';
   documents: LiteralDocument[];
 }
 
-type CollectionChildren = GenericCollectionChildren | LiteralCollectionChildren;
+export type CollectionChildren = GenericCollectionChildren | LiteralCollectionChildren;
 
 export interface GenericDocument {
   type: 'generic-document';
