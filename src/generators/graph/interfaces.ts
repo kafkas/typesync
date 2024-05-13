@@ -14,16 +14,16 @@ export interface LiteralRootCollection {
 
 export interface GenericSubCollection {
   type: 'generic-sub-collection';
-  parent: Document;
   genericId: string;
+  parent: Document;
   path: string;
   children: CollectionChildren;
 }
 
 export interface LiteralSubCollection {
   type: 'literal-sub-collection';
-  parent: Document;
   id: string;
+  parent: Document;
   path: string;
   children: CollectionChildren;
 }
