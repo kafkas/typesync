@@ -19,7 +19,7 @@ export class GraphGeneratorImpl implements GraphGenerator {
     };
   }
 
-  private buildSchemaGraphFromSchema(_s: schema.Schema) {
+  public buildSchemaGraphFromSchema(_s: schema.Schema) {
     // TODO: Implement
     return new SchemaGraph();
   }
