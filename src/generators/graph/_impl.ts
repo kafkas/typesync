@@ -2,7 +2,7 @@ import { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import type { GraphGeneration, GraphGenerator, GraphGeneratorConfig } from './_types.js';
 import { MermaidGraph, MermaidGraphLink, MermaidGraphOrientation } from './_types.js';
-import type { Collection, SchemaGraph } from './schema-graph.js';
+import { Collection, SchemaGraph } from './schema-graph.js';
 
 type SchemaGraphOrientation = 'vertical' | 'horizontal';
 
@@ -21,15 +21,16 @@ export class GraphGeneratorImpl implements GraphGenerator {
 
   private buildSchemaGraphFromSchema(_s: schema.Schema) {
     // TODO: Implement
-    const graph: SchemaGraph = { rootCollections: [] };
-    return graph;
+    return new SchemaGraph();
   }
 
   public buildMermaidGraph(graph: SchemaGraph): MermaidGraph {
     const links: MermaidGraphLink[] = [];
+
     graph.rootCollections.forEach(rootCollection => {
       links.push(...this.buildLinks(rootCollection));
     });
+
     return {
       orientation: this.getMermaidOrientation(this.config.orientation),
       links,
@@ -38,20 +39,20 @@ export class GraphGeneratorImpl implements GraphGenerator {
 
   private buildLinks(collection: Collection): MermaidGraphLink[] {
     const links: MermaidGraphLink[] = [];
-    collection.documents.forEach(document => {
-      if (document.type === 'generic-document') {
-        const documentNodeId = `generic_${document.genericId}[${document.genericId}]`;
-        links.push([collection.id, documentNodeId]);
-        document.subCollections.forEach(subCollection => {
-          links.push([documentNodeId, subCollection.id]);
-        });
-      } else if (document.type === 'literal-document') {
-        // TODO: Implement
-        throw new Error('Unimplemented');
-      } else {
-        assertNever(document);
-      }
+    const { genericDocument, literalDocuments } = collection;
+
+    if (genericDocument !== null) {
+      const documentNodeId = `generic_${genericDocument.genericId}[${genericDocument.genericId}]`;
+      links.push([collection.id, documentNodeId]);
+      genericDocument.subCollections.forEach(subCollection => {
+        links.push([documentNodeId, subCollection.id]);
+      });
+    }
+
+    literalDocuments.forEach(_literalDocument => {
+      // TODO: Implement
     });
+
     return links;
   }
 

@@ -1,22 +1,21 @@
 import { GraphGeneratorImpl } from '../_impl.js';
 import { MermaidGraph } from '../_types.js';
-import { GenericDocument, RootCollection, SubCollection } from '../schema-graph.js';
+import { SchemaGraph } from '../schema-graph.js';
 
 describe('GraphGeneratorImpl', () => {
   it(`correctly builds a Mermaid graph from a SchemaGraph`, () => {
     const generator = new GraphGeneratorImpl({ orientation: 'horizontal' });
 
-    const booksCollection = new RootCollection('books', []);
-    const genericBookDocument = new GenericDocument('bookId', booksCollection, []);
-    booksCollection.documents.push(genericBookDocument);
-    const reviewsSubCollection = new SubCollection('reviews', []);
-    const chaptersCollection = new SubCollection('chapters', []);
-    const translationsCollection = new SubCollection('translations', []);
-    genericBookDocument.subCollections.push(reviewsSubCollection, chaptersCollection, translationsCollection);
+    const graph = new SchemaGraph();
+    const booksCollection = graph.addRootCollection('books');
+    const bookDocument = booksCollection.setGenericDocument('bookId');
+    bookDocument.addSubCollection('reviews');
+    bookDocument.addSubCollection('chapters');
+    bookDocument.addSubCollection('translations');
 
-    const graph = generator.buildMermaidGraph({ rootCollections: [booksCollection] });
+    const mermaidGraph = generator.buildMermaidGraph(graph);
 
-    const expectedGraph: MermaidGraph = {
+    const expectedMermaidGraph: MermaidGraph = {
       orientation: 'LR',
       links: [
         ['books', 'generic_bookId[bookId]'],
@@ -26,6 +25,6 @@ describe('GraphGeneratorImpl', () => {
       ],
     };
 
-    expect(graph).toEqual(expectedGraph);
+    expect(mermaidGraph).toEqual(expectedMermaidGraph);
   });
 });
