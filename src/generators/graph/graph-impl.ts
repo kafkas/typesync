@@ -1,3 +1,4 @@
+import { assertNever } from '../../util/assert.js';
 import {
   GenericDocument,
   GenericRootCollection,
@@ -129,9 +130,28 @@ export class GenericDocumentImpl implements GenericDocument {
 
   public constructor(
     public readonly genericId: string,
-    public readonly parent: CollectionImpl,
-    public readonly children: DocumentChildrenImpl | null
+    public parent: CollectionImpl,
+    public children: DocumentChildrenImpl | null
   ) {}
+
+  public setParent(parent: CollectionImpl) {
+    this.parent = parent;
+  }
+
+  public addLiteralSubCollection(collection: LiteralSubCollectionImpl) {
+    if (this.children) {
+      if (this.children.type === 'generic-document-children') {
+        throw new Error('Parent already has generic document children');
+      } else if (this.children.type === 'literal-document-children') {
+        const prevCollections = this.children.collections;
+        this.children.collections = [...prevCollections, collection];
+      } else {
+        assertNever(this.children);
+      }
+    } else {
+      this.children = { type: 'literal-document-children', collections: [collection] };
+    }
+  }
 }
 
 export class LiteralDocumentImpl implements LiteralDocument {
@@ -144,8 +164,23 @@ export class LiteralDocumentImpl implements LiteralDocument {
   public constructor(
     public readonly id: string,
     public readonly parent: CollectionImpl,
-    public readonly children: DocumentChildrenImpl | null
+    public children: DocumentChildrenImpl | null
   ) {}
+
+  public addLiteralSubCollection(collection: LiteralSubCollectionImpl) {
+    if (this.children) {
+      if (this.children.type === 'generic-document-children') {
+        throw new Error('Parent already has generic document children');
+      } else if (this.children.type === 'literal-document-children') {
+        const prevCollections = this.children.collections;
+        this.children.collections = [...prevCollections, collection];
+      } else {
+        assertNever(this.children);
+      }
+    } else {
+      this.children = { type: 'literal-document-children', collections: [collection] };
+    }
+  }
 }
 
 interface GenericDocumentChildrenImpl {
