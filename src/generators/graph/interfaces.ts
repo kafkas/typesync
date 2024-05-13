@@ -1,3 +1,19 @@
+export interface SchemaGraph {
+  children: GraphChildren;
+}
+
+interface GenericGraphChildren {
+  type: 'generic-graph-children';
+  collection: GenericRootCollection;
+}
+
+interface LiteralGraphChildren {
+  type: 'literal-graph-children';
+  collections: LiteralRootCollection[];
+}
+
+type GraphChildren = GenericGraphChildren | LiteralGraphChildren;
+
 export interface GenericRootCollection {
   type: 'generic-root-collection';
   genericId: string;
@@ -73,7 +89,3 @@ interface LiteralDocumentChildren {
 }
 
 type DocumentChildren = GenericDocumentChildren | LiteralDocumentChildren;
-
-export interface SchemaGraph {
-  rootCollections: RootCollection[];
-}

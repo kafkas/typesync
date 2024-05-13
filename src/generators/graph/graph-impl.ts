@@ -9,12 +9,20 @@ import {
 } from './interfaces.js';
 
 export class SchemaGraphImpl implements SchemaGraph {
-  private readonly rootCollectionsById = new Map<string, RootCollectionImpl>();
-
-  public get rootCollections() {
-    return Array.from(this.rootCollectionsById.values());
-  }
+  public constructor(public readonly children: GraphChildrenImpl) {}
 }
+
+interface GenericGraphChildrenImpl {
+  type: 'generic-graph-children';
+  collection: GenericRootCollectionImpl;
+}
+
+interface LiteralGraphChildrenImpl {
+  type: 'literal-graph-children';
+  collections: LiteralRootCollectionImpl[];
+}
+
+type GraphChildrenImpl = GenericGraphChildrenImpl | LiteralGraphChildrenImpl;
 
 export class GenericRootCollectionImpl implements GenericRootCollection {
   public readonly type = 'generic-root-collection';
