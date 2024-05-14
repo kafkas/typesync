@@ -16,6 +16,7 @@ export type GraphChildren = GenericGraphChildren | LiteralGraphChildren;
 
 export interface GenericRootCollection {
   type: 'generic-root-collection';
+  id: string;
   genericId: string;
   path: string;
   children: CollectionChildren;
@@ -30,6 +31,7 @@ export interface LiteralRootCollection {
 
 export interface GenericSubCollection {
   type: 'generic-sub-collection';
+  id: string;
   genericId: string;
   parent: Document;
   path: string;
