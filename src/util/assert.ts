@@ -11,7 +11,7 @@ export function assert(condition: unknown, message?: string): asserts condition 
 }
 
 export function assertNever(val: never): never {
-  throw new Error(`Invalid value: ${JSON.stringify(val)}`);
+  throw new AssertionError(`Invalid value: ${JSON.stringify(val)}`);
 }
 
 export function assertNeverNoThrow(_val: never): void {}
