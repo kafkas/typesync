@@ -5,7 +5,7 @@ import { createGraphRenderer } from '../_impl.js';
 import { MermaidGraph2 } from '../mermaid-graph2.js';
 
 describe('MermaidGraph2', () => {
-  it(`correctly builds a Mermaid graph from a SchemaGraph`, async () => {
+  it(`correctly renders a MermaidGraph2`, async () => {
     const renderer = createGraphRenderer({
       startMarker: 'typesync-start',
       endMarker: 'typesync-end',
