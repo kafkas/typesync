@@ -1,34 +1,43 @@
 import { assertNever } from '../../../util/assert.js';
-import {
-  GenericDocument,
-  GenericDocumentChildren,
-  GenericRootCollection,
-  GenericSubCollection,
-  LiteralDocument,
-  LiteralDocumentChildren,
-  LiteralRootCollection,
-  LiteralSubCollection,
-  SchemaGraph,
-} from './interfaces.js';
+import { CollectionChildrenJson, DocumentChildrenJson, SchemaGraphJson, SchemaGraphRootJson } from './json.js';
 
-export class SchemaGraphImpl implements SchemaGraph {
-  public constructor(public readonly children: GraphChildrenImpl) {}
+export function createSchemaGraph(fromJson: SchemaGraphJson) {
+  return new SchemaGraph(fromJson.root);
 }
 
-export interface GenericGraphChildrenImpl {
-  type: 'generic-graph-children';
-  collection: GenericRootCollectionImpl;
+export class SchemaGraph {
+  public get root(): SchemaGraphRoot {
+    if (this.rootJson.type === 'generic') {
+      const { collection } = this.rootJson;
+      return { type: 'generic', collection: new GenericRootCollection(collection.genericId, collection.children) };
+    } else if (this.rootJson.type === 'literal') {
+      const { collections } = this.rootJson;
+      return {
+        type: 'literal',
+        collections: collections.map(collection => new LiteralRootCollection(collection.id, collection.children)),
+      };
+    } else {
+      assertNever(this.rootJson);
+    }
+  }
+
+  public constructor(private readonly rootJson: SchemaGraphRootJson) {}
 }
 
-export interface LiteralGraphChildrenImpl {
-  type: 'literal-graph-children';
-  collections: LiteralRootCollectionImpl[];
+export interface SchemaGraphRootGeneric {
+  type: 'generic';
+  collection: GenericRootCollection;
 }
 
-export type GraphChildrenImpl = GenericGraphChildrenImpl | LiteralGraphChildrenImpl;
+export interface SchemaGraphRootLiteral {
+  type: 'literal';
+  collections: LiteralRootCollection[];
+}
 
-export class GenericRootCollectionImpl implements GenericRootCollection {
-  public readonly type = 'generic-root-collection';
+export type SchemaGraphRoot = SchemaGraphRootGeneric | SchemaGraphRootLiteral;
+
+export class GenericRootCollection {
+  public readonly type = 'generic';
 
   public get id() {
     return this.genericIdWithBraces;
@@ -42,29 +51,59 @@ export class GenericRootCollectionImpl implements GenericRootCollection {
     return this.id;
   }
 
+  public get children(): CollectionChildren {
+    if (this.childrenJson.type === 'generic') {
+      const { document } = this.childrenJson;
+      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { documents } = this.childrenJson;
+      return {
+        type: 'literal',
+        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+      };
+    } else {
+      assertNever(this.childrenJson);
+    }
+  }
+
   public constructor(
     public readonly genericId: string,
-    public readonly children: CollectionChildrenImpl
+    private readonly childrenJson: CollectionChildrenJson
   ) {}
 }
 
-export class LiteralRootCollectionImpl implements LiteralRootCollection {
-  public readonly type = 'literal-root-collection';
+export class LiteralRootCollection {
+  public readonly type = 'literal';
 
   public get path() {
     return this.id;
   }
 
+  public get children(): CollectionChildren {
+    if (this.childrenJson.type === 'generic') {
+      const { document } = this.childrenJson;
+      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { documents } = this.childrenJson;
+      return {
+        type: 'literal',
+        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+      };
+    } else {
+      assertNever(this.childrenJson);
+    }
+  }
+
   public constructor(
     public readonly id: string,
-    public readonly children: CollectionChildrenImpl
+    private readonly childrenJson: CollectionChildrenJson
   ) {}
 }
 
-export type RootCollectionImpl = GenericRootCollectionImpl | LiteralRootCollectionImpl;
+export type RootCollection = GenericRootCollection | LiteralRootCollection;
 
-export class GenericSubCollectionImpl implements GenericSubCollection {
-  public readonly type = 'generic-sub-collection';
+export class GenericSubCollection {
+  public readonly type = 'generic';
 
   public get id() {
     return this.genericIdWithBraces;
@@ -78,44 +117,74 @@ export class GenericSubCollectionImpl implements GenericSubCollection {
     return `${this.parent.id}/${this.id}`;
   }
 
+  public get children(): CollectionChildren {
+    if (this.childrenJson.type === 'generic') {
+      const { document } = this.childrenJson;
+      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { documents } = this.childrenJson;
+      return {
+        type: 'literal',
+        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+      };
+    } else {
+      assertNever(this.childrenJson);
+    }
+  }
+
   public constructor(
     public readonly genericId: string,
-    public readonly parent: DocumentImpl,
-    public readonly children: CollectionChildrenImpl
+    public readonly parent: Document,
+    private readonly childrenJson: CollectionChildrenJson
   ) {}
 }
 
-export class LiteralSubCollectionImpl implements LiteralSubCollection {
-  public readonly type = 'literal-sub-collection';
+export class LiteralSubCollection {
+  public readonly type = 'literal';
 
   public get path() {
     return `${this.parent.id}/${this.id}`;
   }
 
+  public get children(): CollectionChildren {
+    if (this.childrenJson.type === 'generic') {
+      const { document } = this.childrenJson;
+      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { documents } = this.childrenJson;
+      return {
+        type: 'literal',
+        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+      };
+    } else {
+      assertNever(this.childrenJson);
+    }
+  }
+
   public constructor(
     public readonly id: string,
-    public readonly parent: DocumentImpl,
-    public readonly children: CollectionChildrenImpl
+    public readonly parent: Document,
+    private readonly childrenJson: CollectionChildrenJson
   ) {}
 }
 
-export interface GenericCollectionChildrenImpl {
-  type: 'generic-collection-children';
-  document: GenericDocumentImpl;
+export interface CollectionChildrenGeneric {
+  type: 'generic';
+  document: GenericDocument;
 }
 
-export interface LiteralCollectionChildrenImpl {
-  type: 'literal-collection-children';
-  documents: LiteralDocumentImpl[];
+export interface CollectionChildrenLiteral {
+  type: 'literal';
+  documents: LiteralDocument[];
 }
 
-export type CollectionChildrenImpl = GenericCollectionChildrenImpl | LiteralCollectionChildrenImpl;
+export type CollectionChildren = CollectionChildrenGeneric | CollectionChildrenLiteral;
 
-export type SubCollectionImpl = GenericSubCollectionImpl | LiteralSubCollectionImpl;
+export type SubCollection = GenericSubCollection | LiteralSubCollection;
 
-export type CollectionImpl = RootCollectionImpl | SubCollectionImpl;
+export type Collection = RootCollection | SubCollection;
 
-export class GenericDocumentImpl implements GenericDocument {
+export class GenericDocument {
   public readonly type = 'generic-document';
 
   public get id() {
@@ -130,82 +199,69 @@ export class GenericDocumentImpl implements GenericDocument {
     return `${this.parent.path}/${this.id}`;
   }
 
-  public constructor(
-    public readonly genericId: string,
-    public parent: CollectionImpl,
-    public children: DocumentChildrenImpl | null
-  ) {}
-
-  public setParent(parent: CollectionImpl) {
-    this.parent = parent;
-  }
-
-  public addLiteralSubCollection(collection: LiteralSubCollectionImpl) {
-    if (this.children) {
-      if (this.children.type === 'generic-document-children') {
-        throw new Error('Parent already has generic document children');
-      } else if (this.children.type === 'literal-document-children') {
-        this.children.addCollection(collection);
-      } else {
-        assertNever(this.children);
-      }
+  public get children(): DocumentChildren | null {
+    if (this.childrenJson === null) return null;
+    if (this.childrenJson.type === 'generic') {
+      const { collection } = this.childrenJson;
+      return { type: 'generic', collection: new GenericSubCollection(collection.genericId, this, collection.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { collections } = this.childrenJson;
+      return {
+        type: 'literal',
+        collections: collections.map(collection => new LiteralSubCollection(collection.id, this, collection.children)),
+      };
     } else {
-      this.children = new LiteralDocumentChildrenImpl(new Map([[collection.id, collection]]));
+      assertNever(this.childrenJson);
     }
   }
+
+  public constructor(
+    public readonly genericId: string,
+    public readonly parent: Collection,
+    private readonly childrenJson: DocumentChildrenJson | null
+  ) {}
 }
 
-export class LiteralDocumentImpl implements LiteralDocument {
+export class LiteralDocument {
   public readonly type = 'literal-document';
 
   public get path() {
     return `${this.parent.path}/${this.id}`;
   }
 
+  public get children(): DocumentChildren | null {
+    if (this.childrenJson === null) return null;
+    if (this.childrenJson.type === 'generic') {
+      const { collection } = this.childrenJson;
+      return { type: 'generic', collection: new GenericSubCollection(collection.genericId, this, collection.children) };
+    } else if (this.childrenJson.type === 'literal') {
+      const { collections } = this.childrenJson;
+      return {
+        type: 'literal',
+        collections: collections.map(collection => new LiteralSubCollection(collection.id, this, collection.children)),
+      };
+    } else {
+      assertNever(this.childrenJson);
+    }
+  }
+
   public constructor(
     public readonly id: string,
-    public readonly parent: CollectionImpl,
-    public children: DocumentChildrenImpl | null
+    public readonly parent: Collection,
+    private readonly childrenJson: DocumentChildrenJson | null
   ) {}
-
-  public addLiteralSubCollection(collection: LiteralSubCollectionImpl) {
-    if (this.children) {
-      if (this.children.type === 'generic-document-children') {
-        throw new Error('Parent already has generic document children');
-      } else if (this.children.type === 'literal-document-children') {
-        this.children.addCollection(collection);
-      } else {
-        assertNever(this.children);
-      }
-    } else {
-      this.children = new LiteralDocumentChildrenImpl(new Map([[collection.id, collection]]));
-    }
-  }
 }
 
-export class GenericDocumentChildrenImpl implements GenericDocumentChildren {
-  public readonly type = 'generic-document-children';
-
-  public constructor(public readonly collection: GenericSubCollectionImpl) {}
+export interface DocumentChildrenGeneric {
+  type: 'generic';
+  collection: GenericSubCollection;
 }
 
-export class LiteralDocumentChildrenImpl implements LiteralDocumentChildren {
-  public readonly type = 'literal-document-children';
-
-  public get collections() {
-    return Array.from(this.collectionsById.values());
-  }
-
-  public constructor(private readonly collectionsById: Map<string, LiteralSubCollectionImpl>) {}
-
-  public addCollection(collection: LiteralSubCollectionImpl) {
-    if (this.collectionsById.has(collection.id)) {
-      throw new Error(`The collection ${collection.path} is already in this children object.`);
-    }
-    this.collectionsById.set(collection.id, collection);
-  }
+export interface DocumentChildrenLiteral {
+  type: 'literal';
+  collections: LiteralSubCollection[];
 }
 
-export type DocumentChildrenImpl = GenericDocumentChildrenImpl | LiteralDocumentChildrenImpl;
+export type DocumentChildren = DocumentChildrenGeneric | DocumentChildrenLiteral;
 
-export type DocumentImpl = GenericDocumentImpl | LiteralDocumentImpl;
+export type Document = GenericDocument | LiteralDocument;

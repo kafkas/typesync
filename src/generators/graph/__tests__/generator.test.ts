@@ -1,12 +1,7 @@
 import { schema } from '../../../schema/index.js';
 import { GraphGeneratorImpl } from '../_impl.js';
 import { MermaidGraph } from '../mermaid-graph.js';
-import {
-  createLiteralRootCollectionWithGenericChildren,
-  createLiteralSubCollectionWithGenericChildren,
-} from '../schema-graph/factory.js';
-import { SchemaGraphImpl } from '../schema-graph/impl.js';
-import { SchemaGraph } from '../schema-graph/interfaces.js';
+import { createSchemaGraph } from '../schema-graph/index.js';
 
 describe('GraphGeneratorImpl', () => {
   describe('buildSchemaGraphFromSchema()', () => {
@@ -47,23 +42,64 @@ describe('GraphGeneratorImpl', () => {
         return schema.createSchemaWithModels([bookModel, reviewModel, chapterModel, translationModel, authorModel]);
       };
 
-      const buildExpectedGraph = (): SchemaGraph => {
-        const { collection: booksCollection, document: bookDocument } = createLiteralRootCollectionWithGenericChildren(
-          'books',
-          'bookId'
-        );
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'reviews', 'reviewId');
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'chapters', 'chapterId');
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'translations', 'translationId');
-        const { collection: authorsCollection } = createLiteralRootCollectionWithGenericChildren('authors', 'authorId');
-        return new SchemaGraphImpl({
-          type: 'literal-graph-children',
-          collections: [booksCollection, authorsCollection],
-        });
-      };
-
       const inputSchema = buildInputSchema();
-      const expectedGraph = buildExpectedGraph();
+
+      const expectedGraph = createSchemaGraph({
+        root: {
+          type: 'literal',
+          collections: [
+            {
+              type: 'literal',
+              id: 'books',
+              children: {
+                type: 'generic',
+                document: {
+                  type: 'generic-document',
+                  genericId: 'bookId',
+                  children: {
+                    type: 'literal',
+                    collections: [
+                      {
+                        type: 'literal',
+                        id: 'reviews',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
+                        },
+                      },
+                      {
+                        type: 'literal',
+                        id: 'chapters',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'chapterId', children: null },
+                        },
+                      },
+                      {
+                        type: 'literal',
+                        id: 'translations',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'translationId', children: null },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              type: 'literal',
+              id: 'authors',
+              children: {
+                type: 'generic',
+                document: { type: 'generic-document', genericId: 'authorId', children: null },
+              },
+            },
+          ],
+        },
+      });
+
       const generatedGraph = generator.buildSchemaGraphFromSchema(inputSchema);
 
       // TODO: Implement
@@ -75,20 +111,65 @@ describe('GraphGeneratorImpl', () => {
     it(`correctly builds a Mermaid graph from a SchemaGraph`, () => {
       const generator = new GraphGeneratorImpl({ orientation: 'horizontal' });
 
-      const buildInputGraph = (): SchemaGraph => {
-        const { collection: booksCollection, document: bookDocument } = createLiteralRootCollectionWithGenericChildren(
-          'books',
-          'bookId'
-        );
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'reviews', 'reviewId');
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'chapters', 'chapterId');
-        createLiteralSubCollectionWithGenericChildren(bookDocument, 'translations', 'translationId');
-        const { collection: authorsCollection } = createLiteralRootCollectionWithGenericChildren('authors', 'authorId');
-        return new SchemaGraphImpl({
-          type: 'literal-graph-children',
-          collections: [booksCollection, authorsCollection],
-        });
-      };
+      const inputGraph = createSchemaGraph({
+        root: {
+          type: 'literal',
+          collections: [
+            {
+              type: 'literal',
+              id: 'books',
+              children: {
+                type: 'generic',
+                document: {
+                  type: 'generic-document',
+                  genericId: 'bookId',
+                  children: {
+                    type: 'literal',
+                    collections: [
+                      {
+                        type: 'literal',
+                        id: 'reviews',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
+                        },
+                      },
+                      {
+                        type: 'literal',
+                        id: 'chapters',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'chapterId', children: null },
+                        },
+                      },
+                      {
+                        type: 'literal',
+                        id: 'translations',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'translationId', children: null },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              type: 'literal',
+              id: 'authors',
+              children: {
+                type: 'generic',
+                document: {
+                  type: 'generic-document',
+                  genericId: 'authorId',
+                  children: null,
+                },
+              },
+            },
+          ],
+        },
+      });
 
       const buildExpectedMermaidGraph = () => {
         const graph = new MermaidGraph('LR');
@@ -115,8 +196,7 @@ describe('GraphGeneratorImpl', () => {
         return graph;
       };
 
-      const graph = buildInputGraph();
-      const builtMermaidGraph = generator.buildMermaidGraphFromSchemaGraph(graph);
+      const builtMermaidGraph = generator.buildMermaidGraphFromSchemaGraph(inputGraph);
       const expectedMermaidGraph = buildExpectedMermaidGraph();
       expect(builtMermaidGraph.equals(expectedMermaidGraph)).toBe(true);
     });
