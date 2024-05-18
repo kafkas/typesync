@@ -1,31 +1,17 @@
 import { StringBuilder } from '@proficient/ds';
 
-import { GraphGeneration } from '../../generators/graph/index.js';
+import { GraphGeneration, type MermaidGraph, type MermaidGraphNode } from '../../generators/graph/index.js';
 import { space } from '../../util/space.js';
 import type { RenderedFile } from '../_types.js';
 import type { GraphRenderer, GraphRendererConfig } from './_types.js';
-import { MermaidGraph2, MermaidGraphNode } from './mermaid-graph2.js';
 
 class GraphRendererImpl implements GraphRenderer {
-  public readonly type = 'python';
+  public readonly type = 'graph';
 
   public constructor(private readonly config: GraphRendererConfig) {}
 
   public async render(generation: GraphGeneration): Promise<RenderedFile> {
     const { graph } = generation;
-
-    const b = new StringBuilder();
-
-    b.append(`graph ${graph.orientation}` + `\n`);
-    graph.links.forEach(link => {
-      const [leftNodeId, rightNodeId] = link;
-      b.append(space(4) + leftNodeId + ' --> ' + rightNodeId + `\n`);
-    });
-
-    return { content: b.toString() };
-  }
-
-  public async render2(graph: MermaidGraph2): Promise<RenderedFile> {
     const links = this.buildLinksForGraph(graph);
     const b = new StringBuilder();
     b.append(`graph ${graph.orientation}` + `\n`);
@@ -36,7 +22,7 @@ class GraphRendererImpl implements GraphRenderer {
     return { content: b.toString() };
   }
 
-  private buildLinksForGraph(graph: MermaidGraph2) {
+  private buildLinksForGraph(graph: MermaidGraph) {
     const { rootNodes } = graph;
     return rootNodes.map(rootNode => this.buildLinksForNode(rootNode)).flat(1);
   }

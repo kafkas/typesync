@@ -1,10 +1,10 @@
 import { schema } from '../../../schema/index.js';
 import { GraphGeneratorImpl } from '../_impl.js';
-import { MermaidGraph } from '../_types.js';
 import {
   createLiteralRootCollectionWithGenericChildren,
   createLiteralSubCollectionWithGenericChildren,
 } from '../factory.js';
+import { MermaidGraph } from '../mermaid-graph.js';
 import { SchemaGraphImpl } from '../schema-graph/impl.js';
 import { SchemaGraph } from '../schema-graph/interfaces.js';
 
@@ -66,7 +66,7 @@ describe('GraphGeneratorImpl', () => {
       const expectedGraph = buildExpectedGraph();
       const generatedGraph = generator.buildSchemaGraphFromSchema(inputSchema);
 
-      // TODO: Implemented
+      // TODO: Implement
       expect(true).toEqual(true);
     });
   });
@@ -90,21 +90,29 @@ describe('GraphGeneratorImpl', () => {
         });
       };
 
-      const graph = buildInputGraph();
-      const mermaidGraph = generator.buildMermaidGraph(graph);
+      const buildExpectedMermaidGraph = () => {
+        const graph = new MermaidGraph('LR');
+        const booksCol = graph.createNode('books');
+        const bookDoc = graph.createNode('{bookId}');
+        const reviewsCol = graph.createNode('reviews');
+        const chaptersCol = graph.createNode('chapters');
+        const translationsCol = graph.createNode('translations');
+        const authorsCol = graph.createNode('authors');
+        const authorDoc = graph.createNode('{authorId}');
 
-      const expectedMermaidGraph: MermaidGraph = {
-        orientation: 'LR',
-        links: [
-          ['books', 'generic_bookId[bookId]'],
-          ['generic_bookId[bookId]', 'reviews'],
-          ['generic_bookId[bookId]', 'chapters'],
-          ['generic_bookId[bookId]', 'translations'],
-          ['authors', 'generic_authorId[authorId]'],
-        ],
+        graph.link(booksCol, bookDoc);
+        graph.link(bookDoc, reviewsCol);
+        graph.link(bookDoc, chaptersCol);
+        graph.link(bookDoc, translationsCol);
+        graph.link(authorsCol, authorDoc);
+
+        return graph;
       };
 
-      expect(mermaidGraph).toEqual(expectedMermaidGraph);
+      const graph = buildInputGraph();
+      const mermaidGraph = generator.buildMermaidGraph(graph);
+      const expectedMermaidGraph = buildExpectedMermaidGraph();
+      expect(mermaidGraph.equals(expectedMermaidGraph)).toBe(true);
     });
   });
 });

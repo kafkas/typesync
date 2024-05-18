@@ -1,3 +1,5 @@
+import lodash from 'lodash';
+
 class MermaidGraphNodeImpl implements MermaidGraphNode {
   public get pointsTo() {
     return [...this.#pointsToOrdering];
@@ -26,9 +28,9 @@ export interface MermaidGraphNode {
   readonly pointsTo: MermaidGraphNode[];
 }
 
-export type MermaidGraphOrientation2 = 'TB' | 'LR';
+export type MermaidGraphOrientation = 'TB' | 'LR';
 
-export class MermaidGraph2 {
+export class MermaidGraph {
   private readonly nodesById = new Map<string, MermaidGraphNodeImpl>();
   private readonly rootNodesById = new Map<string, MermaidGraphNodeImpl>();
 
@@ -36,7 +38,7 @@ export class MermaidGraph2 {
     return Array.from(this.rootNodesById.values());
   }
 
-  public constructor(public readonly orientation: MermaidGraphOrientation2) {}
+  public constructor(public readonly orientation: MermaidGraphOrientation) {}
 
   public createNode(label: string): MermaidGraphNode {
     const id = this.createIdForNewNode();
@@ -54,6 +56,20 @@ export class MermaidGraph2 {
     const toNode = this.validateNodeExists(to);
     fromNode.linkTo(toNode);
     this.rootNodesById.delete(toNode.id);
+  }
+
+  public equals(that: MermaidGraph) {
+    if (this.nodesById.size !== that.nodesById.size) return false;
+    if (this.rootNodesById.size !== that.rootNodesById.size) return false;
+    for (const [, thisNode] of this.nodesById) {
+      const thatNode = that.nodesById.get(thisNode.id);
+      if (thatNode === undefined) return false;
+      if (thatNode.id !== thisNode.id || thatNode.label !== thisNode.label) return false;
+      const thisNodePointsToIds = thisNode.pointsTo.map(node => node.id);
+      const thatNodePointsToIds = thatNode.pointsTo.map(node => node.id);
+      if (!lodash.isEqual(thisNodePointsToIds, thatNodePointsToIds)) return false;
+    }
+    return true;
   }
 
   private validateNodeExists(node: MermaidGraphNode) {

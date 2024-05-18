@@ -1,29 +1,38 @@
 import { resolve } from 'path';
 
-import { GraphGeneration } from '../../../generators/graph/index.js';
+import { MermaidGraph } from '../../../generators/graph/index.js';
 import { getDirName } from '../../../util/fs.js';
 import { createGraphRenderer } from '../_impl.js';
 
-describe('GraphRendererImpl', () => {
-  it(`correctly renders a Mermaid graph generation`, async () => {
+describe('MermaidGraph2', () => {
+  it(`correctly renders a MermaidGraph2`, async () => {
     const renderer = createGraphRenderer({
       startMarker: 'typesync-start',
       endMarker: 'typesync-end',
       pathToOutputFile: resolve(getDirName(import.meta.url), `template.md`),
     });
-    const graph: GraphGeneration = {
-      type: 'graph',
-      graph: {
-        orientation: 'LR',
-        links: [
-          ['books', 'generic_bookId[bookId]'],
-          ['generic_bookId[bookId]', 'reviews'],
-          ['generic_bookId[bookId]', 'chapters'],
-          ['generic_bookId[bookId]', 'translations'],
-        ],
-      },
-    };
-    const renderedGraph = await renderer.render(graph);
-    expect(renderedGraph).toMatchSnapshot();
+
+    const graph = new MermaidGraph('LR');
+    const booksCol = graph.createNode('books');
+    const bookDoc = graph.createNode('{bookId}');
+    const reviewsCol = graph.createNode('reviews');
+    const reviewDoc = graph.createNode('{reviewId}');
+    const chaptersCol = graph.createNode('chapters');
+    const chapterDoc = graph.createNode('{chapterId}');
+    const translationsCol = graph.createNode('translations');
+    const translationDoc = graph.createNode('{translationId}');
+    const authorsCol = graph.createNode('authors');
+    const authorDoc = graph.createNode('{authorId}');
+
+    graph.link(booksCol, bookDoc);
+    graph.link(bookDoc, reviewsCol);
+    graph.link(reviewsCol, reviewDoc);
+    graph.link(bookDoc, chaptersCol);
+    graph.link(chaptersCol, chapterDoc);
+    graph.link(bookDoc, translationsCol);
+    graph.link(translationsCol, translationDoc);
+    graph.link(authorsCol, authorDoc);
+
+    expect(await renderer.render({ type: 'graph', graph })).toMatchSnapshot();
   });
 });

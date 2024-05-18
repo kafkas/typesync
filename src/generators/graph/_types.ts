@@ -1,13 +1,5 @@
 import type { schema } from '../../schema/index.js';
-
-export type MermaidGraphOrientation = 'TB' | 'LR';
-
-export type MermaidGraphLink = [nodeId: string, nodeId: string];
-
-export interface MermaidGraph {
-  orientation: MermaidGraphOrientation;
-  links: MermaidGraphLink[];
-}
+import { MermaidGraph } from './mermaid-graph.js';
 
 export interface GraphGeneration {
   type: 'graph';
