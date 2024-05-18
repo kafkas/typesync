@@ -1,10 +1,10 @@
 import { schema } from '../../../schema/index.js';
 import { GraphGeneratorImpl } from '../_impl.js';
+import { MermaidGraph } from '../mermaid-graph.js';
 import {
   createLiteralRootCollectionWithGenericChildren,
   createLiteralSubCollectionWithGenericChildren,
-} from '../factory.js';
-import { MermaidGraph } from '../mermaid-graph.js';
+} from '../schema-graph/factory.js';
 import { SchemaGraphImpl } from '../schema-graph/impl.js';
 import { SchemaGraph } from '../schema-graph/interfaces.js';
 

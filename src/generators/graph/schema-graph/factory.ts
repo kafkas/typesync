@@ -4,7 +4,7 @@ import {
   GenericRootCollectionImpl,
   LiteralRootCollectionImpl,
   LiteralSubCollectionImpl,
-} from './schema-graph/impl.js';
+} from './impl.js';
 
 export function createLiteralRootCollectionWithGenericChildren(rootCollectionId: string, genericDocumentId: string) {
   const placeholderCol = new GenericRootCollectionImpl('placeholder', {

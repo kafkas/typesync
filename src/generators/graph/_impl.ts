@@ -1,4 +1,4 @@
-import { schema } from '../../schema/index.js';
+import { type schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
 import type { GraphGeneration, GraphGenerator, GraphGeneratorConfig } from './_types.js';
 import { MermaidGraph, MermaidGraphNode, MermaidGraphOrientation } from './mermaid-graph.js';
@@ -23,8 +23,8 @@ export class GraphGeneratorImpl implements GraphGenerator {
     };
   }
 
-  public buildSchemaGraphFromSchema(_s: schema.Schema): SchemaGraph {
-    // TODO: Implement
+  public buildSchemaGraphFromSchema(s: schema.Schema): SchemaGraph {
+    const { documentModels: _ } = s;
     return { children: { type: 'literal-graph-children', collections: [] } };
   }
 
