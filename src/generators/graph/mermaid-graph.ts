@@ -59,6 +59,7 @@ export class MermaidGraph {
   }
 
   public equals(that: MermaidGraph) {
+    if (this.orientation !== that.orientation) return false;
     if (this.nodesById.size !== that.nodesById.size) return false;
     if (this.rootNodesById.size !== that.rootNodesById.size) return false;
     for (const [, thisNode] of this.nodesById) {

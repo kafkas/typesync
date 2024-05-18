@@ -64,6 +64,7 @@ export type CollectionChildren = GenericCollectionChildren | LiteralCollectionCh
 
 export interface GenericDocument {
   type: 'generic-document';
+  id: string;
   genericId: string;
   parent: Collection;
   path: string;
