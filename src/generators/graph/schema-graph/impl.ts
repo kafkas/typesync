@@ -15,17 +15,17 @@ export class SchemaGraphImpl implements SchemaGraph {
   public constructor(public readonly children: GraphChildrenImpl) {}
 }
 
-interface GenericGraphChildrenImpl {
+export interface GenericGraphChildrenImpl {
   type: 'generic-graph-children';
   collection: GenericRootCollectionImpl;
 }
 
-interface LiteralGraphChildrenImpl {
+export interface LiteralGraphChildrenImpl {
   type: 'literal-graph-children';
   collections: LiteralRootCollectionImpl[];
 }
 
-type GraphChildrenImpl = GenericGraphChildrenImpl | LiteralGraphChildrenImpl;
+export type GraphChildrenImpl = GenericGraphChildrenImpl | LiteralGraphChildrenImpl;
 
 export class GenericRootCollectionImpl implements GenericRootCollection {
   public readonly type = 'generic-root-collection';
@@ -61,7 +61,7 @@ export class LiteralRootCollectionImpl implements LiteralRootCollection {
   ) {}
 }
 
-type RootCollectionImpl = GenericRootCollectionImpl | LiteralRootCollectionImpl;
+export type RootCollectionImpl = GenericRootCollectionImpl | LiteralRootCollectionImpl;
 
 export class GenericSubCollectionImpl implements GenericSubCollection {
   public readonly type = 'generic-sub-collection';
@@ -111,9 +111,9 @@ export interface LiteralCollectionChildrenImpl {
 
 export type CollectionChildrenImpl = GenericCollectionChildrenImpl | LiteralCollectionChildrenImpl;
 
-type SubCollectionImpl = GenericSubCollectionImpl | LiteralSubCollectionImpl;
+export type SubCollectionImpl = GenericSubCollectionImpl | LiteralSubCollectionImpl;
 
-type CollectionImpl = RootCollectionImpl | SubCollectionImpl;
+export type CollectionImpl = RootCollectionImpl | SubCollectionImpl;
 
 export class GenericDocumentImpl implements GenericDocument {
   public readonly type = 'generic-document';
@@ -183,13 +183,13 @@ export class LiteralDocumentImpl implements LiteralDocument {
   }
 }
 
-class GenericDocumentChildrenImpl implements GenericDocumentChildren {
+export class GenericDocumentChildrenImpl implements GenericDocumentChildren {
   public readonly type = 'generic-document-children';
 
   public constructor(public readonly collection: GenericSubCollectionImpl) {}
 }
 
-class LiteralDocumentChildrenImpl implements LiteralDocumentChildren {
+export class LiteralDocumentChildrenImpl implements LiteralDocumentChildren {
   public readonly type = 'literal-document-children';
 
   public get collections() {
@@ -206,6 +206,6 @@ class LiteralDocumentChildrenImpl implements LiteralDocumentChildren {
   }
 }
 
-type DocumentChildrenImpl = GenericDocumentChildrenImpl | LiteralDocumentChildrenImpl;
+export type DocumentChildrenImpl = GenericDocumentChildrenImpl | LiteralDocumentChildrenImpl;
 
 export type DocumentImpl = GenericDocumentImpl | LiteralDocumentImpl;
