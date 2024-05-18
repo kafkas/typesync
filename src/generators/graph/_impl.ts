@@ -84,16 +84,17 @@ export class GraphGeneratorImpl implements GraphGenerator {
     const hasLiteralRootNode = rootNodes.some(node => !node.isGeneric);
 
     if (hasGenericRootNode) {
-      assert(!hasLiteralRootNode, ``);
-      assert(rootNodesById.size === 1, ``);
+      assert(!hasLiteralRootNode, `todo`);
+      assert(rootNodesById.size === 1, `todo`);
     } else if (hasLiteralRootNode) {
-      assert(!hasGenericRootNode, ``);
+      assert(!hasGenericRootNode, `todo`);
     }
 
     if (hasGenericRootNode) {
       const [rootNode] = rootNodes;
       assertDefined(rootNode);
       const genericId = extractGenericId(rootNode.id);
+
       // TODO: Implement
       throw new Error('Unimplemented');
     } else {
