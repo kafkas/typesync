@@ -1,14 +1,13 @@
 import { type schema } from '../../schema/index.js';
-import { assertNever } from '../../util/assert.js';
+import { assert, assertDefined, assertNever } from '../../util/assert.js';
+import { extractGenericId } from '../../util/misc.js';
 import type { GraphGeneration, GraphGenerator, GraphGeneratorConfig } from './_types.js';
 import { MermaidGraph, MermaidGraphNode, MermaidGraphOrientation } from './mermaid-graph.js';
+import { CollectionNode, DocumentNode } from './schema-graph/dynamic.js';
+import { GenericRootCollectionImpl } from './schema-graph/impl.js';
 import { Collection, Document, SchemaGraph } from './schema-graph/interfaces.js';
 
 type SchemaGraphOrientation = 'vertical' | 'horizontal';
-
-// function isGeneric(part: string) {
-//   return part.startsWith('{') && part.endsWith('}');
-// }
 
 export class GraphGeneratorImpl implements GraphGenerator {
   public constructor(private readonly config: GraphGeneratorConfig) {}
@@ -24,8 +23,88 @@ export class GraphGeneratorImpl implements GraphGenerator {
   }
 
   public buildSchemaGraphFromSchema(s: schema.Schema): SchemaGraph {
-    const { documentModels: _ } = s;
-    return { children: { type: 'literal-graph-children', collections: [] } };
+    const { documentModels } = s;
+    const rootNodesById = new Map<string, CollectionNode>();
+    const collectionNodesByPath = new Map<string, CollectionNode>();
+    const documentNodesByPath = new Map<string, DocumentNode>();
+
+    documentModels.forEach(model => {
+      // TODO: Validate path
+      const parts = model.path.split('/');
+
+      parts.forEach((id, idx) => {
+        const path = parts.slice(0, idx + 1).join('/');
+        if (idx % 2 === 0) {
+          // Collection
+          let node = collectionNodesByPath.get(path);
+          if (!node) {
+            node = new CollectionNode(id);
+            collectionNodesByPath.set(path, node);
+          }
+          if (idx === 0) {
+            rootNodesById.set(id, node);
+          }
+        } else {
+          // Document
+          let node = documentNodesByPath.get(path);
+          if (!node) {
+            node = new DocumentNode(id);
+            documentNodesByPath.set(path, node);
+          }
+        }
+      });
+
+      // Link nodes
+      parts.forEach((id, idx) => {
+        if (idx === 0) return;
+        const parentPath = parts.slice(0, idx).join('/');
+        const path = [parentPath, id].join('/');
+        if (idx % 2 === 0) {
+          const node = collectionNodesByPath.get(path);
+          const parentNode = documentNodesByPath.get(parentPath);
+          assertDefined(node, `Expected node to be defined for path '${path}'.`);
+          assertDefined(parentNode, `Expected parent node to be defined for path '${parentPath}'.`);
+          if (!parentNode.hasChild(node.id)) {
+            parentNode.addChild(node);
+          }
+        } else {
+          const node = documentNodesByPath.get(path);
+          const parentNode = collectionNodesByPath.get(parentPath);
+          assertDefined(node, `Expected node to be defined for path '${path}'.`);
+          assertDefined(parentNode, `Expected parent node to be defined for path '${parentPath}'.`);
+          if (!parentNode.hasChild(node.id)) {
+            parentNode.addChild(node);
+          }
+        }
+      });
+    });
+
+    const rootNodes = Array.from(rootNodesById.values());
+    const hasGenericRootNode = rootNodes.some(node => node.isGeneric);
+    const hasLiteralRootNode = rootNodes.some(node => !node.isGeneric);
+
+    if (hasGenericRootNode) {
+      assert(!hasLiteralRootNode, ``);
+      assert(rootNodesById.size === 1, ``);
+    } else if (hasLiteralRootNode) {
+      assert(!hasGenericRootNode, ``);
+    }
+
+    if (hasGenericRootNode) {
+      const [rootNode] = rootNodes;
+      assertDefined(rootNode);
+      const genericId = extractGenericId(rootNode.id);
+      // TODO: Implement
+      throw new Error('Unimplemented');
+    } else {
+      return {
+        children: {
+          type: 'literal-graph-children',
+          // TODO: Implement
+          collections: [],
+        },
+      };
+    }
   }
 
   public buildMermaidGraphFromSchemaGraph(graph: SchemaGraph): MermaidGraph {
