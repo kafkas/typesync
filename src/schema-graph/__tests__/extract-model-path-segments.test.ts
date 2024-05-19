@@ -36,6 +36,9 @@ describe('extractModelPathSegments()', () => {
   it(`throws ModelPathInvalidError if path is otherwise invalid`, () => {
     const paths = [
       '',
+      '{}',
+      '{}/{}',
+      'users/{}',
       'users//{userId}',
       'users///{userId}',
       'users/{{userId}}',

@@ -33,7 +33,7 @@ export function extractModelPathSegments(modelName: string, modelPath: string): 
       return true;
     } else {
       if (ft.frequencyOf('{') === 1 && ft.frequencyOf('}') === 1) {
-        return part.charAt(0) === '{' && part.charAt(part.length - 1) === '}';
+        return part.charAt(0) === '{' && part.charAt(part.length - 1) === '}' && part.length > 2;
       } else {
         return false;
       }
