@@ -14,6 +14,7 @@ export function createSchemaGraphFromSchema(s: schema.Schema): SchemaGraph {
   documentModels.forEach(model => {
     const segments = extractModelPathSegments(model.name, model.path);
 
+    // Create nodes
     segments.forEach(segment => {
       const { id, path, type, level } = segment;
       if (type === 'collection') {
