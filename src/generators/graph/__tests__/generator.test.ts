@@ -50,6 +50,14 @@ describe('GraphGeneratorImpl', () => {
           collections: [
             {
               type: 'literal',
+              id: 'authors',
+              children: {
+                type: 'generic',
+                document: { type: 'generic-document', genericId: 'authorId', children: null },
+              },
+            },
+            {
+              type: 'literal',
               id: 'books',
               children: {
                 type: 'generic',
@@ -61,20 +69,21 @@ describe('GraphGeneratorImpl', () => {
                     collections: [
                       {
                         type: 'literal',
-                        id: 'reviews',
-                        children: {
-                          type: 'generic',
-                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
-                        },
-                      },
-                      {
-                        type: 'literal',
                         id: 'chapters',
                         children: {
                           type: 'generic',
                           document: { type: 'generic-document', genericId: 'chapterId', children: null },
                         },
                       },
+                      {
+                        type: 'literal',
+                        id: 'reviews',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
+                        },
+                      },
+
                       {
                         type: 'literal',
                         id: 'translations',
@@ -88,22 +97,13 @@ describe('GraphGeneratorImpl', () => {
                 },
               },
             },
-            {
-              type: 'literal',
-              id: 'authors',
-              children: {
-                type: 'generic',
-                document: { type: 'generic-document', genericId: 'authorId', children: null },
-              },
-            },
           ],
         },
       });
 
       const generatedGraph = generator.buildSchemaGraphFromSchema(inputSchema);
 
-      // TODO: Implement
-      expect(true).toEqual(true);
+      expect(generatedGraph.equals(expectedGraph)).toBe(true);
     });
   });
 
@@ -117,6 +117,18 @@ describe('GraphGeneratorImpl', () => {
           collections: [
             {
               type: 'literal',
+              id: 'authors',
+              children: {
+                type: 'generic',
+                document: {
+                  type: 'generic-document',
+                  genericId: 'authorId',
+                  children: null,
+                },
+              },
+            },
+            {
+              type: 'literal',
               id: 'books',
               children: {
                 type: 'generic',
@@ -128,18 +140,18 @@ describe('GraphGeneratorImpl', () => {
                     collections: [
                       {
                         type: 'literal',
-                        id: 'reviews',
-                        children: {
-                          type: 'generic',
-                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
-                        },
-                      },
-                      {
-                        type: 'literal',
                         id: 'chapters',
                         children: {
                           type: 'generic',
                           document: { type: 'generic-document', genericId: 'chapterId', children: null },
+                        },
+                      },
+                      {
+                        type: 'literal',
+                        id: 'reviews',
+                        children: {
+                          type: 'generic',
+                          document: { type: 'generic-document', genericId: 'reviewId', children: null },
                         },
                       },
                       {
@@ -155,40 +167,28 @@ describe('GraphGeneratorImpl', () => {
                 },
               },
             },
-            {
-              type: 'literal',
-              id: 'authors',
-              children: {
-                type: 'generic',
-                document: {
-                  type: 'generic-document',
-                  genericId: 'authorId',
-                  children: null,
-                },
-              },
-            },
           ],
         },
       });
 
       const buildExpectedMermaidGraph = () => {
         const graph = new MermaidGraph('LR');
-        const booksCol = graph.createNode('books');
-        const bookDoc = graph.createNode('{bookId}');
-        const reviewsCol = graph.createNode('reviews');
-        const reviewDoc = graph.createNode('{reviewId}');
-        const chaptersCol = graph.createNode('chapters');
-        const chapterDoc = graph.createNode('{chapterId}');
-        const translationsCol = graph.createNode('translations');
-        const translationDoc = graph.createNode('{translationId}');
         const authorsCol = graph.createNode('authors');
         const authorDoc = graph.createNode('{authorId}');
+        const booksCol = graph.createNode('books');
+        const bookDoc = graph.createNode('{bookId}');
+        const chaptersCol = graph.createNode('chapters');
+        const chapterDoc = graph.createNode('{chapterId}');
+        const reviewsCol = graph.createNode('reviews');
+        const reviewDoc = graph.createNode('{reviewId}');
+        const translationsCol = graph.createNode('translations');
+        const translationDoc = graph.createNode('{translationId}');
 
         graph.link(booksCol, bookDoc);
-        graph.link(bookDoc, reviewsCol);
-        graph.link(reviewsCol, reviewDoc);
         graph.link(bookDoc, chaptersCol);
         graph.link(chaptersCol, chapterDoc);
+        graph.link(bookDoc, reviewsCol);
+        graph.link(reviewsCol, reviewDoc);
         graph.link(bookDoc, translationsCol);
         graph.link(translationsCol, translationDoc);
         graph.link(authorsCol, authorDoc);
@@ -198,6 +198,7 @@ describe('GraphGeneratorImpl', () => {
 
       const builtMermaidGraph = generator.buildMermaidGraphFromSchemaGraph(inputGraph);
       const expectedMermaidGraph = buildExpectedMermaidGraph();
+
       expect(builtMermaidGraph.equals(expectedMermaidGraph)).toBe(true);
     });
   });
