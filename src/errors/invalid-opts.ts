@@ -1,4 +1,10 @@
-import type { GeneratePythonOption, GenerateRulesOption, GenerateSwiftOption, GenerateTsOption } from '../api/index.js';
+import type {
+  GenerateGraphOption,
+  GeneratePythonOption,
+  GenerateRulesOption,
+  GenerateSwiftOption,
+  GenerateTsOption,
+} from '../api/index.js';
 import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../constants.js';
 
 export class InvalidOptionsError extends Error {
@@ -56,6 +62,30 @@ export class InvalidRulesIndentationOptionError extends InvalidOptionsError {
   public constructor(indentation: number) {
     const option: GenerateRulesOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidGraphStartMarkerOptionError extends InvalidOptionsError {
+  public constructor() {
+    const option: GenerateGraphOption = 'startMarker';
+    super(`Expected '${option}' to be a non-empty string.`);
+  }
+}
+
+export class InvalidGraphEndMarkerOptionError extends InvalidOptionsError {
+  public constructor() {
+    const option: GenerateGraphOption = 'endMarker';
+    super(`Expected '${option}' to be a non-empty string.`);
+  }
+}
+
+export class GraphMarkerOptionsNotDistinctError extends InvalidOptionsError {
+  public constructor(marker: string) {
+    const startMarkerOpt: GenerateGraphOption = 'startMarker';
+    const endMarkerOpt: GenerateGraphOption = 'endMarker';
+    super(
+      `Expected '${startMarkerOpt}' and '${endMarkerOpt}' to have different values. Received '${marker}' for both.`
+    );
   }
 }
 

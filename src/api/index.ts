@@ -1,4 +1,13 @@
 export {
+  type GenerateGraphOption,
+  type GenerateGraphOptions,
+  type GenerateGraphRepresentationOptions,
+  type GenerateGraphRepresentationResult,
+  type GenerateGraphResult,
+  type SchemaGraphOrientation,
+  getSchemaGraphOrientations,
+} from './graph.js';
+export {
   type GeneratePythonOption,
   type GeneratePythonOptions,
   type GeneratePythonRepresentationOptions,

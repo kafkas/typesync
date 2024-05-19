@@ -2,6 +2,12 @@ import { createTypesync } from '../core/typesync.js';
 import { definition } from '../definition/index.js';
 import { schema } from '../schema/index.js';
 import type {
+  GenerateGraphOptions,
+  GenerateGraphRepresentationOptions,
+  GenerateGraphRepresentationResult,
+  GenerateGraphResult,
+} from './graph.js';
+import type {
   GeneratePythonOptions,
   GeneratePythonRepresentationOptions,
   GeneratePythonRepresentationResult,
@@ -109,6 +115,21 @@ export interface Typesync {
   generateRulesRepresentation(opts: GenerateRulesRepresentationOptions): Promise<GenerateRulesRepresentationResult>;
 
   /**
+   * Generates a Mermaid graph for the specified schema and injects it into the specified file.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync generate-graph` command.
+   */
+  generateGraph(opts: GenerateGraphOptions): Promise<GenerateGraphResult>;
+
+  /**
+   * Generates a Mermaid graph for the specified schema and returns the generation and the internal representation of the
+   * schema without writing anything to the filesystem.
+   */
+  generateGraphRepresentation(opts: GenerateGraphRepresentationOptions): Promise<GenerateGraphRepresentationResult>;
+
+  /**
    * Checks if the specified schema definition is syntactically valid.
    *
    * @remarks
@@ -123,7 +144,12 @@ export interface Typesync {
   generateRepresentation(opts: GenerateRepresentationOptions): GenerateRepresentationResult;
 }
 
-export type GenerationResult = GenerateTsResult | GenerateSwiftResult | GeneratePythonResult | GenerateRulesResult;
+export type GenerationResult =
+  | GenerateTsResult
+  | GenerateSwiftResult
+  | GeneratePythonResult
+  | GenerateRulesResult
+  | GenerateGraphResult;
 
 /**
  * The programmatic interface for the Typesync CLI.

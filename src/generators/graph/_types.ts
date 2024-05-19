@@ -1,3 +1,4 @@
+import { SchemaGraphOrientation } from '../../api/index.js';
 import type { schema } from '../../schema/index.js';
 import { MermaidGraph } from './mermaid-graph.js';
 
@@ -5,8 +6,6 @@ export interface GraphGeneration {
   type: 'graph';
   graph: MermaidGraph;
 }
-
-export type SchemaGraphOrientation = 'vertical' | 'horizontal';
 
 export interface GraphGeneratorConfig {
   orientation: SchemaGraphOrientation;

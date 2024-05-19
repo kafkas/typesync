@@ -5,9 +5,13 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { getPythonTargets, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
+import { getPythonTargets, getSchemaGraphOrientations, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
 import { getObjectTypeFormats } from '../api/ts.js';
 import {
+  DEFAULT_GRAPH_DEBUG,
+  DEFAULT_GRAPH_END_MARKER,
+  DEFAULT_GRAPH_ORIENTATION,
+  DEFAULT_GRAPH_START_MARKER,
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
   DEFAULT_PY_INDENTATION,
@@ -23,6 +27,7 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_TS_OBJECT_TYPE_FORMAT,
+  DEFAULT_VALIDATE_DEBUG,
   RULES_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
@@ -316,6 +321,71 @@ await yargs(hideBin(process.argv))
     }
   )
   .command(
+    'generate-graph',
+    'Generates a Mermaid graph for the specified schema and injects it into the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('startMarker', {
+          describe:
+            'A marker that indicates the line after which the generated code should be inserted. Make sure to use a string that is unique within the file.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_GRAPH_START_MARKER,
+        })
+        .option('endMarker', {
+          describe:
+            'A marker that indicates the line before which the generated code should be inserted. Make sure to use a string that is unique within the file.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_GRAPH_END_MARKER,
+        })
+        .option('orientation', {
+          describe: `The orientation of the generated Mermaid graph. Can be either 'vertical' or 'horizontal which correspond to 'TB' and 'LR' Mermaid options, respectively.`,
+          type: 'string',
+          demandOption: false,
+          choices: getSchemaGraphOrientations(),
+          default: DEFAULT_GRAPH_ORIENTATION,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_GRAPH_DEBUG,
+        }),
+    async args => {
+      const { definition, outFile, startMarker, endMarker, orientation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateGraph({
+          definition: resolve(process.cwd(), definition),
+          outFile: pathToOutputFile,
+          startMarker,
+          endMarker,
+          orientation,
+          debug,
+        });
+
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
+      } catch (e) {
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
+      }
+    }
+  )
+  .command(
     'validate',
     'Checks if the specified schema definition is syntactically valid.',
     y =>
@@ -330,7 +400,7 @@ await yargs(hideBin(process.argv))
           describe: 'Whether to enable debug logs.',
           type: 'boolean',
           demandOption: false,
-          default: false,
+          default: DEFAULT_VALIDATE_DEBUG,
         }),
     async args => {
       const { definition, debug } = args;
