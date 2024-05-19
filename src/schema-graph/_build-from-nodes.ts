@@ -1,8 +1,8 @@
-import { assert, assertDefined, assertNever } from '../../../util/assert.js';
-import { extractGenericId } from '../../../util/misc.js';
-import { SchemaGraph, createSchemaGraph } from '../schema-graph/impl.js';
-import { CollectionChildrenJson, DocumentChildrenJson } from '../schema-graph/json.js';
-import { type CollectionNode, DocumentNode } from './nodes.js';
+import { assert, assertDefined, assertNever } from '../util/assert.js';
+import { extractGenericId } from '../util/misc.js';
+import type { CollectionNode, DocumentNode } from './_nodes.js';
+import { SchemaGraph, createSchemaGraph } from './impl.js';
+import { CollectionChildrenJson, DocumentChildrenJson } from './json.js';
 
 export function buildSchemaGraphFromNodes(rootNodes: CollectionNode[]): SchemaGraph {
   const representation = validateRepresentationTypeForLevel(rootNodes);

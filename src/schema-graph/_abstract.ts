@@ -1,4 +1,4 @@
-import { assertNever } from '../../../util/assert.js';
+import { assertNever } from '../util/assert.js';
 import type {
   CollectionChildren,
   DocumentChildren,

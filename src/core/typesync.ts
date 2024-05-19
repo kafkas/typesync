@@ -76,12 +76,13 @@ import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
+import { createSchemaGraphFromSchema } from '../schema-graph/create-from-schema.js';
 import { schema } from '../schema/index.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
 import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
-import { createDefinitionParser } from './definition-parser.js';
-import { createLogger } from './logger.js';
+import { createDefinitionParser } from './definition-parser/index.js';
+import { createLogger } from './logger/index.js';
 
 interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
@@ -387,9 +388,9 @@ class TypesyncImpl implements Typesync {
   ): Promise<GenerateGraphRepresentationResult> {
     const opts = this.normalizeGenerateGraphRepresentationOpts(rawOpts);
     const { definitionGlobPattern, orientation, debug } = opts;
-    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const { schema: s, graph } = this.createCoreObjects(definitionGlobPattern, debug);
     const generator = createGraphGenerator({ orientation });
-    const generation = generator.generate(s);
+    const generation = generator.generate(graph);
     return { type: 'graph', schema: s, generation };
   }
 
@@ -449,7 +450,9 @@ class TypesyncImpl implements Typesync {
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
-    return { logger, definition, schema: schema.createSchemaFromDefinition(definition) };
+    const s = schema.createSchemaFromDefinition(definition);
+    const graph = createSchemaGraphFromSchema(s);
+    return { logger, definition, schema: s, graph };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {

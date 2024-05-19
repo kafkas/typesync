@@ -2,7 +2,7 @@ import { globSync } from 'glob';
 import { resolve } from 'path';
 
 import { getDirName } from '../../util/fs.js';
-import { createDefinitionParser } from '../definition-parser.js';
+import { createDefinitionParser } from '../definition-parser/index.js';
 
 describe('definition-parser', () => {
   it('correctly parses definition from YAML files', () => {

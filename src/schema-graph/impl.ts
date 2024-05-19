@@ -1,7 +1,7 @@
 import lodash from 'lodash';
 
-import { assertNever } from '../../../util/assert.js';
-import { AbstractCollection, AbstractDocument } from './abstract.js';
+import { assertNever } from '../util/assert.js';
+import { AbstractCollection, AbstractDocument } from './_abstract.js';
 import type { CollectionChildrenJson, DocumentChildrenJson, SchemaGraphJson, SchemaGraphRootJson } from './json.js';
 
 export function createSchemaGraph(fromJson: SchemaGraphJson) {

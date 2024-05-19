@@ -1,85 +1,19 @@
-import { type schema } from '../../schema/index.js';
-import { assertDefined, assertNever } from '../../util/assert.js';
+import { Collection, Document, type SchemaGraph } from '../../schema-graph/index.js';
+import { assertNever } from '../../util/assert.js';
 import type { GraphGeneration, GraphGenerator, GraphGeneratorConfig } from './_types.js';
 import { MermaidGraph, MermaidGraphNode, MermaidGraphOrientation } from './mermaid-graph.js';
-import { CollectionNode, DocumentNode, buildSchemaGraphFromNodes } from './nodes/index.js';
-import { Collection, Document, SchemaGraph } from './schema-graph/index.js';
 
 type SchemaGraphOrientation = 'vertical' | 'horizontal';
 
 export class GraphGeneratorImpl implements GraphGenerator {
   public constructor(private readonly config: GraphGeneratorConfig) {}
 
-  public generate(s: schema.Schema): GraphGeneration {
-    const { documentModels: _ } = s;
-    const schemaGraph = this.buildSchemaGraphFromSchema(s);
-    const mermaidGraph = this.buildMermaidGraphFromSchemaGraph(schemaGraph);
+  public generate(graph: SchemaGraph): GraphGeneration {
+    const mermaidGraph = this.buildMermaidGraphFromSchemaGraph(graph);
     return {
       type: 'graph',
       graph: mermaidGraph,
     };
-  }
-
-  public buildSchemaGraphFromSchema(s: schema.Schema): SchemaGraph {
-    const { documentModels } = s;
-    const rootNodesById = new Map<string, CollectionNode>();
-    const collectionNodesByPath = new Map<string, CollectionNode>();
-    const documentNodesByPath = new Map<string, DocumentNode>();
-
-    documentModels.forEach(model => {
-      // TODO: Validate path
-      const parts = model.path.split('/');
-
-      parts.forEach((id, idx) => {
-        const path = parts.slice(0, idx + 1).join('/');
-        if (idx % 2 === 0) {
-          // Collection
-          let node = collectionNodesByPath.get(path);
-          if (!node) {
-            node = new CollectionNode(id);
-            collectionNodesByPath.set(path, node);
-          }
-          if (idx === 0) {
-            rootNodesById.set(id, node);
-          }
-        } else {
-          // Document
-          let node = documentNodesByPath.get(path);
-          if (!node) {
-            node = new DocumentNode(id);
-            documentNodesByPath.set(path, node);
-          }
-        }
-      });
-
-      // Link nodes
-      parts.forEach((id, idx) => {
-        if (idx === 0) return;
-        const parentPath = parts.slice(0, idx).join('/');
-        const path = [parentPath, id].join('/');
-        if (idx % 2 === 0) {
-          const node = collectionNodesByPath.get(path);
-          const parentNode = documentNodesByPath.get(parentPath);
-          assertDefined(node, `Expected node to be defined for path '${path}'.`);
-          assertDefined(parentNode, `Expected parent node to be defined for path '${parentPath}'.`);
-          if (!parentNode.hasChild(node.id)) {
-            parentNode.addChild(node);
-          }
-        } else {
-          const node = documentNodesByPath.get(path);
-          const parentNode = collectionNodesByPath.get(parentPath);
-          assertDefined(node, `Expected node to be defined for path '${path}'.`);
-          assertDefined(parentNode, `Expected parent node to be defined for path '${parentPath}'.`);
-          if (!parentNode.hasChild(node.id)) {
-            parentNode.addChild(node);
-          }
-        }
-      });
-    });
-
-    const rootNodes = Array.from(rootNodesById.values());
-
-    return buildSchemaGraphFromNodes(rootNodes);
   }
 
   public buildMermaidGraphFromSchemaGraph(graph: SchemaGraph): MermaidGraph {

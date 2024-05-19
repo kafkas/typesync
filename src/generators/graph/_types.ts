@@ -1,5 +1,5 @@
 import { SchemaGraphOrientation } from '../../api/index.js';
-import type { schema } from '../../schema/index.js';
+import { type SchemaGraph } from '../../schema-graph/index.js';
 import { MermaidGraph } from './mermaid-graph.js';
 
 export interface GraphGeneration {
@@ -12,5 +12,5 @@ export interface GraphGeneratorConfig {
 }
 
 export interface GraphGenerator {
-  generate(s: schema.Schema): GraphGeneration;
+  generate(graph: SchemaGraph): GraphGeneration;
 }
