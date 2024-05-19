@@ -185,7 +185,7 @@ export type SubCollection = GenericSubCollection | LiteralSubCollection;
 export type Collection = RootCollection | SubCollection;
 
 export class GenericDocument {
-  public readonly type = 'generic-document';
+  public readonly type = 'generic';
 
   public get id() {
     return this.genericIdWithBraces;
@@ -223,7 +223,7 @@ export class GenericDocument {
 }
 
 export class LiteralDocument {
-  public readonly type = 'literal-document';
+  public readonly type = 'literal';
 
   public get path() {
     return `${this.parent.path}/${this.id}`;

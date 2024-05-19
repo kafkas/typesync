@@ -1,9 +1,9 @@
 import { type schema } from '../../schema/index.js';
-import { assert, assertDefined, assertNever } from '../../util/assert.js';
-import { extractGenericId } from '../../util/misc.js';
+import { assertDefined, assertNever } from '../../util/assert.js';
 import type { GraphGeneration, GraphGenerator, GraphGeneratorConfig } from './_types.js';
 import { MermaidGraph, MermaidGraphNode, MermaidGraphOrientation } from './mermaid-graph.js';
-import { Collection, CollectionNode, Document, DocumentNode, SchemaGraph } from './schema-graph/index.js';
+import { CollectionNode, DocumentNode, buildSchemaGraphFromNodes } from './nodes/index.js';
+import { Collection, Document, SchemaGraph } from './schema-graph/index.js';
 
 type SchemaGraphOrientation = 'vertical' | 'horizontal';
 
@@ -78,26 +78,8 @@ export class GraphGeneratorImpl implements GraphGenerator {
     });
 
     const rootNodes = Array.from(rootNodesById.values());
-    const hasGenericRootNode = rootNodes.some(node => node.isGeneric);
-    const hasLiteralRootNode = rootNodes.some(node => !node.isGeneric);
 
-    if (hasGenericRootNode) {
-      assert(!hasLiteralRootNode, `todo`);
-      assert(rootNodesById.size === 1, `todo`);
-    } else if (hasLiteralRootNode) {
-      assert(!hasGenericRootNode, `todo`);
-    }
-
-    if (hasGenericRootNode) {
-      const [rootNode] = rootNodes;
-      assertDefined(rootNode);
-      const genericId = extractGenericId(rootNode.id);
-
-      // TODO: Implement
-      throw new Error('Unimplemented');
-    } else {
-      throw new Error('Unimplemented');
-    }
+    return buildSchemaGraphFromNodes(rootNodes);
   }
 
   public buildMermaidGraphFromSchemaGraph(graph: SchemaGraph): MermaidGraph {
