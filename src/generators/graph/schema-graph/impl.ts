@@ -1,3 +1,5 @@
+import lodash from 'lodash';
+
 import { assertNever } from '../../../util/assert.js';
 import { CollectionChildrenJson, DocumentChildrenJson, SchemaGraphJson, SchemaGraphRootJson } from './json.js';
 
@@ -14,7 +16,9 @@ export class SchemaGraph {
       const { collections } = this.rootJson;
       return {
         type: 'literal',
-        collections: collections.map(collection => new LiteralRootCollection(collection.id, collection.children)),
+        collections: collections
+          .map(collection => new LiteralRootCollection(collection.id, collection.children))
+          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
       };
     } else {
       assertNever(this.rootJson);
@@ -22,6 +26,10 @@ export class SchemaGraph {
   }
 
   public constructor(private readonly rootJson: SchemaGraphRootJson) {}
+
+  public equals(that: SchemaGraph) {
+    return lodash.isEqual(this.rootJson, that.rootJson);
+  }
 }
 
 export interface SchemaGraphRootGeneric {
@@ -59,7 +67,9 @@ export class GenericRootCollection {
       const { documents } = this.childrenJson;
       return {
         type: 'literal',
-        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+        documents: documents
+          .map(document => new LiteralDocument(document.id, this, document.children))
+          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -87,7 +97,9 @@ export class LiteralRootCollection {
       const { documents } = this.childrenJson;
       return {
         type: 'literal',
-        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+        documents: documents
+          .map(document => new LiteralDocument(document.id, this, document.children))
+          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -125,7 +137,9 @@ export class GenericSubCollection {
       const { documents } = this.childrenJson;
       return {
         type: 'literal',
-        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+        documents: documents
+          .map(document => new LiteralDocument(document.id, this, document.children))
+          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -154,7 +168,9 @@ export class LiteralSubCollection {
       const { documents } = this.childrenJson;
       return {
         type: 'literal',
-        documents: documents.map(document => new LiteralDocument(document.id, this, document.children)),
+        documents: documents
+          .map(document => new LiteralDocument(document.id, this, document.children))
+          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -208,7 +224,9 @@ export class GenericDocument {
       const { collections } = this.childrenJson;
       return {
         type: 'literal',
-        collections: collections.map(collection => new LiteralSubCollection(collection.id, this, collection.children)),
+        collections: collections
+          .map(collection => new LiteralSubCollection(collection.id, this, collection.children))
+          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -238,7 +256,9 @@ export class LiteralDocument {
       const { collections } = this.childrenJson;
       return {
         type: 'literal',
-        collections: collections.map(collection => new LiteralSubCollection(collection.id, this, collection.children)),
+        collections: collections
+          .map(collection => new LiteralSubCollection(collection.id, this, collection.children))
+          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
       };
     } else {
       assertNever(this.childrenJson);
