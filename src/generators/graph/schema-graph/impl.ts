@@ -1,7 +1,8 @@
 import lodash from 'lodash';
 
 import { assertNever } from '../../../util/assert.js';
-import { CollectionChildrenJson, DocumentChildrenJson, SchemaGraphJson, SchemaGraphRootJson } from './json.js';
+import { AbstractCollection, AbstractDocument } from './abstract.js';
+import type { CollectionChildrenJson, DocumentChildrenJson, SchemaGraphJson, SchemaGraphRootJson } from './json.js';
 
 export function createSchemaGraph(fromJson: SchemaGraphJson) {
   return new SchemaGraph(fromJson.root);
@@ -44,7 +45,7 @@ export interface SchemaGraphRootLiteral {
 
 export type SchemaGraphRoot = SchemaGraphRootGeneric | SchemaGraphRootLiteral;
 
-export class GenericRootCollection {
+export class GenericRootCollection extends AbstractCollection {
   public readonly type = 'generic';
 
   public get id() {
@@ -59,62 +60,48 @@ export class GenericRootCollection {
     return this.id;
   }
 
-  public get children(): CollectionChildren {
-    if (this.childrenJson.type === 'generic') {
-      const { document } = this.childrenJson;
-      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { documents } = this.childrenJson;
-      return {
-        type: 'literal',
-        documents: documents
-          .map(document => new LiteralDocument(document.id, this, document.children))
-          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly genericId: string,
-    private readonly childrenJson: CollectionChildrenJson
-  ) {}
+    childrenJson: CollectionChildrenJson
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericDocument(genericId: string, childrenJson: DocumentChildrenJson | null) {
+    return new GenericDocument(genericId, this, childrenJson);
+  }
+
+  protected createLiteralDocument(id: string, childrenJson: DocumentChildrenJson | null) {
+    return new LiteralDocument(id, this, childrenJson);
+  }
 }
 
-export class LiteralRootCollection {
+export class LiteralRootCollection extends AbstractCollection {
   public readonly type = 'literal';
 
   public get path() {
     return this.id;
   }
 
-  public get children(): CollectionChildren {
-    if (this.childrenJson.type === 'generic') {
-      const { document } = this.childrenJson;
-      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { documents } = this.childrenJson;
-      return {
-        type: 'literal',
-        documents: documents
-          .map(document => new LiteralDocument(document.id, this, document.children))
-          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly id: string,
-    private readonly childrenJson: CollectionChildrenJson
-  ) {}
+    childrenJson: CollectionChildrenJson
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericDocument(genericId: string, childrenJson: DocumentChildrenJson | null) {
+    return new GenericDocument(genericId, this, childrenJson);
+  }
+
+  protected createLiteralDocument(id: string, childrenJson: DocumentChildrenJson | null) {
+    return new LiteralDocument(id, this, childrenJson);
+  }
 }
 
 export type RootCollection = GenericRootCollection | LiteralRootCollection;
 
-export class GenericSubCollection {
+export class GenericSubCollection extends AbstractCollection {
   public readonly type = 'generic';
 
   public get id() {
@@ -129,59 +116,45 @@ export class GenericSubCollection {
     return `${this.parent.id}/${this.id}`;
   }
 
-  public get children(): CollectionChildren {
-    if (this.childrenJson.type === 'generic') {
-      const { document } = this.childrenJson;
-      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { documents } = this.childrenJson;
-      return {
-        type: 'literal',
-        documents: documents
-          .map(document => new LiteralDocument(document.id, this, document.children))
-          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly genericId: string,
     public readonly parent: Document,
-    private readonly childrenJson: CollectionChildrenJson
-  ) {}
+    childrenJson: CollectionChildrenJson
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericDocument(genericId: string, childrenJson: DocumentChildrenJson | null) {
+    return new GenericDocument(genericId, this, childrenJson);
+  }
+
+  protected createLiteralDocument(id: string, childrenJson: DocumentChildrenJson | null) {
+    return new LiteralDocument(id, this, childrenJson);
+  }
 }
 
-export class LiteralSubCollection {
+export class LiteralSubCollection extends AbstractCollection {
   public readonly type = 'literal';
 
   public get path() {
     return `${this.parent.id}/${this.id}`;
   }
 
-  public get children(): CollectionChildren {
-    if (this.childrenJson.type === 'generic') {
-      const { document } = this.childrenJson;
-      return { type: 'generic', document: new GenericDocument(document.genericId, this, document.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { documents } = this.childrenJson;
-      return {
-        type: 'literal',
-        documents: documents
-          .map(document => new LiteralDocument(document.id, this, document.children))
-          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly id: string,
     public readonly parent: Document,
-    private readonly childrenJson: CollectionChildrenJson
-  ) {}
+    childrenJson: CollectionChildrenJson
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericDocument(genericId: string, childrenJson: DocumentChildrenJson | null) {
+    return new GenericDocument(genericId, this, childrenJson);
+  }
+
+  protected createLiteralDocument(id: string, childrenJson: DocumentChildrenJson | null) {
+    return new LiteralDocument(id, this, childrenJson);
+  }
 }
 
 export interface CollectionChildrenGeneric {
@@ -200,7 +173,7 @@ export type SubCollection = GenericSubCollection | LiteralSubCollection;
 
 export type Collection = RootCollection | SubCollection;
 
-export class GenericDocument {
+export class GenericDocument extends AbstractDocument {
   public readonly type = 'generic';
 
   public get id() {
@@ -215,61 +188,45 @@ export class GenericDocument {
     return `${this.parent.path}/${this.id}`;
   }
 
-  public get children(): DocumentChildren | null {
-    if (this.childrenJson === null) return null;
-    if (this.childrenJson.type === 'generic') {
-      const { collection } = this.childrenJson;
-      return { type: 'generic', collection: new GenericSubCollection(collection.genericId, this, collection.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { collections } = this.childrenJson;
-      return {
-        type: 'literal',
-        collections: collections
-          .map(collection => new LiteralSubCollection(collection.id, this, collection.children))
-          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly genericId: string,
     public readonly parent: Collection,
-    private readonly childrenJson: DocumentChildrenJson | null
-  ) {}
+    childrenJson: DocumentChildrenJson | null
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericSubCollection(genericId: string, childrenJson: CollectionChildrenJson) {
+    return new GenericSubCollection(genericId, this, childrenJson);
+  }
+
+  protected createLiteralSubCollection(id: string, childrenJson: CollectionChildrenJson) {
+    return new LiteralSubCollection(id, this, childrenJson);
+  }
 }
 
-export class LiteralDocument {
+export class LiteralDocument extends AbstractDocument {
   public readonly type = 'literal';
 
   public get path() {
     return `${this.parent.path}/${this.id}`;
   }
 
-  public get children(): DocumentChildren | null {
-    if (this.childrenJson === null) return null;
-    if (this.childrenJson.type === 'generic') {
-      const { collection } = this.childrenJson;
-      return { type: 'generic', collection: new GenericSubCollection(collection.genericId, this, collection.children) };
-    } else if (this.childrenJson.type === 'literal') {
-      const { collections } = this.childrenJson;
-      return {
-        type: 'literal',
-        collections: collections
-          .map(collection => new LiteralSubCollection(collection.id, this, collection.children))
-          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
-      };
-    } else {
-      assertNever(this.childrenJson);
-    }
-  }
-
   public constructor(
     public readonly id: string,
     public readonly parent: Collection,
-    private readonly childrenJson: DocumentChildrenJson | null
-  ) {}
+    childrenJson: DocumentChildrenJson | null
+  ) {
+    super(childrenJson);
+  }
+
+  protected createGenericSubCollection(genericId: string, childrenJson: CollectionChildrenJson) {
+    return new GenericSubCollection(genericId, this, childrenJson);
+  }
+
+  protected createLiteralSubCollection(id: string, childrenJson: CollectionChildrenJson) {
+    return new LiteralSubCollection(id, this, childrenJson);
+  }
 }
 
 export interface DocumentChildrenGeneric {
