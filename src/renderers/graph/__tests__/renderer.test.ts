@@ -4,8 +4,8 @@ import { MermaidGraph } from '../../../generators/graph/index.js';
 import { getDirName } from '../../../util/fs.js';
 import { createGraphRenderer } from '../_impl.js';
 
-describe('MermaidGraph2', () => {
-  it(`correctly renders a MermaidGraph2`, async () => {
+describe('MermaidGraph', () => {
+  it(`correctly renders a MermaidGraph`, async () => {
     const renderer = createGraphRenderer({
       startMarker: 'typesync-start',
       endMarker: 'typesync-end',
