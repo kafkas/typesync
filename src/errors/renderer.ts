@@ -18,6 +18,14 @@ export class MissingRulesOutputFileError extends Error {
   }
 }
 
+export class MissingGraphOutputFileError extends Error {
+  public constructor(pathToOutputFile: string) {
+    super(
+      `The output file '${pathToOutputFile}' does not exist. An existing output file is required for Mermaid graph generation since it contains the markers between which the generated graph is inserted.`
+    );
+  }
+}
+
 export class MissingStartMarkerError extends InvalidOutputFileError {
   public constructor(pathToOutputFile: string, startMarker: string) {
     super(pathToOutputFile, `The start marker '${startMarker}' is missing from the output file.`);
