@@ -1,4 +1,5 @@
-import { assert, assertDefined, assertNever } from '../util/assert.js';
+import { GenericAndLiteralNodesInSameLevelError, MultipleGenericNodesInSameLevelError } from '../errors/invalid-def.js';
+import { assertDefined, assertNever } from '../util/assert.js';
 import { extractGenericId } from '../util/misc.js';
 import type { CollectionNode, DocumentNode } from './_nodes.js';
 import { SchemaGraph, createSchemaGraph } from './impl.js';
@@ -38,19 +39,23 @@ export function buildSchemaGraphFromNodes(rootNodes: CollectionNode[]): SchemaGr
 }
 
 function validateRepresentationTypeForLevel(levelNodes: (CollectionNode | DocumentNode)[]) {
-  const hasGenericChild = levelNodes.some(node => node.isGeneric);
-  const hasLiteralChild = levelNodes.some(node => !node.isGeneric);
-  const assertion = 'Generic nodes and literal nodes cannot be siblings.';
+  const [firstGenericNode, secondGenericNode] = levelNodes.filter(node => node.isGeneric);
+  const [firstLiteralNode] = levelNodes.filter(node => !node.isGeneric);
+  const hasGenericChild = firstGenericNode !== undefined;
+  const hasLiteralChild = firstLiteralNode !== undefined;
   if (hasGenericChild) {
-    assert(!hasLiteralChild, assertion);
-    assert(levelNodes.length === 1, 'There can be only one generic node that represents a level.');
+    if (hasLiteralChild) {
+      throw new GenericAndLiteralNodesInSameLevelError(firstGenericNode.id, firstLiteralNode.id);
+    }
+    if (secondGenericNode !== undefined) {
+      throw new MultipleGenericNodesInSameLevelError(firstGenericNode.id, secondGenericNode.id);
+    }
     return 'generic';
   }
   if (hasLiteralChild) {
-    assert(!hasGenericChild, assertion);
     return 'literal';
   }
-  throw new Error(assertion);
+  throw new Error('Representation type validation cannot be done for an empty list of nodes.');
 }
 
 function buildCollectionChildrenJson(childNodes: DocumentNode[]): CollectionChildrenJson {
