@@ -63,7 +63,16 @@ export function createSchemaGraphFromSchema(s: schema.Schema): SchemaGraph {
     });
   });
 
-  const rootNodes = Array.from(rootNodesById.values());
+  // Sort nodes
+  const rootNodes = Array.from(rootNodesById.values()).sort((n1, n2) => n1.id.localeCompare(n2.id));
+  sortNodesChildrenDeep(rootNodes);
 
   return buildSchemaGraphFromNodes(rootNodes);
+}
+
+function sortNodesChildrenDeep(nodes: (CollectionNode | DocumentNode)[]) {
+  nodes.forEach(node => {
+    node.sortChildren();
+    sortNodesChildrenDeep(node.children);
+  });
 }

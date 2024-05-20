@@ -17,9 +17,7 @@ export class SchemaGraph {
       const { collections } = this.rootJson;
       return {
         type: 'literal',
-        collections: collections
-          .map(collection => new LiteralRootCollection(collection.id, collection.children))
-          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
+        collections: collections.map(collection => new LiteralRootCollection(collection.id, collection.children)),
       };
     } else {
       assertNever(this.rootJson);

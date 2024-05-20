@@ -18,9 +18,7 @@ export abstract class AbstractCollection {
       const { documents } = this.childrenJson;
       return {
         type: 'literal',
-        documents: documents
-          .map(document => this.createLiteralDocument(document.id, document.children))
-          .sort((d1, d2) => d1.id.localeCompare(d2.id)),
+        documents: documents.map(document => this.createLiteralDocument(document.id, document.children)),
       };
     } else {
       assertNever(this.childrenJson);
@@ -50,9 +48,7 @@ export abstract class AbstractDocument {
       const { collections } = this.childrenJson;
       return {
         type: 'literal',
-        collections: collections
-          .map(collection => this.createLiteralSubCollection(collection.id, collection.children))
-          .sort((c1, c2) => c1.id.localeCompare(c2.id)),
+        collections: collections.map(collection => this.createLiteralSubCollection(collection.id, collection.children)),
       };
     } else {
       assertNever(this.childrenJson);

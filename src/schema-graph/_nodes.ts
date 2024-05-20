@@ -27,6 +27,10 @@ export class CollectionNode {
   public hasChild(id: string) {
     return this.childNodesById.has(id);
   }
+
+  public sortChildren() {
+    this.childNodesOrdering.sort((n1, n2) => n1.id.localeCompare(n2.id));
+  }
 }
 
 export class DocumentNode {
@@ -52,5 +56,9 @@ export class DocumentNode {
 
   public hasChild(id: string) {
     return this.childNodesById.has(id);
+  }
+
+  public sortChildren() {
+    this.childNodesOrdering.sort((n1, n2) => n1.id.localeCompare(n2.id));
   }
 }

@@ -38,26 +38,6 @@ export function buildSchemaGraphFromNodes(rootNodes: CollectionNode[]): SchemaGr
   }
 }
 
-function validateRepresentationTypeForLevel(levelNodes: (CollectionNode | DocumentNode)[]) {
-  const [firstGenericNode, secondGenericNode] = levelNodes.filter(node => node.isGeneric);
-  const [firstLiteralNode] = levelNodes.filter(node => !node.isGeneric);
-  const hasGenericChild = firstGenericNode !== undefined;
-  const hasLiteralChild = firstLiteralNode !== undefined;
-  if (hasGenericChild) {
-    if (hasLiteralChild) {
-      throw new GenericAndLiteralNodesInSameLevelError(firstGenericNode.id, firstLiteralNode.id);
-    }
-    if (secondGenericNode !== undefined) {
-      throw new MultipleGenericNodesInSameLevelError(firstGenericNode.id, secondGenericNode.id);
-    }
-    return 'generic';
-  }
-  if (hasLiteralChild) {
-    return 'literal';
-  }
-  throw new Error('Representation type validation cannot be done for an empty list of nodes.');
-}
-
 function buildCollectionChildrenJson(childNodes: DocumentNode[]): CollectionChildrenJson {
   const representation = validateRepresentationTypeForLevel(childNodes);
 
@@ -118,4 +98,24 @@ function buildDocumentChildrenJson(childNodes: CollectionNode[]): DocumentChildr
   } else {
     assertNever(representation);
   }
+}
+
+function validateRepresentationTypeForLevel(levelNodes: (CollectionNode | DocumentNode)[]) {
+  const [firstGenericNode, secondGenericNode] = levelNodes.filter(node => node.isGeneric);
+  const [firstLiteralNode] = levelNodes.filter(node => !node.isGeneric);
+  const hasGenericChild = firstGenericNode !== undefined;
+  const hasLiteralChild = firstLiteralNode !== undefined;
+  if (hasGenericChild) {
+    if (hasLiteralChild) {
+      throw new GenericAndLiteralNodesInSameLevelError(firstGenericNode.id, firstLiteralNode.id);
+    }
+    if (secondGenericNode !== undefined) {
+      throw new MultipleGenericNodesInSameLevelError(firstGenericNode.id, secondGenericNode.id);
+    }
+    return 'generic';
+  }
+  if (hasLiteralChild) {
+    return 'literal';
+  }
+  throw new Error('Representation type validation cannot be done for an empty list of nodes.');
 }
