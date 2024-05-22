@@ -351,7 +351,7 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_GRAPH_END_MARKER,
         })
         .option('orientation', {
-          describe: `The orientation of the generated Mermaid graph. Can be either 'vertical' or 'horizontal which correspond to 'TB' and 'LR' Mermaid options, respectively.`,
+          describe: `The orientation of the generated Mermaid graph. Can be either 'vertical' or 'horizontal' which correspond to the 'TB' and 'LR' Mermaid options, respectively.`,
           type: 'string',
           demandOption: false,
           choices: getSchemaGraphOrientations(),
