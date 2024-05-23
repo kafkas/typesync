@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- 9cd5312: Implemented the Mermaid graph generator. The `generate-graph` command will now generate a Mermaid graph for a given schema and inject it into the specified Markdown file.
+- 9cd5312: [BREAKING] Document models are now required to have a `path` field.
+
 ## 0.8.0
 
 ### Minor Changes
