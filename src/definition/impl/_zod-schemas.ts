@@ -190,8 +190,12 @@ export const documentModel = z
     model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
     docs: z.string().optional().describe('Optional documentation for the model.'),
     type: objectType.describe(`The type that represents the shape of the document model. Must be an 'object' type.`),
-    // TODO: Expand description
-    path: z.string().min(1).describe(`An exact or generic path to the document.`),
+    path: z
+      .string()
+      .min(1)
+      .describe(
+        `An exact or generic path to the document. Must be a string consisting of path segments separated by a '/' (slash). Each segment can either be a literal ID or a generic ID of the collection or document. A literal ID is a plain string, such as 'users', while a generic ID must be enclosed in curly braces (e.g. '{userId}').`
+      ),
   })
   .strict()
   .describe('A document model.');
