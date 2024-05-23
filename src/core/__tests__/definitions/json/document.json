@@ -1,6 +1,7 @@
 {
   "UserProfile": {
     "model": "document",
+    "path": "profiles/{profileId}",
     "docs": "User profile model",
     "type": {
       "type": "object",
@@ -67,7 +68,6 @@
           }
         }
       }
-    },
-    "path": "profiles/{profileId}"
+    }
   }
 }
