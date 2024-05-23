@@ -49,7 +49,7 @@
     "test": "yarn run test:compile && yarn run test:run",
     "test-local": "yarn run test:compile && yarn run test:run --verbose",
     "test:compile": "tsc -p tsconfig.test.json",
-    "test:run": "node --experimental-vm-modules --max-old-space-size=1024 node_modules/jest/bin/jest.js",
+    "test:run": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "version": "changeset version && yarn run generate-json-schema"
   },
   "dependencies": {
