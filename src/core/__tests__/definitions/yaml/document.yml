@@ -1,7 +1,8 @@
-# yaml-language-server: $schema=../../../../../public/v0.8.json
+# yaml-language-server: $schema=../../../../../public/v0.9.json
 
 UserProfile:
   model: document
+  path: profiles/{profileId}
   docs: User profile model
   type:
     type: object
@@ -51,4 +52,3 @@ UserProfile:
         type:
           type: map
           valueType: unknown
-  path: profiles/{profileId}

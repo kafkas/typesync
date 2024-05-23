@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../public/v0.8.json",
+  "$schema": "../../../../public/v0.9.json",
   "Username": {
     "model": "alias",
     "type": "string"
