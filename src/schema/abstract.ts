@@ -25,7 +25,8 @@ export abstract class AbstractDocumentModel<T> {
   public constructor(
     public readonly name: string,
     public readonly docs: string | null,
-    public readonly type: T
+    public readonly type: T,
+    public readonly path: string
   ) {}
 
   protected cloneType() {

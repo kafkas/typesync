@@ -20,6 +20,8 @@ function getMessageForResult(result: GenerationResult) {
       return 'Successfully generated Python/Pydantic type definitions for the specified schema.';
     case 'rules':
       return 'Successfully generated validator functions for Firestore Security Rules.';
+    case 'graph':
+      return 'Successfully generated Mermaid graph for the specified schema.';
     default:
       assertNever(result);
   }

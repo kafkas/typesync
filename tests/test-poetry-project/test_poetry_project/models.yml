@@ -15,6 +15,7 @@ UserRole:
 
 User:
   model: document
+  path: users/{userId}
   docs: Represents a user that belongs to a project.
   type:
     type: object

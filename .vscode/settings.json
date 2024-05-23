@@ -1,4 +1,10 @@
 {
-  "cSpell.words": ["datetime", "expressible", "pydantic", "typesync"],
+  "cSpell.words": [
+    "datetime",
+    "expressible",
+    "pydantic",
+    "subcollection",
+    "typesync"
+  ],
   "circleci.persistedProjectSelection": []
 }

@@ -25,6 +25,7 @@ describe('SwiftGeneratorImpl', () => {
       },
       Project: {
         model: 'document',
+        docs: 'Represents a project within a workspace',
         type: {
           type: 'object',
           fields: {
@@ -38,7 +39,7 @@ describe('SwiftGeneratorImpl', () => {
             },
           },
         },
-        docs: 'Represents a project within a workspace',
+        path: 'projects/{projectId}',
       },
     });
     const generation = generator.generate(s);

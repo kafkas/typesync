@@ -34,7 +34,7 @@ export function createSchemaFromDefinition(def: definition.Definition) {
       }
       case 'document': {
         const schemaType = converters.definition.objectTypeToSchema(defModel.type);
-        return new DocumentModel(modelName, defModel.docs ?? null, schemaType);
+        return new DocumentModel(modelName, defModel.docs ?? null, schemaType, defModel.path);
       }
       default:
         assertNever(defModel);
@@ -90,6 +90,6 @@ export function createAliasModel(params: CreateAliasModelParams<AliasParameterTy
 }
 
 export function createDocumentModel(params: CreateDocumentModelParams<DocumentParameterType>) {
-  const { name, docs, type } = params;
-  return new DocumentModel(name, docs, type);
+  const { name, docs, type, path } = params;
+  return new DocumentModel(name, docs, type, path);
 }

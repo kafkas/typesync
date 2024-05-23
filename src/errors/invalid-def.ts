@@ -29,3 +29,19 @@ export class DuplicateModelNameError extends DefinitionNotValidError {
     );
   }
 }
+
+export class GenericAndLiteralNodesInSameLevelError extends DefinitionNotValidError {
+  public constructor(genericNodeId: string, literalNodeId: string) {
+    super(
+      `One or more paths for the defined models need to be changed. The generic ID '${genericNodeId}' and literal ID '${literalNodeId}' exist on the same level. A Firestore level (i.e. sibling documents or collections) can be associated either with a single generic ID like '{projectId}' or multiple literal IDs like 'abc1' and 'abc2' etc. Generic nodes and literal nodes cannot be siblings.`
+    );
+  }
+}
+
+export class MultipleGenericNodesInSameLevelError extends DefinitionNotValidError {
+  public constructor(genericNodeId1: string, genericNodeId2: string) {
+    super(
+      `One or more paths for the defined models need to be changed. The generic IDs '${genericNodeId1}' and '${genericNodeId2}' represent the same level, which is illegal. A Firestore level (i.e. sibling documents or collections) can be associated either with a single generic ID like '{projectId}' or multiple literal IDs like 'abc1' and 'abc2' etc.`
+    );
+  }
+}

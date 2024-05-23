@@ -25,6 +25,7 @@ describe('PythonGeneratorImpl', () => {
       },
       Project: {
         model: 'document',
+        docs: 'Represents a project within a workspace',
         type: {
           type: 'object',
           fields: {
@@ -38,7 +39,7 @@ describe('PythonGeneratorImpl', () => {
             },
           },
         },
-        docs: 'Represents a project within a workspace',
+        path: `projects/{projectId}`,
       },
     });
     const generation = generator.generate(s);

@@ -51,3 +51,4 @@ UserProfile:
         type:
           type: map
           valueType: unknown
+  path: profiles/{profileId}

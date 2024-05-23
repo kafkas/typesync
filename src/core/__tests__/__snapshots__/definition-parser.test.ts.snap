@@ -72,6 +72,7 @@ exports[`definition-parser correctly parses definition from JSON files 1`] = `
   "UserProfile": {
     "docs": "User profile model",
     "model": "document",
+    "path": "profiles/{profileId}",
     "type": {
       "fields": {
         "address": {
@@ -245,6 +246,7 @@ exports[`definition-parser correctly parses definition from YAML files 1`] = `
   "UserProfile": {
     "docs": "User profile model",
     "model": "document",
+    "path": "profiles/{profileId}",
     "type": {
       "fields": {
         "address": {

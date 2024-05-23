@@ -2,14 +2,14 @@ import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 
-import { definition } from '../definition/index.js';
+import { definition } from '../../definition/index.js';
 import {
   DefinitionFileFieldNotValidError,
   DefinitionFileNotValidYamlOrJsonError,
   DuplicateModelNameError,
-} from '../errors/invalid-def.js';
-import { extractErrorMessage } from '../util/extract-error-message.js';
-import type { Logger } from './logger.js';
+} from '../../errors/invalid-def.js';
+import { extractErrorMessage } from '../../util/extract-error-message.js';
+import type { Logger } from '../logger/index.js';
 
 export interface DefinitionParser {
   parseDefinition(filePaths: string[]): definition.Definition;

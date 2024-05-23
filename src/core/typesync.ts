@@ -1,6 +1,10 @@
 import { globSync } from 'glob';
 
 import type {
+  GenerateGraphOptions,
+  GenerateGraphRepresentationOptions,
+  GenerateGraphRepresentationResult,
+  GenerateGraphResult,
   GeneratePythonOptions,
   GeneratePythonRepresentationOptions,
   GeneratePythonRepresentationResult,
@@ -18,6 +22,7 @@ import type {
   GenerateTsRepresentationResult,
   GenerateTsResult,
   PythonGenerationTarget,
+  SchemaGraphOrientation,
   SwiftGenerationTarget,
   TSGenerationTarget,
   TSObjectTypeFormat,
@@ -27,6 +32,10 @@ import type {
 } from '../api/index.js';
 import { GenerateRepresentationOptions, GenerateRepresentationResult } from '../api/typesync.js';
 import {
+  DEFAULT_GRAPH_DEBUG,
+  DEFAULT_GRAPH_END_MARKER,
+  DEFAULT_GRAPH_ORIENTATION,
+  DEFAULT_GRAPH_START_MARKER,
   DEFAULT_PY_CUSTOM_PYDANTIC_BASE,
   DEFAULT_PY_DEBUG,
   DEFAULT_PY_INDENTATION,
@@ -46,7 +55,10 @@ import {
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
+  GraphMarkerOptionsNotDistinctError,
   InvalidCustomPydanticBaseOptionError,
+  InvalidGraphEndMarkerOptionError,
+  InvalidGraphStartMarkerOptionError,
   InvalidPyIndentationOptionError,
   InvalidRulesEndMarkerOptionError,
   InvalidRulesIndentationOptionError,
@@ -58,17 +70,19 @@ import {
   InvalidValidatorParamNameOptionError,
   RulesMarkerOptionsNotDistinctError,
 } from '../errors/invalid-opts.js';
+import { createGraphGenerator } from '../generators/graph/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
 import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
 import { renderers } from '../renderers/index.js';
+import { createSchemaGraphFromSchema } from '../schema-graph/create-from-schema.js';
 import { schema } from '../schema/index.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { writeFile } from '../util/fs.js';
 import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
-import { createDefinitionParser } from './definition-parser.js';
-import { createLogger } from './logger.js';
+import { createDefinitionParser } from './definition-parser/index.js';
+import { createLogger } from './logger/index.js';
 
 interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
@@ -121,6 +135,18 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
   validatorNamePattern: string;
   validatorParamName: string;
   indentation: number;
+}
+
+interface NormalizedGenerateGraphRepresentationOptions {
+  definitionGlobPattern: string;
+  orientation: SchemaGraphOrientation;
+  debug: boolean;
+}
+
+interface NormalizedGenerateGraphOptions extends NormalizedGenerateGraphRepresentationOptions {
+  pathToOutputFile: string;
+  startMarker: string;
+  endMarker: string;
 }
 
 class TypesyncImpl implements Typesync {
@@ -348,6 +374,60 @@ class TypesyncImpl implements Typesync {
     };
   }
 
+  public async generateGraph(rawOpts: GenerateGraphOptions): Promise<GenerateGraphResult> {
+    const opts = this.normalizeGenerateGraphOpts(rawOpts);
+    const { schema: s, generation } = await this.generateGraphRepresentation(rawOpts);
+    const renderer = renderers.createGraphRenderer(opts);
+    const file = await renderer.render(generation);
+    await writeFile(opts.pathToOutputFile, file.content);
+    return { type: 'graph', schema: s, generation };
+  }
+
+  public async generateGraphRepresentation(
+    rawOpts: GenerateGraphRepresentationOptions
+  ): Promise<GenerateGraphRepresentationResult> {
+    const opts = this.normalizeGenerateGraphRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, orientation, debug } = opts;
+    const { schema: s, graph } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createGraphGenerator({ orientation });
+    const generation = generator.generate(graph);
+    return { type: 'graph', schema: s, generation };
+  }
+
+  private normalizeGenerateGraphOpts(opts: GenerateGraphOptions): NormalizedGenerateGraphOptions {
+    const { outFile, startMarker = DEFAULT_GRAPH_START_MARKER, endMarker = DEFAULT_GRAPH_END_MARKER, ...rest } = opts;
+
+    if (startMarker.length === 0) {
+      throw new InvalidGraphStartMarkerOptionError();
+    }
+
+    if (endMarker.length === 0) {
+      throw new InvalidGraphEndMarkerOptionError();
+    }
+
+    if (startMarker === endMarker) {
+      throw new GraphMarkerOptionsNotDistinctError(startMarker);
+    }
+
+    return {
+      ...this.normalizeGenerateGraphRepresentationOpts(rest),
+      pathToOutputFile: outFile,
+      startMarker,
+      endMarker,
+    };
+  }
+
+  private normalizeGenerateGraphRepresentationOpts(
+    opts: GenerateGraphRepresentationOptions
+  ): NormalizedGenerateGraphRepresentationOptions {
+    const { definition, orientation = DEFAULT_GRAPH_ORIENTATION, debug = DEFAULT_GRAPH_DEBUG } = opts;
+    return {
+      definitionGlobPattern: definition,
+      orientation,
+      debug,
+    };
+  }
+
   public async validate(opts: ValidateOptions): Promise<ValidateResult> {
     const { definition: definitionGlobPattern, debug = DEFAULT_VALIDATE_DEBUG } = opts;
     try {
@@ -370,7 +450,9 @@ class TypesyncImpl implements Typesync {
     const definitionFilePaths = this.findDefinitionFilesMatchingPattern(definitionGlobPattern);
     logger.info(`Found ${definitionFilePaths.length} definition files matching Glob pattern:`, definitionFilePaths);
     const definition = parser.parseDefinition(definitionFilePaths);
-    return { logger, definition, schema: schema.createSchemaFromDefinition(definition) };
+    const s = schema.createSchemaFromDefinition(definition);
+    const graph = createSchemaGraphFromSchema(s);
+    return { logger, definition, schema: s, graph };
   }
 
   private findDefinitionFilesMatchingPattern(globPattern: string) {
