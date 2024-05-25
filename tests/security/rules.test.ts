@@ -53,6 +53,10 @@ describe('Security Rules', () => {
     ).resolves.toBeUndefined();
   });
 
+  afterEach(async () => {
+    await testEnv.clearFirestore();
+  });
+
   afterAll(async () => {
     await testEnv.cleanup();
   });
