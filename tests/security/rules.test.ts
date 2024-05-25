@@ -1,4 +1,9 @@
-import { type RulesTestEnvironment, assertFails, initializeTestEnvironment } from '@firebase/rules-unit-testing';
+import {
+  type RulesTestEnvironment,
+  assertFails,
+  assertSucceeds,
+  initializeTestEnvironment,
+} from '@firebase/rules-unit-testing';
 import { doc, setDoc } from 'firebase/firestore';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -34,5 +39,21 @@ describe('Security Rules', () => {
         })
       )
     ).resolves.toBeDefined();
+  });
+
+  it('allows create if the rules are relaxed', async () => {
+    const ctx = testEnv.unauthenticatedContext();
+    const projectDocRef = doc(ctx.firestore(), projectDocPath);
+    await expect(
+      assertSucceeds(
+        setDoc(projectDocRef, {
+          someField: 123,
+        })
+      )
+    ).resolves.toBeUndefined();
+  });
+
+  afterAll(async () => {
+    await testEnv.cleanup();
   });
 });
