@@ -70,6 +70,23 @@ describe('Security Rules', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('blocks update if a read-only field is affected', async () => {
+    const ctx = testEnv.unauthenticatedContext();
+    const userDocRef = doc(ctx.firestore(), userDocPath);
+    await setDoc(userDocRef, {
+      name: 'John Appleseed',
+      role: 'member',
+      created_at: new Date(),
+    });
+    await expect(
+      assertFails(
+        updateDoc(userDocRef, {
+          role: 'admin',
+        })
+      )
+    ).resolves.toBeDefined();
+  });
+
   afterEach(async () => {
     await testEnv.clearFirestore();
   });
