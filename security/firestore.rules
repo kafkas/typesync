@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  // typesync-start
+  function isValidUserRole(data) {
+    return ((data == 'owner') || (data == 'admin') || (data == 'member'));
+  }
+
+  function isValidUser(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['name', 'role', 'website_url', 'created_at'])) &&
+    (data.name is string) &&
+    isValidUserRole(data.role) &&
+    ((data.website_url is string) || !('website_url' in data)) &&
+    (data.created_at is timestamp)
+    );
+  }
+
+  function isLegalUserUpdate() {
+    let readonlyFields = ['role', 'created_at'];
+    let changedFields = request.resource.data.diff(resource.data).affectedKeys();
+    return !changedFields.hasAny(fields) && isValidUser(request.resource.data);
+  }
+  // typesync-end
+
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read;
+      allow create: if isValidUser(request.resource.data);
+      allow update: if isLegalUserUpdate();
+      allow delete: if false;
+    }
+  }
+}

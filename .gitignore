@@ -11,6 +11,8 @@ coverage/
 playground
 
 .firebase
+firebase-debug.log*
+firestore-debug.log*
 
 secrets/**/*
 
