@@ -24,11 +24,15 @@ service cloud.firestore {
   // typesync-end
 
   match /databases/{database}/documents {
-    match /users/{uid} {
+    match /users/{userId} {
       allow read;
       allow create: if isValidUser(request.resource.data);
       allow update: if isLegalUserUpdate();
       allow delete: if false;
+    }
+
+    match /projects/{projectId} {
+      allow read, create, update, delete;
     }
   }
 }

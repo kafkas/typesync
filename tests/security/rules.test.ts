@@ -13,6 +13,8 @@ describe('Security Rules', () => {
 
   const userId = 'user123';
   const userDocPath = `/users/${userId}`;
+  const projectId = 'projectId';
+  const projectDocPath = `/projects/${projectId}`;
 
   beforeAll(async () => {
     testEnv = await initializeTestEnvironment({
@@ -28,7 +30,7 @@ describe('Security Rules', () => {
     await expect(
       assertFails(
         setDoc(userDocRef, {
-          name: 'John',
+          someField: 123,
         })
       )
     ).resolves.toBeDefined();
