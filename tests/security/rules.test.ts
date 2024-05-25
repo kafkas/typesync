@@ -18,7 +18,7 @@ describe('Security Rules', () => {
 
   const userId = 'user123';
   const userDocPath = `/users/${userId}`;
-  const projectId = 'projectId';
+  const projectId = 'project123';
   const projectDocPath = `/projects/${projectId}`;
 
   beforeAll(async () => {
@@ -47,7 +47,7 @@ describe('Security Rules', () => {
     await expect(
       assertSucceeds(
         setDoc(projectDocRef, {
-          someField: 123,
+          someField: 'abc',
         })
       )
     ).resolves.toBeUndefined();
