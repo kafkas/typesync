@@ -95,8 +95,11 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
-          name: Run rests
-          command: yarn test
+          name: Run rests for the source code
+          command: yarn test:src
+      - run:
+          name: Run Security Rules tests
+          command: yarn test:rules
 
   publish-npm-package:
     executor: node/default
