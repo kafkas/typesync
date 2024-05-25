@@ -4,5 +4,5 @@
     "noEmit": true
   },
   "exclude": ["playground/**/*"],
-  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*"]
+  "include": ["jest.config.global.ts", "jest.config.ts", "src/**/__tests__/**/*", "tests/**/*.ts"]
 }
