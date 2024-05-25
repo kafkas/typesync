@@ -1,6 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   // typesync-start
+  // Type Validators
+
   function isValidUserRole(data) {
     return ((data == 'owner') || (data == 'admin') || (data == 'member'));
   }
@@ -16,15 +18,21 @@ service cloud.firestore {
     );
   }
 
-  function isLegalUserUpdate() {
+  // Read-only fields
+
+  function isReadonlyFieldAffectedForUser() {
     let readonlyFields = ['role', 'created_at'];
     let changedFields = request.resource.data.diff(resource.data).affectedKeys();
-    return !changedFields.hasAny(readonlyFields) && isValidUser(request.resource.data);
+    return changedFields.hasAny(readonlyFields);
   }
   // typesync-end
 
   match /databases/{database}/documents {
     match /users/{userId} {
+      function isLegalUserUpdate() {
+        return !isReadonlyFieldAffectedForUser() && isValidUser(request.resource.data);
+      }
+
       allow read;
       allow create: if isValidUser(request.resource.data);
       allow update: if isLegalUserUpdate();
