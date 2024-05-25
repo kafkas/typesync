@@ -19,7 +19,7 @@ service cloud.firestore {
   function isLegalUserUpdate() {
     let readonlyFields = ['role', 'created_at'];
     let changedFields = request.resource.data.diff(resource.data).affectedKeys();
-    return !changedFields.hasAny(fields) && isValidUser(request.resource.data);
+    return !changedFields.hasAny(readonlyFields) && isValidUser(request.resource.data);
   }
   // typesync-end
 

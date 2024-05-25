@@ -4,7 +4,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
@@ -48,6 +48,23 @@ describe('Security Rules', () => {
       assertSucceeds(
         setDoc(projectDocRef, {
           someField: 'abc',
+        })
+      )
+    ).resolves.toBeUndefined();
+  });
+
+  it('allows update if existing read-only fields are not affected', async () => {
+    const ctx = testEnv.unauthenticatedContext();
+    const userDocRef = doc(ctx.firestore(), userDocPath);
+    await setDoc(userDocRef, {
+      name: 'John Appleseed',
+      role: 'member',
+      created_at: new Date(),
+    });
+    await expect(
+      assertSucceeds(
+        updateDoc(userDocRef, {
+          name: 'James',
         })
       )
     ).resolves.toBeUndefined();
