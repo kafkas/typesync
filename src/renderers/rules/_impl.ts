@@ -155,7 +155,7 @@ class RulesRendererImpl implements RulesRenderer {
     if (predicate.alignment === 'vertical') {
       return (
         `(\n` +
-        `${predicate.innerPredicates.map(p => `${this.indent(3)}${this.renderPredicate(p)}`).join(' &&\n')}` +
+        `${predicate.innerPredicates.map(p => `${this.indent(2)}${this.renderPredicate(p)}`).join(' &&\n')}` +
         `\n${this.indent(2)})`
       );
     } else {
