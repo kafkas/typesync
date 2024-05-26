@@ -7,14 +7,14 @@ service cloud.firestore {
   // t-start
   function isUser(data) {
     return (
-      (data is map) &&
-      (data.keys().hasOnly(['username', 'role', 'path', 'pets', 'website_url', 'created_at'])) &&
-      (data.username is string) &&
-      ((data.role == 'owner') || (data.role == 'admin') || (data.role == 'member')) &&
-      ((data.path is string) || (data.path is list)) &&
-      (data.pets is list) &&
-      ((data.website_url is string) || !('website_url' in data)) &&
-      (data.created_at is timestamp)
+    (data is map) &&
+    (data.keys().hasOnly(['username', 'role', 'path', 'pets', 'website_url', 'created_at'])) &&
+    (data.username is string) &&
+    ((data.role == 'owner') || (data.role == 'admin') || (data.role == 'member')) &&
+    ((data.path is string) || (data.path is list)) &&
+    (data.pets is list) &&
+    ((data.website_url is string) || !('website_url' in data)) &&
+    (data.created_at is timestamp)
     );
   }
   // t-end
