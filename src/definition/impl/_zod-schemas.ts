@@ -171,6 +171,12 @@ export const objectField = z
   .object({
     type: type,
     optional: z.boolean().optional().describe('Whether this field is optional. Defaults to false.'),
+    readonly: z
+      .boolean()
+      .optional()
+      .describe(
+        'Whether this field is read-only. Defaults to false. This information is used by the Security Rules generator when producing validators that detect whether a read-only field has been affected by a write.'
+      ),
     docs: z.string().optional().describe('Optional documentation for the object field.'),
   })
   .strict()

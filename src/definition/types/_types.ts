@@ -79,6 +79,7 @@ export interface Object {
 export interface ObjectField {
   type: Type;
   optional?: boolean;
+  readonly?: boolean;
   docs?: string;
 }
 
