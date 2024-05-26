@@ -1,13 +1,13 @@
 import type { rules } from '../../platforms/rules/index.js';
 import type { schema } from '../../schema/index.js';
 
-export interface RulesValidatorDeclaration {
-  type: 'validator';
+export interface RulesTypeValidatorDeclaration {
+  type: 'type-validator';
   modelName: string;
   modelType: rules.Type;
 }
 
-export type RulesDeclaration = RulesValidatorDeclaration;
+export type RulesDeclaration = RulesTypeValidatorDeclaration;
 
 export interface RulesGeneration {
   type: 'rules';

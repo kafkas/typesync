@@ -6,7 +6,7 @@ import type {
   RulesGeneration,
   RulesGenerator,
   RulesGeneratorConfig,
-  RulesValidatorDeclaration,
+  RulesTypeValidatorDeclaration,
 } from './_types.js';
 
 class RulesGeneratorImpl implements RulesGenerator {
@@ -17,29 +17,33 @@ class RulesGeneratorImpl implements RulesGenerator {
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: RulesDeclaration[] = [];
     aliasModels.forEach(model => {
-      const d = this.createValidatorDeclarationForFlatAliasModel(model);
+      const d = this.createTypeValidatorDeclarationForFlatAliasModel(model);
       declarations.push(d);
     });
     documentModels.forEach(model => {
-      const d = this.createValidatorDeclarationForFlatDocumentModel(model);
+      const d = this.createTypeValidatorDeclarationForFlatDocumentModel(model);
       declarations.push(d);
     });
     return { type: 'rules', declarations };
   }
 
-  private createValidatorDeclarationForFlatAliasModel(model: schema.rules.AliasModel): RulesValidatorDeclaration {
+  private createTypeValidatorDeclarationForFlatAliasModel(
+    model: schema.rules.AliasModel
+  ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(model.type);
     return {
-      type: 'validator',
+      type: 'type-validator',
       modelName: model.name,
       modelType: rulesType,
     };
   }
 
-  private createValidatorDeclarationForFlatDocumentModel(model: schema.rules.DocumentModel): RulesValidatorDeclaration {
+  private createTypeValidatorDeclarationForFlatDocumentModel(
+    model: schema.rules.DocumentModel
+  ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(model.type);
     return {
-      type: 'validator',
+      type: 'type-validator',
       modelName: model.name,
       modelType: rulesType,
     };

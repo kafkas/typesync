@@ -9,7 +9,7 @@ import {
   MissingRulesOutputFileError,
   MissingStartMarkerError,
 } from '../../errors/renderer.js';
-import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
+import type { RulesDeclaration, RulesGeneration, RulesTypeValidatorDeclaration } from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
 import { multiply } from '../../util/multiply-str.js';
@@ -80,14 +80,14 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderDeclaration(declaration: RulesDeclaration) {
     switch (declaration.type) {
-      case 'validator':
-        return this.renderValidatorDeclaration(declaration);
+      case 'type-validator':
+        return this.renderTypeValidatorDeclaration(declaration);
       default:
         assertNever(declaration.type);
     }
   }
 
-  private renderValidatorDeclaration(declaration: RulesValidatorDeclaration) {
+  private renderTypeValidatorDeclaration(declaration: RulesTypeValidatorDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
     const varName = this.config.validatorParamName;
