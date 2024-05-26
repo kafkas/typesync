@@ -1,5 +1,5 @@
 {
-  "bad": "../../../../public/v0.9.json",
+  "bad": "../../../../schema.local.json",
   "Username": {
     "model": "alias",
     "type": "string"

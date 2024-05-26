@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../public/v0.9.json
+# yaml-language-server: $schema=../../schema.local.json
 
 UserRole:
   model: alias
