@@ -1,0 +1,1 @@
+../../lib/cli/index.js generate-rules --definition definition.yml --outFile firestore.rules

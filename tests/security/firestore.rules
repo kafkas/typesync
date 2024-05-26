@@ -18,12 +18,35 @@ service cloud.firestore {
     );
   }
 
-  // Read-only fields
+  function isValidWorkspace(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['info', 'metadata', 'created_at'])) &&
+    (
+    (data.info is map) &&
+    (data.info.keys().hasOnly(['name', 'description'])) &&
+    (data.info.name is string) &&
+    (data.info.description is string)
+    ) &&
+    (data.metadata is map) &&
+    (data.created_at is timestamp)
+    );
+  }
+
+  // Read-only field validators
 
   function isReadonlyFieldAffectedForUser() {
     let readonlyFields = ['role', 'created_at'];
     let changedFields = request.resource.data.diff(resource.data).affectedKeys();
     return changedFields.hasAny(readonlyFields);
+  }
+
+  function isReadonlyFieldAffectedForWorkspace() {
+    let readonlyFields = ['created_at'];
+    let readonlyFieldsForInfo = ['name'];
+    let changedFields = request.resource.data.diff(resource.data).affectedKeys();
+    let changeFieldsForInfo = request.resource.data.info.diff(resource.data.info).affectedKeys();
+    return changedFields.hasAny(readonlyFields) || changeFieldsForInfo.hasAny(readonlyFieldsForInfo);
   }
   // typesync-end
 

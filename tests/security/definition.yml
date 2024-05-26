@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../public/v0.9.json
+
+UserRole:
+  model: alias
+  type:
+    type: enum
+    members:
+      - label: Owner
+        value: owner
+      - label: Admin
+        value: admin
+      - label: Member
+        value: member
+
+User:
+  model: document
+  path: users/{userId}
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+      role:
+        type: UserRole
+      website_url:
+        type: string
+        optional: true
+      created_at:
+        type: timestamp
+
+Workspace:
+  model: document
+  path: workspaces/{workspaceId}
+  type:
+    type: object
+    fields:
+      info:
+        type:
+          type: object
+          fields:
+            name:
+              type: string
+              readonly: true
+            description:
+              type: string
+      metadata:
+        type:
+          type: map
+          valueType: string
+      created_at:
+        type: timestamp
+        readonly: true
