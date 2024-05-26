@@ -126,6 +126,9 @@ jobs:
             yarn run generate-json-schema
             git --no-pager diff --exit-code
       - run:
+          name: Install the Firebase CLI
+          command: yarn global add firebase-tools@13.5.1
+      - run:
           name: Prepare service account
           command: |
             mkdir -p secrets
