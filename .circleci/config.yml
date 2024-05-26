@@ -166,18 +166,13 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v\d+\.\d+\.\d+$/
-      # - publish-json-schema:
-      #     requires: [build, lint, test]
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^v\d+\.\d+\.\d+$/
       - publish-json-schema:
           requires: [build, lint, test]
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: /.*/
+              only: /^v\d+\.\d+\.\d+$/
 
   integration-tests:
     jobs:
