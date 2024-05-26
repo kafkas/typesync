@@ -99,6 +99,7 @@ export interface Object<F extends ObjectField<unknown>> {
 export interface ObjectField<T> {
   type: T;
   optional: boolean;
+  readonly: boolean;
   name: string;
   docs: string | null;
 }

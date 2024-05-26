@@ -354,6 +354,7 @@ export function createZodSchemasForSchema(schema: Schema) {
     .object({
       type,
       optional: z.boolean(),
+      readonly: z.boolean(),
       name: z.string(),
       docs: z.string().nullable(),
     })

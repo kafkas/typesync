@@ -290,6 +290,7 @@ describe('schema.validateType()', () => {
               members: [{ label: 'a', value: 1.23 }],
             },
             optional: false,
+            readonly: false,
             docs: null,
           },
         ],
@@ -310,6 +311,7 @@ describe('schema.validateType()', () => {
               members: [{ label: 'a', value: 1 }],
             },
             optional: false,
+            readonly: false,
             docs: null,
           },
         ],
@@ -335,7 +337,7 @@ describe('schema.validateType()', () => {
         docs: null,
         value: {
           type: 'object',
-          fields: [{ name: 'name', type: { type: 'string' }, docs: null, optional: false }],
+          fields: [{ name: 'name', type: { type: 'string' }, docs: null, optional: false, readonly: false }],
           additionalFields: false,
         },
       });
@@ -366,8 +368,20 @@ describe('schema.validateType()', () => {
         value: {
           type: 'object',
           fields: [
-            { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
-            { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
+            {
+              name: 'type',
+              type: { type: 'string-literal', value: 'cat' },
+              docs: null,
+              optional: false,
+              readonly: false,
+            },
+            {
+              name: 'lives_left',
+              type: { type: 'int' },
+              docs: null,
+              optional: false,
+              readonly: false,
+            },
           ],
           additionalFields: false,
         },
@@ -404,14 +418,34 @@ describe('schema.validateType()', () => {
           {
             type: 'object',
             fields: [
-              { name: 'type', type: { type: 'string-literal', value: 'cat' }, docs: null, optional: false },
-              { name: 'lives_left', type: { type: 'int' }, docs: null, optional: false },
+              {
+                name: 'type',
+                type: { type: 'string-literal', value: 'cat' },
+                docs: null,
+                optional: false,
+                readonly: false,
+              },
+              {
+                name: 'lives_left',
+                type: { type: 'int' },
+                docs: null,
+                optional: false,
+                readonly: false,
+              },
             ],
             additionalFields: false,
           },
           {
             type: 'object',
-            fields: [{ name: 'breed', type: { type: 'string' }, docs: null, optional: false }],
+            fields: [
+              {
+                name: 'breed',
+                type: { type: 'string' },
+                docs: null,
+                optional: false,
+                readonly: false,
+              },
+            ],
             additionalFields: false,
           },
         ],
@@ -430,8 +464,8 @@ describe('schema.validateType()', () => {
           {
             type: 'object',
             fields: [
-              { name: 'type', type: { type: 'string' }, docs: null, optional: false },
-              { name: 'breed', type: { type: 'string' }, docs: null, optional: false },
+              { name: 'type', type: { type: 'string' }, docs: null, optional: false, readonly: false },
+              { name: 'breed', type: { type: 'string' }, docs: null, optional: false, readonly: false },
             ],
             additionalFields: false,
           },
@@ -451,8 +485,20 @@ describe('schema.validateType()', () => {
           {
             type: 'object',
             fields: [
-              { name: 'type', type: { type: 'string-literal', value: 'cat' }, optional: true, docs: null },
-              { name: 'lives_left', type: { type: 'int' }, optional: false, docs: null },
+              {
+                name: 'type',
+                type: { type: 'string-literal', value: 'cat' },
+                optional: true,
+                readonly: false,
+                docs: null,
+              },
+              {
+                name: 'lives_left',
+                type: { type: 'int' },
+                optional: false,
+                readonly: false,
+                docs: null,
+              },
             ],
             additionalFields: false,
           },
@@ -472,16 +518,40 @@ describe('schema.validateType()', () => {
           {
             type: 'object',
             fields: [
-              { name: 'type', type: { type: 'string-literal', value: 'cat' }, optional: false, docs: null },
-              { name: 'lives_left', type: { type: 'int' }, optional: false, docs: null },
+              {
+                name: 'type',
+                type: { type: 'string-literal', value: 'cat' },
+                optional: false,
+                readonly: false,
+                docs: null,
+              },
+              {
+                name: 'lives_left',
+                type: { type: 'int' },
+                optional: false,
+                readonly: false,
+                docs: null,
+              },
             ],
             additionalFields: false,
           },
           {
             type: 'object',
             fields: [
-              { name: 'type', type: { type: 'string-literal', value: 'dog' }, optional: false, docs: null },
-              { name: 'breed', type: { type: 'string' }, optional: false, docs: null },
+              {
+                name: 'type',
+                type: { type: 'string-literal', value: 'dog' },
+                optional: false,
+                readonly: false,
+                docs: null,
+              },
+              {
+                name: 'breed',
+                type: { type: 'string' },
+                optional: false,
+                readonly: false,
+                docs: null,
+              },
             ],
             additionalFields: false,
           },
