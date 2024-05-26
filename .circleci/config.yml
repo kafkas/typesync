@@ -91,12 +91,17 @@ jobs:
 
   test:
     executor: node/default
+    docker:
+      - image: cimg/openjdk:21.0.2-node
     steps:
       - attach_workspace:
           at: ~/project
       - run:
-          name: Run rests
-          command: yarn test
+          name: Run rests for the source code
+          command: yarn test:src
+      - run:
+          name: Run Security Rules tests
+          command: yarn test:rules
 
   publish-npm-package:
     executor: node/default
@@ -123,19 +128,16 @@ jobs:
             yarn run generate-json-schema
             git --no-pager diff --exit-code
       - run:
-          name: Install the Firebase CLI
-          command: yarn global add firebase-tools@13.5.1
-      - run:
           name: Prepare service account
           command: |
             mkdir -p secrets
             echo $HOSTING_SERVICE_ACCOUNT_BASE64_PROD | base64 -d > secrets/hosting-service-account-prod.json
       - run:
           name: Switch to the 'prod' environment
-          command: firebase use prod
+          command: npx firebase use prod
       - run:
           name: Publish JSON schema
-          command: firebase deploy --only hosting
+          command: npx firebase deploy --only hosting
       - run:
           name: Delete service account
           command: rm -rf secrets/hosting-service-account-prod.json

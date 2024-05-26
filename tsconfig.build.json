@@ -14,7 +14,7 @@
     "playground/**/*",
     "scripts",
     "src/**/__tests__/**/*",
-    "test/**/*",
+    "tests/**/*",
     "tsup.config.ts"
   ]
 }
