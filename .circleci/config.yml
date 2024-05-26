@@ -92,7 +92,7 @@ jobs:
   test:
     executor: node/default
     docker:
-      - image: cimg/openjdk:21.0.2
+      - image: cimg/openjdk:21.0.2-node
     steps:
       - attach_workspace:
           at: ~/project
