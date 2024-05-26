@@ -91,6 +91,7 @@ export function fieldToSchema(fieldName: string, field: definition.types.ObjectF
   return {
     type: typeToSchema(field.type),
     optional: !!field.optional,
+    readonly: !!field.readonly,
     docs: field.docs ?? null,
     name: fieldName,
   };
