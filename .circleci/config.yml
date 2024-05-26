@@ -134,10 +134,10 @@ jobs:
             echo $HOSTING_SERVICE_ACCOUNT_BASE64_PROD | base64 -d > secrets/hosting-service-account-prod.json
       - run:
           name: Switch to the 'prod' environment
-          command: firebase use prod
+          command: npx firebase use prod
       - run:
           name: Publish JSON schema
-          command: firebase deploy --only hosting
+          command: npx firebase deploy --only hosting
       - run:
           name: Delete service account
           command: rm -rf secrets/hosting-service-account-prod.json
