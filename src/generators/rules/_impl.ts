@@ -28,9 +28,11 @@ class RulesGeneratorImpl implements RulesGenerator {
           (params): params is { modelName: string; modelType: schema.rules.types.Object } =>
             params.modelType.type === 'object'
         )
-        .map(params => this.createReadonlyFieldValidatorDeclarationForAliasModel(params.modelName, params.modelType)),
+        .map(params =>
+          this.createReadonlyFieldValidatorDeclarationForAliasModel(params.modelName, params.modelType, adjustedSchema)
+        ),
       ...documentModels.map(model =>
-        this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type)
+        this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type, adjustedSchema)
       ),
     ];
     return { type: 'rules', typeValidatorDeclarations, readonlyFieldValidatorDeclarations };
@@ -74,41 +76,73 @@ class RulesGeneratorImpl implements RulesGenerator {
 
   private createReadonlyFieldValidatorDeclarationForAliasModel(
     modelName: string,
-    _modelType: schema.rules.types.Object
+    modelType: schema.rules.types.Object,
+    s: schema.rules.Schema
   ): RulesReadonlyFieldValidatorDeclaration {
     // TODO: Implement
-    const innerPredicates: rules.Predicate[] = [];
-    const predicate: rules.Predicate = {
-      type: 'or',
-      innerPredicates,
-    };
+    const prevDataParamName = 'prevData';
+    const nextDataParamName = 'nextData';
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
       // TODO: Get from config
-      prevDataParamName: 'prevData',
-      nextDataParamName: 'nextData',
-      predicate,
+      prevDataParamName,
+      nextDataParamName,
+      predicate: this.getReadonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName),
     };
   }
 
   private createReadonlyFieldValidatorDeclarationForDocumentModel(
     modelName: string,
-    _modelType: schema.rules.types.Object
+    modelType: schema.rules.types.Object,
+    s: schema.rules.Schema
   ): RulesReadonlyFieldValidatorDeclaration {
     // TODO: Implement
-    const innerPredicates: rules.Predicate[] = [];
-    const predicate: rules.Predicate = {
-      type: 'or',
-      innerPredicates,
-    };
+    const prevDataParamName = 'prevData';
+    const nextDataParamName = 'nextData';
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
-      // TODO: Get from config
-      prevDataParamName: 'prevData',
-      nextDataParamName: 'nextData',
-      predicate,
+      prevDataParamName,
+      nextDataParamName,
+      predicate: this.getReadonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName),
+    };
+  }
+
+  private getReadonlyFieldPredicateForObjectType(
+    t: schema.rules.types.Object,
+    s: schema.rules.Schema,
+    prevDataParam: string,
+    nextDataParam: string
+  ): rules.Predicate {
+    // TODO: Make dynamic
+    const innerPredicates: rules.Predicate[] = [];
+    t.fields.forEach(field => {
+      if (field.type.type === 'alias') {
+        const aliasModel = s.getAliasModel(field.type.name);
+        if (aliasModel?.type.type === 'object') {
+          // TODO: What about other types like union?
+          innerPredicates.push({
+            type: 'readonly-field-validator',
+            validatorName: this.getReadonlyFieldValidatorNameForModel(field.type.name),
+            prevDataParam: `${prevDataParam}.${field.name}`,
+            nextDataParam: `${nextDataParam}.${field.name}`,
+          });
+        }
+      } else if (field.type.type === 'object') {
+        const objectPredicate = this.getReadonlyFieldPredicateForObjectType(
+          field.type,
+          s,
+          `${prevDataParam}.${field.name}`,
+          `${nextDataParam}.${field.name}`
+        );
+        innerPredicates.push(objectPredicate);
+      }
+      // TODO: What about other types like union?
+    });
+    return {
+      type: 'or',
+      innerPredicates,
     };
   }
 
