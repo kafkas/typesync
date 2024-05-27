@@ -44,6 +44,13 @@ export interface ReadonlyFieldValidatorPredicate {
   nextDataParam: string;
 }
 
+export interface MapDiffHasAffectedKeysPredicate {
+  type: 'map-diff-has-affected-keys';
+  prevDataParam: string;
+  nextDataParam: string;
+  keys: string[];
+}
+
 export interface MapHasKeyPredicate {
   type: 'map-has-key';
   varName: string;
@@ -82,6 +89,7 @@ export type Predicate =
   | TypeEqualityPredicate
   | TypeValidatorPredicate
   | ReadonlyFieldValidatorPredicate
+  | MapDiffHasAffectedKeysPredicate
   | MapHasKeyPredicate
   | MapHasOnlyKeysPredicate
   | LiteralPredicate

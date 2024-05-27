@@ -140,6 +140,10 @@ class RulesGeneratorImpl implements RulesGenerator {
       }
       // TODO: What about other types like union?
     });
+    const readonlyKeys = t.fields.filter(field => field.readonly).map(field => field.name);
+    if (readonlyKeys.length > 0) {
+      innerPredicates.push({ type: 'map-diff-has-affected-keys', prevDataParam, nextDataParam, keys: readonlyKeys });
+    }
     return {
       type: 'or',
       innerPredicates,

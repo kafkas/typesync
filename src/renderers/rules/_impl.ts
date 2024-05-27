@@ -117,6 +117,8 @@ class RulesRendererImpl implements RulesRenderer {
         return this.renderTypeValidatorPredicate(predicate);
       case 'readonly-field-validator':
         return this.renderReadonlyFieldValidatorPredicate(predicate);
+      case 'map-diff-has-affected-keys':
+        return this.renderMapDiffHasAffectedKeysPredicate(predicate);
       case 'map-has-key':
         return this.renderMapHasKeyPredicate(predicate);
       case 'map-has-only-keys':
@@ -148,6 +150,12 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderReadonlyFieldValidatorPredicate(predicate: rules.ReadonlyFieldValidatorPredicate) {
     return `${predicate.validatorName}(${predicate.prevDataParam}, ${predicate.nextDataParam})`;
+  }
+
+  private renderMapDiffHasAffectedKeysPredicate(predicate: rules.MapDiffHasAffectedKeysPredicate) {
+    const { prevDataParam, nextDataParam, keys } = predicate;
+    const keysAsString = keys.map(key => `'${key}'`).join(', ');
+    return `${nextDataParam}.diff(${prevDataParam}).affectedKeys().hasAny([${keysAsString}])`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
