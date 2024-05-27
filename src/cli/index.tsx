@@ -20,7 +20,7 @@ import {
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
   DEFAULT_RULES_START_MARKER,
-  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
   DEFAULT_RULES_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
@@ -28,7 +28,7 @@ import {
   DEFAULT_TS_INDENTATION,
   DEFAULT_TS_OBJECT_TYPE_FORMAT,
   DEFAULT_VALIDATE_DEBUG,
-  RULES_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
@@ -263,11 +263,11 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_RULES_END_MARKER,
         })
-        .option('validatorNamePattern', {
-          describe: `The pattern that specifies how the validators are named. The string must contain the '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isValid${RULES_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
+        .option('typeValidatorNamePattern', {
+          describe: `The pattern that specifies how the validators are named. The string must contain the '${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isValid${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
-          default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+          default: DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
         })
         .option('validatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
@@ -293,7 +293,7 @@ await yargs(hideBin(process.argv))
         outFile,
         startMarker,
         endMarker,
-        validatorNamePattern,
+        typeValidatorNamePattern,
         validatorParamName,
         indentation,
         debug,
@@ -306,7 +306,7 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           startMarker,
           endMarker,
-          validatorNamePattern,
+          typeValidatorNamePattern,
           validatorParamName,
           indentation,
           debug,

@@ -23,7 +23,7 @@ export interface RulesGeneration {
 }
 
 export interface RulesGeneratorConfig {
-  validatorNamePattern: string;
+  typeValidatorNamePattern: string;
   validatorParamName: string;
 }
 

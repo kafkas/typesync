@@ -44,14 +44,14 @@ import {
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
   DEFAULT_RULES_START_MARKER,
-  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
   DEFAULT_RULES_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
-  RULES_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -66,7 +66,7 @@ import {
   InvalidSwiftIndentationOptionError,
   InvalidTSIndentationOptionError,
   InvalidUndefinedSentinelNameOptionError,
-  InvalidValidatorNamePatternOptionError,
+  InvalidTypeValidatorNamePatternOptionError,
   InvalidValidatorParamNameOptionError,
   RulesMarkerOptionsNotDistinctError,
 } from '../errors/invalid-opts.js';
@@ -125,7 +125,7 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
-  validatorNamePattern: string;
+  typeValidatorNamePattern: string;
   validatorParamName: string;
   debug: boolean;
 }
@@ -311,9 +311,9 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, validatorNamePattern, validatorParamName, debug } = opts;
+    const { definitionGlobPattern, typeValidatorNamePattern, validatorParamName, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({ validatorNamePattern, validatorParamName });
+    const generator = createRulesGenerator({ typeValidatorNamePattern, validatorParamName });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -357,13 +357,13 @@ class TypesyncImpl implements Typesync {
   ): NormalizedGenerateRulesRepresentationOptions {
     const {
       definition,
-      validatorNamePattern = DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+      typeValidatorNamePattern = DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
       validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
       debug = DEFAULT_RULES_DEBUG,
     } = opts;
 
-    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
-      throw new InvalidValidatorNamePatternOptionError(validatorNamePattern);
+    if (!typeValidatorNamePattern.includes(RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM)) {
+      throw new InvalidTypeValidatorNamePatternOptionError(typeValidatorNamePattern);
     }
 
     if (validatorParamName.length === 0) {
@@ -372,7 +372,7 @@ class TypesyncImpl implements Typesync {
 
     return {
       definitionGlobPattern: definition,
-      validatorNamePattern,
+      typeValidatorNamePattern,
       validatorParamName,
       debug,
     };

@@ -1,4 +1,4 @@
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
+import { RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
 import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
@@ -71,7 +71,7 @@ class RulesGeneratorImpl implements RulesGenerator {
   }
 
   private getTypeValidatorNameForModel(modelName: string) {
-    return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
+    return this.config.typeValidatorNamePattern.replace(RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
   private createReadonlyFieldValidatorDeclarationForFlatAliasModel(

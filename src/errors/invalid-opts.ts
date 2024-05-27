@@ -5,7 +5,7 @@ import type {
   GenerateSwiftOption,
   GenerateTsOption,
 } from '../api/index.js';
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../constants.js';
+import { RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM } from '../constants.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {
@@ -105,11 +105,11 @@ export class InvalidUndefinedSentinelNameOptionError extends InvalidOptionsError
   }
 }
 
-export class InvalidValidatorNamePatternOptionError extends InvalidOptionsError {
-  public constructor(validatorNamePattern: string) {
-    const option: GenerateRulesOption = 'validatorNamePattern';
+export class InvalidTypeValidatorNamePatternOptionError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const option: GenerateRulesOption = 'typeValidatorNamePattern';
     super(
-      `Expected '${option}' to be a string that contains a '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${validatorNamePattern}'`
+      `Expected '${option}' to be a string that contains a '${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
     );
   }
 }

@@ -3,7 +3,7 @@ import { GenerateRepresentationResult } from './_common.js';
 
 export interface GenerateRulesRepresentationOptions {
   definition: string;
-  validatorNamePattern?: string;
+  typeValidatorNamePattern?: string;
   validatorParamName?: string;
   debug?: boolean;
 }
