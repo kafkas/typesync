@@ -4,7 +4,7 @@ import type { schema } from '../../schema/index.js';
 export interface RulesTypeValidatorDeclaration {
   type: 'type-validator';
   modelName: string;
-  modelType: rules.Type;
+  predicate: rules.Predicate;
 }
 
 export interface RulesReadonlyFieldValidatorDeclaration {
@@ -21,7 +21,9 @@ export interface RulesGeneration {
   readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[];
 }
 
-export interface RulesGeneratorConfig {}
+export interface RulesGeneratorConfig {
+  validatorParamName: string;
+}
 
 export interface RulesGenerator {
   generate(s: schema.Schema): RulesGeneration;

@@ -125,6 +125,7 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
+  validatorParamName: string;
   debug: boolean;
 }
 
@@ -133,7 +134,6 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
   startMarker: string;
   endMarker: string;
   validatorNamePattern: string;
-  validatorParamName: string;
   indentation: number;
 }
 
@@ -311,9 +311,9 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, debug } = opts;
+    const { definitionGlobPattern, validatorParamName, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({});
+    const generator = createRulesGenerator({ validatorParamName });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -359,7 +359,6 @@ class TypesyncImpl implements Typesync {
       startMarker,
       endMarker,
       validatorNamePattern,
-      validatorParamName,
       indentation,
     };
   }
@@ -367,9 +366,10 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateRulesRepresentationOpts(
     opts: GenerateRulesRepresentationOptions
   ): NormalizedGenerateRulesRepresentationOptions {
-    const { definition, debug = DEFAULT_RULES_DEBUG } = opts;
+    const { definition, validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME, debug = DEFAULT_RULES_DEBUG } = opts;
     return {
       definitionGlobPattern: definition,
+      validatorParamName,
       debug,
     };
   }

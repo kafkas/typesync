@@ -1,3 +1,4 @@
+import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
@@ -41,10 +42,11 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(modelType);
+    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName);
     return {
       type: 'type-validator',
       modelName,
-      modelType: rulesType,
+      predicate,
     };
   }
 
@@ -53,10 +55,11 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(modelType);
+    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName);
     return {
       type: 'type-validator',
       modelName,
-      modelType: rulesType,
+      predicate,
     };
   }
 

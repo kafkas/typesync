@@ -91,11 +91,10 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorDeclaration(declaration: RulesTypeValidatorDeclaration) {
-    const { modelName, modelType } = declaration;
+    const { modelName, predicate } = declaration;
     const b = new StringBuilder();
     const varName = this.config.validatorParamName;
     b.append(`${this.indent(1)}function ${this.typeValidatorName(modelName)}(${varName}) {` + `\n`);
-    const predicate = rules.predicateForType(modelType, varName);
     b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
     b.append(`${this.indent(1)}}`);
     return b.toString();
