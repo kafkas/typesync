@@ -7,11 +7,18 @@ export interface RulesTypeValidatorDeclaration {
   modelType: rules.Type;
 }
 
-export type RulesDeclaration = RulesTypeValidatorDeclaration;
+export interface RulesReadonlyFieldValidatorDeclaration {
+  type: 'readonly-field-validator';
+  modelName: string;
+  // TODO: Implement
+}
+
+export type RulesDeclaration = RulesTypeValidatorDeclaration | RulesReadonlyFieldValidatorDeclaration;
 
 export interface RulesGeneration {
   type: 'rules';
-  declarations: RulesDeclaration[];
+  typeValidatorDeclarations: RulesTypeValidatorDeclaration[];
+  readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[];
 }
 
 export interface RulesGeneratorConfig {}

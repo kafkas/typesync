@@ -2,10 +2,10 @@ import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
 import type {
-  RulesDeclaration,
   RulesGeneration,
   RulesGenerator,
   RulesGeneratorConfig,
+  RulesReadonlyFieldValidatorDeclaration,
   RulesTypeValidatorDeclaration,
 } from './_types.js';
 
@@ -15,37 +15,68 @@ class RulesGeneratorImpl implements RulesGenerator {
   public generate(s: schema.Schema): RulesGeneration {
     const adjustedSchema = adjustSchemaForRules(s);
     const { aliasModels, documentModels } = adjustedSchema;
-    const declarations: RulesDeclaration[] = [];
-    aliasModels.forEach(model => {
-      const d = this.createTypeValidatorDeclarationForFlatAliasModel(model);
-      declarations.push(d);
-    });
-    documentModels.forEach(model => {
-      const d = this.createTypeValidatorDeclarationForFlatDocumentModel(model);
-      declarations.push(d);
-    });
-    return { type: 'rules', declarations };
+    const typeValidatorDeclarations: RulesTypeValidatorDeclaration[] = [
+      ...aliasModels.map(model => this.createTypeValidatorDeclarationForFlatAliasModel(model.name, model.type)),
+      ...documentModels.map(model => this.createTypeValidatorDeclarationForFlatDocumentModel(model.name, model.type)),
+    ];
+    const readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[] = [
+      ...aliasModels
+        .map(model => ({ modelName: model.name, modelType: model.type }))
+        .filter(
+          (params): params is { modelName: string; modelType: schema.rules.types.Object } =>
+            params.modelType.type === 'object'
+        )
+        .map(params =>
+          this.createReadonlyFieldValidatorDeclarationForFlatAliasModel(params.modelName, params.modelType)
+        ),
+      ...documentModels.map(model =>
+        this.createReadonlyFieldValidatorDeclarationForFlatDocumentModel(model.name, model.type)
+      ),
+    ];
+    return { type: 'rules', typeValidatorDeclarations, readonlyFieldValidatorDeclarations };
   }
 
   private createTypeValidatorDeclarationForFlatAliasModel(
-    model: schema.rules.AliasModel
+    modelName: string,
+    modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
-    const rulesType = flatTypeToRules(model.type);
+    const rulesType = flatTypeToRules(modelType);
     return {
       type: 'type-validator',
-      modelName: model.name,
+      modelName,
       modelType: rulesType,
     };
   }
 
   private createTypeValidatorDeclarationForFlatDocumentModel(
-    model: schema.rules.DocumentModel
+    modelName: string,
+    modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
-    const rulesType = flatObjectTypeToRules(model.type);
+    const rulesType = flatObjectTypeToRules(modelType);
     return {
       type: 'type-validator',
-      modelName: model.name,
+      modelName,
       modelType: rulesType,
+    };
+  }
+
+  private createReadonlyFieldValidatorDeclarationForFlatAliasModel(
+    modelName: string,
+    _modelType: schema.rules.types.Object
+  ): RulesReadonlyFieldValidatorDeclaration {
+    return {
+      type: 'readonly-field-validator',
+      modelName,
+    };
+  }
+
+  private createReadonlyFieldValidatorDeclarationForFlatDocumentModel(
+    modelName: string,
+    _modelType: schema.rules.types.Object
+  ): RulesReadonlyFieldValidatorDeclaration {
+    return {
+      type: 'readonly-field-validator',
+      modelName,
     };
   }
 }

@@ -9,7 +9,11 @@ import {
   MissingRulesOutputFileError,
   MissingStartMarkerError,
 } from '../../errors/renderer.js';
-import type { RulesDeclaration, RulesGeneration, RulesTypeValidatorDeclaration } from '../../generators/rules/index.js';
+import type {
+  RulesGeneration,
+  RulesReadonlyFieldValidatorDeclaration,
+  RulesTypeValidatorDeclaration,
+} from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
 import { multiply } from '../../util/multiply-str.js';
@@ -27,7 +31,16 @@ class RulesRendererImpl implements RulesRenderer {
 
     lines.forEach((line, lineIdx) => {
       if (lineIdx === startMarkerLineIdx + 1) {
-        const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
+        b.append('// Type Validators');
+        const renderedTypeValidatorDeclarations = g.typeValidatorDeclarations.map(d =>
+          this.renderTypeValidatorDeclaration(d)
+        );
+        const renderedReadonlyFieldDeclarations = g.readonlyFieldValidatorDeclarations.map(d =>
+          this.renderReadonlyFieldValidatorDeclaration(d)
+        );
+        const renderedDeclarations = [...renderedTypeValidatorDeclarations, ...renderedReadonlyFieldDeclarations].join(
+          '\n\n'
+        );
         b.append(renderedDeclarations + `\n`);
       }
       b.append(`${line}`);
@@ -78,22 +91,23 @@ class RulesRendererImpl implements RulesRenderer {
     return parts.some(part => part === marker);
   }
 
-  private renderDeclaration(declaration: RulesDeclaration) {
-    switch (declaration.type) {
-      case 'type-validator':
-        return this.renderTypeValidatorDeclaration(declaration);
-      default:
-        assertNever(declaration.type);
-    }
-  }
-
   private renderTypeValidatorDeclaration(declaration: RulesTypeValidatorDeclaration) {
     const { modelName, modelType } = declaration;
     const b = new StringBuilder();
     const varName = this.config.validatorParamName;
-    b.append(`${this.indent(1)}function ${this.validatorName(modelName)}(${varName}) {` + `\n`);
+    b.append(`${this.indent(1)}function ${this.typeValidatorName(modelName)}(${varName}) {` + `\n`);
     const predicate = rules.predicateForType(modelType, varName);
     b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
+    b.append(`${this.indent(1)}}`);
+    return b.toString();
+  }
+
+  private renderReadonlyFieldValidatorDeclaration(declaration: RulesReadonlyFieldValidatorDeclaration) {
+    const { modelName } = declaration;
+    const b = new StringBuilder();
+    // TODO: Implement
+    b.append(`${this.indent(1)}function isReadonlyFieldAffectedFor${modelName}(prevData, nextData) {` + `\n`);
+    b.append(`${this.indent(2)}return ` + 'false' + `;\n`);
     b.append(`${this.indent(1)}}`);
     return b.toString();
   }
@@ -132,7 +146,7 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
-    return `${this.validatorName(predicate.varModelName)}(${predicate.varName})`;
+    return `${this.typeValidatorName(predicate.varModelName)}(${predicate.varName})`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
@@ -167,7 +181,7 @@ class RulesRendererImpl implements RulesRenderer {
     return `!${this.renderPredicate(predicate.originalPredicate)}`;
   }
 
-  private validatorName(modelName: string) {
+  private typeValidatorName(modelName: string) {
     return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
