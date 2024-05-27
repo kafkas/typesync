@@ -1,8 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   // typesync-start
-  // Type Validators
-
   function isValidUserRole(data) {
     return ((data == 'owner') || (data == 'admin') || (data == 'member'));
   }
@@ -48,22 +46,15 @@ service cloud.firestore {
     );
   }
 
-  // Read-only field validators
-
   function isReadonlyFieldAffectedForUser(prevData, nextData) {
-    let readonlyFields = ['role', 'created_at'];
-    let changedFields = nextData.diff(prevData).affectedKeys();
-    return changedFields.hasAny(readonlyFields);
+    return nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']);
   }
 
   function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
-    let readonlyFields = ['name'];
-    let changedFields = nextData.diff(prevData).affectedKeys();
-    return changedFields.hasAny(readonlyFields);
+    return nextData.diff(prevData).affectedKeys().hasAny(['name']);
   }
 
   function isReadonlyFieldAffectedForWorkspace(prevData, nextData) {
-    let readonlyFieldsForMetadataField2 = ['nestedField2'];
     return (
     isReadonlyFieldAffectedForWorkspaceInfo(prevData.info, nextData.info) ||
     nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1']) ||
@@ -76,7 +67,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
       function isLegalUserUpdate() {
-        return !isReadonlyFieldAffectedForUser(resource.data, request.resource.data) && isValidUser(request.resource.data);
+        return isValidUser(request.resource.data) && !isReadonlyFieldAffectedForUser(resource.data, request.resource.data);
       }
 
       allow read;
