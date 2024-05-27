@@ -31,7 +31,6 @@ class RulesRendererImpl implements RulesRenderer {
 
     lines.forEach((line, lineIdx) => {
       if (lineIdx === startMarkerLineIdx + 1) {
-        b.append('// Type Validators');
         const renderedTypeValidatorDeclarations = g.typeValidatorDeclarations.map(d =>
           this.renderTypeValidatorDeclaration(d)
         );
