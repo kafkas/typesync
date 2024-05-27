@@ -46,12 +46,12 @@ service cloud.firestore {
     );
   }
 
-  function isReadonlyFieldAffectedForUser(prevData, nextData) {
-    return nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']);
+  function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
+    return (nextData.diff(prevData).affectedKeys().hasAny(['name']));
   }
 
-  function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
-    return nextData.diff(prevData).affectedKeys().hasAny(['name']);
+  function isReadonlyFieldAffectedForUser(prevData, nextData) {
+    return (nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']));
   }
 
   function isReadonlyFieldAffectedForWorkspace(prevData, nextData) {

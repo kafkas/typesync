@@ -22,11 +22,13 @@ User:
         type: string
       role:
         type: UserRole
+        readonly: true
       website_url:
         type: string
         optional: true
       created_at:
         type: timestamp
+        readonly: true
 
 WorkspaceInfo:
   model: alias
