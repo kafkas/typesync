@@ -10,7 +10,9 @@ export interface RulesTypeValidatorDeclaration {
 
 export interface RulesReadonlyFieldValidatorDeclaration {
   type: 'readonly-field-validator';
-  modelName: string;
+  validatorName: string;
+  prevDataParamName: string;
+  nextDataParamName: string;
   // TODO: Implement
 }
 

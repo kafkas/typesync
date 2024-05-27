@@ -99,10 +99,10 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderReadonlyFieldValidatorDeclaration(declaration: RulesReadonlyFieldValidatorDeclaration) {
-    const { modelName } = declaration;
+    const { validatorName, prevDataParamName, nextDataParamName } = declaration;
     const b = new StringBuilder();
+    b.append(`${this.indent(1)}function ${validatorName}(${prevDataParamName}, ${nextDataParamName}) {` + `\n`);
     // TODO: Implement
-    b.append(`${this.indent(1)}function isReadonlyFieldAffectedFor${modelName}(prevData, nextData) {` + `\n`);
     b.append(`${this.indent(2)}return ` + 'false' + `;\n`);
     b.append(`${this.indent(1)}}`);
     return b.toString();

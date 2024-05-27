@@ -80,7 +80,10 @@ class RulesGeneratorImpl implements RulesGenerator {
   ): RulesReadonlyFieldValidatorDeclaration {
     return {
       type: 'readonly-field-validator',
-      modelName,
+      validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
+      // TODO: Get from config
+      prevDataParamName: 'prevData',
+      nextDataParamName: 'nextData',
     };
   }
 
@@ -90,8 +93,16 @@ class RulesGeneratorImpl implements RulesGenerator {
   ): RulesReadonlyFieldValidatorDeclaration {
     return {
       type: 'readonly-field-validator',
-      modelName,
+      validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
+      // TODO: Get from config
+      prevDataParamName: 'prevData',
+      nextDataParamName: 'nextData',
     };
+  }
+
+  private getReadonlyFieldValidatorNameForModel(modelName: string) {
+    // TODO: Implement with config
+    return `isReadonlyFieldAffectedFor${modelName}`;
   }
 }
 
