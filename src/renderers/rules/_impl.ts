@@ -116,6 +116,8 @@ class RulesRendererImpl implements RulesRenderer {
         return this.renderTypeEqualityPredicate(predicate);
       case 'type-validator':
         return this.renderTypeValidatorPredicate(predicate);
+      case 'readonly-field-validator':
+        return this.renderReadonlyFieldValidatorPredicate(predicate);
       case 'map-has-key':
         return this.renderMapHasKeyPredicate(predicate);
       case 'map-has-only-keys':
@@ -143,6 +145,10 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
     return `${predicate.validatorName}(${predicate.varName})`;
+  }
+
+  private renderReadonlyFieldValidatorPredicate(predicate: rules.ReadonlyFieldValidatorPredicate) {
+    return `${predicate.validatorName}(${predicate.prevDataParam}, ${predicate.nextDataParam})`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {

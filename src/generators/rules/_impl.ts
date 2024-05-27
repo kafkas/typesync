@@ -41,7 +41,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.typeValidatorParamName, {
+    const predicate = rules.typePredicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
@@ -57,7 +57,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.typeValidatorParamName, {
+    const predicate = rules.typePredicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
@@ -76,12 +76,19 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelName: string,
     _modelType: schema.rules.types.Object
   ): RulesReadonlyFieldValidatorDeclaration {
+    // TODO: Implement
+    const innerPredicates: rules.Predicate[] = [];
+    const predicate: rules.Predicate = {
+      type: 'or',
+      innerPredicates,
+    };
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
       // TODO: Get from config
       prevDataParamName: 'prevData',
       nextDataParamName: 'nextData',
+      predicate,
     };
   }
 
@@ -89,12 +96,19 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelName: string,
     _modelType: schema.rules.types.Object
   ): RulesReadonlyFieldValidatorDeclaration {
+    // TODO: Implement
+    const innerPredicates: rules.Predicate[] = [];
+    const predicate: rules.Predicate = {
+      type: 'or',
+      innerPredicates,
+    };
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
       // TODO: Get from config
       prevDataParamName: 'prevData',
       nextDataParamName: 'nextData',
+      predicate,
     };
   }
 

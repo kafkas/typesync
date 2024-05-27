@@ -13,7 +13,7 @@ export interface RulesReadonlyFieldValidatorDeclaration {
   validatorName: string;
   prevDataParamName: string;
   nextDataParamName: string;
-  // TODO: Implement
+  predicate: rules.Predicate;
 }
 
 export type RulesDeclaration = RulesTypeValidatorDeclaration | RulesReadonlyFieldValidatorDeclaration;
