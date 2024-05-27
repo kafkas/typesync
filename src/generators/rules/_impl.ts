@@ -43,13 +43,13 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName, {
+    const predicate = rules.predicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
       type: 'type-validator',
       validatorName: this.getTypeValidatorNameForModel(modelName),
-      paramName: this.config.validatorParamName,
+      paramName: this.config.typeValidatorParamName,
       predicate,
     };
   }
@@ -59,13 +59,13 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName, {
+    const predicate = rules.predicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
       type: 'type-validator',
       validatorName: this.getTypeValidatorNameForModel(modelName),
-      paramName: this.config.validatorParamName,
+      paramName: this.config.typeValidatorParamName,
       predicate,
     };
   }

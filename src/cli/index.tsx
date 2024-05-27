@@ -21,7 +21,7 @@ import {
   DEFAULT_RULES_INDENTATION,
   DEFAULT_RULES_START_MARKER,
   DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
-  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
@@ -269,11 +269,11 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
         })
-        .option('validatorParamName', {
+        .option('typeValidatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
           type: 'string',
           demandOption: false,
-          default: DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+          default: DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
         })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
@@ -294,7 +294,7 @@ await yargs(hideBin(process.argv))
         startMarker,
         endMarker,
         typeValidatorNamePattern,
-        validatorParamName,
+        typeValidatorParamName,
         indentation,
         debug,
       } = args;
@@ -307,7 +307,7 @@ await yargs(hideBin(process.argv))
           startMarker,
           endMarker,
           typeValidatorNamePattern,
-          validatorParamName,
+          typeValidatorParamName,
           indentation,
           debug,
         });

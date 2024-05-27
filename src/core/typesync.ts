@@ -45,7 +45,7 @@ import {
   DEFAULT_RULES_INDENTATION,
   DEFAULT_RULES_START_MARKER,
   DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
-  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
@@ -65,9 +65,9 @@ import {
   InvalidRulesStartMarkerOptionError,
   InvalidSwiftIndentationOptionError,
   InvalidTSIndentationOptionError,
-  InvalidUndefinedSentinelNameOptionError,
   InvalidTypeValidatorNamePatternOptionError,
-  InvalidValidatorParamNameOptionError,
+  InvalidTypeValidatorParamNameOptionError,
+  InvalidUndefinedSentinelNameOptionError,
   RulesMarkerOptionsNotDistinctError,
 } from '../errors/invalid-opts.js';
 import { createGraphGenerator } from '../generators/graph/index.js';
@@ -126,7 +126,7 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
   typeValidatorNamePattern: string;
-  validatorParamName: string;
+  typeValidatorParamName: string;
   debug: boolean;
 }
 
@@ -311,9 +311,9 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, typeValidatorNamePattern, validatorParamName, debug } = opts;
+    const { definitionGlobPattern, typeValidatorNamePattern, typeValidatorParamName, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({ typeValidatorNamePattern, validatorParamName });
+    const generator = createRulesGenerator({ typeValidatorNamePattern, typeValidatorParamName });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -358,7 +358,7 @@ class TypesyncImpl implements Typesync {
     const {
       definition,
       typeValidatorNamePattern = DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
-      validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+      typeValidatorParamName = DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
       debug = DEFAULT_RULES_DEBUG,
     } = opts;
 
@@ -366,14 +366,14 @@ class TypesyncImpl implements Typesync {
       throw new InvalidTypeValidatorNamePatternOptionError(typeValidatorNamePattern);
     }
 
-    if (validatorParamName.length === 0) {
-      throw new InvalidValidatorParamNameOptionError(validatorParamName);
+    if (typeValidatorParamName.length === 0) {
+      throw new InvalidTypeValidatorParamNameOptionError(typeValidatorParamName);
     }
 
     return {
       definitionGlobPattern: definition,
       typeValidatorNamePattern,
-      validatorParamName,
+      typeValidatorParamName,
       debug,
     };
   }

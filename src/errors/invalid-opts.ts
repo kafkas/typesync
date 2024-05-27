@@ -114,9 +114,9 @@ export class InvalidTypeValidatorNamePatternOptionError extends InvalidOptionsEr
   }
 }
 
-export class InvalidValidatorParamNameOptionError extends InvalidOptionsError {
+export class InvalidTypeValidatorParamNameOptionError extends InvalidOptionsError {
   public constructor(validatorParamName: string) {
-    const option: GenerateRulesOption = 'validatorParamName';
+    const option: GenerateRulesOption = 'typeValidatorParamName';
     super(`Expected '${option}' to be a non-empty string. Received '${validatorParamName}'`);
   }
 }
