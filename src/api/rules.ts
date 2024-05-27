@@ -3,6 +3,7 @@ import { GenerateRepresentationResult } from './_common.js';
 
 export interface GenerateRulesRepresentationOptions {
   definition: string;
+  validatorNamePattern?: string;
   validatorParamName?: string;
   debug?: boolean;
 }
@@ -11,7 +12,6 @@ export interface GenerateRulesOptions extends GenerateRulesRepresentationOptions
   outFile: string;
   startMarker?: string;
   endMarker?: string;
-  validatorNamePattern?: string;
   indentation?: number;
 }
 

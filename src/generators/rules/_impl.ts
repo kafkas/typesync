@@ -1,3 +1,4 @@
+import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
 import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
@@ -42,10 +43,13 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName);
+    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName, {
+      getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
+    });
     return {
       type: 'type-validator',
-      modelName,
+      validatorName: this.getTypeValidatorNameForModel(modelName),
+      paramName: this.config.validatorParamName,
       predicate,
     };
   }
@@ -55,12 +59,19 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(modelType);
-    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName);
+    const predicate = rules.predicateForType(rulesType, this.config.validatorParamName, {
+      getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
+    });
     return {
       type: 'type-validator',
-      modelName,
+      validatorName: this.getTypeValidatorNameForModel(modelName),
+      paramName: this.config.validatorParamName,
       predicate,
     };
+  }
+
+  private getTypeValidatorNameForModel(modelName: string) {
+    return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
   private createReadonlyFieldValidatorDeclarationForFlatAliasModel(

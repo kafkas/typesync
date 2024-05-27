@@ -3,7 +3,8 @@ import type { schema } from '../../schema/index.js';
 
 export interface RulesTypeValidatorDeclaration {
   type: 'type-validator';
-  modelName: string;
+  validatorName: string;
+  paramName: string;
   predicate: rules.Predicate;
 }
 
@@ -22,6 +23,7 @@ export interface RulesGeneration {
 }
 
 export interface RulesGeneratorConfig {
+  validatorNamePattern: string;
   validatorParamName: string;
 }
 

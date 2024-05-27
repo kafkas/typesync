@@ -125,6 +125,7 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
+  validatorNamePattern: string;
   validatorParamName: string;
   debug: boolean;
 }
@@ -133,7 +134,6 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
-  validatorNamePattern: string;
   indentation: number;
 }
 
@@ -311,9 +311,9 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, validatorParamName, debug } = opts;
+    const { definitionGlobPattern, validatorNamePattern, validatorParamName, debug } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({ validatorParamName });
+    const generator = createRulesGenerator({ validatorNamePattern, validatorParamName });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -323,18 +323,12 @@ class TypesyncImpl implements Typesync {
       outFile,
       startMarker = DEFAULT_RULES_START_MARKER,
       endMarker = DEFAULT_RULES_END_MARKER,
-      validatorNamePattern = DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
-      validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
       indentation = DEFAULT_RULES_INDENTATION,
       ...rest
     } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidRulesIndentationOptionError(indentation);
-    }
-
-    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
-      throw new InvalidValidatorNamePatternOptionError(validatorNamePattern);
     }
 
     if (startMarker.length === 0) {
@@ -349,16 +343,11 @@ class TypesyncImpl implements Typesync {
       throw new RulesMarkerOptionsNotDistinctError(startMarker);
     }
 
-    if (validatorParamName.length === 0) {
-      throw new InvalidValidatorParamNameOptionError(validatorParamName);
-    }
-
     return {
       ...this.normalizeGenerateRulesRepresentationOpts(rest),
       pathToOutputFile: outFile,
       startMarker,
       endMarker,
-      validatorNamePattern,
       indentation,
     };
   }
@@ -366,9 +355,24 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateRulesRepresentationOpts(
     opts: GenerateRulesRepresentationOptions
   ): NormalizedGenerateRulesRepresentationOptions {
-    const { definition, validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME, debug = DEFAULT_RULES_DEBUG } = opts;
+    const {
+      definition,
+      validatorNamePattern = DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+      validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+      debug = DEFAULT_RULES_DEBUG,
+    } = opts;
+
+    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
+      throw new InvalidValidatorNamePatternOptionError(validatorNamePattern);
+    }
+
+    if (validatorParamName.length === 0) {
+      throw new InvalidValidatorParamNameOptionError(validatorParamName);
+    }
+
     return {
       definitionGlobPattern: definition,
+      validatorNamePattern,
       validatorParamName,
       debug,
     };

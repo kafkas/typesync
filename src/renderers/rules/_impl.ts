@@ -2,7 +2,6 @@ import { StringBuilder } from '@proficient/ds';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
 import {
   MisplacedStartMarkerError,
   MissingEndMarkerError,
@@ -91,10 +90,9 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorDeclaration(declaration: RulesTypeValidatorDeclaration) {
-    const { modelName, predicate } = declaration;
+    const { validatorName, paramName, predicate } = declaration;
     const b = new StringBuilder();
-    const varName = this.config.validatorParamName;
-    b.append(`${this.indent(1)}function ${this.typeValidatorName(modelName)}(${varName}) {` + `\n`);
+    b.append(`${this.indent(1)}function ${validatorName}(${paramName}) {` + `\n`);
     b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
     b.append(`${this.indent(1)}}`);
     return b.toString();
@@ -144,7 +142,7 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
-    return `${this.typeValidatorName(predicate.varModelName)}(${predicate.varName})`;
+    return `${predicate.validatorName}(${predicate.varName})`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
@@ -177,10 +175,6 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderNegationPredicate(predicate: rules.NegationPredicate) {
     return `!${this.renderPredicate(predicate.originalPredicate)}`;
-  }
-
-  private typeValidatorName(modelName: string) {
-    return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
   private indent(count: number) {

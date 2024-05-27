@@ -34,7 +34,7 @@ export interface TypeEqualityPredicate {
 export interface TypeValidatorPredicate {
   type: 'type-validator';
   varName: string;
-  varModelName: string;
+  validatorName: string;
 }
 
 export interface MapHasKeyPredicate {
@@ -120,14 +120,14 @@ export function predicateForEnumType(t: Enum, varName: string): Predicate {
   };
 }
 
-export function predicateForTupleType(t: Tuple, varName: string): Predicate {
+export function predicateForTupleType(t: Tuple, varName: string, ctx: Context): Predicate {
   const primaryPredicate: Predicate = {
     type: 'type-equality',
     varName,
     varType: { type: 'list' },
   };
   const elementPredicates = t.elements.map((elementType, elementIdx) =>
-    predicateForType(elementType, `${varName}[${elementIdx}]`)
+    predicateForType(elementType, `${varName}[${elementIdx}]`, ctx)
   );
   return {
     type: 'and',
@@ -144,7 +144,7 @@ export function predicateForMapType(t: Map, varName: string): Predicate {
   return { type: 'type-equality', varName, varType: t };
 }
 
-export function predicateForObjectType(t: Object, varName: string): Predicate {
+export function predicateForObjectType(t: Object, varName: string, ctx: Context): Predicate {
   const mapTypePredicate: Predicate = {
     type: 'type-equality',
     varName,
@@ -156,7 +156,7 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
     keys: t.fields.map(f => f.name),
   };
   const fieldPredicates: Predicate[] = t.fields.map(field => {
-    const p = predicateForType(field.type, `${varName}.${field.name}`);
+    const p = predicateForType(field.type, `${varName}.${field.name}`, ctx);
     if (field.optional) {
       const optionalPredicate: Predicate = {
         type: 'negation',
@@ -182,13 +182,13 @@ export function predicateForObjectType(t: Object, varName: string): Predicate {
   };
 }
 
-export function predicateForDiscriminatedUnionType(t: DiscriminatedUnion, varName: string): Predicate {
+export function predicateForDiscriminatedUnionType(t: DiscriminatedUnion, varName: string, ctx: Context): Predicate {
   const variantPredicates = t.variants.map(variantType => {
     switch (variantType.type) {
       case 'object':
-        return predicateForObjectType(variantType, varName);
+        return predicateForObjectType(variantType, varName, ctx);
       case 'alias':
-        return predicateForAliasType(variantType, varName);
+        return predicateForAliasType(variantType, varName, ctx);
       default:
         assertNever(variantType);
     }
@@ -199,9 +199,9 @@ export function predicateForDiscriminatedUnionType(t: DiscriminatedUnion, varNam
   };
 }
 
-export function predicateForSimpleUnionType(t: SimpleUnion, varName: string): Predicate {
+export function predicateForSimpleUnionType(t: SimpleUnion, varName: string, ctx: Context): Predicate {
   const variantPredicates = t.variants.map(variantType => {
-    return predicateForType(variantType, varName);
+    return predicateForType(variantType, varName, ctx);
   });
   return {
     type: 'or',
@@ -209,15 +209,19 @@ export function predicateForSimpleUnionType(t: SimpleUnion, varName: string): Pr
   };
 }
 
-export function predicateForAliasType(t: Alias, varName: string): Predicate {
+export function predicateForAliasType(t: Alias, varName: string, ctx: Context): Predicate {
   return {
     type: 'type-validator',
     varName,
-    varModelName: t.name,
+    validatorName: ctx.getTypeValidatorNameForModel(t.name),
   };
 }
 
-export function predicateForType(t: Type, varName: string): Predicate {
+interface Context {
+  getTypeValidatorNameForModel: (modelName: string) => string;
+}
+
+export function predicateForType(t: Type, varName: string, ctx: Context): Predicate {
   switch (t.type) {
     case 'any':
       return predicateForAnyType(t);
@@ -236,19 +240,19 @@ export function predicateForType(t: Type, varName: string): Predicate {
     case 'enum':
       return predicateForEnumType(t, varName);
     case 'tuple':
-      return predicateForTupleType(t, varName);
+      return predicateForTupleType(t, varName, ctx);
     case 'list':
       return predicateForListType(t, varName);
     case 'map':
       return predicateForMapType(t, varName);
     case 'object':
-      return predicateForObjectType(t, varName);
+      return predicateForObjectType(t, varName, ctx);
     case 'discriminated-union':
-      return predicateForDiscriminatedUnionType(t, varName);
+      return predicateForDiscriminatedUnionType(t, varName, ctx);
     case 'simple-union':
-      return predicateForSimpleUnionType(t, varName);
+      return predicateForSimpleUnionType(t, varName, ctx);
     case 'alias':
-      return predicateForAliasType(t, varName);
+      return predicateForAliasType(t, varName, ctx);
     default:
       assertNever(t);
   }
