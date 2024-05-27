@@ -1,6 +1,5 @@
 import { resolve } from 'node:path';
 
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../../constants.js';
 import { RulesGeneration } from '../../../generators/rules/index.js';
 import { getDirName } from '../../../util/fs.js';
 import { createRulesRenderer } from '../_impl.js';
@@ -12,62 +11,78 @@ describe('RulesRendererImpl', () => {
       pathToOutputFile: resolve(getDirName(import.meta.url), `firestore.rules`),
       startMarker: 't-start',
       endMarker: 't-end',
-      validatorNamePattern: `is${RULES_VALIDATOR_NAME_PATTERN_PARAM}`,
-      validatorParamName: 'data',
     });
 
     const generation: RulesGeneration = {
       type: 'rules',
-      declarations: [
+      typeValidatorDeclarations: [
         {
-          type: 'validator',
-          modelName: 'User',
-          modelType: {
-            type: 'object',
-            fields: [
-              { type: { type: 'string' }, optional: false, name: 'username' },
+          type: 'type-validator',
+          validatorName: 'isUser',
+          paramName: 'data',
+          predicate: {
+            type: 'and',
+            alignment: 'vertical',
+            innerPredicates: [
               {
-                type: {
-                  type: 'enum',
-                  members: [{ value: 'owner' }, { value: 'admin' }, { value: 'member' }],
-                },
-                optional: false,
-                name: 'role',
+                type: 'type-equality',
+                varName: 'data',
+                varType: { type: 'map' },
               },
               {
-                type: {
-                  type: 'simple-union',
-                  variants: [{ type: 'string' }, { type: 'list' }],
-                },
-                optional: false,
-                name: 'path',
+                type: 'map-has-only-keys',
+                varName: 'data',
+                keys: ['username', 'role', 'path', 'pets', 'website_url', 'created_at'],
               },
               {
-                type: {
-                  type: 'list',
-                },
-                optional: false,
-                name: 'pets',
+                type: 'type-equality',
+                varName: 'data.username',
+                varType: { type: 'string' },
               },
               {
-                type: {
-                  type: 'string',
-                },
-                optional: true,
-                name: 'website_url',
+                type: 'or',
+                innerPredicates: [
+                  { type: 'value-equality', varName: 'data.role', varValue: `'owner'` },
+                  { type: 'value-equality', varName: 'data.role', varValue: `'admin'` },
+                  { type: 'value-equality', varName: 'data.role', varValue: `'member'` },
+                ],
               },
               {
-                type: {
-                  type: 'timestamp',
-                },
-                optional: false,
-                name: 'created_at',
+                type: 'or',
+                innerPredicates: [
+                  { type: 'type-equality', varName: 'data.path', varType: { type: 'string' } },
+                  { type: 'type-equality', varName: 'data.path', varType: { type: 'list' } },
+                ],
+              },
+              {
+                type: 'type-equality',
+                varName: 'data.pets',
+                varType: { type: 'list' },
+              },
+              {
+                type: 'or',
+                innerPredicates: [
+                  { type: 'type-equality', varName: 'data.website_url', varType: { type: 'string' } },
+                  {
+                    type: 'negation',
+                    originalPredicate: {
+                      type: 'map-has-key',
+                      varName: 'data',
+                      key: 'website_url',
+                    },
+                  },
+                ],
+              },
+              {
+                type: 'type-equality',
+                varName: 'data.created_at',
+                varType: { type: 'timestamp' },
               },
             ],
-            additionalFields: false,
           },
         },
       ],
+      readonlyFieldValidatorDeclarations: [],
     };
 
     const result = await renderer.render(generation);
