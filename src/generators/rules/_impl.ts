@@ -18,8 +18,8 @@ class RulesGeneratorImpl implements RulesGenerator {
     const adjustedSchema = adjustSchemaForRules(s);
     const { aliasModels, documentModels } = adjustedSchema;
     const typeValidatorDeclarations: RulesTypeValidatorDeclaration[] = [
-      ...aliasModels.map(model => this.createTypeValidatorDeclarationForFlatAliasModel(model.name, model.type)),
-      ...documentModels.map(model => this.createTypeValidatorDeclarationForFlatDocumentModel(model.name, model.type)),
+      ...aliasModels.map(model => this.createTypeValidatorDeclarationForAliasModel(model.name, model.type)),
+      ...documentModels.map(model => this.createTypeValidatorDeclarationForDocumentModel(model.name, model.type)),
     ];
     const readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[] = [
       ...aliasModels
@@ -28,17 +28,15 @@ class RulesGeneratorImpl implements RulesGenerator {
           (params): params is { modelName: string; modelType: schema.rules.types.Object } =>
             params.modelType.type === 'object'
         )
-        .map(params =>
-          this.createReadonlyFieldValidatorDeclarationForFlatAliasModel(params.modelName, params.modelType)
-        ),
+        .map(params => this.createReadonlyFieldValidatorDeclarationForAliasModel(params.modelName, params.modelType)),
       ...documentModels.map(model =>
-        this.createReadonlyFieldValidatorDeclarationForFlatDocumentModel(model.name, model.type)
+        this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type)
       ),
     ];
     return { type: 'rules', typeValidatorDeclarations, readonlyFieldValidatorDeclarations };
   }
 
-  private createTypeValidatorDeclarationForFlatAliasModel(
+  private createTypeValidatorDeclarationForAliasModel(
     modelName: string,
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
@@ -54,7 +52,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     };
   }
 
-  private createTypeValidatorDeclarationForFlatDocumentModel(
+  private createTypeValidatorDeclarationForDocumentModel(
     modelName: string,
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
@@ -74,7 +72,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     return this.config.typeValidatorNamePattern.replace(RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
-  private createReadonlyFieldValidatorDeclarationForFlatAliasModel(
+  private createReadonlyFieldValidatorDeclarationForAliasModel(
     modelName: string,
     _modelType: schema.rules.types.Object
   ): RulesReadonlyFieldValidatorDeclaration {
@@ -87,7 +85,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     };
   }
 
-  private createReadonlyFieldValidatorDeclarationForFlatDocumentModel(
+  private createReadonlyFieldValidatorDeclarationForDocumentModel(
     modelName: string,
     _modelType: schema.rules.types.Object
   ): RulesReadonlyFieldValidatorDeclaration {
