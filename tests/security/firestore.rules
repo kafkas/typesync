@@ -22,13 +22,19 @@ service cloud.firestore {
     return (
     (data is map) &&
     (data.keys().hasOnly(['info', 'metadata', 'created_at'])) &&
+    isValidWorkspaceInfo(data.info) &&
     (
-    (data.info is map) &&
-    (data.info.keys().hasOnly(['name', 'description'])) &&
-    (data.info.name is string) &&
-    (data.info.description is string)
-    ) &&
     (data.metadata is map) &&
+    (data.metadata.keys().hasOnly(['field1', 'field2', 'field3'])) &&
+    (data.metadata.field1 is float) &&
+    (
+    (data.metadata.field2 is map) &&
+    (data.metadata.field2.keys().hasOnly(['nestedField1', 'nestedField2'])) &&
+    (data.metadata.field2.nestedField1 is bool) &&
+    (data.metadata.field2.nestedField2 is int)
+    ) &&
+    (data.metadata.field3 is string)
+    ) &&
     (data.created_at is timestamp)
     );
   }
