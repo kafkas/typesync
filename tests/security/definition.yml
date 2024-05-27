@@ -28,6 +28,17 @@ User:
       created_at:
         type: timestamp
 
+WorkspaceInfo:
+  model: alias
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+        readonly: true
+      description:
+        type: string
+
 Workspace:
   model: document
   path: workspaces/{workspaceId}
@@ -35,18 +46,25 @@ Workspace:
     type: object
     fields:
       info:
+        type: WorkspaceInfo
+      metadata:
         type:
           type: object
           fields:
-            name:
-              type: string
+            field1:
+              type: double
               readonly: true
-            description:
+            field2:
+              type:
+                type: object
+                fields:
+                  nestedField1:
+                    type: boolean
+                  nestedField2:
+                    type: int
+                    readonly: true
+            field3:
               type: string
-      metadata:
-        type:
-          type: map
-          valueType: string
       created_at:
         type: timestamp
         readonly: true

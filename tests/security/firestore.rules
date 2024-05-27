@@ -35,25 +35,33 @@ service cloud.firestore {
 
   // Read-only field validators
 
-  function isReadonlyFieldAffectedForUser() {
+  function isReadonlyFieldAffectedForUser(prevData, nextData) {
     let readonlyFields = ['role', 'created_at'];
-    let changedFields = request.resource.data.diff(resource.data).affectedKeys();
+    let changedFields = nextData.diff(prevData).affectedKeys();
     return changedFields.hasAny(readonlyFields);
   }
 
-  function isReadonlyFieldAffectedForWorkspace() {
-    let readonlyFields = ['created_at'];
-    let readonlyFieldsForInfo = ['name'];
-    let changedFields = request.resource.data.diff(resource.data).affectedKeys();
-    let changeFieldsForInfo = request.resource.data.info.diff(resource.data.info).affectedKeys();
-    return changedFields.hasAny(readonlyFields) || changeFieldsForInfo.hasAny(readonlyFieldsForInfo);
+  function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
+    let readonlyFields = ['name'];
+    let changedFields = nextData.diff(prevData).affectedKeys();
+    return changedFields.hasAny(readonlyFields);
+  }
+
+  function isReadonlyFieldAffectedForWorkspace(prevData, nextData) {
+    let readonlyFieldsForMetadataField2 = ['nestedField2'];
+    return (
+    isReadonlyFieldAffectedForWorkspaceInfo(prevData.info, nextData.info) ||
+    nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1']) ||
+    nextData.metadata.field2.diff(prevData.metadata.field2).affectedKeys().hasAny(['nestedField2']) ||
+    nextData.diff(prevData).affectedKeys().hasAny(['created_at'])
+    )
   }
   // typesync-end
 
   match /databases/{database}/documents {
     match /users/{userId} {
       function isLegalUserUpdate() {
-        return !isReadonlyFieldAffectedForUser() && isValidUser(request.resource.data);
+        return !isReadonlyFieldAffectedForUser(resource.data, request.resource.data) && isValidUser(request.resource.data);
       }
 
       allow read;
