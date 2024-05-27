@@ -7,6 +7,15 @@ service cloud.firestore {
     return ((data == 'owner') || (data == 'admin') || (data == 'member'));
   }
 
+  function isValidWorkspaceInfo(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['name', 'description'])) &&
+    (data.name is string) &&
+    (data.description is string)
+    );
+  }
+
   function isValidUser(data) {
     return (
     (data is map) &&
