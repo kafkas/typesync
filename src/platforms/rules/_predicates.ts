@@ -70,6 +70,7 @@ export interface LiteralPredicate {
 
 export interface OrPredicate {
   type: 'or';
+  alignment: 'vertical' | 'horizontal';
   innerPredicates: Predicate[];
 }
 
@@ -128,6 +129,7 @@ export function typePredicateForLiteralType(t: Literal, varName: string): Predic
 export function typePredicateForEnumType(t: Enum, varName: string): Predicate {
   return {
     type: 'or',
+    alignment: 'horizontal',
     innerPredicates: t.members.map(member => ({
       type: 'value-equality',
       varName,
@@ -182,7 +184,7 @@ export function typePredicateForObjectType(t: Object, varName: string, ctx: Cont
           key: field.name,
         },
       };
-      return { type: 'or', innerPredicates: [p, optionalPredicate] };
+      return { type: 'or', alignment: 'horizontal', innerPredicates: [p, optionalPredicate] };
     } else {
       return p;
     }
@@ -215,6 +217,7 @@ export function typePredicateForDiscriminatedUnionType(
   });
   return {
     type: 'or',
+    alignment: 'horizontal',
     innerPredicates: variantPredicates,
   };
 }
@@ -225,6 +228,7 @@ export function typePredicateForSimpleUnionType(t: SimpleUnion, varName: string,
   });
   return {
     type: 'or',
+    alignment: 'horizontal',
     innerPredicates: variantPredicates,
   };
 }

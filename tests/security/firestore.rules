@@ -62,8 +62,12 @@ service cloud.firestore {
     return (
     nextData.diff(prevData).affectedKeys().hasAny(['created_at']) ||
     isReadonlyFieldAffectedForWorkspaceInfo(prevData.info, nextData.info) ||
-    (nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1'])) ||
-    (nextData.metadata.field2.diff(prevData.metadata.field2).affectedKeys().hasAny(['nestedField2']))
+    (
+    nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1']) ||
+    (
+    nextData.metadata.field2.diff(prevData.metadata.field2).affectedKeys().hasAny(['nestedField2'])
+    )
+    )
     );
   }
   // typesync-end

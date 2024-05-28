@@ -171,7 +171,15 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderOrPredicate(predicate: rules.OrPredicate) {
-    return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+    if (predicate.alignment === 'vertical') {
+      return (
+        `(\n` +
+        `${predicate.innerPredicates.map(p => `${this.indent(2)}${this.renderPredicate(p)}`).join(' ||\n')}` +
+        `\n${this.indent(2)})`
+      );
+    } else {
+      return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+    }
   }
 
   private renderAndPredicate(predicate: rules.AndPredicate) {
