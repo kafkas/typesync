@@ -5,6 +5,9 @@ export interface GenerateRulesRepresentationOptions {
   definition: string;
   typeValidatorNamePattern?: string;
   typeValidatorParamName?: string;
+  readonlyFieldValidatorNamePattern?: string;
+  readonlyFieldValidatorPrevDataParamName?: string;
+  readonlyFieldValidatorNextDataParamName?: string;
   debug?: boolean;
 }
 

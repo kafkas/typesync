@@ -43,6 +43,9 @@ import {
   DEFAULT_RULES_DEBUG,
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
   DEFAULT_RULES_START_MARKER,
   DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
   DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
@@ -51,6 +54,7 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
+  RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
@@ -60,6 +64,9 @@ import {
   InvalidGraphEndMarkerOptionError,
   InvalidGraphStartMarkerOptionError,
   InvalidPyIndentationOptionError,
+  InvalidReadonlyFieldValidatorNamePatternOptionError,
+  InvalidReadonlyFieldValidatorNextDataParamNameOptionError,
+  InvalidReadonlyFieldValidatorPrevDataParamNameOptionError,
   InvalidRulesEndMarkerOptionError,
   InvalidRulesIndentationOptionError,
   InvalidRulesStartMarkerOptionError,
@@ -69,6 +76,7 @@ import {
   InvalidTypeValidatorParamNameOptionError,
   InvalidUndefinedSentinelNameOptionError,
   RulesMarkerOptionsNotDistinctError,
+  ValidatorNamePatternsNotDistinctError,
 } from '../errors/invalid-opts.js';
 import { createGraphGenerator } from '../generators/graph/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
@@ -127,6 +135,9 @@ interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
   typeValidatorNamePattern: string;
   typeValidatorParamName: string;
+  readonlyFieldValidatorNamePattern: string;
+  readonlyFieldValidatorPrevDataParamName: string;
+  readonlyFieldValidatorNextDataParamName: string;
   debug: boolean;
 }
 
@@ -311,9 +322,23 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, typeValidatorNamePattern, typeValidatorParamName, debug } = opts;
+    const {
+      definitionGlobPattern,
+      typeValidatorNamePattern,
+      typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
+      debug,
+    } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({ typeValidatorNamePattern, typeValidatorParamName });
+    const generator = createRulesGenerator({
+      typeValidatorNamePattern,
+      typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
+    });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -359,6 +384,9 @@ class TypesyncImpl implements Typesync {
       definition,
       typeValidatorNamePattern = DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
       typeValidatorParamName = DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
+      readonlyFieldValidatorNamePattern = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+      readonlyFieldValidatorPrevDataParamName = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
+      readonlyFieldValidatorNextDataParamName = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
       debug = DEFAULT_RULES_DEBUG,
     } = opts;
 
@@ -370,10 +398,29 @@ class TypesyncImpl implements Typesync {
       throw new InvalidTypeValidatorParamNameOptionError(typeValidatorParamName);
     }
 
+    if (!readonlyFieldValidatorNamePattern.includes(RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM)) {
+      throw new InvalidReadonlyFieldValidatorNamePatternOptionError(readonlyFieldValidatorNamePattern);
+    }
+
+    if (readonlyFieldValidatorPrevDataParamName.length === 0) {
+      throw new InvalidReadonlyFieldValidatorPrevDataParamNameOptionError(readonlyFieldValidatorPrevDataParamName);
+    }
+
+    if (readonlyFieldValidatorNextDataParamName.length === 0) {
+      throw new InvalidReadonlyFieldValidatorNextDataParamNameOptionError(readonlyFieldValidatorNextDataParamName);
+    }
+
+    if (typeValidatorNamePattern === readonlyFieldValidatorNamePattern) {
+      throw new ValidatorNamePatternsNotDistinctError(typeValidatorNamePattern);
+    }
+
     return {
       definitionGlobPattern: definition,
       typeValidatorNamePattern,
       typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
       debug,
     };
   }

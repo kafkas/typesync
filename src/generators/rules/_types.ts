@@ -27,6 +27,9 @@ export interface RulesGeneration {
 export interface RulesGeneratorConfig {
   typeValidatorNamePattern: string;
   typeValidatorParamName: string;
+  readonlyFieldValidatorNamePattern: string;
+  readonlyFieldValidatorPrevDataParamName: string;
+  readonlyFieldValidatorNextDataParamName: string;
 }
 
 export interface RulesGenerator {

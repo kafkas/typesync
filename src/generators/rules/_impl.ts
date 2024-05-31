@@ -1,4 +1,7 @@
-import { RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
+import {
+  RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+} from '../../constants.js';
 import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
@@ -79,13 +82,13 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object,
     s: schema.rules.Schema
   ): RulesReadonlyFieldValidatorDeclaration {
-    // TODO: Implement
-    const prevDataParamName = 'prevData';
-    const nextDataParamName = 'nextData';
+    const {
+      readonlyFieldValidatorPrevDataParamName: prevDataParamName,
+      readonlyFieldValidatorNextDataParamName: nextDataParamName,
+    } = this.config;
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
-      // TODO: Get from config
       prevDataParamName,
       nextDataParamName,
       predicate: this.getReadonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName),
@@ -97,9 +100,10 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object,
     s: schema.rules.Schema
   ): RulesReadonlyFieldValidatorDeclaration {
-    // TODO: Implement
-    const prevDataParamName = 'prevData';
-    const nextDataParamName = 'nextData';
+    const {
+      readonlyFieldValidatorPrevDataParamName: prevDataParamName,
+      readonlyFieldValidatorNextDataParamName: nextDataParamName,
+    } = this.config;
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
@@ -154,8 +158,10 @@ class RulesGeneratorImpl implements RulesGenerator {
   }
 
   private getReadonlyFieldValidatorNameForModel(modelName: string) {
-    // TODO: Implement with config
-    return `isReadonlyFieldAffectedFor${modelName}`;
+    return this.config.readonlyFieldValidatorNamePattern.replace(
+      RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
+      modelName
+    );
   }
 }
 

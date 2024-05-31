@@ -3,6 +3,7 @@ import type { TSObjectTypeFormat } from './api/ts.js';
 
 export const PYTHON_UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 export const RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
+export const RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
 
 /*
  * Default values
@@ -23,6 +24,9 @@ export const DEFAULT_RULES_START_MARKER = 'typesync-start';
 export const DEFAULT_RULES_END_MARKER = 'typesync-end';
 export const DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN = `isValid${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}`;
 export const DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME = 'data';
+export const DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN = `isReadonlyFieldAffectedFor${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}`;
+export const DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME = 'prevData';
+export const DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME = 'nextData';
 export const DEFAULT_RULES_INDENTATION = 2;
 export const DEFAULT_RULES_DEBUG = false;
 
