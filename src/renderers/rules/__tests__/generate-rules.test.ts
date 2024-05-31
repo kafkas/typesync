@@ -41,6 +41,7 @@ describe('RulesRendererImpl', () => {
               },
               {
                 type: 'or',
+                alignment: 'horizontal',
                 innerPredicates: [
                   { type: 'value-equality', varName: 'data.role', varValue: `'owner'` },
                   { type: 'value-equality', varName: 'data.role', varValue: `'admin'` },
@@ -49,6 +50,7 @@ describe('RulesRendererImpl', () => {
               },
               {
                 type: 'or',
+                alignment: 'horizontal',
                 innerPredicates: [
                   { type: 'type-equality', varName: 'data.path', varType: { type: 'string' } },
                   { type: 'type-equality', varName: 'data.path', varType: { type: 'list' } },
@@ -61,6 +63,7 @@ describe('RulesRendererImpl', () => {
               },
               {
                 type: 'or',
+                alignment: 'horizontal',
                 innerPredicates: [
                   { type: 'type-equality', varName: 'data.website_url', varType: { type: 'string' } },
                   {
