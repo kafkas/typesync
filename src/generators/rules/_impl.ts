@@ -2,10 +2,11 @@ import {
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../../constants.js';
-import { rules } from '../../platforms/rules/index.js';
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
+import { readonlyFieldPredicateForObjectType } from './_readonly-field-predicates.js';
+import { typePredicateForType } from './_type-predicates.js';
 import type {
   RulesGeneration,
   RulesGenerator,
@@ -46,7 +47,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Type
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatTypeToRules(modelType);
-    const predicate = rules.typePredicateForType(rulesType, this.config.typeValidatorParamName, {
+    const predicate = typePredicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
@@ -62,7 +63,7 @@ class RulesGeneratorImpl implements RulesGenerator {
     modelType: schema.rules.types.Object
   ): RulesTypeValidatorDeclaration {
     const rulesType = flatObjectTypeToRules(modelType);
-    const predicate = rules.typePredicateForType(rulesType, this.config.typeValidatorParamName, {
+    const predicate = typePredicateForType(rulesType, this.config.typeValidatorParamName, {
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
     });
     return {
@@ -86,12 +87,15 @@ class RulesGeneratorImpl implements RulesGenerator {
       readonlyFieldValidatorPrevDataParamName: prevDataParamName,
       readonlyFieldValidatorNextDataParamName: nextDataParamName,
     } = this.config;
+    const predicate = readonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName, {
+      getReadonlyFieldValidatorNameForModel: name => this.getReadonlyFieldValidatorNameForModel(name),
+    });
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
       prevDataParamName,
       nextDataParamName,
-      predicate: this.getReadonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName),
+      predicate,
     };
   }
 
@@ -104,56 +108,15 @@ class RulesGeneratorImpl implements RulesGenerator {
       readonlyFieldValidatorPrevDataParamName: prevDataParamName,
       readonlyFieldValidatorNextDataParamName: nextDataParamName,
     } = this.config;
+    const predicate = readonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName, {
+      getReadonlyFieldValidatorNameForModel: name => this.getReadonlyFieldValidatorNameForModel(name),
+    });
     return {
       type: 'readonly-field-validator',
       validatorName: this.getReadonlyFieldValidatorNameForModel(modelName),
       prevDataParamName,
       nextDataParamName,
-      predicate: this.getReadonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName),
-    };
-  }
-
-  private getReadonlyFieldPredicateForObjectType(
-    t: schema.rules.types.Object,
-    s: schema.rules.Schema,
-    prevDataParam: string,
-    nextDataParam: string
-  ): rules.Predicate {
-    // TODO: Make dynamic
-    const innerPredicates: rules.Predicate[] = [];
-
-    const readonlyKeys = t.fields.filter(field => field.readonly).map(field => field.name);
-    if (readonlyKeys.length > 0) {
-      innerPredicates.push({ type: 'map-diff-has-affected-keys', prevDataParam, nextDataParam, keys: readonlyKeys });
-    }
-
-    t.fields.forEach(field => {
-      if (field.type.type === 'alias') {
-        const aliasModel = s.getAliasModel(field.type.name);
-        if (aliasModel?.type.type === 'object') {
-          // TODO: What about other types like union?
-          innerPredicates.push({
-            type: 'readonly-field-validator',
-            validatorName: this.getReadonlyFieldValidatorNameForModel(field.type.name),
-            prevDataParam: `${prevDataParam}.${field.name}`,
-            nextDataParam: `${nextDataParam}.${field.name}`,
-          });
-        }
-      } else if (field.type.type === 'object') {
-        const objectPredicate = this.getReadonlyFieldPredicateForObjectType(
-          field.type,
-          s,
-          `${prevDataParam}.${field.name}`,
-          `${nextDataParam}.${field.name}`
-        );
-        innerPredicates.push(objectPredicate);
-      }
-      // TODO: What about other types like union?
-    });
-    return {
-      type: 'or',
-      alignment: 'vertical',
-      innerPredicates,
+      predicate,
     };
   }
 
