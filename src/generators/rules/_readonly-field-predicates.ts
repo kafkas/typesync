@@ -1,6 +1,7 @@
 import type { rules } from '../../platforms/rules/index.js';
 import type { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
+import { typeHasReadonlyField } from './_has-readonly-field.js';
 
 interface Context {
   adjustedSchema: schema.rules.Schema;
@@ -31,9 +32,9 @@ export function readonlyFieldPredicateForType(
     case 'tuple':
       return readonlyFieldPredicateForTupleType(t, prevDataParam, nextDataParam, ctx);
     case 'list':
-      return readonlyFieldPredicateForListType(t, prevDataParam, nextDataParam, ctx);
+      return readonlyFieldPredicateForListType(t);
     case 'map':
-      return readonlyFieldPredicateForMapType(t, prevDataParam, nextDataParam, ctx);
+      return readonlyFieldPredicateForMapType(t);
     case 'object':
       return readonlyFieldPredicateForObjectType(t, prevDataParam, nextDataParam, ctx);
     case 'discriminated-union':
@@ -56,30 +57,23 @@ export function readonlyFieldPredicateForTupleType(
   return {
     type: 'or',
     alignment: 'horizontal',
-    innerPredicates: t.elements.map(elementType =>
-      readonlyFieldPredicateForType(elementType, prevDataParam, nextDataParam, ctx)
+    innerPredicates: t.elements.map((elementType, elementIdx) =>
+      readonlyFieldPredicateForType(
+        elementType,
+        `${prevDataParam}[${elementIdx}]`,
+        `${nextDataParam}[${elementIdx}]`,
+        ctx
+      )
     ),
   };
 }
 
-export function readonlyFieldPredicateForListType(
-  t: schema.rules.types.List,
-  prevDataParam: string,
-  nextDataParam: string,
-  ctx: Context
-): rules.Predicate {
-  // TODO: Confirm
-  return readonlyFieldPredicateForType(t.elementType, prevDataParam, nextDataParam, ctx);
+export function readonlyFieldPredicateForListType(_t: schema.rules.types.List): rules.Predicate {
+  return { type: 'boolean', value: false };
 }
 
-export function readonlyFieldPredicateForMapType(
-  t: schema.rules.types.Map,
-  prevDataParam: string,
-  nextDataParam: string,
-  ctx: Context
-): rules.Predicate {
-  // TODO: Confirm
-  return readonlyFieldPredicateForType(t.valueType, prevDataParam, nextDataParam, ctx);
+export function readonlyFieldPredicateForMapType(_t: schema.rules.types.Map): rules.Predicate {
+  return { type: 'boolean', value: false };
 }
 
 export function readonlyFieldPredicateForObjectType(
@@ -89,9 +83,15 @@ export function readonlyFieldPredicateForObjectType(
   ctx: Context
 ): rules.Predicate {
   const { adjustedSchema } = ctx;
+
+  if (!typeHasReadonlyField(t, adjustedSchema)) {
+    return { type: 'boolean', value: false };
+  }
+
   const innerPredicates: rules.Predicate[] = [];
 
   const readonlyKeys = t.fields.filter(field => field.readonly).map(field => field.name);
+
   if (readonlyKeys.length > 0) {
     innerPredicates.push({ type: 'map-diff-has-affected-keys', prevDataParam, nextDataParam, keys: readonlyKeys });
   }
