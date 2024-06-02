@@ -87,7 +87,8 @@ class RulesGeneratorImpl implements RulesGenerator {
       readonlyFieldValidatorPrevDataParamName: prevDataParamName,
       readonlyFieldValidatorNextDataParamName: nextDataParamName,
     } = this.config;
-    const predicate = readonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName, {
+    const predicate = readonlyFieldPredicateForObjectType(modelType, prevDataParamName, nextDataParamName, {
+      adjustedSchema: s,
       getReadonlyFieldValidatorNameForModel: name => this.getReadonlyFieldValidatorNameForModel(name),
     });
     return {
@@ -108,7 +109,8 @@ class RulesGeneratorImpl implements RulesGenerator {
       readonlyFieldValidatorPrevDataParamName: prevDataParamName,
       readonlyFieldValidatorNextDataParamName: nextDataParamName,
     } = this.config;
-    const predicate = readonlyFieldPredicateForObjectType(modelType, s, prevDataParamName, nextDataParamName, {
+    const predicate = readonlyFieldPredicateForObjectType(modelType, prevDataParamName, nextDataParamName, {
+      adjustedSchema: s,
       getReadonlyFieldValidatorNameForModel: name => this.getReadonlyFieldValidatorNameForModel(name),
     });
     return {

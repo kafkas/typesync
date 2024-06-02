@@ -109,6 +109,8 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderPredicate(predicate: rules.Predicate): string {
     switch (predicate.type) {
+      case 'boolean':
+        return this.renderBooleanPredicate(predicate);
       case 'value-equality':
         return this.renderValueEqualityPredicate(predicate);
       case 'type-equality':
@@ -134,6 +136,10 @@ class RulesRendererImpl implements RulesRenderer {
       default:
         assertNever(predicate);
     }
+  }
+
+  private renderBooleanPredicate(predicate: rules.BooleanPredicate) {
+    return `${predicate.value}`;
   }
 
   private renderValueEqualityPredicate(predicate: rules.ValueEqualityPredicate) {

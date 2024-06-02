@@ -1,5 +1,10 @@
 import type { RulesDataType } from './_types.js';
 
+export interface BooleanPredicate {
+  type: 'boolean';
+  value: boolean;
+}
+
 export interface ValueEqualityPredicate {
   type: 'value-equality';
   varName: string;
@@ -67,6 +72,7 @@ export interface NegationPredicate {
 }
 
 export type Predicate =
+  | BooleanPredicate
   | ValueEqualityPredicate
   | TypeEqualityPredicate
   | TypeValidatorPredicate
