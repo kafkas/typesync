@@ -97,28 +97,17 @@ export function readonlyFieldPredicateForObjectType(
   }
 
   t.fields.forEach(field => {
-    if (field.type.type === 'alias') {
-      const aliasModel = adjustedSchema.getAliasModel(field.type.name);
-      if (aliasModel?.type.type === 'object') {
-        // TODO: What about other types like union?
-        innerPredicates.push({
-          type: 'readonly-field-validator',
-          validatorName: ctx.getReadonlyFieldValidatorNameForModel(field.type.name),
-          prevDataParam: `${prevDataParam}.${field.name}`,
-          nextDataParam: `${nextDataParam}.${field.name}`,
-        });
-      }
-    } else if (field.type.type === 'object') {
-      const objectPredicate = readonlyFieldPredicateForObjectType(
+    if (typeHasReadonlyField(field.type, adjustedSchema)) {
+      const predicate = readonlyFieldPredicateForType(
         field.type,
         `${prevDataParam}.${field.name}`,
         `${nextDataParam}.${field.name}`,
         ctx
       );
-      innerPredicates.push(objectPredicate);
+      innerPredicates.push(predicate);
     }
-    // TODO: What about other types like union?
   });
+
   return {
     type: 'or',
     alignment: 'vertical',
@@ -152,6 +141,10 @@ export function readonlyFieldPredicateForAliasType(
   nextDataParam: string,
   ctx: Context
 ): rules.Predicate {
-  // TODO: Implement
-  return { type: 'boolean', value: false };
+  return {
+    type: 'readonly-field-validator',
+    validatorName: ctx.getReadonlyFieldValidatorNameForModel(t.name),
+    prevDataParam,
+    nextDataParam,
+  };
 }
