@@ -1,10 +1,13 @@
 import type { rules } from '../../platforms/rules/index.js';
 import type { schema } from '../../schema/index.js';
 import { assertNever } from '../../util/assert.js';
+import { flatTypeToRules } from './_converters.js';
 import { typeHasReadonlyField } from './_has-readonly-field.js';
+import { typePredicateForType } from './_type-predicates.js';
 
 interface Context {
   adjustedSchema: schema.rules.Schema;
+  getTypeValidatorNameForModel: (modelName: string) => string;
   getReadonlyFieldValidatorNameForModel: (modelName: string) => string;
 }
 
@@ -121,8 +124,24 @@ export function readonlyFieldPredicateForDiscriminatedUnionType(
   nextDataParam: string,
   ctx: Context
 ): rules.Predicate {
-  // TODO: Implement
-  return { type: 'boolean', value: false };
+  const { adjustedSchema, getTypeValidatorNameForModel } = ctx;
+  const variants = adjustedSchema.resolveDiscriminatedUnionVariants(t);
+
+  const innerPredicates = variants.map((variant): rules.Predicate => {
+    if (variant.type === 'object-variant') {
+      const rulesType = flatTypeToRules(variant.objectType);
+      const typePredicate = typePredicateForType(rulesType, prevDataParam, {
+        getTypeValidatorNameForModel,
+      });
+      return { type: 'and', alignment: 'horizontal', innerPredicates: [typePredicate] };
+    } else if (variant.type === 'alias-variant') {
+      return { type: 'and', alignment: 'horizontal', innerPredicates: [] };
+    } else {
+      assertNever(variant);
+    }
+  });
+
+  return { type: 'or', alignment: 'vertical', innerPredicates };
 }
 
 export function readonlyFieldPredicateForSimpleUnionType(
