@@ -70,3 +70,54 @@ Workspace:
       created_at:
         type: timestamp
         readonly: true
+
+Dog:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: dog
+        readonly: true
+      name:
+        type: string
+        readonly: true
+      breed:
+        type: string
+
+GuineaPig:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: guinea-pig
+      name:
+        type: string
+      is_nocturnal:
+        type: boolean
+
+Pet:
+  model: alias
+  type:
+    type: union
+    discriminant: type
+    variants:
+      - Dog
+      - type: object
+        fields:
+          type:
+            type:
+              type: literal
+              value: cat
+            readonly: true
+          name:
+            type: string
+          lives_left:
+            type: int
+            readonly: true
+      - GuineaPig

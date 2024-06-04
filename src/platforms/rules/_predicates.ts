@@ -5,6 +5,11 @@ export interface BooleanPredicate {
   value: boolean;
 }
 
+export interface ReferencePredicate {
+  type: 'reference';
+  varName: string;
+}
+
 export interface ValueEqualityPredicate {
   type: 'value-equality';
   varName: string;
@@ -73,6 +78,7 @@ export interface NegationPredicate {
 
 export type Predicate =
   | BooleanPredicate
+  | ReferencePredicate
   | ValueEqualityPredicate
   | TypeEqualityPredicate
   | TypeValidatorPredicate
