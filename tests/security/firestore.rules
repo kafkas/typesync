@@ -1,6 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   // typesync-start
+  function isValidDog(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'breed'])) &&
+    (data.type == 'dog') &&
+    (data.name is string) &&
+    (data.breed is string)
+    );
+  }
+
+  function isValidGuineaPig(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'is_nocturnal'])) &&
+    (data.type == 'guinea-pig') &&
+    (data.name is string) &&
+    (data.is_nocturnal is bool)
+    );
+  }
+
+  function isValidPet(data) {
+    return (isValidDog(data) || (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'lives_left'])) &&
+    (data.type == 'cat') &&
+    (data.name is string) &&
+    (data.lives_left is int)
+    ) || isValidGuineaPig(data));
+  }
+
   function isValidUserRole(data) {
     return ((data == 'owner') || (data == 'admin') || (data == 'member'));
   }
@@ -17,10 +47,11 @@ service cloud.firestore {
   function isValidUser(data) {
     return (
     (data is map) &&
-    (data.keys().hasOnly(['name', 'role', 'website_url', 'created_at'])) &&
+    (data.keys().hasOnly(['name', 'role', 'website_url', 'pet', 'created_at'])) &&
     (data.name is string) &&
     isValidUserRole(data.role) &&
     ((data.website_url is string) || !('website_url' in data)) &&
+    isValidPet(data.pet) &&
     (data.created_at is timestamp)
     );
   }
@@ -46,6 +77,16 @@ service cloud.firestore {
     );
   }
 
+  function isReadonlyFieldAffectedForDog(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['type', 'name'])
+    );
+  }
+
+  function isReadonlyFieldAffectedForGuineaPig(prevData, nextData) {
+    return false;
+  }
+
   function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
     return (
     nextData.diff(prevData).affectedKeys().hasAny(['name'])
@@ -54,7 +95,8 @@ service cloud.firestore {
 
   function isReadonlyFieldAffectedForUser(prevData, nextData) {
     return (
-    nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at'])
+    nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']) ||
+    isReadonlyFieldAffectedForPet(prevData.pet, nextData.pet)
     );
   }
 
