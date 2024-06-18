@@ -5,7 +5,8 @@ import {
 import { schema } from '../../schema/index.js';
 import { adjustSchemaForRules } from './_adjust-schema.js';
 import { flatObjectTypeToRules, flatTypeToRules } from './_converters.js';
-import { readonlyFieldPredicateForObjectType } from './_readonly-field-predicates.js';
+import { typeHasReadonlyField } from './_has-readonly-field.js';
+import { readonlyFieldPredicateForObjectType, readonlyFieldPredicateForType } from './_readonly-field-predicates.js';
 import { typePredicateForType } from './_type-predicates.js';
 import type {
   RulesGeneration,
@@ -27,13 +28,9 @@ class RulesGeneratorImpl implements RulesGenerator {
     ];
     const readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[] = [
       ...aliasModels
-        .map(model => ({ modelName: model.name, modelType: model.type }))
-        .filter(
-          (params): params is { modelName: string; modelType: schema.rules.types.Object } =>
-            params.modelType.type === 'object'
-        )
-        .map(params =>
-          this.createReadonlyFieldValidatorDeclarationForAliasModel(params.modelName, params.modelType, adjustedSchema)
+        .filter(model => typeHasReadonlyField(model.type, adjustedSchema))
+        .map(model =>
+          this.createReadonlyFieldValidatorDeclarationForAliasModel(model.name, model.type, adjustedSchema)
         ),
       ...documentModels.map(model =>
         this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type, adjustedSchema)
@@ -80,14 +77,14 @@ class RulesGeneratorImpl implements RulesGenerator {
 
   private createReadonlyFieldValidatorDeclarationForAliasModel(
     modelName: string,
-    modelType: schema.rules.types.Object,
+    modelType: schema.rules.types.Type,
     s: schema.rules.Schema
   ): RulesReadonlyFieldValidatorDeclaration {
     const {
       readonlyFieldValidatorPrevDataParamName: prevDataParamName,
       readonlyFieldValidatorNextDataParamName: nextDataParamName,
     } = this.config;
-    const predicate = readonlyFieldPredicateForObjectType(modelType, prevDataParamName, nextDataParamName, {
+    const predicate = readonlyFieldPredicateForType(modelType, prevDataParamName, nextDataParamName, {
       adjustedSchema: s,
       getTypeValidatorNameForModel: name => this.getTypeValidatorNameForModel(name),
       getReadonlyFieldValidatorNameForModel: name => this.getReadonlyFieldValidatorNameForModel(name),
