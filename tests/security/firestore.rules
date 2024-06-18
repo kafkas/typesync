@@ -83,8 +83,18 @@ service cloud.firestore {
     );
   }
 
-  function isReadonlyFieldAffectedForGuineaPig(prevData, nextData) {
-    return false;
+  function isReadonlyFieldAffectedForPet(prevData, nextData) {
+    return (
+    () ||
+    ((
+    (prevData is map) &&
+    (prevData.keys().hasOnly(['type', 'name', 'lives_left'])) &&
+    (prevData.type == 'cat') &&
+    (prevData.name is string) &&
+    (prevData.lives_left is int)
+    )) ||
+    ()
+    );
   }
 
   function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
