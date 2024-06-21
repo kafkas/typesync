@@ -79,7 +79,10 @@ service cloud.firestore {
 
   function isReadonlyFieldAffectedForDog(prevData, nextData) {
     return (
-    nextData.diff(prevData).affectedKeys().hasAny(['type', 'name'])
+    (isValidDog(prevData) && isValidDog(nextData) && nextData.diff(prevData).affectedKeys().hasAny(['type', 'name'])) ||
+    (isValidDog(prevData) && !isValidDog(nextData) && true) ||
+    (!isValidDog(prevData) && isValidDog(nextData) && true) ||
+    (!isValidDog(prevData) && !isValidDog(nextData) && false)
     );
   }
 
