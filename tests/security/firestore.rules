@@ -1,36 +1,133 @@
 rules_version = '2';
 service cloud.firestore {
   // typesync-start
-  // Type Validators
+  function isValidDog(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'breed'])) &&
+    (data.type == 'dog') &&
+    (data.name is string) &&
+    (data.breed is string)
+    );
+  }
+
+  function isValidGuineaPig(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'is_nocturnal'])) &&
+    (data.type == 'guinea-pig') &&
+    (data.name is string) &&
+    (data.is_nocturnal is bool)
+    );
+  }
+
+  function isValidPet(data) {
+    return (isValidDog(data) || (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'lives_left'])) &&
+    (data.type == 'cat') &&
+    (data.name is string) &&
+    (data.lives_left is int)
+    ) || isValidGuineaPig(data));
+  }
 
   function isValidUserRole(data) {
     return ((data == 'owner') || (data == 'admin') || (data == 'member'));
   }
 
+  function isValidWorkspaceInfo(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['name', 'description'])) &&
+    (data.name is string) &&
+    (data.description is string)
+    );
+  }
+
   function isValidUser(data) {
     return (
     (data is map) &&
-    (data.keys().hasOnly(['name', 'role', 'website_url', 'created_at'])) &&
+    (data.keys().hasOnly(['name', 'role', 'website_url', 'pet', 'created_at'])) &&
     (data.name is string) &&
     isValidUserRole(data.role) &&
     ((data.website_url is string) || !('website_url' in data)) &&
+    isValidPet(data.pet) &&
     (data.created_at is timestamp)
     );
   }
 
-  // Read-only fields
+  function isValidWorkspace(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['info', 'metadata', 'created_at'])) &&
+    isValidWorkspaceInfo(data.info) &&
+    (
+    (data.metadata is map) &&
+    (data.metadata.keys().hasOnly(['field1', 'field2', 'field3'])) &&
+    (data.metadata.field1 is float) &&
+    (
+    (data.metadata.field2 is map) &&
+    (data.metadata.field2.keys().hasOnly(['nestedField1', 'nestedField2'])) &&
+    (data.metadata.field2.nestedField1 is bool) &&
+    (data.metadata.field2.nestedField2 is int)
+    ) &&
+    (data.metadata.field3 is string)
+    ) &&
+    (data.created_at is timestamp)
+    );
+  }
 
-  function isReadonlyFieldAffectedForUser() {
-    let readonlyFields = ['role', 'created_at'];
-    let changedFields = request.resource.data.diff(resource.data).affectedKeys();
-    return changedFields.hasAny(readonlyFields);
+  function isReadonlyFieldAffectedForDog(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['type', 'name'])
+    );
+  }
+
+  function isReadonlyFieldAffectedForPet(prevData, nextData) {
+    return (
+    () ||
+    ((
+    (prevData is map) &&
+    (prevData.keys().hasOnly(['type', 'name', 'lives_left'])) &&
+    (prevData.type == 'cat') &&
+    (prevData.name is string) &&
+    (prevData.lives_left is int)
+    )) ||
+    ()
+    );
+  }
+
+  function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['name'])
+    );
+  }
+
+  function isReadonlyFieldAffectedForUser(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']) ||
+    isReadonlyFieldAffectedForPet(prevData.pet, nextData.pet)
+    );
+  }
+
+  function isReadonlyFieldAffectedForWorkspace(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['created_at']) ||
+    isReadonlyFieldAffectedForWorkspaceInfo(prevData.info, nextData.info) ||
+    (
+    nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1']) ||
+    (
+    nextData.metadata.field2.diff(prevData.metadata.field2).affectedKeys().hasAny(['nestedField2'])
+    )
+    )
+    );
   }
   // typesync-end
 
   match /databases/{database}/documents {
     match /users/{userId} {
       function isLegalUserUpdate() {
-        return !isReadonlyFieldAffectedForUser() && isValidUser(request.resource.data);
+        return isValidUser(request.resource.data) && !isReadonlyFieldAffectedForUser(resource.data, request.resource.data);
       }
 
       allow read;

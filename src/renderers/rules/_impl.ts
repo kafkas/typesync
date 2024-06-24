@@ -2,14 +2,17 @@ import { StringBuilder } from '@proficient/ds';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../../constants.js';
 import {
   MisplacedStartMarkerError,
   MissingEndMarkerError,
   MissingRulesOutputFileError,
   MissingStartMarkerError,
 } from '../../errors/renderer.js';
-import type { RulesDeclaration, RulesGeneration, RulesValidatorDeclaration } from '../../generators/rules/index.js';
+import type {
+  RulesGeneration,
+  RulesReadonlyFieldValidatorDeclaration,
+  RulesTypeValidatorDeclaration,
+} from '../../generators/rules/index.js';
 import { rules } from '../../platforms/rules/index.js';
 import { assertNever } from '../../util/assert.js';
 import { multiply } from '../../util/multiply-str.js';
@@ -27,7 +30,15 @@ class RulesRendererImpl implements RulesRenderer {
 
     lines.forEach((line, lineIdx) => {
       if (lineIdx === startMarkerLineIdx + 1) {
-        const renderedDeclarations = g.declarations.map(d => this.renderDeclaration(d)).join('\n\n');
+        const renderedTypeValidatorDeclarations = g.typeValidatorDeclarations.map(d =>
+          this.renderTypeValidatorDeclaration(d)
+        );
+        const renderedReadonlyFieldDeclarations = g.readonlyFieldValidatorDeclarations.map(d =>
+          this.renderReadonlyFieldValidatorDeclaration(d)
+        );
+        const renderedDeclarations = [...renderedTypeValidatorDeclarations, ...renderedReadonlyFieldDeclarations].join(
+          '\n\n'
+        );
         b.append(renderedDeclarations + `\n`);
       }
       b.append(`${line}`);
@@ -78,21 +89,19 @@ class RulesRendererImpl implements RulesRenderer {
     return parts.some(part => part === marker);
   }
 
-  private renderDeclaration(declaration: RulesDeclaration) {
-    switch (declaration.type) {
-      case 'validator':
-        return this.renderValidatorDeclaration(declaration);
-      default:
-        assertNever(declaration.type);
-    }
+  private renderTypeValidatorDeclaration(declaration: RulesTypeValidatorDeclaration) {
+    const { validatorName, paramName, predicate } = declaration;
+    const b = new StringBuilder();
+    b.append(`${this.indent(1)}function ${validatorName}(${paramName}) {` + `\n`);
+    b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
+    b.append(`${this.indent(1)}}`);
+    return b.toString();
   }
 
-  private renderValidatorDeclaration(declaration: RulesValidatorDeclaration) {
-    const { modelName, modelType } = declaration;
+  private renderReadonlyFieldValidatorDeclaration(declaration: RulesReadonlyFieldValidatorDeclaration) {
+    const { validatorName, prevDataParamName, nextDataParamName, predicate } = declaration;
     const b = new StringBuilder();
-    const varName = this.config.validatorParamName;
-    b.append(`${this.indent(1)}function ${this.validatorName(modelName)}(${varName}) {` + `\n`);
-    const predicate = rules.predicateForType(modelType, varName);
+    b.append(`${this.indent(1)}function ${validatorName}(${prevDataParamName}, ${nextDataParamName}) {` + `\n`);
     b.append(`${this.indent(2)}return ` + this.renderPredicate(predicate) + `;\n`);
     b.append(`${this.indent(1)}}`);
     return b.toString();
@@ -100,12 +109,20 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderPredicate(predicate: rules.Predicate): string {
     switch (predicate.type) {
+      case 'boolean':
+        return this.renderBooleanPredicate(predicate);
+      case 'reference':
+        return this.renderReferencePredicate(predicate);
       case 'value-equality':
         return this.renderValueEqualityPredicate(predicate);
       case 'type-equality':
         return this.renderTypeEqualityPredicate(predicate);
       case 'type-validator':
         return this.renderTypeValidatorPredicate(predicate);
+      case 'readonly-field-validator':
+        return this.renderReadonlyFieldValidatorPredicate(predicate);
+      case 'map-diff-has-affected-keys':
+        return this.renderMapDiffHasAffectedKeysPredicate(predicate);
       case 'map-has-key':
         return this.renderMapHasKeyPredicate(predicate);
       case 'map-has-only-keys':
@@ -123,6 +140,14 @@ class RulesRendererImpl implements RulesRenderer {
     }
   }
 
+  private renderBooleanPredicate(predicate: rules.BooleanPredicate) {
+    return `${predicate.value}`;
+  }
+
+  private renderReferencePredicate(predicate: rules.ReferencePredicate) {
+    return `${predicate.varName}`;
+  }
+
   private renderValueEqualityPredicate(predicate: rules.ValueEqualityPredicate) {
     return `(${predicate.varName} == ${predicate.varValue})`;
   }
@@ -132,7 +157,17 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderTypeValidatorPredicate(predicate: rules.TypeValidatorPredicate) {
-    return `${this.validatorName(predicate.varModelName)}(${predicate.varName})`;
+    return `${predicate.validatorName}(${predicate.varName})`;
+  }
+
+  private renderReadonlyFieldValidatorPredicate(predicate: rules.ReadonlyFieldValidatorPredicate) {
+    return `${predicate.validatorName}(${predicate.prevDataParam}, ${predicate.nextDataParam})`;
+  }
+
+  private renderMapDiffHasAffectedKeysPredicate(predicate: rules.MapDiffHasAffectedKeysPredicate) {
+    const { prevDataParam, nextDataParam, keys } = predicate;
+    const keysAsString = keys.map(key => `'${key}'`).join(', ');
+    return `${nextDataParam}.diff(${prevDataParam}).affectedKeys().hasAny([${keysAsString}])`;
   }
 
   private renderMapHasKeyPredicate(predicate: rules.MapHasKeyPredicate) {
@@ -148,7 +183,15 @@ class RulesRendererImpl implements RulesRenderer {
   }
 
   private renderOrPredicate(predicate: rules.OrPredicate) {
-    return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+    if (predicate.alignment === 'vertical') {
+      return (
+        `(\n` +
+        `${predicate.innerPredicates.map(p => `${this.indent(2)}${this.renderPredicate(p)}`).join(' ||\n')}` +
+        `\n${this.indent(2)})`
+      );
+    } else {
+      return `(${predicate.innerPredicates.map(p => this.renderPredicate(p)).join(' || ')})`;
+    }
   }
 
   private renderAndPredicate(predicate: rules.AndPredicate) {
@@ -165,10 +208,6 @@ class RulesRendererImpl implements RulesRenderer {
 
   private renderNegationPredicate(predicate: rules.NegationPredicate) {
     return `!${this.renderPredicate(predicate.originalPredicate)}`;
-  }
-
-  private validatorName(modelName: string) {
-    return this.config.validatorNamePattern.replace(RULES_VALIDATOR_NAME_PATTERN_PARAM, modelName);
   }
 
   private indent(count: number) {

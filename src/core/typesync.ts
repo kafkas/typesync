@@ -43,15 +43,19 @@ import {
   DEFAULT_RULES_DEBUG,
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
   DEFAULT_RULES_START_MARKER,
-  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
-  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
-  RULES_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -60,15 +64,19 @@ import {
   InvalidGraphEndMarkerOptionError,
   InvalidGraphStartMarkerOptionError,
   InvalidPyIndentationOptionError,
+  InvalidReadonlyFieldValidatorNamePatternOptionError,
+  InvalidReadonlyFieldValidatorNextDataParamNameOptionError,
+  InvalidReadonlyFieldValidatorPrevDataParamNameOptionError,
   InvalidRulesEndMarkerOptionError,
   InvalidRulesIndentationOptionError,
   InvalidRulesStartMarkerOptionError,
   InvalidSwiftIndentationOptionError,
   InvalidTSIndentationOptionError,
+  InvalidTypeValidatorNamePatternOptionError,
+  InvalidTypeValidatorParamNameOptionError,
   InvalidUndefinedSentinelNameOptionError,
-  InvalidValidatorNamePatternOptionError,
-  InvalidValidatorParamNameOptionError,
   RulesMarkerOptionsNotDistinctError,
+  ValidatorNamePatternsNotDistinctError,
 } from '../errors/invalid-opts.js';
 import { createGraphGenerator } from '../generators/graph/index.js';
 import { createPythonGenerator } from '../generators/python/index.js';
@@ -125,6 +133,11 @@ interface NormalizedGeneratePythonOptions extends NormalizedGeneratePythonRepres
 
 interface NormalizedGenerateRulesRepresentationOptions {
   definitionGlobPattern: string;
+  typeValidatorNamePattern: string;
+  typeValidatorParamName: string;
+  readonlyFieldValidatorNamePattern: string;
+  readonlyFieldValidatorPrevDataParamName: string;
+  readonlyFieldValidatorNextDataParamName: string;
   debug: boolean;
 }
 
@@ -132,8 +145,6 @@ interface NormalizedGenerateRulesOptions extends NormalizedGenerateRulesRepresen
   pathToOutputFile: string;
   startMarker: string;
   endMarker: string;
-  validatorNamePattern: string;
-  validatorParamName: string;
   indentation: number;
 }
 
@@ -311,9 +322,23 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateRulesRepresentationOptions
   ): Promise<GenerateRulesRepresentationResult> {
     const opts = this.normalizeGenerateRulesRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, debug } = opts;
+    const {
+      definitionGlobPattern,
+      typeValidatorNamePattern,
+      typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
+      debug,
+    } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createRulesGenerator({});
+    const generator = createRulesGenerator({
+      typeValidatorNamePattern,
+      typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
+    });
     const generation = generator.generate(s);
     return { type: 'rules', schema: s, generation };
   }
@@ -323,18 +348,12 @@ class TypesyncImpl implements Typesync {
       outFile,
       startMarker = DEFAULT_RULES_START_MARKER,
       endMarker = DEFAULT_RULES_END_MARKER,
-      validatorNamePattern = DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
-      validatorParamName = DEFAULT_RULES_VALIDATOR_PARAM_NAME,
       indentation = DEFAULT_RULES_INDENTATION,
       ...rest
     } = opts;
 
     if (!Number.isSafeInteger(indentation) || indentation < 1) {
       throw new InvalidRulesIndentationOptionError(indentation);
-    }
-
-    if (!validatorNamePattern.includes(RULES_VALIDATOR_NAME_PATTERN_PARAM)) {
-      throw new InvalidValidatorNamePatternOptionError(validatorNamePattern);
     }
 
     if (startMarker.length === 0) {
@@ -349,17 +368,11 @@ class TypesyncImpl implements Typesync {
       throw new RulesMarkerOptionsNotDistinctError(startMarker);
     }
 
-    if (validatorParamName.length === 0) {
-      throw new InvalidValidatorParamNameOptionError(validatorParamName);
-    }
-
     return {
       ...this.normalizeGenerateRulesRepresentationOpts(rest),
       pathToOutputFile: outFile,
       startMarker,
       endMarker,
-      validatorNamePattern,
-      validatorParamName,
       indentation,
     };
   }
@@ -367,9 +380,47 @@ class TypesyncImpl implements Typesync {
   private normalizeGenerateRulesRepresentationOpts(
     opts: GenerateRulesRepresentationOptions
   ): NormalizedGenerateRulesRepresentationOptions {
-    const { definition, debug = DEFAULT_RULES_DEBUG } = opts;
+    const {
+      definition,
+      typeValidatorNamePattern = DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
+      typeValidatorParamName = DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
+      readonlyFieldValidatorNamePattern = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+      readonlyFieldValidatorPrevDataParamName = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
+      readonlyFieldValidatorNextDataParamName = DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
+      debug = DEFAULT_RULES_DEBUG,
+    } = opts;
+
+    if (!typeValidatorNamePattern.includes(RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM)) {
+      throw new InvalidTypeValidatorNamePatternOptionError(typeValidatorNamePattern);
+    }
+
+    if (typeValidatorParamName.length === 0) {
+      throw new InvalidTypeValidatorParamNameOptionError(typeValidatorParamName);
+    }
+
+    if (!readonlyFieldValidatorNamePattern.includes(RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM)) {
+      throw new InvalidReadonlyFieldValidatorNamePatternOptionError(readonlyFieldValidatorNamePattern);
+    }
+
+    if (readonlyFieldValidatorPrevDataParamName.length === 0) {
+      throw new InvalidReadonlyFieldValidatorPrevDataParamNameOptionError(readonlyFieldValidatorPrevDataParamName);
+    }
+
+    if (readonlyFieldValidatorNextDataParamName.length === 0) {
+      throw new InvalidReadonlyFieldValidatorNextDataParamNameOptionError(readonlyFieldValidatorNextDataParamName);
+    }
+
+    if (typeValidatorNamePattern === readonlyFieldValidatorNamePattern) {
+      throw new ValidatorNamePatternsNotDistinctError(typeValidatorNamePattern);
+    }
+
     return {
       definitionGlobPattern: definition,
+      typeValidatorNamePattern,
+      typeValidatorParamName,
+      readonlyFieldValidatorNamePattern,
+      readonlyFieldValidatorPrevDataParamName,
+      readonlyFieldValidatorNextDataParamName,
       debug,
     };
   }

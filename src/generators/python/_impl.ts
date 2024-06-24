@@ -21,17 +21,17 @@ class PythonGeneratorImpl implements PythonGenerator {
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: PythonDeclaration[] = [];
     aliasModels.forEach(model => {
-      const d = this.createDeclarationForFlatAliasModel(model);
+      const d = this.createDeclarationForAliasModel(model);
       declarations.push(d);
     });
     documentModels.forEach(model => {
-      const d = this.createDeclarationForFlatDocumentModel(model);
+      const d = this.createDeclarationForDocumentModel(model);
       declarations.push(d);
     });
     return { type: 'python', declarations };
   }
 
-  private createDeclarationForFlatAliasModel(model: schema.python.AliasModel): PythonDeclaration {
+  private createDeclarationForAliasModel(model: schema.python.AliasModel): PythonDeclaration {
     switch (model.type.type) {
       case 'any':
       case 'unknown':
@@ -61,7 +61,7 @@ class PythonGeneratorImpl implements PythonGenerator {
     }
   }
 
-  private createDeclarationForFlatDocumentModel(model: schema.python.DocumentModel): PythonDeclaration {
+  private createDeclarationForDocumentModel(model: schema.python.DocumentModel): PythonDeclaration {
     // A Firestore document can be considered an 'object' type
     return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
   }

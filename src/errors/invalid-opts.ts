@@ -5,7 +5,10 @@ import type {
   GenerateSwiftOption,
   GenerateTsOption,
 } from '../api/index.js';
-import { RULES_VALIDATOR_NAME_PATTERN_PARAM } from '../constants.js';
+import {
+  RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+} from '../constants.js';
 
 export class InvalidOptionsError extends Error {
   public constructor(message: string) {
@@ -105,18 +108,51 @@ export class InvalidUndefinedSentinelNameOptionError extends InvalidOptionsError
   }
 }
 
-export class InvalidValidatorNamePatternOptionError extends InvalidOptionsError {
-  public constructor(validatorNamePattern: string) {
-    const option: GenerateRulesOption = 'validatorNamePattern';
+export class InvalidTypeValidatorNamePatternOptionError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const option: GenerateRulesOption = 'typeValidatorNamePattern';
     super(
-      `Expected '${option}' to be a string that contains a '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${validatorNamePattern}'`
+      `Expected '${option}' to be a string that contains a '${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
     );
   }
 }
 
-export class InvalidValidatorParamNameOptionError extends InvalidOptionsError {
+export class InvalidTypeValidatorParamNameOptionError extends InvalidOptionsError {
   public constructor(validatorParamName: string) {
-    const option: GenerateRulesOption = 'validatorParamName';
+    const option: GenerateRulesOption = 'typeValidatorParamName';
     super(`Expected '${option}' to be a non-empty string. Received '${validatorParamName}'`);
+  }
+}
+
+export class InvalidReadonlyFieldValidatorNamePatternOptionError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const option: GenerateRulesOption = 'readonlyFieldValidatorNamePattern';
+    super(
+      `Expected '${option}' to be a string that contains a '${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
+    );
+  }
+}
+
+export class InvalidReadonlyFieldValidatorPrevDataParamNameOptionError extends InvalidOptionsError {
+  public constructor(validatorParamName: string) {
+    const option: GenerateRulesOption = 'readonlyFieldValidatorPrevDataParamName';
+    super(`Expected '${option}' to be a non-empty string. Received '${validatorParamName}'`);
+  }
+}
+
+export class InvalidReadonlyFieldValidatorNextDataParamNameOptionError extends InvalidOptionsError {
+  public constructor(validatorParamName: string) {
+    const option: GenerateRulesOption = 'readonlyFieldValidatorNextDataParamName';
+    super(`Expected '${option}' to be a non-empty string. Received '${validatorParamName}'`);
+  }
+}
+
+export class ValidatorNamePatternsNotDistinctError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const pattern1Opt: GenerateRulesOption = 'typeValidatorNamePattern';
+    const pattern2Opt: GenerateRulesOption = 'readonlyFieldValidatorNamePattern';
+    super(
+      `Expected the values for '${pattern1Opt}' and '${pattern2Opt}' to be different. Received '${pattern}' for both.`
+    );
   }
 }

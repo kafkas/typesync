@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../schema.local.json
+
+Dog:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: dog
+        readonly: true
+      name:
+        type: string
+        readonly: true
+      breed:
+        type: string
+
+GuineaPig:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: guinea-pig
+      name:
+        type: string
+      is_nocturnal:
+        type: boolean
+
+Pet:
+  model: alias
+  type:
+    type: union
+    discriminant: type
+    variants:
+      - Dog
+      - type: object
+        fields:
+          type:
+            type:
+              type: literal
+              value: cat
+            readonly: true
+          name:
+            type: string
+          lives_left:
+            type: int
+            readonly: true
+      - GuineaPig
+
+UserRole:
+  model: alias
+  type:
+    type: enum
+    members:
+      - label: Owner
+        value: owner
+      - label: Admin
+        value: admin
+      - label: Member
+        value: member
+
+User:
+  model: document
+  path: users/{userId}
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+      role:
+        type: UserRole
+        readonly: true
+      website_url:
+        type: string
+        optional: true
+      pet:
+        type: Pet
+      created_at:
+        type: timestamp
+        readonly: true
+
+WorkspaceInfo:
+  model: alias
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+        readonly: true
+      description:
+        type: string
+
+Workspace:
+  model: document
+  path: workspaces/{workspaceId}
+  type:
+    type: object
+    fields:
+      info:
+        type: WorkspaceInfo
+      metadata:
+        type:
+          type: object
+          fields:
+            field1:
+              type: double
+              readonly: true
+            field2:
+              type:
+                type: object
+                fields:
+                  nestedField1:
+                    type: boolean
+                  nestedField2:
+                    type: int
+                    readonly: true
+            field3:
+              type: string
+      created_at:
+        type: timestamp
+        readonly: true

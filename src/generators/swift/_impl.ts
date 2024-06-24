@@ -26,17 +26,17 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     const { aliasModels, documentModels } = adjustedSchema;
     const declarations: SwiftDeclaration[] = [];
     aliasModels.forEach(model => {
-      const d = this.createDeclarationForFlatAliasModel(model, adjustedSchema);
+      const d = this.createDeclarationForAliasModel(model, adjustedSchema);
       declarations.push(d);
     });
     documentModels.forEach(model => {
-      const d = this.createDeclarationForFlatDocumentModel(model);
+      const d = this.createDeclarationForDocumentModel(model);
       declarations.push(d);
     });
     return { type: 'swift', declarations };
   }
 
-  private createDeclarationForFlatAliasModel(model: schema.swift.AliasModel, s: schema.swift.Schema): SwiftDeclaration {
+  private createDeclarationForAliasModel(model: schema.swift.AliasModel, s: schema.swift.Schema): SwiftDeclaration {
     switch (model.type.type) {
       case 'any':
       case 'unknown':
@@ -68,7 +68,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     }
   }
 
-  private createDeclarationForFlatDocumentModel(model: schema.swift.DocumentModel): SwiftDeclaration {
+  private createDeclarationForDocumentModel(model: schema.swift.DocumentModel): SwiftDeclaration {
     // A Firestore document can be considered an 'object' type
     return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
   }

@@ -19,16 +19,20 @@ import {
   DEFAULT_RULES_DEBUG,
   DEFAULT_RULES_END_MARKER,
   DEFAULT_RULES_INDENTATION,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
+  DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
   DEFAULT_RULES_START_MARKER,
-  DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
-  DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+  DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
+  DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
   DEFAULT_SWIFT_DEBUG,
   DEFAULT_SWIFT_INDENTATION,
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_TS_OBJECT_TYPE_FORMAT,
   DEFAULT_VALIDATE_DEBUG,
-  RULES_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
+  RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
@@ -263,17 +267,38 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_RULES_END_MARKER,
         })
-        .option('validatorNamePattern', {
-          describe: `The pattern that specifies how the validators are named. The string must contain the '${RULES_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isValid${RULES_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
+        .option('typeValidatorNamePattern', {
+          describe: `The pattern that specifies how the generated type validators are named. The pattern must be a string that contains the '${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isValid${RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isValidUser', 'isValidProject' etc.`,
           type: 'string',
           demandOption: false,
-          default: DEFAULT_RULES_VALIDATOR_NAME_PATTERN,
+          default: DEFAULT_RULES_TYPE_VALIDATOR_NAME_PATTERN,
         })
-        .option('validatorParamName', {
+        .option('typeValidatorParamName', {
           describe: 'The name of the parameter taken by each type validator.',
           type: 'string',
           demandOption: false,
-          default: DEFAULT_RULES_VALIDATOR_PARAM_NAME,
+          default: DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
+        })
+        // TODO: Implement
+        // .option('readonlyFieldValidatorNamePattern', {
+        //   describe: `The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the '${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isReadonlyFieldAffectedFor${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isReadonlyFieldAffectedForUser', 'isReadonlyFieldAffectedForProject' etc.`,
+        //   type: 'string',
+        //   demandOption: false,
+        //   default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+        // })
+        // .option('readonlyFieldValidatorPrevDataParamName', {
+        //   describe:
+        //     'The name of the first parameter taken by each readonly field validator representing previous data. This parameter used when computing the diff between next data and previous data to determine whether a readonly field has been affected by a write.',
+        //   type: 'string',
+        //   demandOption: false,
+        //   default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
+        // })
+        .option('readonlyFieldValidatorNextDataParamName', {
+          describe:
+            'The name of the second parameter taken by each readonly field validator representing next data. This parameter used when computing the diff between next data and previous data to determine whether a readonly field has been affected by a write.',
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NEXT_DATA_PARAM_NAME,
         })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
@@ -293,8 +318,11 @@ await yargs(hideBin(process.argv))
         outFile,
         startMarker,
         endMarker,
-        validatorNamePattern,
-        validatorParamName,
+        typeValidatorNamePattern,
+        typeValidatorParamName,
+        readonlyFieldValidatorNamePattern,
+        readonlyFieldValidatorPrevDataParamName,
+        readonlyFieldValidatorNextDataParamName,
         indentation,
         debug,
       } = args;
@@ -306,8 +334,11 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           startMarker,
           endMarker,
-          validatorNamePattern,
-          validatorParamName,
+          typeValidatorNamePattern,
+          typeValidatorParamName,
+          // readonlyFieldValidatorNamePattern,
+          // readonlyFieldValidatorPrevDataParamName,
+          // readonlyFieldValidatorNextDataParamName,
           indentation,
           debug,
         });
