@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- fc5f901: [BREAKING] `double` types now compile to `number` in Security Rules type validators
+- 7502c83: [BREAKING] Renamed the `validatorNamePattern` option for the `generate-rules` command to `typeValidatorNamePattern`.
+- 7502c83: [BREAKING] Renamed the `validatorParamName` option for the `generate-rules` command to `typeValidatorParamName`.
+
+### Patch Changes
+
+- 5a612cc: Changed the indentation for "and" predicates in Security Rules output.
+
 ## 0.9.0
 
 ### Minor Changes
