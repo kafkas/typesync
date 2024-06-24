@@ -279,19 +279,20 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_RULES_TYPE_VALIDATOR_PARAM_NAME,
         })
-        .option('readonlyFieldValidatorNamePattern', {
-          describe: `The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the '${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isReadonlyFieldAffectedFor${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isReadonlyFieldAffectedForUser', 'isReadonlyFieldAffectedForProject' etc.`,
-          type: 'string',
-          demandOption: false,
-          default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
-        })
-        .option('readonlyFieldValidatorPrevDataParamName', {
-          describe:
-            'The name of the first parameter taken by each readonly field validator representing previous data. This parameter used when computing the diff between next data and previous data to determine whether a readonly field has been affected by a write.',
-          type: 'string',
-          demandOption: false,
-          default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
-        })
+        // TODO: Implement
+        // .option('readonlyFieldValidatorNamePattern', {
+        //   describe: `The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the '${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' substring (this is a literal value). For example, providing 'isReadonlyFieldAffectedFor${RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM}' ensures that the generated validators are given names like 'isReadonlyFieldAffectedForUser', 'isReadonlyFieldAffectedForProject' etc.`,
+        //   type: 'string',
+        //   demandOption: false,
+        //   default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN,
+        // })
+        // .option('readonlyFieldValidatorPrevDataParamName', {
+        //   describe:
+        //     'The name of the first parameter taken by each readonly field validator representing previous data. This parameter used when computing the diff between next data and previous data to determine whether a readonly field has been affected by a write.',
+        //   type: 'string',
+        //   demandOption: false,
+        //   default: DEFAULT_RULES_READONLY_FIELD_VALIDATOR_PREV_DATA_PARAM_NAME,
+        // })
         .option('readonlyFieldValidatorNextDataParamName', {
           describe:
             'The name of the second parameter taken by each readonly field validator representing next data. This parameter used when computing the diff between next data and previous data to determine whether a readonly field has been affected by a write.',
@@ -335,9 +336,9 @@ await yargs(hideBin(process.argv))
           endMarker,
           typeValidatorNamePattern,
           typeValidatorParamName,
-          readonlyFieldValidatorNamePattern,
-          readonlyFieldValidatorPrevDataParamName,
-          readonlyFieldValidatorNextDataParamName,
+          // readonlyFieldValidatorNamePattern,
+          // readonlyFieldValidatorPrevDataParamName,
+          // readonlyFieldValidatorNextDataParamName,
           indentation,
           debug,
         });
