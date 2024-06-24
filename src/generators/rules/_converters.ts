@@ -26,8 +26,8 @@ export function integerTypeToRules(_t: schema.rules.types.Int): rules.Int {
   return { type: 'int' };
 }
 
-export function doubleTypeToRules(_t: schema.rules.types.Double): rules.Float {
-  return { type: 'float' };
+export function doubleTypeToRules(_t: schema.rules.types.Double): rules.Number {
+  return { type: 'number' };
 }
 
 export function timestampTypeToRules(_t: schema.rules.types.Timestamp): rules.Timestamp {

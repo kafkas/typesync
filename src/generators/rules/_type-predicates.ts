@@ -21,6 +21,10 @@ export function typePredicateForIntType(t: rules.Int, varName: string): rules.Pr
   return { type: 'type-equality', varName, varType: t };
 }
 
+export function typePredicateForNumberType(t: rules.Number, varName: string): rules.Predicate {
+  return { type: 'type-equality', varName, varType: t };
+}
+
 export function typePredicateForTimestampType(t: rules.Timestamp, varName: string): rules.Predicate {
   return { type: 'type-equality', varName, varType: t };
 }
@@ -160,6 +164,8 @@ export function typePredicateForType(t: rules.Type, varName: string, ctx: Contex
       return typePredicateForFloatType(t, varName);
     case 'int':
       return typePredicateForIntType(t, varName);
+    case 'number':
+      return typePredicateForNumberType(t, varName);
     case 'timestamp':
       return typePredicateForTimestampType(t, varName);
     case 'literal':
