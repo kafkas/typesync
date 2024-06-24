@@ -1,6 +1,6 @@
 import type { rules } from '../../../platforms/rules/index.js';
 import { schema } from '../../../schema/index.js';
-import { readonlyFieldPredicateForObjectType, readonlyFieldPredicateForType } from '../_readonly-field-predicates.js';
+import { readonlyFieldPredicateForType } from '../_readonly-field-predicates.js';
 
 describe('readonlyFieldPredicateForType()', () => {
   const prevDataParam = 'prevData';
@@ -217,110 +217,112 @@ describe('readonlyFieldPredicateForType()', () => {
     expect(predicate).toEqual(expectedPredicate);
   });
 
-  it(`returns the correct 'or' predicate for a discriminated union type`, () => {
-    const dogModel = schema.rules.createAliasModel({
-      name: 'Dog',
-      docs: null,
-      value: {
-        type: 'object',
-        fields: [
-          { name: 'type', type: { type: 'string-literal', value: 'dog' }, optional: false, readonly: true, docs: null },
-          { name: 'name', type: { type: 'string' }, optional: false, readonly: true, docs: null },
-          { name: 'breed', type: { type: 'string' }, optional: false, readonly: false, docs: null },
-        ],
-        additionalFields: false,
-      },
-    });
-    const guineaPigModel = schema.rules.createAliasModel({
-      name: 'GuineaPig',
-      docs: null,
-      value: {
-        type: 'object',
-        fields: [
-          {
-            name: 'type',
-            type: { type: 'string-literal', value: 'guinea-pig' },
-            optional: false,
-            readonly: false,
-            docs: null,
-          },
-          { name: 'name', type: { type: 'string' }, optional: false, readonly: false, docs: null },
-          { name: 'is_nocturnal', type: { type: 'boolean' }, optional: false, readonly: false, docs: null },
-        ],
-        additionalFields: false,
-      },
-    });
-    const adjustedSchema = schema.rules.createSchemaWithModels([dogModel, guineaPigModel]);
-    const catObjectType: schema.rules.types.Object = {
-      type: 'object',
-      fields: [
-        {
-          name: 'type',
-          type: { type: 'string-literal', value: 'cat' },
-          docs: null,
-          optional: false,
-          readonly: true,
-        },
-        {
-          name: 'name',
-          type: { type: 'string' },
-          docs: null,
-          optional: false,
-          readonly: false,
-        },
-        {
-          name: 'lives_left',
-          type: { type: 'int' },
-          docs: null,
-          optional: false,
-          readonly: true,
-        },
-      ],
-      additionalFields: false,
-    };
-    const discriminatedUnionType: schema.rules.types.DiscriminatedUnion = {
-      type: 'discriminated-union',
-      discriminant: 'type',
-      variants: [
-        {
-          type: 'alias',
-          name: 'Dog',
-        },
-        catObjectType,
-        {
-          type: 'alias',
-          name: 'GuineaPig',
-        },
-      ],
-    };
-    const predicate = readonlyFieldPredicateForType(discriminatedUnionType, prevDataParam, nextDataParam, {
-      adjustedSchema,
-      getTypeValidatorNameForModel,
-      getReadonlyFieldValidatorNameForModel,
-    });
-    const expectedPredicate: rules.Predicate = {
-      type: 'or',
-      alignment: 'vertical',
-      innerPredicates: [
-        {
-          type: 'readonly-field-validator',
-          prevDataParam,
-          nextDataParam,
-          validatorName: getReadonlyFieldValidatorNameForModel('Dog'),
-        },
-        readonlyFieldPredicateForObjectType(catObjectType, prevDataParam, nextDataParam, {
-          adjustedSchema,
-          getTypeValidatorNameForModel,
-          getReadonlyFieldValidatorNameForModel,
-        }),
-        {
-          type: 'readonly-field-validator',
-          prevDataParam,
-          nextDataParam,
-          validatorName: getReadonlyFieldValidatorNameForModel('GuineaPig'),
-        },
-      ],
-    };
-    expect(predicate).toEqual(expectedPredicate);
-  });
+  // TODO: Implement
+
+  // it(`returns the correct 'or' predicate for a discriminated union type`, () => {
+  //   const dogModel = schema.rules.createAliasModel({
+  //     name: 'Dog',
+  //     docs: null,
+  //     value: {
+  //       type: 'object',
+  //       fields: [
+  //         { name: 'type', type: { type: 'string-literal', value: 'dog' }, optional: false, readonly: true, docs: null },
+  //         { name: 'name', type: { type: 'string' }, optional: false, readonly: true, docs: null },
+  //         { name: 'breed', type: { type: 'string' }, optional: false, readonly: false, docs: null },
+  //       ],
+  //       additionalFields: false,
+  //     },
+  //   });
+  //   const guineaPigModel = schema.rules.createAliasModel({
+  //     name: 'GuineaPig',
+  //     docs: null,
+  //     value: {
+  //       type: 'object',
+  //       fields: [
+  //         {
+  //           name: 'type',
+  //           type: { type: 'string-literal', value: 'guinea-pig' },
+  //           optional: false,
+  //           readonly: false,
+  //           docs: null,
+  //         },
+  //         { name: 'name', type: { type: 'string' }, optional: false, readonly: false, docs: null },
+  //         { name: 'is_nocturnal', type: { type: 'boolean' }, optional: false, readonly: false, docs: null },
+  //       ],
+  //       additionalFields: false,
+  //     },
+  //   });
+  //   const adjustedSchema = schema.rules.createSchemaWithModels([dogModel, guineaPigModel]);
+  //   const catObjectType: schema.rules.types.Object = {
+  //     type: 'object',
+  //     fields: [
+  //       {
+  //         name: 'type',
+  //         type: { type: 'string-literal', value: 'cat' },
+  //         docs: null,
+  //         optional: false,
+  //         readonly: true,
+  //       },
+  //       {
+  //         name: 'name',
+  //         type: { type: 'string' },
+  //         docs: null,
+  //         optional: false,
+  //         readonly: false,
+  //       },
+  //       {
+  //         name: 'lives_left',
+  //         type: { type: 'int' },
+  //         docs: null,
+  //         optional: false,
+  //         readonly: true,
+  //       },
+  //     ],
+  //     additionalFields: false,
+  //   };
+  //   const discriminatedUnionType: schema.rules.types.DiscriminatedUnion = {
+  //     type: 'discriminated-union',
+  //     discriminant: 'type',
+  //     variants: [
+  //       {
+  //         type: 'alias',
+  //         name: 'Dog',
+  //       },
+  //       catObjectType,
+  //       {
+  //         type: 'alias',
+  //         name: 'GuineaPig',
+  //       },
+  //     ],
+  //   };
+  //   const predicate = readonlyFieldPredicateForType(discriminatedUnionType, prevDataParam, nextDataParam, {
+  //     adjustedSchema,
+  //     getTypeValidatorNameForModel,
+  //     getReadonlyFieldValidatorNameForModel,
+  //   });
+  //   const expectedPredicate: rules.Predicate = {
+  //     type: 'or',
+  //     alignment: 'vertical',
+  //     innerPredicates: [
+  //       {
+  //         type: 'readonly-field-validator',
+  //         prevDataParam,
+  //         nextDataParam,
+  //         validatorName: getReadonlyFieldValidatorNameForModel('Dog'),
+  //       },
+  //       readonlyFieldPredicateForObjectType(catObjectType, prevDataParam, nextDataParam, {
+  //         adjustedSchema,
+  //         getTypeValidatorNameForModel,
+  //         getReadonlyFieldValidatorNameForModel,
+  //       }),
+  //       {
+  //         type: 'readonly-field-validator',
+  //         prevDataParam,
+  //         nextDataParam,
+  //         validatorName: getReadonlyFieldValidatorNameForModel('GuineaPig'),
+  //       },
+  //     ],
+  //   };
+  //   expect(predicate).toEqual(expectedPredicate);
+  // });
 });

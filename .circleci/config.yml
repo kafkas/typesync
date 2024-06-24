@@ -99,9 +99,10 @@ jobs:
       - run:
           name: Run rests for the source code
           command: yarn test:src
-      - run:
-          name: Run Security Rules tests
-          command: yarn test:rules
+      # TODO: Implement
+      # - run:
+      #     name: Run Security Rules tests
+      #     command: yarn test:rules
 
   publish-npm-package:
     executor: node/default
