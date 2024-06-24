@@ -26,17 +26,18 @@ class RulesGeneratorImpl implements RulesGenerator {
       ...aliasModels.map(model => this.createTypeValidatorDeclarationForAliasModel(model.name, model.type)),
       ...documentModels.map(model => this.createTypeValidatorDeclarationForDocumentModel(model.name, model.type)),
     ];
-    const readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[] = [
-      ...aliasModels
-        .filter(model => typeHasReadonlyField(model.type, adjustedSchema))
-        .map(model =>
-          this.createReadonlyFieldValidatorDeclarationForAliasModel(model.name, model.type, adjustedSchema)
-        ),
-      ...documentModels.map(model =>
-        this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type, adjustedSchema)
-      ),
-    ];
-    return { type: 'rules', typeValidatorDeclarations, readonlyFieldValidatorDeclarations };
+    // TODO: Implement
+    // const readonlyFieldValidatorDeclarations: RulesReadonlyFieldValidatorDeclaration[] = [
+    //   ...aliasModels
+    //     .filter(model => typeHasReadonlyField(model.type, adjustedSchema))
+    //     .map(model =>
+    //       this.createReadonlyFieldValidatorDeclarationForAliasModel(model.name, model.type, adjustedSchema)
+    //     ),
+    //   ...documentModels.map(model =>
+    //     this.createReadonlyFieldValidatorDeclarationForDocumentModel(model.name, model.type, adjustedSchema)
+    //   ),
+    // ];
+    return { type: 'rules', typeValidatorDeclarations, readonlyFieldValidatorDeclarations: [] };
   }
 
   private createTypeValidatorDeclarationForAliasModel(
