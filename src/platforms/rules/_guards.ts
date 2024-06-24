@@ -7,6 +7,7 @@ export function isRulesDataType(t: Type): t is RulesDataType {
     case 'bool':
     case 'float':
     case 'int':
+    case 'number':
     case 'timestamp':
     case 'list':
     case 'map':
