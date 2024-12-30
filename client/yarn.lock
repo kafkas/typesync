@@ -2090,7 +2090,7 @@ faye-websocket@0.11.4:
   dependencies:
     websocket-driver ">=0.5.1"
 
-"firebase-10@npm:firebase@^10":
+"firebase-10@yarn:firebase@^10":
   version "10.14.1"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-10.14.1.tgz#fb86709a56271589201eb4ecb6a2b09df7a4617e"
   integrity sha512-0KZxU+Ela9rUCULqFsUUOYYkjh7OM1EWdIfG6///MtXd0t2/uUIf0iNV5i0KariMhRQ5jve/OY985nrAXFaZeQ==
@@ -2124,7 +2124,7 @@ faye-websocket@0.11.4:
     "@firebase/util" "1.10.0"
     "@firebase/vertexai-preview" "0.0.4"
 
-"firebase-11@npm:firebase@^11":
+"firebase-11@yarn:firebase@^11":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-11.1.0.tgz#7fce26e8220f9490bf2a32469b7c5034462024c2"
   integrity sha512-3OoNW3vBXmBLYJvcwbPCwfluptbDVp2zZYjrfHPVFAXfPgmyy/LWjidt+Sw2WNvRelsG0v++WN2Wor6J3OwDRg==
@@ -2158,7 +2158,7 @@ faye-websocket@0.11.4:
     "@firebase/util" "1.10.2"
     "@firebase/vertexai" "1.0.2"
 
-"firebase-9@npm:firebase@^9":
+"firebase-9@yarn:firebase@^9":
   version "9.23.0"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-9.23.0.tgz#71fea60d704bfed8e92162911544fd6564a04d0e"
   integrity sha512-/4lUVY0lUvBDIaeY1q6dUYhS8Sd18Qb9CgWkPZICUo9IXpJNCEagfNZXBBFCkMTTN5L5gx2Hjr27y21a9NzUcA==
@@ -2190,7 +2190,7 @@ faye-websocket@0.11.4:
     "@firebase/storage-compat" "0.3.2"
     "@firebase/util" "1.9.3"
 
-"firebase-admin-10@npm:firebase-admin@^10":
+"firebase-admin-10@yarn:firebase-admin@^10":
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-10.3.0.tgz#6ac2a528d11e52e20cb7e417730b057b83900422"
   integrity sha512-A0wgMLEjyVyUE+heyMJYqHRkPVjpebhOYsa47RHdrTM4ltApcx8Tn86sUmjqxlfh09gNnILAm7a8q5+FmgBYpg==
@@ -2207,7 +2207,7 @@ faye-websocket@0.11.4:
     "@google-cloud/firestore" "^4.15.1"
     "@google-cloud/storage" "^5.18.3"
 
-"firebase-admin-11@npm:firebase-admin@^11":
+"firebase-admin-11@yarn:firebase-admin@^11":
   version "11.11.1"
   resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-11.11.1.tgz#6712923de70d218c9f514d73005d976d03339605"
   integrity sha512-UyEbq+3u6jWzCYbUntv/HuJiTixwh36G1R9j0v71mSvGAx/YZEWEW7uSGLYxBYE6ckVRQoKMr40PYUEzrm/4dg==
@@ -2224,7 +2224,7 @@ faye-websocket@0.11.4:
     "@google-cloud/firestore" "^6.8.0"
     "@google-cloud/storage" "^6.9.5"
 
-"firebase-admin-12@npm:firebase-admin@^12":
+"firebase-admin-12@yarn:firebase-admin@^12":
   version "12.7.0"
   resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-12.7.0.tgz#586c9ed852c4bb2d4d72f0d52c1c48a2b6dee793"
   integrity sha512-raFIrOyTqREbyXsNkSHyciQLfv8AUZazehPaQS1lZBSCDYW74FYXU0nQZa3qHI4K+hawohlDbywZ4+qce9YNxA==
@@ -2242,7 +2242,7 @@ faye-websocket@0.11.4:
     "@google-cloud/firestore" "^7.7.0"
     "@google-cloud/storage" "^7.7.0"
 
-"firebase-admin-13@npm:firebase-admin@^13":
+"firebase-admin-13@yarn:firebase-admin@^13":
   version "13.0.2"
   resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-13.0.2.tgz#ea4d9a739dde467d584820d8c38086bc4884a6a2"
   integrity sha512-YWVpoN+tZVSRXF0qC0gojoF5bSqvBRbnBk8+xUtFiguM2L4vB7f0moAwV1VVWDDHvTnvQ68OyTMpdp6wKo/clw==
@@ -3166,7 +3166,7 @@ punycode@^1.4.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
   integrity sha512-jmYNElW7yvO7TV33CjSmvSiE2yco3bV2czu/OzDKdMNVZQWfxCblURLhf+47syQRBntjfLdd/H0egrzIG+oaFQ==
 
-"react-native-firebase-21@npm:@react-native-firebase/firestore@^21":
+"react-native-firebase-21@yarn:@react-native-firebase/firestore@^21":
   version "21.6.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.6.1.tgz#228122fc2cd380f403f8984570b0ae6fa47c030a"
   integrity sha512-i3RQM11zTRCYc7/KdD0MiCm7UyyTecDXG/89lEv5hvVJMS6ltIfK+0rDheSpBzYlK4kNoK765jnvVAQxIFEqbA==
