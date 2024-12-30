@@ -1,14 +1,10 @@
 <h1 align="center">
-  <a href="https://docs.typesync.org">
-    Typesync
-  </a>
+  🦚 typesync
 </h1>
 
 <p align="center">
     Autogenerate Firestore model types for all platforms
 </p>
-
----
 
 <p align="center">
     <a href="https://npmjs.com/package/typesync-cli" alt="Latest version">
@@ -30,7 +26,7 @@ Typesync keeps your database and application code consistent and up-to-date at a
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
 <div align="center">
-  <img src="images/architecture.png" width="600px" alt="header" />
+  <img src="images/architecture-v2.png" width="600px" alt="header" />
 </div>
 
 # Documentation
