@@ -6,6 +6,7 @@
     "firebase-admin-10": "npm:firebase-admin@^10",
     "firebase-admin-11": "npm:firebase-admin@^11",
     "firebase-admin-12": "npm:firebase-admin@^12",
+    "firebase-admin-13": "npm:firebase-admin@^13",
     "react-native-firebase-21": "npm:@react-native-firebase/firestore@^21"
   }
 }

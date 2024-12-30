@@ -64,6 +64,7 @@ class TSRendererImpl implements TSRenderer {
 
   private getImportFirestoreStatement() {
     switch (this.config.target) {
+      case 'firebase-admin@13':
       case 'firebase-admin@12':
         return `import type * as firestore from "firebase-admin/firestore"`;
       case 'firebase-admin@11':
