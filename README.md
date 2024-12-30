@@ -1,16 +1,10 @@
-<div align="center">
-  <a href="https://docs.typesync.org">
-    <img src="images/icon-green.png" width="160px" alt="header" />
-  </a>
-</div>
-
-<br />
+<h1 align="center">
+ ⚡️ typesync
+</h1>
 
 <p align="center">
     Autogenerate Firestore model types for all platforms
 </p>
-
----
 
 <p align="center">
     <a href="https://npmjs.com/package/typesync-cli" alt="Latest version">
