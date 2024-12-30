@@ -71,6 +71,8 @@ class TSRendererImpl implements TSRenderer {
       case 'firebase@10':
       case 'firebase@9':
         return `import type * as firestore from 'firebase/firestore';`;
+      case 'react-native-firebase@21':
+        return `import type * as firestore from '@react-native-firebase/firestore';`;
       default:
         assertNever(this.config.target);
     }
