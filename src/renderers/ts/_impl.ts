@@ -70,6 +70,7 @@ class TSRendererImpl implements TSRenderer {
       case 'firebase-admin@11':
       case 'firebase-admin@10':
         return `import type { firestore } from 'firebase-admin';`;
+      case 'firebase@11':
       case 'firebase@10':
       case 'firebase@9':
         return `import type * as firestore from 'firebase/firestore';`;
