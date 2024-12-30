@@ -11,6 +11,8 @@ const TS_TARGETS = {
   'firebase@10': true,
   'firebase@9': true,
   'react-native-firebase@21': true,
+  'react-native-firebase@20': true,
+  'react-native-firebase@19': true,
 };
 
 export type TSGenerationTarget = keyof typeof TS_TARGETS;
