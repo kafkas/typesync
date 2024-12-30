@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- 321e107: Added `firebase-admin@13` target
+- 3807a68: Added `firebase-admin@10` target
+
 ## 0.11.0
 
 ### Minor Changes
