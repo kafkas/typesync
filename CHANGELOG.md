@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- 0c3dd5a: Added support for react-native-firebase@21 target
+
 ## 0.10.0
 
 ### Minor Changes
