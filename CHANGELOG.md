@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.0
+
+### Minor Changes
+
+- 5233021: Implemented `firebase@11` target
+- 5168a0e: Implemented `react-native-firebase@20` and `react-native-firebase@19` targets.
+
 ## 0.12.0
 
 ### Minor Changes

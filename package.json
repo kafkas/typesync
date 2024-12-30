@@ -1,6 +1,6 @@
 {
   "name": "typesync-cli",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Autogenerate Firestore model types for all platforms",
   "keywords": [
     "typesync",
