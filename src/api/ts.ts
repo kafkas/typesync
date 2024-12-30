@@ -3,6 +3,7 @@ import { objectKeys } from '../util/object-keys.js';
 import { GenerateRepresentationResult } from './_common.js';
 
 const TS_TARGETS = {
+  'firebase-admin@13': true,
   'firebase-admin@12': true,
   'firebase-admin@11': true,
   'firebase-admin@10': true,
