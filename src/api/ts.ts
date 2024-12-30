@@ -5,6 +5,7 @@ import { GenerateRepresentationResult } from './_common.js';
 const TS_TARGETS = {
   'firebase-admin@12': true,
   'firebase-admin@11': true,
+  'firebase-admin@10': true,
   'firebase@10': true,
   'firebase@9': true,
   'react-native-firebase@21': true,
