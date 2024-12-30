@@ -1,8 +1,10 @@
-<h1 align="center">
+<div align="center">
   <a href="https://docs.typesync.org">
-    Typesync
+    <img src="images/icon.png" width="160px" alt="header" />
   </a>
-</h1>
+</div>
+
+<br />
 
 <p align="center">
     Autogenerate Firestore model types for all platforms
