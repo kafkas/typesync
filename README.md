@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://docs.typesync.org">
-    <img src="images/icon.png" width="160px" alt="header" />
+    <img src="images/icon-green.png" width="160px" alt="header" />
   </a>
 </div>
 
