@@ -3166,6 +3166,16 @@ punycode@^1.4.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
   integrity sha512-jmYNElW7yvO7TV33CjSmvSiE2yco3bV2czu/OzDKdMNVZQWfxCblURLhf+47syQRBntjfLdd/H0egrzIG+oaFQ==
 
+"react-native-firebase-19@yarn:@react-native-firebase/firestore@^19":
+  version "19.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-19.3.0.tgz#e10e8f043d5e3a574e9eac9d8846d4b6e7dc8c22"
+  integrity sha512-fWRtMTPfAQAtrN0I4YuGZqVW1CSnqt0+vF0NYQl4e5qGhZ6AyUUmsEd3sFlSQX7M4JHJL7iozgUSpEffOA8opw==
+
+"react-native-firebase-20@yarn:@react-native-firebase/firestore@^20":
+  version "20.5.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-20.5.0.tgz#f3bf30300dd3ff2ee19c0e82a90eb1c61bf43f31"
+  integrity sha512-DsjMLHlVcj6If02kfQKpPDQ1S29mL8lAusQ8wRJ8oltQd64HBsANcjDXpWak6v7ohY6TmGvuHjBfNF73M+7LXA==
+
 "react-native-firebase-21@yarn:@react-native-firebase/firestore@^21":
   version "21.6.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.6.1.tgz#228122fc2cd380f403f8984570b0ae6fa47c030a"

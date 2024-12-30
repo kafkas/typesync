@@ -8,6 +8,8 @@
     "firebase-admin-11": "yarn:firebase-admin@^11",
     "firebase-admin-12": "yarn:firebase-admin@^12",
     "firebase-admin-13": "yarn:firebase-admin@^13",
+    "react-native-firebase-19": "yarn:@react-native-firebase/firestore@^19",
+    "react-native-firebase-20": "yarn:@react-native-firebase/firestore@^20",
     "react-native-firebase-21": "yarn:@react-native-firebase/firestore@^21"
   }
 }
