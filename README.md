@@ -26,7 +26,7 @@ Typesync keeps your database and application code consistent and up-to-date at a
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
 <div align="center">
-  <img src="images/architecture-v2.png" width="600px" alt="header" />
+  <img src="images/architecture-v3.png" width="600px" alt="header" />
 </div>
 
 # Documentation
