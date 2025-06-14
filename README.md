@@ -1,5 +1,9 @@
+<div align="center">
+  <img src="images/logo.png" width="240px" alt="header" />
+</div>
+
 <h1 align="center">
-  🦚 typesync
+  typesync
 </h1>
 
 <p align="center">
