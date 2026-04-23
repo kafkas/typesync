@@ -36,3 +36,10 @@ export const DEFAULT_GRAPH_ORIENTATION: SchemaGraphOrientation = 'horizontal';
 export const DEFAULT_GRAPH_DEBUG = false;
 
 export const DEFAULT_VALIDATE_DEBUG = false;
+
+export const DEFAULT_VALIDATE_DATA_MAX_RETRIES = 5;
+export const DEFAULT_VALIDATE_DATA_BATCH_SIZE = 250;
+export const DEFAULT_VALIDATE_DATA_JSON = false;
+export const DEFAULT_VALIDATE_DATA_DEBUG = false;
+export const VALIDATE_DATA_MAX_FAILURES_PER_MODEL_IN_TERMINAL = 10;
+export const VALIDATE_DATA_PROGRESS_THROTTLE_MS = 200;
