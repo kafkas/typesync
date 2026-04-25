@@ -1,5 +1,4 @@
 import { schema } from '../../../schema/index.js';
-import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForPython } from '../_adjust-schema.js';
 
 describe('adjustSchemaForPython()', () => {
@@ -22,12 +21,12 @@ describe('adjustSchemaForPython()', () => {
         path: `documents/{documentId}`,
       },
     });
+    const snapshot = inputSchema.clone();
 
-    deepFreeze(inputSchema);
+    adjustSchemaForPython(inputSchema);
 
-    expect(() => {
-      adjustSchemaForPython(inputSchema);
-    }).not.toThrow();
+    expect(inputSchema.aliasModels).toEqual(snapshot.aliasModels);
+    expect(inputSchema.documentModels).toEqual(snapshot.documentModels);
   });
 
   it('returns a new schema', () => {
