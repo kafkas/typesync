@@ -10,5 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022"
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/__tests__/**/*"]
 }
