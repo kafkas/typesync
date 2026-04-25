@@ -179,11 +179,32 @@ export class InvalidValidateDataLimitOptionError extends InvalidOptionsError {
   }
 }
 
-export class InvalidValidateDataModelOptionError extends InvalidOptionsError {
-  public constructor(modelName: string) {
-    const option: ValidateDataOption = 'model';
+export class InvalidValidateDataModelsOptionError extends InvalidOptionsError {
+  public constructor(missingModelNames: string[]) {
+    const option: ValidateDataOption = 'models';
+    const formatted = missingModelNames.map(n => `'${n}'`).join(', ');
     super(
-      `Expected '${option}' to be the name of a document model in the provided schema. Received '${modelName}' which does not match any document model.`
+      `Expected every entry in '${option}' to be the name of a document model in the provided schema. The following name(s) did not match any document model: ${formatted}.`
+    );
+  }
+}
+
+export class MissingValidateDataModelSelectorError extends InvalidOptionsError {
+  public constructor() {
+    const modelsOpt: ValidateDataOption = 'models';
+    const allOpt: ValidateDataOption = 'allModels';
+    super(
+      `A model selector is required. Pass one or more model names via '${modelsOpt}' (CLI: --model <name> [--model <name>]...) or set '${allOpt}' to true (CLI: --all-models) to validate every document model in the schema.`
+    );
+  }
+}
+
+export class ConflictingValidateDataModelSelectorError extends InvalidOptionsError {
+  public constructor() {
+    const modelsOpt: ValidateDataOption = 'models';
+    const allOpt: ValidateDataOption = 'allModels';
+    super(
+      `'${modelsOpt}' and '${allOpt}' are mutually exclusive. Pass either a list of model names or '${allOpt}: true', not both.`
     );
   }
 }
