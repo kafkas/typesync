@@ -13,8 +13,8 @@
 <p align="center">
     <a href="https://npmjs.com/package/typesync-cli" alt="Latest version">
         <img src="https://img.shields.io/npm/v/typesync-cli?label=latest" /></a>
-    <a href="https://app.circleci.com/pipelines/github/kafkas/typesync" alt="Build status">
-        <img src="https://circleci.com/gh/kafkas/typesync.svg?style=shield" /></a>
+    <a href="https://github.com/kafkas/typesync/actions/workflows/ci.yml" alt="Build status">
+        <img src="https://github.com/kafkas/typesync/actions/workflows/ci.yml/badge.svg" /></a>
     <a href="https://github.com/kafkas/typesync">
       <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
     <a href="https://www.npmjs.com/package/typesync-cli" alt="NPM unpacked size">

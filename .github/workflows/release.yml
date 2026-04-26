@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  publish-npm:
+    name: Publish NPM package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-json-schema:
+    name: Publish JSON schema
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: secrets/hosting-service-account-prod.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      - name: Verify repo contains the JSON schema for the current version
+        run: |
+          yarn run generate-json-schema
+          git --no-pager diff --exit-code
+
+      - name: Prepare service account
+        env:
+          HOSTING_SERVICE_ACCOUNT_BASE64_PROD: ${{ secrets.HOSTING_SERVICE_ACCOUNT_BASE64_PROD }}
+        run: |
+          mkdir -p secrets
+          printf '%s' "$HOSTING_SERVICE_ACCOUNT_BASE64_PROD" | base64 -d > secrets/hosting-service-account-prod.json
+
+      - name: Switch to the 'prod' Firebase environment
+        run: npx firebase use prod
+
+      - name: Deploy JSON schema to Firebase Hosting
+        run: npx firebase deploy --only hosting
+
+      - name: Cleanup service account
+        if: always()
+        run: rm -rf secrets/hosting-service-account-prod.json
