@@ -47,9 +47,7 @@ export function createRuntimeZodEmitter(registry: RuntimeZodRegistry): ZodEmitte
       for (const field of fields) {
         shape[field.name] = field.optional ? field.value.optional() : field.value;
       }
-      const base = z.object(shape);
-      // TODO(kafkas): Use z.looseObject() or .loose() instead.
-      return additionalFields ? base.passthrough() : base.strict();
+      return additionalFields ? z.looseObject(shape) : z.strictObject(shape);
     },
 
     simpleUnion: variants => {
@@ -64,12 +62,8 @@ export function createRuntimeZodEmitter(registry: RuntimeZodRegistry): ZodEmitte
       if (variants.length < 2) {
         return variants[0] ?? z.never();
       }
-      // TODO(kafkas): Fix this.
-      // zod@4's `z.discriminatedUnion` signature exposes a complex generic that is awkward
-      // to satisfy from our emitter-level perspective. Variants are only ever constructed
-      // as ZodObjects upstream (per `schema.DiscriminatedUnion` semantics), so we cast via
-      // `unknown` to bypass the generic while preserving runtime behaviour.
-      return z.discriminatedUnion(discriminant, variants as unknown as Parameters<typeof z.discriminatedUnion>[1]);
+      const objectVariants = variants as [z.ZodObject, z.ZodObject, ...z.ZodObject[]];
+      return z.discriminatedUnion(discriminant, objectVariants);
     },
 
     reference: modelName =>
