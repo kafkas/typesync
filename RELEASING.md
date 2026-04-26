@@ -1,37 +1,72 @@
 # Release Process
 
-## Steps
+Releases are fully automated by [Changesets](https://github.com/changesets/changesets)
+and the official [Changesets GitHub Action](https://github.com/changesets/action).
+Cutting a release is done by merging a PR — there are no local commands to
+run and no direct pushes to `main`.
 
-1. **Development Changes**
+## Day-to-day: shipping a change
 
-   - All changes should be made through Pull Requests
-   - Each PR must include a changeset (created using `changeset` CLI)
-   - Merge approved PRs into `main`
+1. Open a PR against `main` with your change.
+2. Run `yarn changeset` and commit the generated `.changeset/*.md` file.
+3. Get the PR reviewed and merged.
 
-2. **Prepare Release**
+That's it. Don't bump versions, don't edit `CHANGELOG.md`, and don't create
+tags. The [Release workflow](.github/workflows/release.yml) takes care of all
+of that.
 
-   ```bash
-   yarn run prepare-release
-   ```
+## Cutting a release
 
-   This command will:
+After any PR carrying a changeset lands on `main`, the Release workflow opens
+(or updates) a single PR titled **`chore: version packages`**. This PR is the
+release control panel — it accumulates all unreleased changesets and contains
+a preview of:
 
-   - Update versions based on changesets
-   - Update changelog
-   - Generate JSON schema for definition files
+- the bumped `package.json` version
+- the appended `CHANGELOG.md` entries
+- the regenerated `public/v0.X.json` JSON schema
 
-3. **Commit and Push**
+Whenever you are ready to publish, merge this PR. On merge, the workflow will:
 
-   ```bash
-   git add .
-   git commit -m "0.12.0"
-   git push origin main
-   ```
+1. Publish the new version to NPM (`npm publish` on `typesync-cli`)
+2. Create a GitHub Release with the matching `vX.Y.Z` tag and changelog body
+3. Deploy the regenerated JSON schema to Firebase Hosting (`prod`)
 
-4. **Create GitHub Release**
-   - Go to [GitHub Releases](https://github.com/kafkas/typesync/releases)
-   - Click "Draft a new release"
-   - Create a new tag (e.g., `v0.12.0`)
-   - Title: `v0.12.0`
-   - Description: Copy the relevant changelog entries
-   - Publish the release
+If the `chore: version packages` PR doesn't exist, no changesets have landed
+since the last release. Merge any PR with a changeset to materialize one.
+
+To **hold** a release, just don't merge the PR — new feature merges will keep
+adding to it. To **cancel** a pending release, close the PR; the changesets
+remain on `main` and the next push will reopen it.
+
+## One-time GitHub configuration
+
+### Repository secrets
+
+Configure under **Settings → Secrets and variables → Actions**:
+
+| Secret                                | Purpose                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| `NPM_TOKEN`                           | NPM automation token with publish access to `typesync-cli`               |
+| `HOSTING_SERVICE_ACCOUNT_BASE64_PROD` | Base64-encoded GCP service account JSON with Firebase Hosting permission |
+
+### Workflow permissions
+
+Under **Settings → Actions → General**, make sure the following are enabled:
+
+- **Workflow permissions**: "Read and write permissions"
+- **"Allow GitHub Actions to create and approve pull requests"**
+
+The release workflow uses the built-in `GITHUB_TOKEN` to open the
+`chore: version packages` PR; without these settings the action cannot create
+or update it.
+
+### Branch protection (recommended)
+
+Now that nothing legitimately needs to push directly to `main`, enable branch
+protection on `main`:
+
+- Require a pull request before merging
+- Require the [CI workflow](.github/workflows/ci.yml) (`lint`, `test`, `build`,
+  `integration-test`) to pass
+- Disallow force-pushes

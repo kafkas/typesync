@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn format-check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn test:src
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+  integration-test:
+    name: Integration tests (Python E2E)
+    runs-on: ubuntu-latest
+    env:
+      TYPESYNC_MODELS_OUT_DIR: ${{ github.workspace }}/tests/test-poetry-project/autogen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: poetry
+          cache-dependency-path: tests/test-poetry-project/poetry.lock
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: 'beta,cloud-firestore-emulator'
+
+      - name: Install Node dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate Python models from Typesync schema
+        run: |
+          mkdir -p "$TYPESYNC_MODELS_OUT_DIR"
+          yarn tsx src/cli/index.tsx generate-py \
+            --definition tests/test-poetry-project/test_poetry_project/models.yml \
+            --target firebase-admin@6 \
+            --outFile "$TYPESYNC_MODELS_OUT_DIR/models.py"
+
+      - name: Install Poetry project
+        working-directory: tests/test-poetry-project
+        run: poetry install
+
+      - name: Run Python end-to-end tests
+        working-directory: tests/test-poetry-project
+        env:
+          TYPESYNC_OUT_MODEL_PATH: ${{ github.workspace }}/tests/test-poetry-project/autogen/models.py
+        run: poetry run pytest

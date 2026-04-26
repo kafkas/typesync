@@ -22,7 +22,7 @@ TYPESYNC_CLI_ENTRYPOINT_PATH = REPO_ROOT / "src" / "cli" / "index.tsx"
 
 
 def is_running_on_ci_machine() -> bool:
-    return os.getenv("CIRCLECI", None) is not None
+    return os.getenv("CI", "").lower() == "true"
 
 
 @pytest.fixture
