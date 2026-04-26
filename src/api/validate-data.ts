@@ -75,12 +75,20 @@ export type ValidateDataOption = keyof ValidateDataOptions;
 
 /**
  * An event emitted during a data validation run.
+ *
+ * `docsScanned` is the number of documents validated against the model so far
+ * (always equal to `valid + invalid`). `skipped` is the number of documents that
+ * Firestore returned but were filtered out because they didn't match the model's
+ * path template — this is non-zero only when the model path resolves to a
+ * collection-group query and the database contains other collections with the same
+ * leaf name.
  */
 export type ValidateDataProgressEvent =
   | {
       type: 'model-started';
       model: string;
       collectionPath: string;
+      isCollectionGroup: boolean;
     }
   | {
       type: 'batch-processed';
@@ -88,6 +96,7 @@ export type ValidateDataProgressEvent =
       docsScanned: number;
       valid: number;
       invalid: number;
+      skipped: number;
     }
   | {
       type: 'model-completed';
@@ -95,6 +104,7 @@ export type ValidateDataProgressEvent =
       docsScanned: number;
       valid: number;
       invalid: number;
+      skipped: number;
     }
   | {
       type: 'model-failed';
@@ -114,6 +124,12 @@ export interface ValidateDataResult {
     totalDocsScanned: number;
     totalValid: number;
     totalInvalid: number;
+    /**
+     * Total number of documents that Firestore returned but were filtered out as
+     * belonging to a different model (collection-group leaf-name collisions). Always
+     * `0` for runs in which no model resolved to a collection-group query.
+     */
+    totalSkipped: number;
     durationMs: number;
   };
   models: ValidateDataModelReport[];
@@ -125,12 +141,27 @@ export interface ValidateDataResult {
 export interface ValidateDataModelReport {
   name: string;
   /**
-   * The collection path (or collection-group name) that was traversed for this model.
+   * The collection path (or model path template) that was traversed for this model.
+   * For top-level models this is the collection name (e.g. `users`); for nested models
+   * this is the full model path template (e.g. `users/{userId}/posts/{postId}`) so the
+   * report disambiguates models that share a leaf collection name.
    */
   collectionPath: string;
+  /**
+   * Whether the model was traversed via a Firestore collection-group query. When
+   * `true`, `skipped` may be non-zero if other collections share the same leaf name.
+   */
+  isCollectionGroup: boolean;
+  /** Number of documents validated against this model's Zod schema (= valid + invalid). */
   docsScanned: number;
   valid: number;
   invalid: number;
+  /**
+   * Number of documents that Firestore returned through the collection-group query but
+   * were filtered out because their path did not match the model's path template. These
+   * documents belong to a different model and were not validated against this one.
+   */
+  skipped: number;
   /**
    * Individual document failures. Every entry describes one document that failed to
    * parse against the generated Zod schema.

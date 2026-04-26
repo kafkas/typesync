@@ -12,6 +12,7 @@ type Props = {
 export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
   const { summary, models } = result;
   const anyInvalid = summary.totalInvalid > 0;
+  const anySkipped = summary.totalSkipped > 0;
 
   return (
     <Box flexDirection="column">
@@ -30,9 +31,12 @@ export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
             ) : (
               <Text color="red">{m.invalid.toLocaleString()} invalid</Text>
             )}
+            {m.skipped > 0 ? <Text color="yellow"> · {m.skipped.toLocaleString()} skipped (other models)</Text> : null}
           </Box>
         ))}
       </Box>
+
+      {anySkipped ? <SkippedNotice result={result} /> : null}
 
       {anyInvalid ? <FailureDetails result={result} /> : null}
 
@@ -42,6 +46,29 @@ export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
           <Text color="yellowBright">{pathToOutFile}</Text>
         </Box>
       ) : null}
+    </Box>
+  );
+}
+
+function SkippedNotice({ result }: { result: ValidateDataResult }) {
+  const offenders = result.models.filter(m => m.skipped > 0);
+  if (offenders.length === 0) return null;
+
+  return (
+    <Box marginTop={1} flexDirection="column">
+      <Text color="yellow">
+        ⓘ {result.summary.totalSkipped.toLocaleString()} document(s) were returned by a collection-group query but
+        belong to a different model:
+      </Text>
+      {offenders.map(m => (
+        <Text key={m.name} dimColor>
+          {'  '}• {m.name} ({m.collectionPath}): {m.skipped.toLocaleString()} skipped
+        </Text>
+      ))}
+      <Text dimColor>
+        {'  '}This happens when two document models share the same leaf collection name. Skipped documents are validated
+        when their own model is scanned. If --limit was set, the actual fetch count was higher.
+      </Text>
     </Box>
   );
 }

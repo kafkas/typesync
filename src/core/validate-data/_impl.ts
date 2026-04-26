@@ -214,13 +214,14 @@ async function traverseAndValidateModel(args: {
   opts: NormalizedValidateDataOptions;
 }): Promise<ValidateDataModelReport> {
   const { model, zodSchema, db, opts } = args;
-  const { collectionName, ref } = resolveCollectionRef(db, model.path);
-  const accumulator = new ModelReportAccumulator(model.name, collectionName);
+  const { label, ref, isCollectionGroup, matchesPath } = resolveCollectionRef(db, model.path);
+  const accumulator = new ModelReportAccumulator(model.name, label, isCollectionGroup);
 
   opts.onProgress?.({
     type: 'model-started',
     model: model.name,
-    collectionPath: collectionName,
+    collectionPath: label,
+    isCollectionGroup,
   });
 
   const traverser = createTraverser(ref, {
@@ -235,10 +236,14 @@ async function traverseAndValidateModel(args: {
 
   try {
     await traverser.traverse(async batchDocs => {
-      // `safeParse` never throws, but a defensive loop keeps any unexpected runtime
-      // error (e.g. a bug in a user alias) from being silently swallowed; Firewalk
-      // applies its own retry policy before surfacing it here.
       for (const doc of batchDocs) {
+        // Collection-group queries return every collection with the same leaf name
+        // across the database, so we filter out documents whose path doesn't match the
+        // model's path template before validating. For non-group refs this is a no-op.
+        if (isCollectionGroup && !matchesPath(doc.ref.path)) {
+          accumulator.recordSkipped();
+          continue;
+        }
         const parseRes = zodSchema.safeParse(doc.data());
         if (parseRes.success) {
           accumulator.recordValid();
@@ -255,7 +260,7 @@ async function traverseAndValidateModel(args: {
       model: model.name,
       error: message,
     });
-    throw new FirestoreTraversalError(collectionName, message);
+    throw new FirestoreTraversalError(label, message);
   }
 
   emitThrottledProgress.flush();
@@ -267,6 +272,7 @@ async function traverseAndValidateModel(args: {
     docsScanned: finalized.docsScanned,
     valid: finalized.valid,
     invalid: finalized.invalid,
+    skipped: finalized.skipped,
   });
   return finalized;
 }
@@ -291,6 +297,7 @@ function createThrottledProgressEmitter(
       docsScanned: snapshot.docsScanned,
       valid: snapshot.valid,
       invalid: snapshot.invalid,
+      skipped: snapshot.skipped,
     });
   };
 
@@ -313,11 +320,13 @@ function summarize(reports: ValidateDataModelReport[], durationMs: number) {
   const totalDocsScanned = reports.reduce((acc, r) => acc + r.docsScanned, 0);
   const totalValid = reports.reduce((acc, r) => acc + r.valid, 0);
   const totalInvalid = reports.reduce((acc, r) => acc + r.invalid, 0);
+  const totalSkipped = reports.reduce((acc, r) => acc + r.skipped, 0);
   return {
     totalModels: reports.length,
     totalDocsScanned,
     totalValid,
     totalInvalid,
+    totalSkipped,
     durationMs,
   };
 }

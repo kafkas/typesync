@@ -7,10 +7,12 @@ import type { ValidateDataProgressEvent } from '../../api/index.js';
 type ModelState = {
   name: string;
   collectionPath: string;
+  isCollectionGroup: boolean;
   status: 'scanning' | 'done' | 'failed';
   docsScanned: number;
   valid: number;
   invalid: number;
+  skipped: number;
   error?: string;
 };
 
@@ -35,10 +37,12 @@ export function ValidateDataInProgress({ register }: Props) {
               [event.model]: {
                 name: event.model,
                 collectionPath: event.collectionPath,
+                isCollectionGroup: event.isCollectionGroup,
                 status: 'scanning',
                 docsScanned: 0,
                 valid: 0,
                 invalid: 0,
+                skipped: 0,
               },
             };
           case 'batch-processed': {
@@ -51,6 +55,7 @@ export function ValidateDataInProgress({ register }: Props) {
                 docsScanned: event.docsScanned,
                 valid: event.valid,
                 invalid: event.invalid,
+                skipped: event.skipped,
               },
             };
           }
@@ -65,6 +70,7 @@ export function ValidateDataInProgress({ register }: Props) {
                 docsScanned: event.docsScanned,
                 valid: event.valid,
                 invalid: event.invalid,
+                skipped: event.skipped,
               },
             };
           }
@@ -122,6 +128,9 @@ function ModelRow({ state }: { state: ModelState }) {
           {state.docsScanned.toLocaleString()} scanned · {state.valid.toLocaleString()} valid ·{' '}
         </Text>
         <Text color={state.invalid > 0 ? 'red' : undefined}>{state.invalid.toLocaleString()} invalid</Text>
+        {state.skipped > 0 ? (
+          <Text color="yellow"> · {state.skipped.toLocaleString()} skipped (other models)</Text>
+        ) : null}
         {state.error ? <Text color="red"> · {state.error}</Text> : null}
       </Box>
     </Box>
