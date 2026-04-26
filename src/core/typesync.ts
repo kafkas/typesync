@@ -27,6 +27,8 @@ import type {
   TSGenerationTarget,
   TSObjectTypeFormat,
   Typesync,
+  ValidateDataOptions,
+  ValidateDataResult,
   ValidateOptions,
   ValidateResult,
 } from '../api/index.js';
@@ -91,6 +93,7 @@ import { writeFile } from '../util/fs.js';
 import { parsePythonClassImportPath } from '../util/parse-python-class-import-path.js';
 import { createDefinitionParser } from './definition-parser/index.js';
 import { createLogger } from './logger/index.js';
+import { normalizeValidateDataOpts, runValidateData } from './validate-data/index.js';
 
 interface NormalizedGenerateTsRepresentationOptions {
   definitionGlobPattern: string;
@@ -487,6 +490,16 @@ class TypesyncImpl implements Typesync {
     } catch (e) {
       return { success: false, message: extractErrorMessage(e) };
     }
+  }
+
+  public async validateData(rawOpts: ValidateDataOptions): Promise<ValidateDataResult> {
+    const opts = normalizeValidateDataOpts(rawOpts);
+    return runValidateData(opts, {
+      buildSchema: (glob, debug) => {
+        const { schema: s } = this.createCoreObjects(glob, debug);
+        return { schema: s };
+      },
+    });
   }
 
   public generateRepresentation(opts: GenerateRepresentationOptions): GenerateRepresentationResult {

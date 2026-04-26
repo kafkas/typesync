@@ -31,6 +31,7 @@ import type {
   GenerateTsRepresentationResult,
   GenerateTsResult,
 } from './ts.js';
+import type { ValidateDataOptions, ValidateDataResult } from './validate-data.js';
 
 export interface GenerateRepresentationOptions {
   definition: string;
@@ -137,6 +138,17 @@ export interface Typesync {
    * This is the programmatic API for the `typesync validate` command.
    */
   validate(opts: ValidateOptions): Promise<ValidateResult>;
+
+  /**
+   * Traverses the Firestore collections associated with the document models in the
+   * specified schema and validates every document against its Zod schema. The result
+   * is a structured report of valid and invalid documents.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync validate-data` command.
+   */
+  validateData(opts: ValidateDataOptions): Promise<ValidateDataResult>;
 
   /**
    * Build and returns the internal representation for the specified schema definition.

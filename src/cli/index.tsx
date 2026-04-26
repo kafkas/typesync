@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { getPythonTargets, getSchemaGraphOrientations, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
+import type { ValidateDataProgressEvent } from '../api/index.js';
 import { getObjectTypeFormats } from '../api/ts.js';
 import {
   DEFAULT_GRAPH_DEBUG,
@@ -30,6 +31,10 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_TS_OBJECT_TYPE_FORMAT,
+  DEFAULT_VALIDATE_DATA_BATCH_SIZE,
+  DEFAULT_VALIDATE_DATA_DEBUG,
+  DEFAULT_VALIDATE_DATA_JSON,
+  DEFAULT_VALIDATE_DATA_MAX_RETRIES,
   DEFAULT_VALIDATE_DEBUG,
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
@@ -38,6 +43,9 @@ import { extractErrorMessage } from '../util/extract-error-message.js';
 import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
 import { GenerationFailed } from './components/GenerationFailed.js';
 import { GenerationSuccessful } from './components/GenerationSuccessful.js';
+import { ValidateDataCompleted } from './components/ValidateDataCompleted.js';
+import { ValidateDataFailed } from './components/ValidateDataFailed.js';
+import { ValidateDataInProgress } from './components/ValidateDataInProgress.js';
 import { ValidationFailed } from './components/ValidationFailed.js';
 import { ValidationSuccessful } from './components/ValidationSuccessful.js';
 
@@ -413,6 +421,156 @@ await yargs(hideBin(process.argv))
         const message = extractErrorMessage(e);
         render(<GenerationFailed message={message} />);
         yargs().exit(1, new Error(message));
+      }
+    }
+  )
+  .command(
+    'validate-data',
+    'Traverses Firestore collections of selected document models in the schema and validates every document against its Zod-generated validator. Reports invalid documents without making any writes. You must explicitly select what to scan via --model (repeatable) or --all-models.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('model', {
+          describe:
+            'The name of a document model to validate. Repeat the flag to validate multiple models (e.g. --model User --model Theme). Mutually exclusive with --all-models; exactly one of the two must be provided.',
+          type: 'string',
+          array: true,
+          demandOption: false,
+        })
+        .option('all-models', {
+          describe:
+            'Validates every document model in the schema. Opt-in because traversing every collection on a large project is slow and incurs Firestore read costs. Mutually exclusive with --model.',
+          type: 'boolean',
+          demandOption: false,
+          default: false,
+        })
+        .option('serviceAccount', {
+          describe:
+            'Path to a Google Cloud service account JSON file. If omitted, Typesync honors the GOOGLE_APPLICATION_CREDENTIALS environment variable.',
+          type: 'string',
+          demandOption: false,
+        })
+        .option('projectId', {
+          describe: 'Overrides the Firebase project id. Most useful together with --emulatorHost for emulator runs.',
+          type: 'string',
+          demandOption: false,
+        })
+        .option('emulatorHost', {
+          describe:
+            'Points the validator at the Firestore emulator instead of a live project. Expected to be a "host:port" string.',
+          type: 'string',
+          demandOption: false,
+        })
+        .option('maxRetries', {
+          describe: 'Maximum retry attempts per batch for transient Firestore errors.',
+          type: 'number',
+          demandOption: false,
+          default: DEFAULT_VALIDATE_DATA_MAX_RETRIES,
+        })
+        .option('batchSize', {
+          describe: 'Number of documents fetched per page during traversal.',
+          type: 'number',
+          demandOption: false,
+          default: DEFAULT_VALIDATE_DATA_BATCH_SIZE,
+        })
+        .option('limit', {
+          describe:
+            'Stops validation for each model after this many documents. Useful for spot checks on very large collections.',
+          type: 'number',
+          demandOption: false,
+        })
+        .option('outFile', {
+          describe: 'The path to a file where the full JSON validation report will be written.',
+          type: 'string',
+          demandOption: false,
+        })
+        .option('json', {
+          describe:
+            'Emits a JSON summary of the run to stdout instead of rendering the live progress UI. Intended for CI pipelines.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_VALIDATE_DATA_JSON,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_VALIDATE_DATA_DEBUG,
+        }),
+    async args => {
+      const {
+        definition,
+        model,
+        allModels,
+        serviceAccount,
+        projectId,
+        emulatorHost,
+        maxRetries,
+        batchSize,
+        limit,
+        outFile,
+        json,
+        debug,
+      } = args;
+
+      const pathToOutFile = outFile ? resolve(process.cwd(), outFile) : undefined;
+
+      let emitter: ((event: ValidateDataProgressEvent) => void) | undefined;
+      let liveApp: ReturnType<typeof render> | undefined;
+
+      if (!json) {
+        liveApp = render(
+          <ValidateDataInProgress
+            register={setEmitter => {
+              emitter = setEmitter;
+            }}
+          />
+        );
+      }
+
+      try {
+        const result = await typesync.validateData({
+          definition: resolve(process.cwd(), definition),
+          models: model,
+          allModels,
+          serviceAccount: serviceAccount ? resolve(process.cwd(), serviceAccount) : undefined,
+          projectId,
+          emulatorHost,
+          maxRetries,
+          batchSize,
+          limit,
+          outFile: pathToOutFile,
+          debug,
+          onProgress: event => {
+            emitter?.(event);
+          },
+        });
+
+        if (liveApp) {
+          liveApp.unmount();
+          render(<ValidateDataCompleted result={result} pathToOutFile={pathToOutFile} />);
+        } else {
+          const { schema: _schema, ...serializable } = result;
+          process.stdout.write(`${JSON.stringify(serializable, null, 2)}\n`);
+        }
+
+        if (result.summary.totalInvalid > 0) {
+          yargs().exit(1, new Error(`${result.summary.totalInvalid} invalid document(s) found.`));
+        }
+      } catch (e) {
+        const message = extractErrorMessage(e);
+        if (liveApp) {
+          liveApp.unmount();
+          render(<ValidateDataFailed message={message} />);
+        } else {
+          process.stderr.write(`${JSON.stringify({ error: message }, null, 2)}\n`);
+        }
+        yargs().exit(2, new Error(message));
       }
     }
   )

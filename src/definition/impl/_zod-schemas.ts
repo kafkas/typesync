@@ -117,7 +117,7 @@ export const objectType = z
     z
       .object({
         type: z.literal('object'),
-        fields: z.record(objectField).describe('The fields that belong to this object.'),
+        fields: z.record(z.string(), objectField).describe('The fields that belong to this object.'),
         additionalFields: z
           .boolean()
           .optional()
@@ -156,16 +156,18 @@ export const unionType = discriminatedUnionType.or(simpleUnionType).describe('A 
 
 export const aliasType = z.string().describe('An alias type.');
 
-export const type: z.ZodType<types.Type> = primitiveType
-  .or(literalType)
-  .or(enumType)
-  .or(tupleType)
-  .or(listType)
-  .or(mapType)
-  .or(objectType)
-  .or(unionType)
-  .or(aliasType)
-  .describe('Any valid type.');
+export const type: z.ZodType<types.Type> = z.lazy(() =>
+  primitiveType
+    .or(literalType)
+    .or(enumType)
+    .or(tupleType)
+    .or(listType)
+    .or(mapType)
+    .or(objectType)
+    .or(unionType)
+    .or(aliasType)
+    .describe('Any valid type.')
+);
 
 export const objectField = z
   .object({

@@ -1,5 +1,4 @@
 import { schema } from '../../../schema/index.js';
-import { deepFreeze } from '../../../util/deep-freeze.js';
 import { adjustSchemaForSwift } from '../_adjust-schema.js';
 
 describe('adjustSchemaForSwift()', () => {
@@ -22,12 +21,12 @@ describe('adjustSchemaForSwift()', () => {
         path: 'documents/{documentId}',
       },
     });
+    const snapshot = inputSchema.clone();
 
-    deepFreeze(inputSchema);
+    adjustSchemaForSwift(inputSchema);
 
-    expect(() => {
-      adjustSchemaForSwift(inputSchema);
-    }).not.toThrow();
+    expect(inputSchema.aliasModels).toEqual(snapshot.aliasModels);
+    expect(inputSchema.documentModels).toEqual(snapshot.documentModels);
   });
 
   it('returns a new schema', () => {

@@ -42,6 +42,15 @@ export {
   type TSObjectTypeFormat,
   getTSTargets,
 } from './ts.js';
+export type {
+  ValidateDataFailure,
+  ValidateDataModelReport,
+  ValidateDataOption,
+  ValidateDataOptions,
+  ValidateDataProgressEvent,
+  ValidateDataResult,
+} from './validate-data.js';
+export { buildZodSchemaMap, type ZodSchemaMap } from '../core/zod/index.js';
 export { type Definition } from '../definition/impl/index.js';
 export {
   type Schema,
