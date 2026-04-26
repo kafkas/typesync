@@ -32,7 +32,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: yarn run prepare-release
-          publish: yarn build && yarn changeset publish
+          publish: yarn run release
           commit: 'chore: version packages'
           title: 'chore: version packages'
         env:
