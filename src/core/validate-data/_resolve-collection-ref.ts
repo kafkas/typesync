@@ -1,6 +1,6 @@
 import type { firestore } from 'firebase-admin';
 
-import { assertDefined } from '../../util/assert.js';
+import { assert, assertDefined } from '../../util/assert.js';
 
 /**
  * Result of resolving a Typesync document model path to a Firestore reference plus a
@@ -90,6 +90,42 @@ export function parseModelSegments(modelPath: string): string[] {
 }
 
 /**
+ * Returns a human-readable reason if the given model path cannot be traversed by the
+ * data validator's current strategy (collection-group queries with a path-template
+ * filter). Returns `undefined` if the path is supported.
+ *
+ * The validator works only when every collection-name slot in the model path is a
+ * literal string. When any collection slot is a placeholder (e.g.
+ * `system/scripts/{script_id}/{output_id}` — index 2 `{script_id}` is a placeholder
+ * collection name), Firestore offers no way to enumerate the matching collections
+ * without a parent-walk strategy, which `validate-data` does not implement today.
+ */
+export function getUnsupportedTraversalReason(modelPath: string): string | undefined {
+  const segments = parseModelSegments(modelPath);
+  const placeholderCollectionSegments: { segment: string; index: number }[] = [];
+  for (let i = 0; i < segments.length; i += 2) {
+    const segment = segments[i];
+    assertDefined(segment, 'Internal error: model path segment array is shorter than expected.');
+    if (isPlaceholder(segment)) {
+      placeholderCollectionSegments.push({ segment, index: i });
+    }
+  }
+
+  if (placeholderCollectionSegments.length === 0) {
+    return undefined;
+  }
+
+  const formatted = placeholderCollectionSegments
+    .map(({ segment, index }) => `'${segment}' at position ${index}`)
+    .join(', ');
+  return (
+    `Model path '${modelPath}' contains placeholder collection-name segment(s) (${formatted}), ` +
+    `which Firestore collection-group queries cannot target. ` +
+    `validate-data currently only supports model paths whose collection-name segments are all literal.`
+  );
+}
+
+/**
  * Returns the collection name that should be passed to Firestore's `collectionGroup`
  * (or `collection`) factory for the given model path — i.e. the segment immediately
  * before the final dynamic id.
@@ -107,9 +143,14 @@ function leafCollectionName(modelSegments: string[]): string {
   const idx = modelSegments.length - 2;
   const name = modelSegments[idx];
   assertDefined(name, 'Internal error: model path is missing the leaf collection segment.');
-  if (isPlaceholder(name)) {
-    throw new Error(`Invalid document model path. Collection name segment cannot be a placeholder: '${name}'.`);
-  }
+  // Defensive precondition: callers should have already filtered unsupported paths via
+  // `getUnsupportedTraversalReason`. We retain the assertion so this layer fails loudly
+  // if a future caller forgets that step.
+  assert(
+    !isPlaceholder(name),
+    `Internal error: leaf collection segment '${name}' is a placeholder. Call ` +
+      `getUnsupportedTraversalReason() before resolveCollectionRef() to filter such paths.`
+  );
   return name;
 }
 

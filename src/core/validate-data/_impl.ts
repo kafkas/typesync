@@ -8,6 +8,7 @@ import type {
   ValidateDataOptions,
   ValidateDataProgressEvent,
   ValidateDataResult,
+  ValidateDataUnsupportedModel,
 } from '../../api/validate-data.js';
 import {
   DEFAULT_VALIDATE_DATA_BATCH_SIZE,
@@ -30,7 +31,7 @@ import { extractErrorMessage } from '../../util/extract-error-message.js';
 import { buildZodSchemaMap } from '../zod/index.js';
 import { initFirebaseAdminApp } from './_firebase-admin.js';
 import { ModelReportAccumulator } from './_report.js';
-import { resolveCollectionRef } from './_resolve-collection-ref.js';
+import { getUnsupportedTraversalReason, resolveCollectionRef } from './_resolve-collection-ref.js';
 
 /**
  * After normalization, the model selector is collapsed to one of two shapes:
@@ -137,7 +138,19 @@ export async function runValidateData(
 ): Promise<ValidateDataResult> {
   const { schema: parsedSchema } = deps.buildSchema(opts.definitionGlobPattern, opts.debug);
   const zodMap = buildZodSchemaMap(parsedSchema);
-  const modelsToValidate = selectModelsToValidate(parsedSchema, opts.modelSelector);
+  const selectedModels = selectModelsToValidate(parsedSchema, opts.modelSelector);
+  const { supported, unsupported } = partitionBySupport(selectedModels);
+
+  // Emit unsupported diagnostics up-front so the CLI can render the warning rows
+  // alongside live progress for the supported models.
+  for (const entry of unsupported) {
+    opts.onProgress?.({
+      type: 'model-unsupported',
+      model: entry.name,
+      modelPath: entry.modelPath,
+      reason: entry.reason,
+    });
+  }
 
   const app = initFirebaseAdminApp({
     serviceAccountPath: opts.serviceAccount,
@@ -150,7 +163,7 @@ export async function runValidateData(
     const startedAt = Date.now();
     const reports: ValidateDataModelReport[] = [];
 
-    for (const model of modelsToValidate) {
+    for (const model of supported) {
       const report = await traverseAndValidateModel({
         model,
         zodSchema: getZodSchemaForModel(zodMap, model.name),
@@ -164,8 +177,9 @@ export async function runValidateData(
     const result: ValidateDataResult = {
       type: 'validate-data',
       schema: parsedSchema,
-      summary: summarize(reports, durationMs),
+      summary: summarize(reports, unsupported, durationMs),
       models: reports,
+      unsupportedModels: unsupported,
     };
 
     if (opts.pathToOutFile) {
@@ -178,6 +192,29 @@ export async function runValidateData(
       /* best-effort cleanup */
     });
   }
+}
+
+/**
+ * Splits selected models into ones that the current traversal strategy can handle and
+ * ones that cannot. Unsupported models are reported as diagnostics; the run still
+ * proceeds with the supported subset (so a single unsupported model never blocks
+ * validation of the rest of the schema).
+ */
+function partitionBySupport(models: readonly schema.DocumentModel[]): {
+  supported: schema.DocumentModel[];
+  unsupported: ValidateDataUnsupportedModel[];
+} {
+  const supported: schema.DocumentModel[] = [];
+  const unsupported: ValidateDataUnsupportedModel[] = [];
+  for (const model of models) {
+    const reason = getUnsupportedTraversalReason(model.path);
+    if (reason === undefined) {
+      supported.push(model);
+    } else {
+      unsupported.push({ name: model.name, modelPath: model.path, reason });
+    }
+  }
+  return { supported, unsupported };
 }
 
 function selectModelsToValidate(s: schema.Schema, selector: ModelSelector): readonly schema.DocumentModel[] {
@@ -316,13 +353,18 @@ function createThrottledProgressEmitter(
   return throttled;
 }
 
-function summarize(reports: ValidateDataModelReport[], durationMs: number) {
+function summarize(
+  reports: ValidateDataModelReport[],
+  unsupported: ValidateDataUnsupportedModel[],
+  durationMs: number
+) {
   const totalDocsScanned = reports.reduce((acc, r) => acc + r.docsScanned, 0);
   const totalValid = reports.reduce((acc, r) => acc + r.valid, 0);
   const totalInvalid = reports.reduce((acc, r) => acc + r.invalid, 0);
   const totalSkipped = reports.reduce((acc, r) => acc + r.skipped, 0);
   return {
     totalModels: reports.length,
+    totalUnsupportedModels: unsupported.length,
     totalDocsScanned,
     totalValid,
     totalInvalid,

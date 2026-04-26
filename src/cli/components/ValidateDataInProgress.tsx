@@ -8,12 +8,13 @@ type ModelState = {
   name: string;
   collectionPath: string;
   isCollectionGroup: boolean;
-  status: 'scanning' | 'done' | 'failed';
+  status: 'scanning' | 'done' | 'failed' | 'unsupported';
   docsScanned: number;
   valid: number;
   invalid: number;
   skipped: number;
   error?: string;
+  reason?: string;
 };
 
 type Props = {
@@ -86,6 +87,21 @@ export function ValidateDataInProgress({ register }: Props) {
               },
             };
           }
+          case 'model-unsupported':
+            return {
+              ...prev,
+              [event.model]: {
+                name: event.model,
+                collectionPath: event.modelPath,
+                isCollectionGroup: false,
+                status: 'unsupported',
+                docsScanned: 0,
+                valid: 0,
+                invalid: 0,
+                skipped: 0,
+                reason: event.reason,
+              },
+            };
           default:
             return prev;
         }
@@ -117,6 +133,21 @@ export function ValidateDataInProgress({ register }: Props) {
 function ModelRow({ state }: { state: ModelState }) {
   const leftWidth = 20;
   const name = state.name.padEnd(leftWidth).slice(0, leftWidth);
+
+  if (state.status === 'unsupported') {
+    return (
+      <Box>
+        <Box width={3}>{renderStatusIcon(state.status)}</Box>
+        <Box width={leftWidth + 1}>
+          <Text>{name}</Text>
+        </Box>
+        <Box>
+          <Text color="yellow">unsupported · {state.collectionPath}</Text>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box width={3}>{renderStatusIcon(state.status)}</Box>
@@ -149,5 +180,7 @@ function renderStatusIcon(status: ModelState['status']) {
       return <Text color="green">✔</Text>;
     case 'failed':
       return <Text color="red">✖</Text>;
+    case 'unsupported':
+      return <Text color="yellow">⊘</Text>;
   }
 }

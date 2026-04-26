@@ -1,5 +1,6 @@
 import {
   extractCollectionName,
+  getUnsupportedTraversalReason,
   makeModelPathMatcher,
   parseModelSegments,
   resolveCollectionRef,
@@ -123,5 +124,63 @@ describe('resolveCollectionRef()', () => {
     expect(resolved.label).toBe('users/{userId}/posts/{postId}');
     expect(resolved.matchesPath('users/u1/posts/p1')).toBe(true);
     expect(resolved.matchesPath('workspaces/w1/posts/p1')).toBe(false);
+  });
+});
+
+describe('getUnsupportedTraversalReason()', () => {
+  it('returns undefined for top-level paths', () => {
+    expect(getUnsupportedTraversalReason('users/{userId}')).toBeUndefined();
+    expect(getUnsupportedTraversalReason('projects/{projectId}')).toBeUndefined();
+  });
+
+  it('returns undefined for nested paths whose collection segments are all literal', () => {
+    expect(getUnsupportedTraversalReason('users/{userId}/posts/{postId}')).toBeUndefined();
+    expect(getUnsupportedTraversalReason('orgs/{orgId}/projects/{projectId}/tasks/{taskId}')).toBeUndefined();
+  });
+
+  it('returns undefined for paths with a literal pinned doc id', () => {
+    // `data` is a pinned doc id at index 1 (an odd index), not a collection segment.
+    expect(getUnsupportedTraversalReason('static/data/users/{userId}')).toBeUndefined();
+  });
+
+  it('returns a reason for the regression case (placeholder leaf collection segment)', () => {
+    // ScriptOutput in the CIP schema: `system` (collection), `scripts` (literal doc id),
+    // `{script_id}` (placeholder collection — unsupported), `{output_id}` (doc id).
+    const reason = getUnsupportedTraversalReason('system/scripts/{script_id}/{output_id}');
+    expect(reason).toBeDefined();
+    expect(reason).toContain('{script_id}');
+    expect(reason).toContain('position 2');
+    expect(reason).toContain('collection-group');
+  });
+
+  it('returns a reason for a top-level placeholder collection', () => {
+    const reason = getUnsupportedTraversalReason('{tenant_id}/{tenantDoc}');
+    expect(reason).toBeDefined();
+    expect(reason).toContain('{tenant_id}');
+    expect(reason).toContain('position 0');
+  });
+
+  it('lists every placeholder collection segment when multiple are present', () => {
+    // Hypothetical schema with two wildcard collection levels under a literal root.
+    // Even segment count and well-formed; just unsupported by collection-group.
+    const reason = getUnsupportedTraversalReason('root/literalDoc/{group_id}/{group_doc}/{leaf_id}/{leafDoc}');
+    expect(reason).toBeDefined();
+    expect(reason).toContain('{group_id}');
+    expect(reason).toContain('{leaf_id}');
+  });
+
+  it('throws (rather than returning a reason) for malformed paths', () => {
+    // Structural malformation is a different problem; surfacing it as a thrown error
+    // matches the rest of the path-handling helpers.
+    expect(() => getUnsupportedTraversalReason('users')).toThrow();
+    expect(() => getUnsupportedTraversalReason('')).toThrow();
+  });
+});
+
+describe('extractCollectionName() — unsupported paths', () => {
+  it('asserts (does not silently return a placeholder) when the leaf is a placeholder', () => {
+    // Callers should filter via getUnsupportedTraversalReason() first; this assertion
+    // keeps the helper honest if a future caller forgets that step.
+    expect(() => extractCollectionName('system/scripts/{script_id}/{output_id}')).toThrow();
   });
 });

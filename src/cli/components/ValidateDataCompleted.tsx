@@ -10,9 +10,10 @@ type Props = {
 };
 
 export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
-  const { summary, models } = result;
+  const { summary, models, unsupportedModels } = result;
   const anyInvalid = summary.totalInvalid > 0;
   const anySkipped = summary.totalSkipped > 0;
+  const anyUnsupported = unsupportedModels.length > 0;
 
   return (
     <Box flexDirection="column">
@@ -34,7 +35,17 @@ export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
             {m.skipped > 0 ? <Text color="yellow"> · {m.skipped.toLocaleString()} skipped (other models)</Text> : null}
           </Box>
         ))}
+        {unsupportedModels.map(m => (
+          <Box key={m.name}>
+            <Box width={24}>
+              <Text>{m.name}</Text>
+            </Box>
+            <Text color="yellow">unsupported · {m.modelPath}</Text>
+          </Box>
+        ))}
       </Box>
+
+      {anyUnsupported ? <UnsupportedNotice result={result} /> : null}
 
       {anySkipped ? <SkippedNotice result={result} /> : null}
 
@@ -46,6 +57,31 @@ export function ValidateDataCompleted({ result, pathToOutFile }: Props) {
           <Text color="yellowBright">{pathToOutFile}</Text>
         </Box>
       ) : null}
+    </Box>
+  );
+}
+
+function UnsupportedNotice({ result }: { result: ValidateDataResult }) {
+  const { unsupportedModels } = result;
+  if (unsupportedModels.length === 0) return null;
+
+  return (
+    <Box marginTop={1} flexDirection="column">
+      <Text color="yellow">
+        ⊘ {unsupportedModels.length.toLocaleString()} model(s) were skipped because their path is not supported by the
+        current data validator:
+      </Text>
+      {unsupportedModels.map(m => (
+        <Box key={m.name} flexDirection="column" marginLeft={2}>
+          <Text color="yellow">
+            • {m.name} <Text dimColor>({m.modelPath})</Text>
+          </Text>
+          <Text dimColor>
+            {'  '}
+            {m.reason}
+          </Text>
+        </Box>
+      ))}
     </Box>
   );
 }

@@ -110,6 +110,17 @@ export type ValidateDataProgressEvent =
       type: 'model-failed';
       model: string;
       error: string;
+    }
+  | {
+      /**
+       * Emitted once per model that was selected but cannot be traversed by the current
+       * implementation (e.g. its path contains a placeholder collection-name segment).
+       * The model is reported in `unsupportedModels` and is otherwise skipped.
+       */
+      type: 'model-unsupported';
+      model: string;
+      modelPath: string;
+      reason: string;
     };
 
 /**
@@ -120,7 +131,10 @@ export interface ValidateDataResult {
   /** The internal representation of the schema parsed from the definition. */
   schema: schema.Schema;
   summary: {
+    /** Number of models that were actually traversed (excludes unsupported models). */
     totalModels: number;
+    /** Number of selected models that were not traversed because they're unsupported. */
+    totalUnsupportedModels: number;
     totalDocsScanned: number;
     totalValid: number;
     totalInvalid: number;
@@ -133,6 +147,24 @@ export interface ValidateDataResult {
     durationMs: number;
   };
   models: ValidateDataModelReport[];
+  /**
+   * Models that were selected but cannot be validated by the current implementation
+   * (e.g. their path contains a placeholder collection-name segment, which Firestore
+   * collection-group queries cannot target). These models are listed for visibility
+   * and are not reflected in `models` or in the count totals.
+   */
+  unsupportedModels: ValidateDataUnsupportedModel[];
+}
+
+/**
+ * Diagnostic entry for a model that was selected but skipped because the current
+ * traversal strategy cannot enumerate its documents.
+ */
+export interface ValidateDataUnsupportedModel {
+  name: string;
+  modelPath: string;
+  /** Human-readable explanation of why this model was skipped. */
+  reason: string;
 }
 
 /**
