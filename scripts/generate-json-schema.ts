@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { format } from 'prettier';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z } from 'zod';
 
 import { definition } from '../src/definition/index.js';
 import { assert, assertNever } from '../src/util/assert.js';
@@ -15,7 +15,27 @@ function inferCurrentSchemaVersion() {
 }
 
 function generateJsonSchema(name: string) {
-  return zodToJsonSchema(definition.zodSchema, name);
+  // Convert against the *input* type so the `.transform()` at the top of
+  // `definition` doesn't strip user-facing keys like `$schema` from the schema.
+  const inner = z.toJSONSchema(definition.zodSchema, {
+    target: 'draft-07',
+    io: 'input',
+    unrepresentable: 'any',
+  }) as Record<string, unknown> & { definitions?: Record<string, unknown> };
+
+  delete inner.$schema;
+
+  // Zod extracts cycles/reused subschemas into a nested `definitions` block
+  // whose internal $refs point at `#/definitions/<id>` (top-level). Hoist
+  // them so those refs continue to resolve once we wrap the schema below.
+  const nestedDefinitions = inner.definitions ?? {};
+  delete inner.definitions;
+
+  return {
+    $ref: `#/definitions/${name}`,
+    definitions: { ...nestedDefinitions, [name]: inner },
+    $schema: 'http://json-schema.org/draft-07/schema#',
+  };
 }
 
 type JsonSchema = ReturnType<typeof generateJsonSchema>;
