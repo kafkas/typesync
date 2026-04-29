@@ -49,6 +49,42 @@ describe('SwiftRendererImpl', () => {
             ],
           },
           modelDocs: 'A project within a workspace',
+          isDocumentModel: false,
+        },
+      ],
+    };
+
+    const result = await renderer.render(generation);
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('emits @DocumentID and the FirebaseFirestore import for document models', async () => {
+    const renderer = createSwiftRenderer({
+      indentation: 4,
+      target: 'firebase@10',
+    });
+
+    const generation: SwiftGeneration = {
+      type: 'swift',
+      declarations: [
+        {
+          type: 'struct',
+          modelName: 'Project',
+          modelType: {
+            type: 'struct',
+            literalProperties: [],
+            regularProperties: [
+              {
+                type: { type: 'string' },
+                originalName: 'name',
+                optional: false,
+                docs: null,
+              },
+            ],
+          },
+          modelDocs: null,
+          isDocumentModel: true,
         },
       ],
     };

@@ -19,3 +19,17 @@ struct Project: Codable {
 ",
 }
 `;
+
+exports[`SwiftRendererImpl emits @DocumentID and the FirebaseFirestore import for document models 1`] = `
+{
+  "content": "import Foundation
+import FirebaseFirestore
+
+struct Project: Codable {
+    @DocumentID var id: String?
+    var name: String
+}
+
+",
+}
+`;

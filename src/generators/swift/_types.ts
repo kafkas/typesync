@@ -42,6 +42,13 @@ export interface SwiftStructDeclaration {
   modelName: string;
   modelType: swift.Struct;
   modelDocs: string | null;
+  /**
+   * True if this struct corresponds to a Firestore document model. The Swift
+   * renderer uses this to emit `@DocumentID var id: String?` so the generated
+   * type can round-trip through Firestore's `Codable` SDK without forcing
+   * consumers to thread the document ID through repository APIs separately.
+   */
+  isDocumentModel: boolean;
 }
 
 export type SwiftDeclaration =

@@ -70,7 +70,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
 
   private createDeclarationForDocumentModel(model: schema.swift.DocumentModel): SwiftDeclaration {
     // A Firestore document can be considered an 'object' type
-    return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
+    return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs, true);
   }
 
   private createDeclarationForEnumType(
@@ -118,7 +118,8 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   private createDeclarationForFlatObjectType(
     type: schema.swift.types.Object,
     modelName: string,
-    modelDocs: string | null
+    modelDocs: string | null,
+    isDocumentModel = false
   ): SwiftStructDeclaration {
     const literalProperties: swift.LiteralStructProperty[] = [];
     const regularProperties: swift.RegularStructProperty[] = [];
@@ -157,6 +158,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       modelName,
       modelType: swiftType,
       modelDocs,
+      isDocumentModel,
     };
   }
 

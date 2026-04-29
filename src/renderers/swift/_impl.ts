@@ -26,7 +26,8 @@ class SwiftRendererImpl implements SwiftRenderer {
   public async render(g: SwiftGeneration): Promise<RenderedFile> {
     const b = new StringBuilder();
 
-    b.append(`${this.generateImportStatements()}\n\n`);
+    const hasDocumentModel = g.declarations.some(d => d.type === 'struct' && d.isDocumentModel);
+    b.append(`${this.generateImportStatements(hasDocumentModel)}\n\n`);
 
     g.declarations.forEach(declaration => {
       b.append(`${this.renderDeclaration(declaration)}\n\n`);
@@ -39,9 +40,15 @@ class SwiftRendererImpl implements SwiftRenderer {
     return rootFile;
   }
 
-  private generateImportStatements() {
+  private generateImportStatements(hasDocumentModel: boolean) {
     const b = new StringBuilder();
     b.append(`import Foundation`);
+    if (hasDocumentModel) {
+      // FirebaseFirestore exports the @DocumentID property wrapper used on
+      // document-model structs to bind the Firestore document ID to a Codable
+      // property without writing it into the document body.
+      b.append(`\nimport FirebaseFirestore`);
+    }
     return b.toString();
   }
 
@@ -250,6 +257,9 @@ class SwiftRendererImpl implements SwiftRenderer {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
+    if (declaration.isDocumentModel) {
+      b.append(`${this.indent(1)}@DocumentID var id: String?` + '\n');
+    }
     modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       if (property.docs !== null) {

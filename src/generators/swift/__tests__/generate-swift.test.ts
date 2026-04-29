@@ -87,6 +87,7 @@ describe('SwiftGeneratorImpl', () => {
             ],
           },
           modelDocs: 'Represents a project within a workspace',
+          isDocumentModel: true,
         },
       ],
     };
