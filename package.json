@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/kafkas/typesync.git"
   },
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "author": "Anar Kafkas <anarkafkas@gmail.com>",
   "type": "module",
   "main": "dist/cjs/index.cjs",
