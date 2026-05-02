@@ -20,7 +20,7 @@
     <a href="https://www.npmjs.com/package/typesync-cli" alt="NPM unpacked size">
         <img src="https://img.shields.io/npm/unpacked-size/typesync-cli" /></a>
     <a href="https://github.com/kafkas/typesync/blob/main/LICENSE">
-      <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Typesync CLI is released under the AGPL-3.0-only license." /></a>
+      <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="Typesync CLI is released under the MIT license." /></a>
 </p>
 
 Typesync is an open-source schema management tool that simplifies managing [Firestore](https://cloud.google.com/firestore) databases. Typesync allows you to maintain a single source of truth for your Firestore architecture in a special _schema_. With this schema in place, you can seamlessly auto-generate type definitions for multiple platforms like TypeScript, Swift, Python, and more using the CLI tool.
@@ -45,4 +45,4 @@ Explore our comprehensive [documentation](https://docs.typesync.org) for detaile
 
 # License
 
-This project is made available under the AGPL-3.0 License.
+This project is made available under the MIT License.
