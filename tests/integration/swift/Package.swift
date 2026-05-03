@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 //
 // Integration test package for typesync's Swift generator.
 //
@@ -10,13 +10,15 @@
 // Pinned to firebase-ios-sdk 10.17+ so that the @DocumentID property wrapper
 // (and the rest of the Codable/Swift extensions) live in the FirebaseFirestore
 // module directly, avoiding the deprecated FirebaseFirestoreSwift module.
+//
+// Tests are written with the Swift Testing framework (bundled with Swift 6).
 
 import PackageDescription
 
 let package = Package(
     name: "TypesyncIntegration",
     platforms: [
-        .macOS(.v12),
+        .macOS(.v13),
         .iOS(.v15),
     ],
     products: [

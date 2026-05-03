@@ -1,6 +1,6 @@
 import FirebaseFirestore
 import Foundation
-import XCTest
+import Testing
 
 @testable import TypesyncIntegration
 
@@ -8,18 +8,20 @@ import XCTest
 // Sources/TypesyncIntegration/Generated/users.swift). The runner script writes
 // it before `swift test` runs.
 
-final class UsersIntegrationTests: XCTestCase {
-    func testUserRoundTripsThroughEmulator() async throws {
+@Suite("Users round-trip via emulator")
+struct UsersIntegrationTests {
+    @Test("decoded User survives a write + read round-trip through the emulator")
+    func userRoundTripsThroughEmulator() async throws {
         let firestore = EmulatorClient.firestore()
-        let collection = firestore.collection("test_\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))")
+        let collection = firestore.collection(uniqueCollectionName())
 
         let sampleData = try Fixtures.loadSample(scenario: "users", name: "john")
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601withFractionalSeconds
         let userIn = try decoder.decode(User.self, from: sampleData)
 
-        XCTAssertEqual(userIn.username, "john_appleseed")
-        XCTAssertEqual(userIn.role, .Owner)
+        #expect(userIn.username == "john_appleseed")
+        #expect(userIn.role == .Owner)
 
         let docRef = collection.document(UUID().uuidString)
         // `setData(from:)` is synchronous on the Codable extension; the write
@@ -28,19 +30,20 @@ final class UsersIntegrationTests: XCTestCase {
         try docRef.setData(from: userIn)
 
         let snapshot = try await docRef.getDocument()
-        XCTAssertTrue(snapshot.exists, "expected the written document to be readable")
+        try #require(snapshot.exists, "expected the written document to be readable")
 
         let userOut = try snapshot.data(as: User.self)
 
-        XCTAssertEqual(userOut.username, userIn.username)
-        XCTAssertEqual(userOut.role, userIn.role)
-        XCTAssertEqual(userOut.createdAt.timeIntervalSince1970,
-                       userIn.createdAt.timeIntervalSince1970,
-                       accuracy: 0.001,
-                       "timestamp should round-trip through Firestore within ms precision")
+        #expect(userOut.username == userIn.username)
+        #expect(userOut.role == userIn.role)
+        #expect(
+            abs(userOut.createdAt.timeIntervalSince1970 - userIn.createdAt.timeIntervalSince1970) < 0.001,
+            "timestamp should round-trip through Firestore within ms precision"
+        )
     }
 
-    func testUserRoleEncodesAsRawString() throws {
+    @Test("UserRole encodes as its raw string value")
+    func userRoleEncodesAsRawString() throws {
         let user = User(
             username: "anyone",
             role: .Admin,
@@ -51,9 +54,12 @@ final class UsersIntegrationTests: XCTestCase {
         let data = try encoder.encode(user)
         let decoded = try JSONSerialization.jsonObject(with: data) as? [String: Any]
 
-        XCTAssertEqual(decoded?["role"] as? String, "admin",
-                       "string-enum cases should serialize as their raw string value")
+        #expect(decoded?["role"] as? String == "admin")
     }
+}
+
+private func uniqueCollectionName() -> String {
+    "test_" + UUID().uuidString.replacingOccurrences(of: "-", with: "")
 }
 
 private extension JSONDecoder.DateDecodingStrategy {
@@ -72,7 +78,9 @@ private extension JSONDecoder.DateDecodingStrategy {
         if let date = formatter.date(from: raw) {
             return date
         }
-        throw DecodingError.dataCorruptedError(in: container,
-            debugDescription: "Invalid ISO-8601 date: \(raw)")
+        throw DecodingError.dataCorruptedError(
+            in: container,
+            debugDescription: "Invalid ISO-8601 date: \(raw)"
+        )
     }
 }
