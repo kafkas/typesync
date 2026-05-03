@@ -1,0 +1,6 @@
+{
+  "Username": {
+    "model": "alias",
+    "type": "string"
+  }
+}
