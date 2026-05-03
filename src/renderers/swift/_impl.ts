@@ -26,7 +26,7 @@ class SwiftRendererImpl implements SwiftRenderer {
   public async render(g: SwiftGeneration): Promise<RenderedFile> {
     const b = new StringBuilder();
 
-    b.append(`${this.generateImportStatements()}\n\n`);
+    b.append(`${this.generateImportStatements(g)}\n\n`);
 
     g.declarations.forEach(declaration => {
       b.append(`${this.renderDeclaration(declaration)}\n\n`);
@@ -39,10 +39,18 @@ class SwiftRendererImpl implements SwiftRenderer {
     return rootFile;
   }
 
-  private generateImportStatements() {
+  private generateImportStatements(g: SwiftGeneration) {
     const b = new StringBuilder();
     b.append(`import Foundation`);
+    if (this.requiresFirestoreImport(g)) {
+      b.append('\n');
+      b.append(`import FirebaseFirestore`);
+    }
     return b.toString();
+  }
+
+  private requiresFirestoreImport(g: SwiftGeneration): boolean {
+    return g.declarations.some(d => d.type === 'struct' && d.modelType.documentIdProperty !== null);
   }
 
   private renderDeclaration(declaration: SwiftDeclaration) {
@@ -240,24 +248,24 @@ class SwiftRendererImpl implements SwiftRenderer {
 
   public renderStructDeclaration(declaration: SwiftStructDeclaration) {
     const { modelName, modelType, modelDocs } = declaration;
-    const propertyOriginalNames = [...modelType.literalProperties, ...modelType.regularProperties].map(
-      p => p.originalName
-    );
-    const hasNonCamelCaseOriginalName = propertyOriginalNames.some(name => camelCase(name) !== name);
+    const bodyProperties = [...modelType.literalProperties, ...modelType.regularProperties];
+    const requiresCodingKeys = bodyProperties.some(p => p.name !== p.originalName);
     const b = new StringBuilder();
     const conformedProtocolsAsString = ['Codable'].join(', ');
     if (modelDocs !== null) {
       b.append(this.buildDocCommentsFromMarkdownDocs(modelDocs) + '\n');
     }
     b.append(`struct ${modelName}: ${conformedProtocolsAsString} {` + '\n');
+    if (modelType.documentIdProperty !== null) {
+      b.append(`${this.indent(1)}@DocumentID var ${modelType.documentIdProperty.name}: String?` + '\n');
+    }
     modelType.literalProperties.forEach(property => {
       const expression = swift.expressionForType(property.type);
       if (property.docs !== null) {
         b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
       b.append(
-        `${this.indent(1)}private(set) var ${camelCase(property.originalName)}: ${expression.content} = ${property.literalValue}` +
-          '\n'
+        `${this.indent(1)}private(set) var ${property.name}: ${expression.content} = ${property.literalValue}` + '\n'
       );
     });
     modelType.regularProperties.forEach(property => {
@@ -265,18 +273,23 @@ class SwiftRendererImpl implements SwiftRenderer {
       if (property.docs !== null) {
         b.append(this.indent(1) + this.buildDocCommentsFromMarkdownDocs(property.docs) + '\n');
       }
-      b.append(
-        `${this.indent(1)}var ${camelCase(property.originalName)}: ${expression.content}${property.optional ? '?' : ''}` +
-          '\n'
-      );
+      b.append(`${this.indent(1)}var ${property.name}: ${expression.content}${property.optional ? '?' : ''}` + '\n');
     });
-    if (hasNonCamelCaseOriginalName) {
+    if (requiresCodingKeys) {
       b.append('\n');
       b.append(`${this.indent(1)}private enum CodingKeys: String, CodingKey {` + '\n');
-      propertyOriginalNames.forEach(originalName => {
-        b.append(`${this.indent(2)}case ${camelCase(originalName)}`);
-        if (camelCase(originalName) !== originalName) {
-          b.append(` = "${originalName}"`);
+      // The @DocumentID property must be listed in CodingKeys for Firestore's
+      // decoder to populate it from the document path: the SDK iterates the
+      // declared CodingKeys and special-cases entries whose backing property
+      // is `@DocumentID`-wrapped. Encoding is unaffected because the property
+      // wrapper writes nothing on encode.
+      if (modelType.documentIdProperty !== null) {
+        b.append(`${this.indent(2)}case ${modelType.documentIdProperty.name}` + '\n');
+      }
+      bodyProperties.forEach(property => {
+        b.append(`${this.indent(2)}case ${property.name}`);
+        if (property.name !== property.originalName) {
+          b.append(` = "${property.originalName}"`);
         }
         b.append('\n');
       });

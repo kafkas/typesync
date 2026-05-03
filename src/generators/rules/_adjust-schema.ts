@@ -32,6 +32,7 @@ export function adjustSchemaForRules(prevSchema: schema.Schema): schema.rules.Sc
         optional: field.optional,
         readonly: field.readonly,
         type: flattenType(field.type),
+        platformOptions: field.platformOptions,
       })),
       additionalFields: objectType.additionalFields,
     };

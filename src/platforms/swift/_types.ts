@@ -92,19 +92,47 @@ export interface SimpleUnionEnumCase {
 
 export interface Struct {
   readonly type: 'struct';
+  /**
+   * When non-null, the struct is a Firestore document model and the renderer
+   * emits a `@DocumentID var <name>: String?` property whose value the
+   * Firebase SDK populates from the document path. Null for alias-derived
+   * structs that are not document models. Modeled as an object (rather than a
+   * boolean) so the property name can become user-configurable in the future
+   * without changing the type contract.
+   */
+  readonly documentIdProperty: DocumentIdProperty | null;
   readonly literalProperties: LiteralStructProperty[];
   readonly regularProperties: RegularStructProperty[];
 }
 
+/** Description of the auto-generated `@DocumentID` property on a document struct. */
+export interface DocumentIdProperty {
+  /** Property name in the generated Swift struct. Defaults to `id`. */
+  readonly name: string;
+}
+
 export interface LiteralStructProperty {
+  /** Field name as written to Firestore (the schema field name). */
   readonly originalName: string;
+  /**
+   * Property name in the generated Swift struct. Always equal to
+   * `camelCase(originalName)` for now; literal properties are not user
+   * remappable.
+   */
+  readonly name: string;
   readonly docs: string | null;
   readonly type: String | Bool | Int;
   readonly literalValue: string;
 }
 
 export interface RegularStructProperty {
+  /** Field name as written to Firestore (the schema field name). */
   readonly originalName: string;
+  /**
+   * Property name in the generated Swift struct. Resolved by the generator
+   * from `swift.name` if the user provided it, else `camelCase(originalName)`.
+   */
+  readonly name: string;
   readonly optional: boolean;
   readonly docs: string | null;
   readonly type: Type;

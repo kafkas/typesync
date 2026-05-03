@@ -7,6 +7,7 @@ import {
   DocumentModel as DocumentModelGeneric,
   ObjectField as ObjectFieldGeneric,
   Object as ObjectGeneric,
+  PlatformDocumentModelOptions,
   Schema as SchemaGeneric,
   StringLiteral,
   Type as TypeGeneric,
@@ -23,6 +24,7 @@ export interface CreateDocumentModelParams<DocumentParameterType> {
   docs: string | null;
   type: DocumentParameterType;
   path: string;
+  platformOptions?: PlatformDocumentModelOptions;
 }
 
 export class AliasModel<AliasParameterType>
@@ -39,7 +41,7 @@ export class DocumentModel<DocumentParameterType>
   implements DocumentModelGeneric<DocumentParameterType>
 {
   public clone() {
-    return new DocumentModel(this.name, this.docs, this.cloneType(), this.path);
+    return new DocumentModel(this.name, this.docs, this.cloneType(), this.path, this.clonePlatformOptions());
   }
 }
 
@@ -138,7 +140,7 @@ export class SchemaFactory<
   }
 
   public createDocumentModel(params: CreateDocumentModelParams<DocumentParameterType>) {
-    const { name, docs, type, path } = params;
-    return new DocumentModel(name, docs, type, path);
+    const { name, docs, type, path, platformOptions } = params;
+    return new DocumentModel(name, docs, type, path, platformOptions);
   }
 }

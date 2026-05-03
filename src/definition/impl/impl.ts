@@ -11,6 +11,30 @@ export interface DocumentModel {
   docs?: string;
   type: types.Object;
   path: string;
+  swift?: SwiftDocumentModelOptions;
+}
+
+/**
+ * Swift-specific overrides for a document model. Only consumed by the Swift
+ * generator; ignored by every other generator.
+ */
+export interface SwiftDocumentModelOptions {
+  /**
+   * Configuration for the auto-generated `@DocumentID`-annotated property
+   * that the Swift generator emits on every document model struct.
+   */
+  documentIdProperty?: {
+    /**
+     * The Swift property name for the auto-generated `@DocumentID` field.
+     * Defaults to `id`.
+     *
+     * Set this to a non-`id` value (e.g. `documentId`) when the schema's
+     * document body already has a field whose Firestore key is `id`, since
+     * the Firebase iOS SDK refuses to decode a document where the
+     * `@DocumentID` property name matches an existing body field's key.
+     */
+    name: string;
+  };
 }
 
 export type Model = AliasModel | DocumentModel;

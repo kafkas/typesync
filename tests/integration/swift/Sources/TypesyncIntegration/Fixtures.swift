@@ -31,4 +31,17 @@ public enum Fixtures {
             .appendingPathComponent("\(name).json")
         return try Data(contentsOf: url)
     }
+
+    /// Convenience around `loadSample` that returns the parsed JSON object.
+    /// Tests prefer this over `JSONDecoder.decode(SomeModel.self, ...)` for
+    /// structs that include `@DocumentID`-wrapped properties, because Firebase
+    /// only allows those to be encoded/decoded by `Firestore.Encoder` /
+    /// `Firestore.Decoder`.
+    public static func loadSampleAsDict(scenario: String, name: String) throws -> [String: Any] {
+        let data = try loadSample(scenario: scenario, name: name)
+        guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw Error.rootNotConfigured
+        }
+        return dict
+    }
 }

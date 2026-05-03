@@ -1,3 +1,7 @@
+import {
+  SwiftDocumentIdPropertyCollidesWithFieldError,
+  SwiftPropertyNameCollisionError,
+} from '../../../errors/generator.js';
 import { schema } from '../../../schema/index.js';
 import { createSwiftGenerator } from '../_impl.js';
 
@@ -345,6 +349,353 @@ describe('SwiftGeneratorImpl', () => {
     const lastAliasIdx = generation.declarations.findIndex(d => d.modelName === 'Username');
     const documentIdx = generation.declarations.findIndex(d => d.modelName === 'Profile');
     expect(lastAliasIdx).toBeLessThan(documentIdx);
+  });
+
+  it('emits document model structs with a default `id` documentIdProperty', () => {
+    const s = schema.createSchemaFromDefinition({
+      Profile: {
+        model: 'document',
+        path: 'profiles/{profileId}',
+        type: { type: 'object', fields: { name: { type: 'string' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: { type: 'struct', documentIdProperty: { name: 'id' } },
+    });
+  });
+
+  it('emits alias-derived structs with a null documentIdProperty (no `@DocumentID` is generated)', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: { type: 'object', fields: { name: { type: 'string' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: { type: 'struct', documentIdProperty: null },
+    });
+  });
+
+  it('defaults each property name to camelCase(originalName) when no `swift.name` override is set', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: { type: 'object', fields: { lives_left: { type: 'int' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        regularProperties: [{ originalName: 'lives_left', name: 'livesLeft' }],
+      },
+    });
+  });
+
+  it('uses `swift.name` to override the generated Swift property name without changing the Firestore field name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: {
+          type: 'object',
+          fields: {
+            display_name: { type: 'string', swift: { name: 'displayName' } },
+            kind: { type: 'string' },
+          },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        documentIdProperty: null,
+        regularProperties: [
+          { originalName: 'display_name', name: 'displayName' },
+          { originalName: 'kind', name: 'kind' },
+        ],
+      },
+    });
+  });
+
+  it('honors `swift.name` on a literal-typed field (so the discriminator can be renamed even though it is a `private(set)` literal property)', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: {
+          type: 'object',
+          fields: {
+            type: { type: { type: 'literal', value: 'cat' }, swift: { name: 'kind' } },
+            lives: { type: 'int' },
+          },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        // The wire key stays as `type` so the discriminator continues to round-trip
+        // verbatim through Firestore; only the Swift binding changes.
+        literalProperties: [{ originalName: 'type', name: 'kind', literalValue: '"cat"' }],
+        regularProperties: [{ originalName: 'lives', name: 'lives' }],
+      },
+    });
+  });
+
+  it('threads `swift.name` through a flattened nested anonymous object, preserving it on the extracted alias model', () => {
+    const s = schema.createSchemaFromDefinition({
+      User: {
+        model: 'document',
+        path: 'users/{userId}',
+        type: {
+          type: 'object',
+          fields: {
+            credentials: {
+              type: {
+                type: 'object',
+                fields: {
+                  email_address: { type: 'string', swift: { name: 'email' } },
+                  password_hash: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+    const credentials = generation.declarations.find(d => d.modelName === 'UserCredentials');
+
+    expect(credentials).toMatchObject({
+      type: 'struct',
+      modelType: {
+        // The override on `email_address` must survive flattening into the
+        // synthetic `UserCredentials` alias model.
+        regularProperties: [
+          { originalName: 'email_address', name: 'email' },
+          { originalName: 'password_hash', name: 'passwordHash' },
+        ],
+      },
+    });
+  });
+
+  it('threads `swift.name` through a discriminated-union variant that gets flattened into its own alias model', () => {
+    const s = schema.createSchemaFromDefinition({
+      User: {
+        model: 'document',
+        path: 'users/{userId}',
+        type: {
+          type: 'object',
+          fields: {
+            pet: {
+              type: {
+                type: 'union',
+                discriminant: 'type',
+                variants: [
+                  {
+                    type: 'object',
+                    fields: {
+                      type: { type: { type: 'literal', value: 'cat' } },
+                      lives_left: { type: 'int', swift: { name: 'remainingLives' } },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+    const cat = generation.declarations.find(d => d.modelName === 'UserPetCat');
+
+    expect(cat).toMatchObject({
+      type: 'struct',
+      modelType: {
+        regularProperties: [{ originalName: 'lives_left', name: 'remainingLives' }],
+      },
+    });
+  });
+
+  it('uses `swift.documentIdProperty.name` to rename the auto-generated @DocumentID property', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: { id: { type: 'string' }, name: { type: 'string' } },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        documentIdProperty: { name: 'documentId' },
+        regularProperties: [
+          { originalName: 'id', name: 'id' },
+          { originalName: 'name', name: 'name' },
+        ],
+      },
+    });
+  });
+
+  it('throws SwiftDocumentIdPropertyCollidesWithFieldError when a document model has a body field whose Firestore key matches the @DocumentID property name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        type: {
+          type: 'object',
+          fields: {
+            id: { type: 'string', docs: 'The ID of the project' },
+            completed: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftDocumentIdPropertyCollidesWithFieldError);
+    // The message should name the model, the offending wire key, the @DocumentID
+    // property name, and point at the `documentIdProperty` escape hatch.
+    expect(() => createGenerator().generate(s)).toThrow(/Project/);
+    expect(() => createGenerator().generate(s)).toThrow(/'id'/);
+    expect(() => createGenerator().generate(s)).toThrow(/@DocumentID/);
+    expect(() => createGenerator().generate(s)).toThrow(/swift: \{ documentIdProperty: \{ name: '<unique-name>' \} \}/);
+  });
+
+  it('does not throw when the colliding @DocumentID property is renamed away from the conflicting field key', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: {
+            id: { type: 'string' },
+            completed: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).not.toThrow();
+  });
+
+  it('still throws SwiftDocumentIdPropertyCollidesWithFieldError if the user renames the @DocumentID property to a name that matches another body wire key', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: { documentId: { type: 'string' } },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftDocumentIdPropertyCollidesWithFieldError);
+    expect(() => createGenerator().generate(s)).toThrow(/'documentId'/);
+  });
+
+  it('throws SwiftPropertyNameCollisionError when two body fields rename to the same Swift property name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        type: {
+          type: 'object',
+          fields: {
+            first_name: { type: 'string', swift: { name: 'displayName' } },
+            last_name: { type: 'string', swift: { name: 'displayName' } },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftPropertyNameCollisionError);
+    expect(() => createGenerator().generate(s)).toThrow(/'displayName'/);
+    // Both Firestore keys are mentioned so the user can locate them in the schema.
+    expect(() => createGenerator().generate(s)).toThrow(/'first_name'/);
+    expect(() => createGenerator().generate(s)).toThrow(/'last_name'/);
+    // The remediation should point at `swift.name` (the per-field escape hatch).
+    expect(() => createGenerator().generate(s)).toThrow(/swift: \{ name: '<unique-name>' \}/);
+  });
+
+  it("throws SwiftPropertyNameCollisionError when a body field's natural camelCase Swift name collides with a renamed @DocumentID (no explicit swift.name, no wire-key collision)", () => {
+    // Wire keys are `document_id` (body) vs `documentId` (@DocumentID), so
+    // there's no Firestore-side collision. The Swift binding for `document_id`
+    // naturally camelCases to `documentId`, which clashes with the renamed
+    // @DocumentID at the Swift level.
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: { document_id: { type: 'string' } },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftPropertyNameCollisionError);
+    expect(() => createGenerator().generate(s)).toThrow(/'documentId'/);
+    expect(() => createGenerator().generate(s)).toThrow(/'document_id'/);
+    expect(() => createGenerator().generate(s)).toThrow(/@DocumentID/);
+  });
+
+  it('throws SwiftPropertyNameCollisionError when a body field is renamed via swift.name onto the @DocumentID property name (no wire-key collision)', () => {
+    // The body wire key here is `external_id` (no overlap with any
+    // @DocumentID name), but `swift.name: 'documentId'` makes the body
+    // field's Swift binding collide with the renamed `@DocumentID`
+    // property. This is a Swift-side collision (case C), distinct from the
+    // wire-key collision detected by SwiftDocumentIdPropertyCollidesWithFieldError.
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: {
+            external_id: { type: 'string', swift: { name: 'documentId' } },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftPropertyNameCollisionError);
+    expect(() => createGenerator().generate(s)).toThrow(/'documentId'/);
+    expect(() => createGenerator().generate(s)).toThrow(/@DocumentID/);
+    expect(() => createGenerator().generate(s)).toThrow(/'external_id'/);
+    // The remediation should mention both escape hatches when @DocumentID is
+    // one of the colliding sources, since either side can be renamed.
+    expect(() => createGenerator().generate(s)).toThrow(/documentIdProperty/);
+    expect(() => createGenerator().generate(s)).toThrow(/swift: \{ name: '<unique-name>' \}/);
   });
 
   it('does not mutate the input schema', () => {
