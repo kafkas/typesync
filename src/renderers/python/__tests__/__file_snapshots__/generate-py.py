@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+import typing
+import datetime
+import enum
+import pydantic
+from pydantic_core import core_schema
+from typing_extensions import Annotated
+
+class TypesyncUndefined:
+    """Do not use this class in your code. Use the `UNDEFINED` sentinel instead."""
+    _instance = None
+
+    def __init__(self):
+        if TypesyncUndefined._instance is not None:
+            raise RuntimeError("TypesyncUndefined instances cannot be created directly. Import and use the UNDEFINED sentinel instead.")
+        else:
+            TypesyncUndefined._instance = self
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source, handler) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(cls.validate)
+
+    @classmethod
+    def validate(cls, value: typing.Any, info) -> TypesyncUndefined:
+        if not isinstance(value, cls):
+            raise ValueError("Undefined field type is not valid")
+        return value
+
+UNDEFINED = TypesyncUndefined()
+"""A sentinel value that can be used to indicate that a value should be undefined. During serialization all values that are marked as undefined will be removed. The difference between `UNDEFINED` and `None` is that values that are set to `None` will serialize to explicit null."""
+
+class TypesyncModel(pydantic.BaseModel):
+    def model_dump(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        processed = {}
+        for field_name, field_value in dict(self).items():
+            if isinstance(field_value, pydantic.BaseModel):
+                processed[field_name] = field_value.model_dump(**kwargs)
+            elif isinstance(field_value, list):
+                processed[field_name] = [item.model_dump(**kwargs) if isinstance(item, pydantic.BaseModel) else item for item in field_value]
+            elif isinstance(field_value, dict):
+                processed[field_name] = {key: value.model_dump(**kwargs) if isinstance(value, pydantic.BaseModel) else value for key, value in field_value.items()}
+            elif field_value is UNDEFINED:
+                continue
+            else:
+                processed[field_name] = field_value
+        return processed
+
+# Model Definitions
+
+Username = str
+"""A string that uniquely identifies the user."""
+
+UserMetadata = typing.Any
+
+class Project(TypesyncModel):
+    """A project within a workspace"""
+    name: str
+    completed: bool
+    """Whether the project is completed."""
+
+    class Config:
+        use_enum_values = True
+        extra = 'forbid'
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        super().__setattr__(name, value)
+

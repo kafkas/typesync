@@ -4,18 +4,24 @@
     "outDir": "lib",
     "rootDir": "src",
     "sourceMap": true,
-    "declaration": false
+    "declaration": false,
+    "types": ["node", "yargs"]
   },
+  "include": ["src/**/*"],
   "exclude": [
     "client/**/*",
     "dist",
-    "jest.config.global.ts",
-    "jest.config.ts",
     "lib",
     "playground/**/*",
     "scripts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.tsx",
     "src/**/__tests__/**/*",
     "tests/**/*",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "vitest.config.ts",
+    "vitest.security.config.ts"
   ]
 }

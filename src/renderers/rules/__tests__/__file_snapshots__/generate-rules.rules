@@ -1,8 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`RulesRendererImpl correctly renders a Security Rules generation 1`] = `
-{
-  "content": "rules_version = '2';
+rules_version = '2';
 service cloud.firestore {
   // t-start
   function isUser(data) {
@@ -28,6 +24,4 @@ service cloud.firestore {
       allow read, write;
     }
   }
-}",
 }
-`;

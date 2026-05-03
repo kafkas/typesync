@@ -56,7 +56,7 @@ describe('PythonRendererImpl', () => {
 
     const result = await renderer.render(generation);
 
-    expect(result).toMatchSnapshot();
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/generate-py.py');
   });
 
   it('extends from custom base class if `customPydanticBase` is provided', async () => {
@@ -86,6 +86,6 @@ describe('PythonRendererImpl', () => {
 
     const result = await renderer.render(generation);
 
-    expect(result).toMatchSnapshot();
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/custom-pydantic-base.py');
   });
 });

@@ -33,6 +33,8 @@ describe('MermaidGraph', () => {
     graph.link(translationsCol, translationDoc);
     graph.link(authorsCol, authorDoc);
 
-    expect(await renderer.render({ type: 'graph', graph })).toMatchSnapshot();
+    const result = await renderer.render({ type: 'graph', graph });
+
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/render-graph.md');
   });
 });

@@ -1,2 +1,3 @@
 dist/**/*
 playground/**/*
+src/**/__file_snapshots__/**/*
