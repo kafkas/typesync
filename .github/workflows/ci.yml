@@ -120,7 +120,9 @@ jobs:
 
   integration-swift:
     name: Integration tests (Swift)
-    runs-on: macos-14
+    # macos-15 ships with Xcode 16, which bundles Swift 6 and the `Testing`
+    # framework that the test target imports.
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v5
 
