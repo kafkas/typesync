@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-    Autogenerate Firestore model types for all platforms
+    Schema-first Firestore tooling for types, validation, and visualization
 </p>
 
 <p align="center">
