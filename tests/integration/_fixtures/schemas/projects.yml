@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../../../schema.local.json
+#
+# Shared integration-test fixture for the Swift `@DocumentID` feature, the
+# model-level `swift.documentIdProperty.name` rename, and the field-level
+# `swift.name` rename. Each platform consumes it differently:
+#
+#   - Swift: the document path id is bound to the auto-generated
+#     `@DocumentID var documentId: String?` property (renamed away from `id`
+#     to avoid colliding with the body field whose Firestore key is `id`),
+#     and the body field `display_name` is exposed as `displayName` via the
+#     field-level `swift.name` rename.
+#   - Python and TypeScript ignore both swift overrides and round-trip the
+#     body fields verbatim under their schema names.
+
+Project:
+  model: document
+  path: projects/{projectId}
+  docs: A project document.
+  swift:
+    # Rename the auto-generated @DocumentID property so it does not collide
+    # with the body-side `id` field below. The Firebase iOS SDK refuses to
+    # decode a document if the @DocumentID property name matches a wire key
+    # in the body, so renaming the @DocumentID property (rather than the
+    # body field) is the correct fix.
+    documentIdProperty:
+      name: documentId
+  type:
+    type: object
+    fields:
+      id:
+        type: string
+        docs: Caller-supplied identifier preserved verbatim in the document body.
+      display_name:
+        type: string
+        docs: Human-readable label for the project.
+        swift:
+          name: displayName
+      created_at:
+        type: timestamp

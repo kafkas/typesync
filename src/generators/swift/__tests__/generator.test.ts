@@ -1,3 +1,7 @@
+import {
+  SwiftDocumentIdPropertyCollidesWithFieldError,
+  SwiftPropertyNameCollisionError,
+} from '../../../errors/generator.js';
 import { schema } from '../../../schema/index.js';
 import { createSwiftGenerator } from '../_impl.js';
 
@@ -345,6 +349,183 @@ describe('SwiftGeneratorImpl', () => {
     const lastAliasIdx = generation.declarations.findIndex(d => d.modelName === 'Username');
     const documentIdx = generation.declarations.findIndex(d => d.modelName === 'Profile');
     expect(lastAliasIdx).toBeLessThan(documentIdx);
+  });
+
+  it('emits document model structs with a default `id` documentIdProperty', () => {
+    const s = schema.createSchemaFromDefinition({
+      Profile: {
+        model: 'document',
+        path: 'profiles/{profileId}',
+        type: { type: 'object', fields: { name: { type: 'string' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: { type: 'struct', documentIdProperty: { name: 'id' } },
+    });
+  });
+
+  it('emits alias-derived structs with a null documentIdProperty (no `@DocumentID` is generated)', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: { type: 'object', fields: { name: { type: 'string' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: { type: 'struct', documentIdProperty: null },
+    });
+  });
+
+  it('defaults each property name to camelCase(originalName) when no `swift.name` override is set', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: { type: 'object', fields: { lives_left: { type: 'int' } } },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        regularProperties: [{ originalName: 'lives_left', name: 'livesLeft' }],
+      },
+    });
+  });
+
+  it('uses `swift.name` to override the generated Swift property name without changing the Firestore field name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Cat: {
+        model: 'alias',
+        type: {
+          type: 'object',
+          fields: {
+            display_name: { type: 'string', swift: { name: 'displayName' } },
+            kind: { type: 'string' },
+          },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        documentIdProperty: null,
+        regularProperties: [
+          { originalName: 'display_name', name: 'displayName' },
+          { originalName: 'kind', name: 'kind' },
+        ],
+      },
+    });
+  });
+
+  it('uses `swift.documentIdProperty.name` to rename the auto-generated @DocumentID property', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: { id: { type: 'string' }, name: { type: 'string' } },
+        },
+      },
+    });
+
+    const generation = createGenerator().generate(s);
+
+    expect(generation.declarations[0]).toMatchObject({
+      type: 'struct',
+      modelType: {
+        documentIdProperty: { name: 'documentId' },
+        regularProperties: [
+          { originalName: 'id', name: 'id' },
+          { originalName: 'name', name: 'name' },
+        ],
+      },
+    });
+  });
+
+  it('throws SwiftDocumentIdPropertyCollidesWithFieldError when a document model has a body field whose Firestore key matches the @DocumentID property name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        type: {
+          type: 'object',
+          fields: {
+            id: { type: 'string', docs: 'The ID of the project' },
+            completed: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftDocumentIdPropertyCollidesWithFieldError);
+  });
+
+  it('does not throw when the colliding @DocumentID property is renamed away from the conflicting field key', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: {
+            id: { type: 'string' },
+            completed: { type: 'boolean' },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).not.toThrow();
+  });
+
+  it('still throws if the user renames the @DocumentID property to a name that collides with another body field key', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        swift: { documentIdProperty: { name: 'documentId' } },
+        type: {
+          type: 'object',
+          fields: { documentId: { type: 'string' } },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftDocumentIdPropertyCollidesWithFieldError);
+  });
+
+  it('throws SwiftPropertyNameCollisionError when two fields rename to the same Swift property name', () => {
+    const s = schema.createSchemaFromDefinition({
+      Project: {
+        model: 'document',
+        path: 'projects/{projectId}',
+        type: {
+          type: 'object',
+          fields: {
+            first_name: { type: 'string', swift: { name: 'displayName' } },
+            last_name: { type: 'string', swift: { name: 'displayName' } },
+          },
+        },
+      },
+    });
+
+    expect(() => createGenerator().generate(s)).toThrow(SwiftPropertyNameCollisionError);
   });
 
   it('does not mutate the input schema', () => {

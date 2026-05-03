@@ -97,17 +97,31 @@ describe('SwiftRendererImpl', () => {
           modelDocs: 'A cat',
           modelType: {
             type: 'struct',
+            documentIdProperty: null,
             literalProperties: [
               {
                 originalName: 'type',
+                name: 'type',
                 docs: 'Discriminator',
                 type: { type: 'string' },
                 literalValue: '"cat"',
               },
             ],
             regularProperties: [
-              { originalName: 'lives_left', type: { type: 'int' }, optional: false, docs: 'How many lives' },
-              { originalName: 'nickname', type: { type: 'string' }, optional: true, docs: null },
+              {
+                originalName: 'lives_left',
+                name: 'livesLeft',
+                type: { type: 'int' },
+                optional: false,
+                docs: 'How many lives',
+              },
+              {
+                originalName: 'nickname',
+                name: 'nickname',
+                type: { type: 'string' },
+                optional: true,
+                docs: null,
+              },
             ],
           },
         },
@@ -116,6 +130,93 @@ describe('SwiftRendererImpl', () => {
 
     const result = await createRenderer().render(generation);
     await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/struct-declaration.swift');
+  });
+
+  it('renders document-model structs with @DocumentID and the FirebaseFirestore import', async () => {
+    const generation: SwiftGeneration = {
+      type: 'swift',
+      declarations: [
+        {
+          type: 'struct',
+          modelName: 'User',
+          modelDocs: null,
+          modelType: {
+            type: 'struct',
+            documentIdProperty: { name: 'id' },
+            literalProperties: [],
+            regularProperties: [
+              { originalName: 'username', name: 'username', type: { type: 'string' }, optional: false, docs: null },
+              { originalName: 'created_at', name: 'createdAt', type: { type: 'date' }, optional: false, docs: null },
+            ],
+          },
+        },
+      ],
+    };
+
+    const result = await createRenderer().render(generation);
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/document-id-struct.swift');
+  });
+
+  it('renders a struct whose @DocumentID property is renamed via swift.documentIdProperty.name (so a body-side `id` field can coexist)', async () => {
+    const generation: SwiftGeneration = {
+      type: 'swift',
+      declarations: [
+        {
+          type: 'struct',
+          modelName: 'Project',
+          modelDocs: null,
+          modelType: {
+            type: 'struct',
+            documentIdProperty: { name: 'documentId' },
+            literalProperties: [],
+            regularProperties: [
+              {
+                originalName: 'id',
+                name: 'id',
+                type: { type: 'string' },
+                optional: false,
+                docs: 'Caller-supplied identifier; not the document path id.',
+              },
+              { originalName: 'name', name: 'name', type: { type: 'string' }, optional: false, docs: null },
+            ],
+          },
+        },
+      ],
+    };
+
+    const result = await createRenderer().render(generation);
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/document-id-rename.swift');
+  });
+
+  it('renders a struct that combines a renamed regular property (swift.name) with a renamed @DocumentID property', async () => {
+    const generation: SwiftGeneration = {
+      type: 'swift',
+      declarations: [
+        {
+          type: 'struct',
+          modelName: 'Project',
+          modelDocs: null,
+          modelType: {
+            type: 'struct',
+            documentIdProperty: { name: 'documentId' },
+            literalProperties: [],
+            regularProperties: [
+              {
+                originalName: 'display_name',
+                name: 'displayName',
+                type: { type: 'string' },
+                optional: false,
+                docs: null,
+              },
+              { originalName: 'id', name: 'externalId', type: { type: 'string' }, optional: false, docs: null },
+            ],
+          },
+        },
+      ],
+    };
+
+    const result = await createRenderer().render(generation);
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/document-id-and-field-rename.swift');
   });
 
   it('renders a discriminated-union-enum declaration with cases, CodingKeys, and Codable init/encode methods', async () => {
@@ -172,8 +273,11 @@ describe('SwiftRendererImpl', () => {
           modelDocs: null,
           modelType: {
             type: 'struct',
+            documentIdProperty: null,
             literalProperties: [],
-            regularProperties: [{ originalName: 'name', type: { type: 'string' }, optional: false, docs: null }],
+            regularProperties: [
+              { originalName: 'name', name: 'name', type: { type: 'string' }, optional: false, docs: null },
+            ],
           },
         },
       ],
