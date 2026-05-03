@@ -23,9 +23,17 @@
       <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="Typesync CLI is released under the MIT license." /></a>
 </p>
 
-Typesync is an open-source schema management tool that simplifies managing [Firestore](https://cloud.google.com/firestore) databases. Typesync allows you to maintain a single source of truth for your Firestore architecture in a special _schema_. With this schema in place, you can seamlessly auto-generate type definitions for multiple platforms like TypeScript, Swift, Python, and more using the CLI tool.
+Typesync is an open-source schema management tool for [Firestore](https://cloud.google.com/firestore) databases. You maintain a single source of truth for your Firestore architecture in a _schema_, then use the CLI to generate code and validate data from that schema.
 
-Typesync keeps your database and application code consistent and up-to-date at all times. In addition to type definitions, it lets you generate other useful things like Security Rules, Mermaid graphs visualizing your database architecture and documentation for your data models.
+Typesync helps keep your database, generated application code, and validation checks aligned as your schema changes.
+
+# How Typesync Helps You
+
+- Generate Firestore models for TypeScript, Swift, and Python from one schema.
+- Validate live Firestore documents with `typesync validate-data`.
+- Generate Security Rules validators from the same model definitions.
+- Visualize your Firestore architecture with Mermaid graphs.
+- Carry schema documentation into generated model output.
 
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
@@ -42,6 +50,7 @@ Explore our comprehensive [documentation](https://docs.typesync.org) for detaile
 - [Quickstart](https://docs.typesync.org/quickstart): Get up and running with Typesync quickly.
 - [Upgrading](https://docs.typesync.org/upgrading): Guidelines on upgrading to the latest version of the CLI.
 - [Types](https://docs.typesync.org/schema/types): Details on the types supported by Typesync’s type system.
+- [validate-data](https://docs.typesync.org/cli/validate-data): Validate Firestore documents against your schema.
 
 # License
 

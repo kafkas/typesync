@@ -1,0 +1,134 @@
+---
+title: 'validate-data'
+description: 'Validate live Firestore documents against your Typesync schema.'
+icon: 'rectangle-terminal'
+---
+
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+
+Traverses Firestore collections for selected document models and validates each document against a Zod validator built from your Typesync schema. The command reports invalid documents and does not write to Firestore.
+
+You must explicitly choose what to scan with one or more `--model` flags or with `--all-models`.
+
+<Warning>
+  `validate-data` can read every document in the selected collections. Collections can contain hundreds of thousands of
+  documents, so a full scan can be slow and can incur Firestore read costs. Run this command when you need to audit or
+  investigate stored data, not as a routine development or deployment step.
+</Warning>
+
+## Usage
+
+```bash
+typesync validate-data --definition <filePathOrPattern> --model <modelName>
+```
+
+```bash
+typesync validate-data --definition 'definition/**/*.yml' --model User --model Post --serviceAccount ./service-account.json
+```
+
+## Options
+
+<DefinitionOption />
+
+<ParamField path="model" type="string[]" required>
+  The document model to validate. Repeat the flag to validate multiple models. Mutually exclusive with `allModels`.
+</ParamField>
+
+<ParamField path="allModels" type="boolean" default="false">
+  Validates every document model in the schema. This is opt-in because scanning a large Firestore project can be slow
+  and can incur read costs. Mutually exclusive with `model`.
+</ParamField>
+
+<ParamField path="serviceAccount" type="string">
+  Path to a Google Cloud service account JSON file. If omitted, Typesync uses the `GOOGLE_APPLICATION_CREDENTIALS`
+  environment variable when it is set.
+</ParamField>
+
+<ParamField path="projectId" type="string">
+  Overrides the Firebase project ID. This is most useful when validating data in the Firestore emulator.
+</ParamField>
+
+<ParamField path="emulatorHost" type="string">
+  Points the validator at the Firestore emulator instead of a live project. Use a `host:port` value such as
+  `localhost:8080`.
+</ParamField>
+
+<ParamField path="maxRetries" type="number" default="5">
+  Maximum retry attempts per batch for transient Firestore errors.
+</ParamField>
+
+<ParamField path="batchSize" type="number">
+  Number of documents fetched per page during traversal.
+</ParamField>
+
+<ParamField path="limit" type="number">
+  Stops validation for each selected model after this many documents. Use this for spot checks on large collections.
+</ParamField>
+
+<ParamField path="outFile" type="string">
+  Writes the full JSON validation report to the specified file.
+</ParamField>
+
+<ParamField path="json" type="boolean" default="false">
+  Prints a JSON summary to stdout instead of rendering the live progress UI.
+</ParamField>
+
+<DebugOption />
+
+## Examples
+
+### Validate selected models
+
+```bash
+typesync validate-data \
+  --definition 'definition/**/*.yml' \
+  --model User \
+  --model Post \
+  --serviceAccount ./service-account.json
+```
+
+### Validate all document models
+
+```bash
+typesync validate-data \
+  --definition 'definition/**/*.yml' \
+  --all-models \
+  --serviceAccount ./service-account.json
+```
+
+### Validate emulator data
+
+```bash
+typesync validate-data \
+  --definition 'definition/**/*.yml' \
+  --model User \
+  --projectId demo-project \
+  --emulatorHost localhost:8080
+```
+
+### Write a report file
+
+```bash
+typesync validate-data \
+  --definition 'definition/**/*.yml' \
+  --all-models \
+  --json \
+  --outFile validation-report.json
+```
+
+The command exits with code `1` when it finds invalid documents. It exits with
+code `2` when the validation run itself fails, such as when credentials are
+missing or a selected model does not exist.
+
+## Traversal support
+
+Typesync can validate top-level collections and nested subcollections whose
+collection-name segments are literal strings. For example,
+`users/{userId}/posts/{postId}` can be traversed because the collection names
+are `users` and `posts`.
+
+<Note>
+  Model paths with placeholder collection-name segments cannot be traversed by the current implementation because
+  Firestore collection-group queries require a literal collection ID.
+</Note>

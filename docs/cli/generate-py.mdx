@@ -1,13 +1,13 @@
 ---
-title: "generate-py"
-icon: "rectangle-terminal"
+title: 'generate-py'
+icon: 'rectangle-terminal'
 ---
 
-import DefinitionOption from "/snippets/cli-option-definition.mdx";
-import OutFileOption from "/snippets/cli-option-out-file.mdx";
-import TargetOption from "/snippets/cli-option-target.mdx";
-import IndentationOption from "/snippets/cli-option-indentation.mdx";
-import DebugOption from "/snippets/cli-option-debug.mdx";
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+import IndentationOption from '/snippets/cli-option-indentation.mdx';
+import OutFileOption from '/snippets/cli-option-out-file.mdx';
+import TargetOption from '/snippets/cli-option-target.mdx';
 
 Generates Python/Pydantic type definitions for the specified schema and writes them to the specified file. Typesync first “flattens” your schema, creating new aliases for inline types defined within. It then generates the classes, enums, aliases, etc. including serializers and deserializers.
 
@@ -34,9 +34,8 @@ Example values:
 </ParamField>
 
 <ParamField type="string" path="undefinedSentinelName" default="UNDEFINED">
-  The name of the sentinel value used to indicate that a field should be missing
-  from a given object. This is generated as a variable alongside your model
-  definitions.
+  The name of the sentinel value used to indicate that a field should be missing from a given object. This is generated
+  as a variable alongside your model definitions.
 </ParamField>
 
 <IndentationOption />

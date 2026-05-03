@@ -1,13 +1,17 @@
 ---
-title: "validate"
-icon: "rectangle-terminal"
+title: 'validate'
+icon: 'rectangle-terminal'
 ---
 
-import DefinitionOption from "/snippets/cli-option-definition.mdx";
-import DebugOption from "/snippets/cli-option-debug.mdx";
-
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
 
 Checks if the specified schema definition is syntactically valid.
+
+<Note>
+  This command validates the schema files themselves. To validate documents that already exist in Firestore, use
+  [validate-data](/cli/validate-data).
+</Note>
 
 ## Usage
 

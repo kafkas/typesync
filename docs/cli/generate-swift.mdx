@@ -1,15 +1,17 @@
 ---
-title: "generate-swift"
-icon: "rectangle-terminal"
+title: 'generate-swift'
+icon: 'rectangle-terminal'
 ---
 
-import DefinitionOption from "/snippets/cli-option-definition.mdx";
-import OutFileOption from "/snippets/cli-option-out-file.mdx";
-import TargetOption from "/snippets/cli-option-target.mdx";
-import IndentationOption from "/snippets/cli-option-indentation.mdx";
-import DebugOption from "/snippets/cli-option-debug.mdx";
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+import IndentationOption from '/snippets/cli-option-indentation.mdx';
+import OutFileOption from '/snippets/cli-option-out-file.mdx';
+import TargetOption from '/snippets/cli-option-target.mdx';
 
-Generates Swift type definitions for the specified schema and writes them to the specified file. Typesync first "flattens" your schema, creating new aliases for inline types defined within. It then generates the primary and auxiliary structs, enums, aliases, etc. including encoders and decoders.
+Generates Swift type definitions for the specified schema and writes them to the specified file. Typesync first "flattens" your schema, creating new aliases for inline types defined within. It then generates the primary and auxiliary structs, enums, aliases, encoders, and decoders.
+
+For document models, generated Swift structs include an `@DocumentID var id: String?` property by default. The Firebase Apple SDK fills this value from the document path when decoding and excludes it from the encoded document body when writing.
 
 ## Usage
 
@@ -28,3 +30,62 @@ typesync generate-swift --definition <filePathOrPattern> --target <targetEnviron
 ## Targets
 
 - `firebase@10`: For Swift projects that rely on the [Firebase Apple SDK (v10)](https://github.com/firebase/firebase-ios-sdk).
+
+## Document IDs
+
+Document model structs import `FirebaseFirestore` and include an `@DocumentID`
+property:
+
+```swift
+import FirebaseFirestore
+
+struct User: Codable {
+  @DocumentID var id: String?
+  var username: String
+}
+```
+
+If a document body already has a Firestore field named `id`, rename the generated
+document ID property on that document model:
+
+```yaml
+User:
+  model: document
+  path: users/{userId}
+  swift:
+    documentIdProperty:
+      name: documentId
+  type:
+    type: object
+    fields:
+      id:
+        type: string
+      username:
+        type: string
+```
+
+This produces `@DocumentID var documentId: String?` while keeping the body field
+named `id`.
+
+## Swift field names
+
+Use `swift.name` on a field when the generated Swift property name should differ
+from the Firestore field name. Typesync keeps encoding and decoding aligned with
+the original Firestore key through `CodingKeys`.
+
+```yaml
+User:
+  model: document
+  path: users/{userId}
+  type:
+    type: object
+    fields:
+      class:
+        type: string
+        swift:
+          name: userClass
+```
+
+Typesync fails generation if two fields resolve to the same Swift property name,
+or if a body field conflicts with the generated `@DocumentID` property. Rename
+one of the properties with `swift.name` or `swift.documentIdProperty.name`.

@@ -1,27 +1,33 @@
 ---
 title: Introduction
+description: 'Learn what Typesync does for Firestore schema management, code generation, and data validation.'
 ---
 
-import ExampleDefinition from "/snippets/example-definition.mdx";
-import ExampleGenerationTSFrontend from "/snippets/example-generation-ts-frontend.mdx";
-import ExampleGenerationTSBackend from "/snippets/example-generation-ts-backend.mdx";
-import ExampleGenerationPython from "/snippets/example-generation-py.mdx";
-import ExampleGenerationSwift from "/snippets/example-generation-swift.mdx";
-import ExampleGenerationRules from "/snippets/example-generation-rules.mdx";
+import ExampleDefinition from '/snippets/example-definition.mdx';
+import ExampleGenerationPython from '/snippets/example-generation-py.mdx';
+import ExampleGenerationRules from '/snippets/example-generation-rules.mdx';
+import ExampleGenerationSwift from '/snippets/example-generation-swift.mdx';
+import ExampleGenerationTSBackend from '/snippets/example-generation-ts-backend.mdx';
+import ExampleGenerationTSFrontend from '/snippets/example-generation-ts-frontend.mdx';
 
-import ExampleUsageTSFrontend from "/snippets/example-usage-ts-frontend.mdx";
-import ExampleUsageTSBackend from "/snippets/example-usage-ts-backend.mdx";
-import ExampleUsageSwift from "/snippets/example-usage-swift.mdx";
-import ExampleUsagePython from "/snippets/example-usage-py.mdx";
+import ExampleUsagePython from '/snippets/example-usage-py.mdx';
+import ExampleUsageSwift from '/snippets/example-usage-swift.mdx';
+import ExampleUsageTSBackend from '/snippets/example-usage-ts-backend.mdx';
+import ExampleUsageTSFrontend from '/snippets/example-usage-ts-frontend.mdx';
 
-Typesync is an open-source schema management toolkit that simplifies managing [Firestore](https://cloud.google.com/firestore) databases. Typesync allows you to maintain a single source of truth for your Firestore architecture in a special _schema_. With this schema in place, you can seamlessly auto-generate type definitions for multiple platforms like TypeScript, Swift, Python, and more using the CLI tool.
+Typesync is an open-source schema management toolkit for [Firestore](https://cloud.google.com/firestore) databases. You maintain a single source of truth for your Firestore architecture in a _schema_, then use the CLI to generate code and validate data from that schema.
 
-Typesync keeps your database and application code consistent and up-to-date at all times. In addition to type definitions, it lets you generate other useful things like Security Rules, Mermaid graphs visualizing your database architecture and documentation for your data models.
+Typesync helps keep your database, generated application code, and validation checks aligned as your schema changes.
 
-<Frame
-  type="glass"
-  caption="Single source of truth for your Firestore architecture"
->
+## How Typesync helps you
+
+- **Generate application models** for TypeScript, Swift, and Python from the same Firestore schema.
+- **Validate live Firestore data** against your schema with `typesync validate-data`, using generated Zod validators under the hood.
+- **Generate Security Rules validators** so Firestore writes can be checked against the same model definitions.
+- **Visualize your database architecture** by generating Mermaid graphs from document model paths.
+- **Document your data models** with schema-level descriptions that flow into generated output.
+
+<Frame type="glass" caption="Single source of truth for your Firestore architecture">
   <img src="/images/architecture-v3.png" />
 </Frame>
 
@@ -33,7 +39,7 @@ In the example below, we define our models in `models.yml`.
 
 <ExampleDefinition />
 
-We then run the following commands to generate type definitions for four different environments and type validators for Security Rules:
+We then run the following commands to generate type definitions for four different environments, generate type validators for Security Rules, and validate existing Firestore data:
 
 <CodeGroup>
 
@@ -57,9 +63,13 @@ typesync generate-py --target firebase-admin@6 --definition models.yml # ... oth
 typesync generate-rules --definition models.yml # ... other options
 ```
 
+```bash Data validation
+typesync validate-data --definition models.yml --model User # ... other options
+```
+
 </CodeGroup>
 
-Typesync generates the following files:
+The generator commands produce the following files:
 
 <CodeGroup>
   <ExampleGenerationTSFrontend />

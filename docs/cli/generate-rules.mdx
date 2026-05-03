@@ -1,27 +1,25 @@
 ---
-title: "generate-rules"
-icon: "rectangle-terminal"
+title: 'generate-rules'
+icon: 'rectangle-terminal'
 ---
 
-import DefinitionOption from "/snippets/cli-option-definition.mdx";
-import OutFileOption from "/snippets/cli-option-out-file.mdx";
-import IndentationOption from "/snippets/cli-option-indentation.mdx";
-import DebugOption from "/snippets/cli-option-debug.mdx";
-import ExampleDefinition from "/snippets/example-definition.mdx";
-import ExampleGenerationRulesBefore from "/snippets/example-generation-rules-before.mdx";
-import ExampleGenerationRules from "/snippets/example-generation-rules.mdx";
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+import IndentationOption from '/snippets/cli-option-indentation.mdx';
+import OutFileOption from '/snippets/cli-option-out-file.mdx';
+import ExampleDefinition from '/snippets/example-definition.mdx';
+import ExampleGenerationRulesBefore from '/snippets/example-generation-rules-before.mdx';
+import ExampleGenerationRules from '/snippets/example-generation-rules.mdx';
 
 Generates validator functions for Firestore Security Rules (version 2) and injects them into the specified file. These validators ensure that request data adheres to defined model interfaces and detect any modifications to read-only fields during write operations.
 
 Since Security Rules are centralized in a single file (typically `firestore.rules`), and developers often implement custom rules alongside type validations, Typesync inserts only the necessary validator functions, without overriding your custom rules. You can specify where these validators are added within the file using the `--startMarker` and `--endMarker` options. For a detailed guide, see the full [example](#example) below.
 
 <Info>
-  Note that these validators must adhere to the intrinsic limitations of
-  Security Rules. For example, while it's feasible to verify if `x` is a list
-  with the `x is list` predicate, determining whether it's a list of strings is
-  not possible since loop constructs are not available in Security Rules.
-  Typesync will provide the most stringent validation possible within these
-  constraints.
+  Note that these validators must adhere to the intrinsic limitations of Security Rules. For example, while it's
+  feasible to verify if `x` is a list with the `x is list` predicate, determining whether it's a list of strings is not
+  possible since loop constructs are not available in Security Rules. Typesync will provide the most stringent
+  validation possible within these constraints.
 </Info>
 
 ## Usage
@@ -44,10 +42,9 @@ typesync generate-rules --definition <filePathOrPattern> --outFile <filePath> --
   </ParamField>
 
 <ParamField type="string" path="endMarker" default="typesync-end">
-  A marker that indicates the line before which the generated code should be
-  inserted. Make sure to use a string that is unique within the file. The line
-  containing the marker must be commented i.e. the marker needs to appear after
-  the `//` (see [example](#example)).
+  A marker that indicates the line before which the generated code should be inserted. Make sure to use a string that is
+  unique within the file. The line containing the marker must be commented i.e. the marker needs to appear after the
+  `//` (see [example](#example)).
 </ParamField>
 
 <ParamField
@@ -68,40 +65,42 @@ typesync generate-rules --definition <filePathOrPattern> --outFile <filePath> --
   The name of the parameter taken by each type validator.
 </ParamField>
 
-{/* <ParamField
-  type="string"
-  path="readonlyFieldValidatorNamePattern"
-  default="isReadonlyFieldAffectedFor{modelName}"
->
-  The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the `"{modelName}"` substring (this is a literal value).
-  
-  Example values:
+{/\* <ParamField
+type="string"
+path="readonlyFieldValidatorNamePattern"
+default="isReadonlyFieldAffectedFor{modelName}"
+
+> The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the `"{modelName}"` substring (this is a literal value).
+
+Example values:
 
     - `"isReadonlyFieldAffectedFor{modelName}"` -> produces validators like `isReadonlyFieldAffectedForUser`, `isReadonlyFieldAffectedForProject`, `isReadonlyFieldAffectedForAccount` etc.
     - `"affectsReadonlyFieldFor{modelName}"` -> produces validators like `affectsReadonlyFieldForUser`, `affectsReadonlyFieldForProject`, `affectsReadonlyFieldForAccount` etc.
 
   </ParamField> */}
 
-{/* <ParamField
-  type="string"
-  path="readonlyFieldValidatorPrevDataParamName"
-  default="prevData"
->
-  The name of the first parameter taken by each readonly field validator
-  representing previous data. This parameter used when computing the diff
-  between next data and previous data to determine whether a readonly field has
-  been affected by a write.
+{/\* <ParamField
+type="string"
+path="readonlyFieldValidatorPrevDataParamName"
+default="prevData"
+
+> The name of the first parameter taken by each readonly field validator
+> representing previous data. This parameter used when computing the diff
+> between next data and previous data to determine whether a readonly field has
+> been affected by a write.
+
 </ParamField> */}
 
-{/* <ParamField
-  type="string"
-  path="readonlyFieldValidatorNextDataParamName"
-  default="nextData"
->
-  The name of the second parameter taken by each readonly field validator
-  representing next data. This parameter used when computing the diff between
-  next data and previous data to determine whether a readonly field has been
-  affected by a write.
+{/\* <ParamField
+type="string"
+path="readonlyFieldValidatorNextDataParamName"
+default="nextData"
+
+> The name of the second parameter taken by each readonly field validator
+> representing next data. This parameter used when computing the diff between
+> next data and previous data to determine whether a readonly field has been
+> affected by a write.
+
 </ParamField> */}
 
 <IndentationOption />
@@ -115,7 +114,6 @@ Suppose you have a schema definition file named `models.yml` and a Security Rule
   <ExampleDefinition />
   <ExampleGenerationRulesBefore />
 </CodeGroup>
-
 
 {/* TODO: Update */}
 

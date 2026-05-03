@@ -1,6 +1,6 @@
 ---
-title: "Definition"
-icon: "files"
+title: 'Definition'
+icon: 'files'
 ---
 
 The Typesync schema for a project is defined in a collection of YAML/JSON files. Your definition can contain as many model definition files as you need and you can organize them any way you want.
@@ -28,19 +28,32 @@ Example values:
 </ParamField>
 
 <ParamField path="docs" type="string">
-  Optional documentation explaining the model in more detail. Typesync will add
-  this to the doc comments for the generated models.
+  Optional documentation explaining the model in more detail. Typesync will add this to the doc comments for the
+  generated models.
 </ParamField>
 
 <ParamField path="type" type="hash" required>
-  The type representing the shape of the document. A document can be represented
-  only by an [object](/schema/types#object) type.
+  The type representing the shape of the document. A document can be represented only by an
+  [object](/schema/types#object) type.
+</ParamField>
+
+<ParamField path="swift" type="object">
+  Swift-specific overrides for this document model.
+
+  <Expandable title="properties">
+    <ParamField path="documentIdProperty.name" type="string" default="id">
+      Renames the auto-generated `@DocumentID` property in Swift output for this
+      document model. Use this when the document body already has a Firestore
+      field named `id`, or when you prefer a different Swift property name such
+      as `documentId`.
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 ### Example
 
 ```yaml user.yml
-# yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+# yaml-language-server: $schema=https://schema.typesync.org/v0.15.json
 
 User:
   model: document
@@ -65,19 +78,18 @@ An alias model is used for convenience purposes to define reusable type aliases.
 </ParamField>
 
 <ParamField path="docs" type="string">
-  Optional documentation explaining the model in more detail. Typesync will add
-  this to the doc comments for the generated models.
+  Optional documentation explaining the model in more detail. Typesync will add this to the doc comments for the
+  generated models.
 </ParamField>
 
 <ParamField path="type" type="string | hash" required>
-  The type of which this model is an alias. Can be any Typesync
-  [type](/schema/types).
+  The type of which this model is an alias. Can be any Typesync [type](/schema/types).
 </ParamField>
 
 ### Example
 
 ```yaml user.yml
-# yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+# yaml-language-server: $schema=https://schema.typesync.org/v0.15.json
 
 UserRole:
   model: alias
@@ -101,7 +113,7 @@ UserRole:
     of each definition file.
 
     ```yaml
-    # yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+    # yaml-language-server: $schema=https://schema.typesync.org/v0.15.json
     ```
 
     This indicates to your IDE that the file is not just any YAML file but a part of a Typesync definition by linking it to the relevant JSON Schema.. This will allow your IDE to provide Intellisense/autocomplete for definition fields.
@@ -121,7 +133,7 @@ UserRole:
 
       ```json
       {
-        "$schema": "https://schema.typesync.org/v0.13.json"
+        "$schema": "https://schema.typesync.org/v0.15.json"
         // ...
       }
       ```
