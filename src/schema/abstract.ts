@@ -3,7 +3,7 @@ import lodash from 'lodash';
 import { DuplicateModelError, InvalidModelError } from '../errors/invalid-model.js';
 import { assertNever } from '../util/assert.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
-import type { AliasModel, DocumentModel } from './generic.js';
+import type { AliasModel, DocumentModel, PlatformDocumentModelOptions } from './generic.js';
 
 export abstract class AbstractAliasModel<T> {
   public readonly model = 'alias';
@@ -26,11 +26,16 @@ export abstract class AbstractDocumentModel<T> {
     public readonly name: string,
     public readonly docs: string | null,
     public readonly type: T,
-    public readonly path: string
+    public readonly path: string,
+    public readonly platformOptions?: PlatformDocumentModelOptions
   ) {}
 
   protected cloneType() {
     return lodash.cloneDeep(this.type);
+  }
+
+  protected clonePlatformOptions(): PlatformDocumentModelOptions | undefined {
+    return this.platformOptions === undefined ? undefined : lodash.cloneDeep(this.platformOptions);
   }
 }
 

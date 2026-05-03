@@ -94,6 +94,7 @@ export function fieldToSchema(fieldName: string, field: definition.types.ObjectF
     readonly: !!field.readonly,
     docs: field.docs ?? null,
     name: fieldName,
+    ...(field.swift !== undefined ? { platformOptions: { swift: { ...field.swift } } } : {}),
   };
 }
 

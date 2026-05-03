@@ -102,6 +102,26 @@ export interface ObjectField<T> {
   readonly: boolean;
   name: string;
   docs: string | null;
+  /**
+   * Per-platform overrides carried through from the definition layer.
+   * Optional because most fields don't need any overrides; absence is
+   * equivalent to an empty record. Each generator reads only the slot it
+   * cares about (the Swift generator reads `swift`, etc.).
+   */
+  platformOptions?: PlatformFieldOptions;
+}
+
+/**
+ * Open record of per-platform overrides on an `ObjectField`. Each platform
+ * narrows this when specializing the generic schema namespace.
+ */
+export interface PlatformFieldOptions {
+  swift?: SwiftFieldOptions;
+}
+
+export interface SwiftFieldOptions {
+  /** Overrides the Swift property name used to decode this field. */
+  name?: string;
 }
 
 export interface Alias {
@@ -150,7 +170,31 @@ export interface DocumentModel<T> {
   docs: string | null;
   type: T;
   path: string;
+  /**
+   * Per-platform overrides carried through from the definition layer. Each
+   * generator reads only the slot it cares about (the Swift generator reads
+   * `swift`, etc.).
+   */
+  platformOptions?: PlatformDocumentModelOptions;
   clone(): DocumentModel<T>;
+}
+
+/**
+ * Open record of per-platform overrides on a `DocumentModel`.
+ */
+export interface PlatformDocumentModelOptions {
+  swift?: SwiftDocumentModelOptions;
+}
+
+export interface SwiftDocumentModelOptions {
+  /**
+   * Overrides for the auto-generated `@DocumentID` property emitted on every
+   * document-model struct.
+   */
+  documentIdProperty?: {
+    /** Swift property name. Defaults to `id`. */
+    name: string;
+  };
 }
 
 export type Model<T> = AliasModel<T> | DocumentModel<T>;

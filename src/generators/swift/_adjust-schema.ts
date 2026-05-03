@@ -58,6 +58,7 @@ export function adjustSchemaForSwift(prevSchema: schema.Schema): schema.swift.Sc
         optional: r.field.optional,
         readonly: r.field.readonly,
         type: r.flattenResult.flattenedType,
+        platformOptions: r.field.platformOptions,
       })),
       additionalFields: objectType.additionalFields,
     };
@@ -201,6 +202,7 @@ export function adjustSchemaForSwift(prevSchema: schema.Schema): schema.swift.Sc
       docs: documentModel.docs,
       type: flattenedType,
       path: documentModel.path,
+      platformOptions: documentModel.platformOptions,
     });
     newSchemaAliasModels.push(...extractedAliasModels);
     newSchemaDocumentModels.push(flattenedModel);

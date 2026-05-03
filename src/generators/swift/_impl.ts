@@ -1,7 +1,12 @@
-import { MixedEnumValueTypesNotSupportedError } from '../../errors/generator.js';
+import {
+  MixedEnumValueTypesNotSupportedError,
+  SwiftDocumentIdPropertyCollidesWithFieldError,
+  SwiftPropertyNameCollisionError,
+} from '../../errors/generator.js';
 import { swift } from '../../platforms/swift/index.js';
 import { schema } from '../../schema/index.js';
 import { assert, assertNever } from '../../util/assert.js';
+import { camelCase } from '../../util/casing.js';
 import { extractDiscriminantValue } from '../../util/extract-discriminant-value.js';
 import { adjustSchemaForSwift } from './_adjust-schema.js';
 import { flatTypeToSwift, literalTypeToSwift } from './_converters.js';
@@ -17,6 +22,12 @@ import type {
   SwiftStructDeclaration,
   SwiftTypealiasDeclaration,
 } from './_types.js';
+
+const DEFAULT_DOCUMENT_ID_PROPERTY_NAME = 'id';
+
+function resolveSwiftPropertyName(field: schema.swift.types.ObjectField): string {
+  return field.platformOptions?.swift?.name ?? camelCase(field.name);
+}
 
 class SwiftGeneratorImpl implements SwiftGenerator {
   public constructor(private readonly config: SwiftGeneratorConfig) {}
@@ -34,6 +45,11 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       declarations.push(d);
     });
     return { type: 'swift', declarations };
+  }
+
+  private buildDocumentIdProperty(model: schema.swift.DocumentModel): swift.DocumentIdProperty {
+    const overrideName = model.platformOptions?.swift?.documentIdProperty?.name;
+    return { name: overrideName ?? DEFAULT_DOCUMENT_ID_PROPERTY_NAME };
   }
 
   private createDeclarationForAliasModel(model: schema.swift.AliasModel, s: schema.swift.Schema): SwiftDeclaration {
@@ -69,8 +85,12 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   }
 
   private createDeclarationForDocumentModel(model: schema.swift.DocumentModel): SwiftDeclaration {
-    // A Firestore document can be considered an 'object' type
-    return this.createDeclarationForFlatObjectType(model.type, model.name, model.docs);
+    return this.createDeclarationForFlatObjectType(
+      model.type,
+      model.name,
+      model.docs,
+      this.buildDocumentIdProperty(model)
+    );
   }
 
   private createDeclarationForEnumType(
@@ -118,7 +138,8 @@ class SwiftGeneratorImpl implements SwiftGenerator {
   private createDeclarationForFlatObjectType(
     type: schema.swift.types.Object,
     modelName: string,
-    modelDocs: string | null
+    modelDocs: string | null,
+    documentIdProperty: swift.DocumentIdProperty | null = null
   ): SwiftStructDeclaration {
     const literalProperties: swift.LiteralStructProperty[] = [];
     const regularProperties: swift.RegularStructProperty[] = [];
@@ -132,6 +153,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       ) {
         literalProperties.push({
           originalName: field.name,
+          name: camelCase(field.name),
           docs: field.docs,
           type: literalTypeToSwift(field.type),
           literalValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
@@ -139,6 +161,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       } else {
         regularProperties.push({
           originalName: field.name,
+          name: resolveSwiftPropertyName(field),
           docs: field.docs,
           optional: field.optional,
           type: flatTypeToSwift(field.type),
@@ -146,8 +169,14 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       }
     });
 
+    if (documentIdProperty !== null) {
+      this.assertNoDocumentIdCollision({ modelName, documentIdProperty, literalProperties, regularProperties });
+    }
+    this.assertUniquePropertyNames({ modelName, documentIdProperty, literalProperties, regularProperties });
+
     const swiftType: swift.Struct = {
       type: 'struct',
+      documentIdProperty,
       literalProperties,
       regularProperties,
     };
@@ -158,6 +187,50 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       modelType: swiftType,
       modelDocs,
     };
+  }
+
+  private assertNoDocumentIdCollision(args: {
+    modelName: string;
+    documentIdProperty: swift.DocumentIdProperty;
+    literalProperties: readonly swift.LiteralStructProperty[];
+    regularProperties: readonly swift.RegularStructProperty[];
+  }): void {
+    const { modelName, documentIdProperty, literalProperties, regularProperties } = args;
+    const allBodyProperties = [...literalProperties, ...regularProperties];
+    // The Firebase iOS SDK throws on decode when the @DocumentID property
+    // name matches any wire key in the document body. Renaming the body
+    // field's Swift binding (`swift.name`) does not help because the wire
+    // key is what the SDK compares against, so we have to detect this on
+    // `originalName` (Firestore key), not on the resolved Swift name.
+    const conflict = allBodyProperties.find(p => p.originalName === documentIdProperty.name);
+    if (conflict !== undefined) {
+      throw new SwiftDocumentIdPropertyCollidesWithFieldError(
+        modelName,
+        conflict.originalName,
+        documentIdProperty.name
+      );
+    }
+  }
+
+  private assertUniquePropertyNames(args: {
+    modelName: string;
+    documentIdProperty: swift.DocumentIdProperty | null;
+    literalProperties: readonly swift.LiteralStructProperty[];
+    regularProperties: readonly swift.RegularStructProperty[];
+  }): void {
+    const { modelName, literalProperties, regularProperties } = args;
+    const allBodyProperties = [...literalProperties, ...regularProperties];
+    const byName = new Map<string, string[]>();
+    allBodyProperties.forEach(p => {
+      const existing = byName.get(p.name) ?? [];
+      existing.push(p.originalName);
+      byName.set(p.name, existing);
+    });
+    for (const [name, originalNames] of byName) {
+      if (originalNames.length > 1) {
+        throw new SwiftPropertyNameCollisionError(modelName, name, originalNames);
+      }
+    }
   }
 
   private createDeclarationForFlatDiscriminatedUnionType(

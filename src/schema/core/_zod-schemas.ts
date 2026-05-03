@@ -350,6 +350,18 @@ export function createZodSchemasForSchema(schema: Schema) {
     aliasType,
   ]);
 
+  const swiftFieldOptions = z
+    .object({
+      name: z.string().min(1).optional(),
+    })
+    .strict();
+
+  const platformFieldOptions = z
+    .object({
+      swift: swiftFieldOptions.optional(),
+    })
+    .strict();
+
   const objectField = z
     .object({
       type,
@@ -357,6 +369,7 @@ export function createZodSchemasForSchema(schema: Schema) {
       readonly: z.boolean(),
       name: z.string(),
       docs: z.string().nullable(),
+      platformOptions: platformFieldOptions.optional(),
     })
     .strict();
 

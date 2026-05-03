@@ -169,6 +169,19 @@ export const type: z.ZodType<types.Type> = z.lazy(() =>
     .describe('Any valid type.')
 );
 
+export const swiftFieldOptions = z
+  .object({
+    name: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        "Overrides the Swift property name used to decode this field. Encoding is unaffected: the field is still serialized to Firestore under the schema's field name (the Swift renderer routes the original name through `CodingKeys`). Useful when the schema name collides with a Swift keyword or with an auto-generated property such as `@DocumentID var id`."
+      ),
+  })
+  .strict()
+  .describe('Swift-specific overrides for an object field.');
+
 export const objectField = z
   .object({
     type: type,
@@ -180,6 +193,9 @@ export const objectField = z
         'Whether this field is read-only. Defaults to false. This information is used by the Security Rules generator when producing validators that detect whether a read-only field has been affected by a write.'
       ),
     docs: z.string().optional().describe('Optional documentation for the object field.'),
+    swift: swiftFieldOptions
+      .optional()
+      .describe('Per-platform overrides for the Swift generator. See `SwiftFieldOptions`.'),
   })
   .strict()
   .describe('An object field.');
@@ -193,6 +209,23 @@ export const aliasModel = z
   .strict()
   .describe('An alias model');
 
+export const swiftDocumentModelOptions = z
+  .object({
+    documentIdProperty: z
+      .object({
+        name: z
+          .string()
+          .min(1)
+          .describe(
+            "The Swift property name for the auto-generated `@DocumentID`-annotated field. Defaults to `id`. Set this to a non-`id` value (e.g. `documentId`) when the schema's document body has a field whose Firestore key is also `id`, since the Firebase iOS SDK refuses to decode a document where the `@DocumentID` property name matches an existing body field's key."
+          ),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict()
+  .describe('Swift-specific overrides for a document model.');
+
 export const documentModel = z
   .object({
     model: z.literal('document').describe(`A literal field indicating that this is a 'document' model.`),
@@ -204,6 +237,9 @@ export const documentModel = z
       .describe(
         `An exact or generic path to the document. Must be a string consisting of path segments separated by a '/' (slash). Each segment can either be a literal ID or a generic ID of the collection or document. A literal ID is a plain string, such as 'users', while a generic ID must be enclosed in curly braces (e.g. '{userId}').`
       ),
+    swift: swiftDocumentModelOptions
+      .optional()
+      .describe('Per-platform overrides for the Swift generator. See `SwiftDocumentModelOptions`.'),
   })
   .strict()
   .describe('A document model.');

@@ -81,6 +81,23 @@ export interface ObjectField {
   optional?: boolean;
   readonly?: boolean;
   docs?: string;
+  swift?: SwiftFieldOptions;
+}
+
+/**
+ * Swift-specific overrides for an object field. Only consumed by the Swift
+ * generator; ignored by every other generator.
+ */
+export interface SwiftFieldOptions {
+  /**
+   * Overrides the Swift property name used to decode this field.
+   *
+   * Encoding is unaffected: the field is still serialized to Firestore under
+   * the schema's field name (the Swift renderer routes the original name
+   * through `CodingKeys`). Useful when the schema name collides with a Swift
+   * keyword or with an auto-generated property such as `@DocumentID var id`.
+   */
+  name?: string;
 }
 
 export interface DiscriminatedUnion {
