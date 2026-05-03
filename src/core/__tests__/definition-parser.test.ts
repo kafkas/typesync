@@ -1,44 +1,48 @@
 import { globSync } from 'glob';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 import { getDirName } from '../../util/fs.js';
 import { createDefinitionParser } from '../definition-parser/index.js';
+
+const definitionsDir = resolve(getDirName(import.meta.url), 'definitions');
+
+function findDefinitionFiles(globPattern: string) {
+  return globSync(resolve(definitionsDir, globPattern));
+}
 
 function toJsonSnapshot(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-describe('definition-parser', () => {
-  it('correctly parses definition from YAML files', async () => {
+describe('DefinitionParserImpl', () => {
+  it('aggregates models from multiple YAML files into a single definition', async () => {
     const parser = createDefinitionParser();
-    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/yaml/*.yml`);
-    const filePaths = globSync(definitionGlobPattern);
-    const definition = parser.parseDefinition(filePaths);
-    await expect(toJsonSnapshot(definition)).toMatchFileSnapshot('./__file_snapshots__/definition-from-yaml.json');
+    const definition = parser.parseDefinition(findDefinitionFiles('yaml/*.yml'));
+    await expect(toJsonSnapshot(definition)).toMatchFileSnapshot('./__file_snapshots__/parsed-definition.json');
   });
 
-  it('correctly parses definition from JSON files', async () => {
+  it('parses JSON definition files into the same canonical structure as YAML files', () => {
     const parser = createDefinitionParser();
-    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/json/*.json`);
-    const filePaths = globSync(definitionGlobPattern);
-    const definition = parser.parseDefinition(filePaths);
-    await expect(toJsonSnapshot(definition)).toMatchFileSnapshot('./__file_snapshots__/definition-from-json.json');
+    const fromYaml = parser.parseDefinition(findDefinitionFiles('yaml/*.yml'));
+    const fromJson = parser.parseDefinition(findDefinitionFiles('json/*.json'));
+    expect(fromJson).toEqual(fromYaml);
   });
 
-  it(`ignores the '$schema' field in definition files`, async () => {
+  it(`ignores the '$schema' field commonly used to associate definition files with a JSON schema`, () => {
     const parser = createDefinitionParser();
-    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/with-$schema-key.json`);
-    const filePaths = globSync(definitionGlobPattern);
-    const definition = parser.parseDefinition(filePaths);
-    await expect(toJsonSnapshot(definition)).toMatchFileSnapshot(
-      './__file_snapshots__/definition-with-schema-key.json'
-    );
+    const definition = parser.parseDefinition(findDefinitionFiles('with-$schema-key.json'));
+    expect(definition).toEqual({
+      Username: { model: 'alias', type: 'string' },
+    });
   });
 
-  it(`throws if the file contains an incorrect field`, () => {
+  it('throws when a definition file contains an unrecognized top-level field', () => {
     const parser = createDefinitionParser();
-    const definitionGlobPattern = resolve(getDirName(import.meta.url), `./definitions/bad-field.json`);
-    const filePaths = globSync(definitionGlobPattern);
-    expect(() => parser.parseDefinition(filePaths)).toThrow();
+    expect(() => parser.parseDefinition(findDefinitionFiles('bad-field.json'))).toThrow();
+  });
+
+  it('throws when the same model name is defined in more than one file', () => {
+    const parser = createDefinitionParser();
+    expect(() => parser.parseDefinition(findDefinitionFiles('duplicate-models/*.json'))).toThrow();
   });
 });
