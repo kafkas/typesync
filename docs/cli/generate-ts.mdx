@@ -1,0 +1,48 @@
+---
+title: "generate-ts"
+icon: "rectangle-terminal"
+---
+
+import DefinitionOption from "/snippets/cli-option-definition.mdx";
+import OutFileOption from "/snippets/cli-option-out-file.mdx";
+import TargetOption from "/snippets/cli-option-target.mdx";
+import IndentationOption from "/snippets/cli-option-indentation.mdx";
+import DebugOption from "/snippets/cli-option-debug.mdx";
+
+Generates TypeScript type definitions for the specified schema and writes them to the specified file.
+
+## Usage
+
+```bash
+typesync generate-ts --definition <filePathOrPattern> --target <targetEnvironment> --outFile <filePath> --indentation <indentation> --debug <debug>
+```
+
+## Options
+
+<DefinitionOption />
+<TargetOption />
+<OutFileOption />
+<ParamField
+  type='"interface" | "type-alias"'
+  path="objectTypeFormat"
+  default="interface"
+>
+
+Controls how objects are defined in the TypeScript output. Object types can be represented either by interfaces or type aliases.
+
+</ParamField>
+<IndentationOption />
+<DebugOption />
+
+## Targets
+
+- `firebase-admin@13`: For backend projects that use [Firebase Admin Node.js SDK (v13)](https://www.npmjs.com/package/firebase-admin).
+- `firebase-admin@12`: For backend projects that use [Firebase Admin Node.js SDK (v12)](https://www.npmjs.com/package/firebase-admin).
+- `firebase-admin@11`: For backend projects that use [Firebase Admin Node.js SDK (v11)](https://www.npmjs.com/package/firebase-admin).
+- `firebase-admin@10`: For backend projects that use [Firebase Admin Node.js SDK (v10)](https://www.npmjs.com/package/firebase-admin).
+- `firebase@11`: For frontend projects that use [Firebase Javascript SDK (v11)](https://www.npmjs.com/package/firebase).
+- `firebase@10`: For frontend projects that use [Firebase Javascript SDK (v10)](https://www.npmjs.com/package/firebase).
+- `firebase@9`: For frontend projects that use [Firebase Javascript SDK (v9)](https://www.npmjs.com/package/firebase).
+- `react-native-firebase@21`: For React Native projects that use [React Native Firebase (v21)](https://www.npmjs.com/package/@react-native-firebase/firestore).
+- `react-native-firebase@20`: For React Native projects that use [React Native Firebase (v20)](https://www.npmjs.com/package/@react-native-firebase/firestore).
+- `react-native-firebase@19`: For React Native projects that use [React Native Firebase (v19)](https://www.npmjs.com/package/@react-native-firebase/firestore).

@@ -1,0 +1,10 @@
+```ts app.ts (backend)
+import { firestore } from "firebase-admin";
+import type { User } from "./models";
+
+const usersColRef = firestore().collection(
+  "users"
+) as firestore.CollectionReference<User>;
+const userSnap = await usersColRef.doc("adam").get();
+const user = userSnap.data(); // is a User object
+```

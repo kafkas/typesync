@@ -1,0 +1,69 @@
+---
+title: "Quickstart"
+---
+
+import ExampleDefinition from "/snippets/example-definition.mdx";
+import ExampleGenerationTSBackend from "/snippets/example-generation-ts-backend.mdx";
+
+<Steps titleSize="h2">
+  <Step title="Install Typesync CLI">
+    First, ensure you have [Node.js](https://nodejs.org) 18+ installed. Then, install the Typesync CLI using npm:
+
+```bash
+npm install -g typesync-cli
+```
+
+  </Step>
+  <Step title="Create your schema">
+
+Create a directory within your project to store your Typesync definition files. A common practice is to name this directory `definition`.
+
+```bash
+mkdir definition
+cd definition
+```
+
+Next, create a YAML file named `models.yml` in the `definition` directory. This file will contain the schema definitions for your Firestore documents. Here's a sample schema:
+
+<Note>
+  You can also define your models in JSON files. Typesync accepts YAML, JSON or
+  even a combination of both!
+</Note>
+
+<ExampleDefinition />
+
+  </Step>
+  <Step title="Generate type definitions">
+
+You can now generate the types for the relevant environment. For example, if your project is a Node.js backend that uses Firebase Admin SDK (version 11), run the following command:
+
+```bash
+typesync generate-ts --definition 'definition/**/*.yml' --target firebase-admin@11 --outFile models.ts
+```
+
+This command tells Typesync to:
+
+- take all `.yml` files in the `definition` directory as the schema definition
+- generate TypeScript interfaces for use with the Firebase Admin SDK (version 11)
+- write the generated types to the `models.ts` file in the current directory
+
+Here's what the generated TypeScript file might look like:
+
+<ExampleGenerationTSBackend />
+
+  </Step>
+
+  <Step title="Integrate into your development workflow">
+
+You should regenerate your types anytime the schema changes. To streamline development, consider integrating the Typesync generation command into your build process or CI/CD pipeline.
+
+### Version Control
+
+Decide if you want to version control the generated files. It can be beneficial for ensuring consistency across environments but may require additional maintenance.
+
+### Multiple Files
+
+As your project grows, you might want to split your schema into multiple YAML/JSON files. Typesync will automatically handle all files matching the pattern that you provide to it through the `--definition` option.
+
+  </Step>
+</Steps>

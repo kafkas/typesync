@@ -1,0 +1,15 @@
+```ts models.ts (backend)
+import type { firestore } from 'firebase-admin';
+
+/** Represents a user's role within a project. */
+export type UserRole = 'owner' | 'admin' | 'member';
+
+/** Represents a user that belongs to a project. */
+export interface User {
+  /** A string that uniquely identifies the user within a project. */
+  username: string;
+  role: UserRole;
+  website_url?: string;
+  created_at: firestore.Timestamp;
+}
+```

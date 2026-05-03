@@ -1,0 +1,33 @@
+```python models.py
+from __future__ import annotations
+
+import typing
+import datetime
+import enum
+import pydantic
+
+# [static declarations redacted for brevity]
+
+class UserRole(enum.Enum):
+  """Represents a user's role within a project."""
+  Owner = "owner"
+  Admin = "admin"
+  Member = "member"
+
+class User(TypesyncModel):
+  """Represents a user that belongs to a project."""
+  username: str
+  """A string that uniquely identifies the user within a project."""
+  role: UserRole
+  website_url: typing.Union[TypesyncUndefined, str] = UNDEFINED
+  created_at: datetime.datetime
+
+  class Config:
+    use_enum_values = True
+    extra = 'forbid'
+
+  def __setattr__(self, name: str, value: typing.Any) -> None:
+    if name == "website_url" and value is None:
+      raise ValueError("'website_url' field cannot be set to None")
+    super().__setattr__(name, value)
+```

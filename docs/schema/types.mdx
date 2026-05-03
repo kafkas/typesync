@@ -1,0 +1,827 @@
+---
+title: "Types"
+icon: "cube"
+---
+
+Here, you'll find a comprehensive list of all types supported by the Typesync specification. Typesync's powerful type system is designed to support a wide array of complex and useful types.
+
+## `any`
+
+Represents any type.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: any
+```
+
+```ts models.ts
+export type Example = any;
+```
+
+```swift models.swift
+typealias Example = Any
+```
+
+```python models.py
+import typing
+
+Example = typing.Any
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return true;
+}
+```
+
+</CodeGroup>
+
+## `unknown`
+
+Represents an unknown type.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: unknown
+```
+
+```ts models.ts
+export type Example = unknown;
+```
+
+```swift models.swift
+typealias Example = Any
+```
+
+```python models.py
+import typing
+
+Example = typing.Any
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return true;
+}
+```
+
+</CodeGroup>
+
+## `nil`
+
+Represents the explicit absence of a value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: nil
+```
+
+```ts models.ts
+export type Example = null;
+```
+
+```python models.py
+Example = None
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return true;
+}
+```
+
+</CodeGroup>
+
+## `string`
+
+Represents a string value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: string
+```
+
+```ts models.ts
+export type Example = string;
+```
+
+```swift models.swift
+typealias Example = String
+```
+
+```python models.py
+Example = str
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is string);
+}
+```
+
+</CodeGroup>
+
+## `boolean`
+
+Represents a boolean value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: boolean
+```
+
+```ts models.ts
+export type Example = boolean;
+```
+
+```swift models.swift
+typealias Example = Bool
+```
+
+```python models.py
+Example = bool
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is bool);
+}
+```
+
+</CodeGroup>
+
+## `int`
+
+Represents a signed integer.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: int
+```
+
+```ts models.ts
+export type Example = number;
+```
+
+```swift models.swift
+typealias Example = Int
+```
+
+```python models.py
+Example = int
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is int);
+}
+```
+
+</CodeGroup>
+
+## `double`
+
+Represents a double-precision floating point number.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: double
+```
+
+```ts models.ts
+export type Example = number;
+```
+
+```swift models.swift
+typealias Example = Double
+```
+
+```python models.py
+Example = float
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is float);
+}
+```
+
+</CodeGroup>
+
+## `timestamp`
+
+Represents a datetime value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: timestamp
+```
+
+```ts models.ts
+export type Example = firestore.Timestamp;
+```
+
+```swift models.swift
+typealias Example = Date
+```
+
+```python models.py
+import datetime
+
+Example = datetime.datetime
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is timestamp);
+}
+```
+
+</CodeGroup>
+
+## `literal`
+
+Represents a literal type.
+
+<Info>
+  Literal types are not supported in Swift. Typesync currently compiles literal types to the type of the literal value in Swift.
+</Info>
+
+<CodeGroup>
+
+```yaml definition.yml
+MeaningOfLife:
+  model: alias
+  type:
+    type: literal
+    value: 42
+```
+
+```ts models.ts
+export type MeaningOfLife = 42;
+```
+
+```swift models.swift
+typealias MeaningOfLife = Int
+```
+
+```python models.py
+import typing
+
+MeaningOfLife = typing.Literal[42]
+```
+
+```javascript firestore.rules
+function isValidMeaningOfLife(data) {
+  return data == 42;
+}
+```
+
+</CodeGroup>
+
+## `enum`
+
+Represents an enum value.
+
+<CodeGroup>
+
+```yaml definition.yml
+UserRole:
+  model: alias
+  docs: Represents a user's role within a project.
+  type:
+    type: enum
+    members:
+      - label: Owner
+        value: owner
+      - label: Admin
+        value: admin
+      - label: Member
+        value: member
+```
+
+```ts models.ts
+export type UserRole = "owner" | "admin" | "member";
+```
+
+```swift models.swift
+enum UserRole: String, Codable {
+  case Owner = "owner"
+  case Admin = "admin"
+  case Member = "member"
+}
+```
+
+```python models.py
+import enum
+
+class UserRole(enum.Enum):
+    Owner = "owner"
+    Admin = "admin"
+    Member = "member"
+```
+
+```javascript firestore.rules
+function isValidUserRole(data) {
+  return data == "owner" || data == "admin" || data == "member";
+}
+```
+
+</CodeGroup>
+
+## `tuple`
+
+Represents a tuple value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type:
+    type: tuple
+    elements:
+      - string
+      - boolean
+      - int
+```
+
+```ts models.ts
+export type Example = [string, boolean, number];
+```
+
+```swift models.swift
+typealias Example = (String, Bool, Int)
+```
+
+```python models.py
+Example = tuple[str, bool, int]
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return ((data is list) && (data[0] is string) && (data[1] is bool) && (data[2] is int));
+}
+```
+
+</CodeGroup>
+
+## `list`
+
+Represents a list of items.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type:
+    type: list
+    elementType: string
+```
+
+```ts models.ts
+export type Example = string[];
+```
+
+```swift models.swift
+typealias Example = [String]
+```
+
+```python models.py
+Example = typing.List[str]
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is list);
+}
+```
+
+</CodeGroup>
+
+## `map`
+
+Represents a mapping from arbitrary strings to values of any type.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type:
+    type: map
+    valueType: int
+```
+
+```ts models.ts
+export type Example = Record<string, number>;
+```
+
+```swift models.swift
+typealias Example = [String: Int]
+```
+
+```python models.py
+import typing
+
+Example = typing.Dict[str, int]
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is map);
+}
+```
+
+</CodeGroup>
+
+## `object`
+
+Represents an object with known fields.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+      completed:
+        type: boolean
+      github_url:
+        type: string
+        optional: true
+```
+
+```ts models.ts
+export type Example = {
+  name: string;
+  completed: boolean;
+  github_url?: string;
+};
+```
+
+```swift models.swift
+struct Example: Codable {
+  var name: String
+  var completed: Bool
+  var githubUrl: String?
+
+  private enum CodingKeys: String, CodingKey {
+    case name
+    case completed
+    case githubUrl = "github_url"
+  }
+}
+```
+
+```python models.py
+# ...
+class Example(TypesyncModel):
+    name: str
+    completed: bool
+    github_url: typing.Union[TypesyncUndefined, str] = UNDEFINED
+# ...
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (
+    (data is map) &&
+    (data.keys().hasOnly(['name', 'completed', 'github_url'])) &&
+    (data.name is string) &&
+    (data.completed is bool) &&
+    ((data.github_url is string) || !('github_url' in data))
+  );
+}
+```
+
+</CodeGroup>
+
+## `union`
+
+Represents a union of multiple types. Typesync supports two types of unions: _simple union_ and _discriminated union_. Both are defined in the same way using `variants`, except a discriminated union definition has a `discriminant` key and requires every variant to be of `object` (or `alias` resolving to `object`) type.
+
+**Simple Union Example**
+
+<CodeGroup>
+
+```yaml definition.yml
+Path:
+  model: alias
+  type:
+    type: union
+    variants:
+      - string
+      - type: list
+        elementType: string
+```
+
+```ts models.ts
+export type Path = string | string[];
+```
+
+```swift models.swift
+enum Example: Codable {
+  case variant1(String)
+  case variant2([String])
+
+  private enum CodingKeys: String, CodingKey {
+    case variant1
+    case variant2
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    if let variant1 = try? container.decode(String.self) {
+      self = .variant1(variant1)
+    } else if let variant2 = try? container.decode([String].self) {
+      self = .variant2(variant2)
+    } else {
+      throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Failed to decode ExampleSimpleUnion value."))
+    }
+  }
+
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    switch self {
+    case .variant1(let val):
+      try container.encode(val)
+    case .variant2(let val):
+      try container.encode(val)
+    }
+  }
+}
+```
+
+```python models.py
+Path = typing.Union[str, typing.List[str]]
+```
+
+```javascript firestore.rules
+function isValidPath(data) {
+  return ((data is string) || (data is list));
+}
+```
+
+</CodeGroup>
+
+**Discriminated Union Example**
+
+<CodeGroup>
+
+```yaml definition.yml
+Cat:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: cat
+      name:
+        type: string
+      lives_left:
+        type: int
+
+Dog:
+  model: alias
+  type:
+    type: object
+    fields:
+      type:
+        type:
+          type: literal
+          value: dog
+      name:
+        type: string
+      breed:
+        type: string
+
+Pet:
+  model: alias
+  type:
+    type: union
+    discriminant: type
+    variants:
+      - Cat
+      - Dog
+```
+
+```ts models.ts
+export type Cat = {
+  type: "cat";
+  name: string;
+  lives_left: number;
+};
+
+export type Dog = {
+  type: "dog";
+  name: string;
+  breed: string;
+};
+
+export type Pet = Cat | Dog;
+```
+
+```swift models.swift
+struct Cat: Codable {
+  private(set) var type: String = "cat"
+  var name: String
+  var livesLeft: Int
+
+  private enum CodingKeys: String, CodingKey {
+    case type
+    case name
+    case livesLeft = "lives_left"
+  }
+}
+
+struct Dog: Codable {
+  private(set) var type: String = "dog"
+  var name: String
+  var breed: String
+}
+
+enum Pet: Codable {
+  case cat(Cat)
+  case dog(Dog)
+
+  private enum CodingKeys: String, CodingKey {
+    case type
+  }
+
+  enum PetType: String, Codable {
+    case cat
+    case dog
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let type = try container.decode(PetType.self, forKey: .type)
+    switch type {
+    case .cat:
+      self = .cat(try Cat(from: decoder))
+    case .dog:
+      self = .dog(try Dog(from: decoder))
+    }
+  }
+
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    switch self {
+    case .cat(let obj):
+      try container.encode(PetType.cat.rawValue, forKey: .type)
+      try obj.encode(to: encoder)
+    case .dog(let obj):
+      try container.encode(PetType.dog.rawValue, forKey: .type)
+      try obj.encode(to: encoder)
+    }
+  }
+}
+```
+
+```python models.py
+import typing
+import pydantic
+from typing_extensions import Annotated
+
+class Cat(TypesyncModel):
+    type: typing.Literal["cat"]
+    name: str
+    lives_left: int
+
+class Dog(TypesyncModel):
+    type: typing.Literal["dog"]
+    name: str
+    breed: str
+
+Pet = Annotated[typing.Union[Cat, Dog], pydantic.Field(discriminator='type')]
+```
+
+```javascript firestore.rules
+function isValidCat(data) {
+  return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'lives_left'])) &&
+    (data.type == 'cat') &&
+    (data.name is string) &&
+    (data.lives_left is int)
+  );
+}
+
+function isValidDog(data) {
+  return (
+    (data is map) &&
+    (data.keys().hasOnly(['type', 'name', 'breed'])) &&
+    (data.type == 'dog') &&
+    (data.name is string) &&
+    (data.breed is string)
+  );
+}
+
+function isValidPet(data) {
+  return (isValidCat(data) || isValidDog(data));
+}
+```
+
+</CodeGroup>
+
+## `alias`
+
+Represents an alias of another type.
+
+<CodeGroup>
+
+```yaml definition.yml
+User:
+  model: alias
+  type:
+    type: object
+    fields:
+      name_first:
+        type: string
+      name_last:
+        type: string
+
+WorkspaceMember:
+  model: alias
+  type: User
+```
+
+```ts models.ts
+export type User = {
+  name_first: string;
+  name_last: string;
+};
+
+export type WorkspaceMember = User;
+```
+
+```swift models.swift
+struct User: Codable {
+  var nameFirst: String
+  var nameLast: String
+
+  private enum CodingKeys: String, CodingKey {
+    case nameFirst = "name_first"
+    case nameLast = "name_last"
+  }
+}
+
+typealias WorkspaceMember = User
+```
+
+```python models.py
+class User(TypesyncModel):
+    name_first: str
+    name_last: str
+
+WorkspaceMember = User
+```
+
+```javascript firestore.rules
+function isValidUser(data) {
+  return (
+    (data is map) &&
+    (data.keys().hasOnly(['name_first', 'name_last'])) &&
+    (data.name_first is string) &&
+    (data.name_last is string)
+  );
+}
+
+function isValidWorkspaceMember(data) {
+  return isValidUser(data);
+}
+```
+
+</CodeGroup>

@@ -1,0 +1,10 @@
+```python app.py
+from firebase_admin import firestore
+from models import User, UserRole
+
+db = firestore.client()
+
+doc_ref = db.collection('users').document('adam')
+snapshot = doc_ref.get()
+user = User.model_validate(snapshot.to_dict()) # is a User instance
+```

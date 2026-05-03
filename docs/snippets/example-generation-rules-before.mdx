@@ -1,0 +1,15 @@
+```javascript firestore.rules (initial)
+rules_version = '2';
+service cloud.firestore {
+  // typesync-start
+  // typesync-end
+
+  // Here you define your custom rules
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read;
+      allow write: if isValidUser(request.resource.data);
+    }
+  }
+}
+```

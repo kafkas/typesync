@@ -1,0 +1,158 @@
+---
+title: "Definition"
+icon: "files"
+---
+
+The Typesync schema for a project is defined in a collection of YAML/JSON files. Your definition can contain as many model definition files as you need and you can organize them any way you want.
+
+Each top-level field in a definition file must refer to a model name and the corresponding value must be the model definition. There are two types of models that you can define in a model definition file: _document models_ and _alias models_.
+
+## Document models
+
+A document model represents the shape of a document in a particular Firestore collection.
+
+<ParamField path="model" type='"document"' required>
+  A literal field that specifies that this is a `document` model.
+</ParamField>
+
+<ParamField path="path" type="string" required>
+An exact or generic path to the document. Must be a string consisting of path segments separated by a `/` (slash). Each segment can either be a literal ID or a generic ID of the collection or document. A literal ID is a plain string, such as `users`, while a generic ID must be enclosed in curly braces (e.g. `{userId}`).
+
+Example values:
+
+- `projects/{projectId}`: A document in a top-level `projects` collection.
+- `users/{userId}/posts/{postId}`: A document in a `posts` sub-collection.
+- `static/data/authors/{authorId}`: A document in a static `authors` sub-collection.
+- `{rootColId}/{docId}/cities/london`: A document with a specific ID in a `cities` sub-collection.
+
+</ParamField>
+
+<ParamField path="docs" type="string">
+  Optional documentation explaining the model in more detail. Typesync will add
+  this to the doc comments for the generated models.
+</ParamField>
+
+<ParamField path="type" type="hash" required>
+  The type representing the shape of the document. A document can be represented
+  only by an [object](/schema/types#object) type.
+</ParamField>
+
+### Example
+
+```yaml user.yml
+# yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+
+User:
+  model: document
+  path: users/{userId}
+  docs: Represents a user that belongs to a project.
+  type:
+    type: object
+    fields:
+      name:
+        type: string
+        docs: The full name of the user.
+      created_at:
+        type: timestamp
+```
+
+## Alias models
+
+An alias model is used for convenience purposes to define reusable type aliases. You can use the same alias model in multiple document models. You can also use alias models when composing other aliases.
+
+<ParamField path="model" type='"alias"' required>
+  A literal field that specifies that this is an `alias` model.
+</ParamField>
+
+<ParamField path="docs" type="string">
+  Optional documentation explaining the model in more detail. Typesync will add
+  this to the doc comments for the generated models.
+</ParamField>
+
+<ParamField path="type" type="string | hash" required>
+  The type of which this model is an alias. Can be any Typesync
+  [type](/schema/types).
+</ParamField>
+
+### Example
+
+```yaml user.yml
+# yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+
+UserRole:
+  model: alias
+  docs: Represents a user's role within a project.
+  type:
+    type: enum
+    members:
+      - label: Owner
+        value: owner
+      - label: Admin
+        value: admin
+      - label: Member
+        value: member
+```
+
+## Autcomplete/Intellisense
+
+<Tabs>
+  <Tab title="YAML definition">
+    When writing your schema definition in YAML, always include the following line at the top
+    of each definition file.
+
+    ```yaml
+    # yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+    ```
+
+    This indicates to your IDE that the file is not just any YAML file but a part of a Typesync definition by linking it to the relevant JSON Schema.. This will allow your IDE to provide Intellisense/autocomplete for definition fields.
+
+    <Tip>
+    For type hinting to take effect, you may need to install a YAML extension that
+    automatically loads the specified JSON Schema. For VS Code, we recommend using
+    the [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+    extension by Red Hat.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="JSON definition">
+    When writing your schema definition in JSON, always include the following top-level field at the top
+    of each definition file.
+
+      ```json
+      {
+        "$schema": "https://schema.typesync.org/v0.13.json"
+        // ...
+      }
+      ```
+
+      This indicates to your IDE that the file is not just any JSON file but a part of a Typesync definition by linking it to the relevant JSON Schema. This will allow your IDE to provide Intellisense/autocomplete for definition fields.
+
+      <Tip>
+      For type hinting to take effect, you may need to install an extension that
+      automatically loads the specified JSON Schema. For VS Code, you shouldn't need any extensions as it [ships with JSON Schema support](https://code.visualstudio.com/docs/languages/json#_json-schemas-and-settings).
+      </Tip>
+
+  </Tab>
+</Tabs>
+
+For the time being, you need manually synchronize the schema version in this
+line with the Typesync version you're using. For example, if you're using
+Typesync version 0.4.2, you need to make sure that the version in the above
+schema URL is `v0.4`. Patch version is always excluded.
+
+## Validating with CLI
+
+While utilizing a JSON schema can help identify syntax errors within your schema definition, the Typesync CLI provides the most reliable method to check if a definition is syntactically valid. To validate a schema definition, use the `validate` command as shown below:
+
+```bash
+typesync validate --definition <pathToDefinition>
+```
+
+For additional details on using this command, see [validate](/cli/validate).
+
+<Note>
+
+Typesync automatically validates your definition before running any generators. The manual validation command is needed when you just want to check if your schema definition is valid without generating any artifacts.
+
+</Note>

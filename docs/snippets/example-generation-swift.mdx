@@ -1,0 +1,26 @@
+```swift models.swift
+import Foundation
+
+/// Represents a user's role within a project.
+enum UserRole: String, Codable {
+  case Owner = "owner"
+  case Admin = "admin"
+  case Member = "member"
+}
+
+/// Represents a user that belongs to a project.
+struct User: Codable {
+  /// A string that uniquely identifies the user within a project.
+  var username: String
+  var role: UserRole
+  var websiteUrl: String?
+  var createdAt: Date
+
+  private enum CodingKeys: String, CodingKey {
+    case username
+    case role
+    case websiteUrl = "website_url"
+    case createdAt = "created_at"
+  }
+}
+```
