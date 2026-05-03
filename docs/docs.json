@@ -1,16 +1,15 @@
 {
   "$schema": "https://mintlify.com/schema.json",
+  "theme": "mint",
   "name": "typesync",
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#357470",
     "light": "#48A77B",
-    "dark": "#357470",
-    "anchors": {
-      "from": "#357470",
-      "to": "#48A77B"
-    },
-    "background": {
+    "dark": "#357470"
+  },
+  "background": {
+    "color": {
       "dark": "#030a08"
     }
   },
@@ -44,27 +43,29 @@
       "url": "https://discord.gg/Hb2HW98DvF"
     }
   ],
-  "navigation": [
-    {
-      "group": "Overview",
-      "pages": ["introduction", "installation", "quickstart", "upgrading"]
-    },
-    {
-      "group": "Schema",
-      "pages": ["schema/definition", "schema/types"]
-    },
-    {
-      "group": "CLI Reference",
-      "pages": [
-        "cli/generate-ts",
-        "cli/generate-swift",
-        "cli/generate-py",
-        "cli/generate-rules",
-        "cli/generate-graph",
-        "cli/validate"
-      ]
-    }
-  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Overview",
+        "pages": ["introduction", "installation", "quickstart", "upgrading"]
+      },
+      {
+        "group": "Schema",
+        "pages": ["schema/definition", "schema/types"]
+      },
+      {
+        "group": "CLI Reference",
+        "pages": [
+          "cli/generate-ts",
+          "cli/generate-swift",
+          "cli/generate-py",
+          "cli/generate-rules",
+          "cli/generate-graph",
+          "cli/validate"
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "discord": "https://discord.gg/Hb2HW98DvF",
     "github": "https://github.com/kafkas/typesync"
