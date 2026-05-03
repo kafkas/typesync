@@ -32,3 +32,22 @@ __pypackages__/
 .mypy_cache/
 
 ### PYTHON END
+
+### INTEGRATION TESTS START
+# Generated source for the per-platform integration suites.
+# Each suite also has its own .gitignore that whitelists a .gitkeep file.
+tests/integration/python/generated/*.py
+tests/integration/typescript/generated/*.ts
+tests/integration/swift/Sources/TypesyncIntegration/Generated/*.swift
+
+# Swift Package Manager build artifacts.
+tests/integration/swift/.build/
+tests/integration/swift/.swiftpm/
+tests/integration/swift/Package.resolved
+
+# Firebase emulator runtime artifacts (`firebase emulators:exec` writes
+# these into the working directory it is invoked from).
+ui-debug.log
+database-debug.log
+pubsub-debug.log
+### INTEGRATION TESTS END
