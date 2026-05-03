@@ -47,11 +47,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
 
-  integration-test:
-    name: Integration tests (Python E2E)
+  integration-python:
+    name: Integration tests (Python)
     runs-on: ubuntu-latest
-    env:
-      TYPESYNC_MODELS_OUT_DIR: ${{ github.workspace }}/tests/test-poetry-project/autogen
     steps:
       - uses: actions/checkout@v5
 
@@ -72,29 +70,90 @@ jobs:
         with:
           python-version: '3.10'
           cache: poetry
-          cache-dependency-path: tests/test-poetry-project/poetry.lock
-
-      - uses: google-github-actions/setup-gcloud@v2
-        with:
-          install_components: 'beta,cloud-firestore-emulator'
+          cache-dependency-path: tests/integration/python/poetry.lock
 
       - name: Install Node dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Generate Python models from Typesync schema
-        run: |
-          mkdir -p "$TYPESYNC_MODELS_OUT_DIR"
-          yarn tsx src/cli/index.tsx generate-py \
-            --definition tests/test-poetry-project/test_poetry_project/models.yml \
-            --target firebase-admin@6 \
-            --outFile "$TYPESYNC_MODELS_OUT_DIR/models.py"
-
       - name: Install Poetry project
-        working-directory: tests/test-poetry-project
-        run: poetry install
+        working-directory: tests/integration/python
+        run: poetry install --no-root
 
-      - name: Run Python end-to-end tests
-        working-directory: tests/test-poetry-project
-        env:
-          TYPESYNC_OUT_MODEL_PATH: ${{ github.workspace }}/tests/test-poetry-project/autogen/models.py
-        run: poetry run pytest
+      - name: Run integration tests
+        run: yarn test:integration:python
+
+      - name: Upload generated models on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-python-generated
+          path: tests/integration/python/generated/
+
+  integration-typescript:
+    name: Integration tests (TypeScript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: yarn
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Node dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run integration tests
+        run: yarn test:integration:typescript
+
+      - name: Upload generated types on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-typescript-generated
+          path: tests/integration/typescript/generated/
+
+  integration-swift:
+    name: Integration tests (Swift)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: yarn
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Node dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Cache SwiftPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            tests/integration/swift/.build
+            tests/integration/swift/.swiftpm
+            ~/Library/Caches/org.swift.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('tests/integration/swift/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Run integration tests
+        run: yarn test:integration:swift
+
+      - name: Upload generated source on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-swift-generated
+          path: tests/integration/swift/Sources/TypesyncIntegration/Generated/

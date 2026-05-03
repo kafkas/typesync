@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+Package.resolved
+
+Sources/TypesyncIntegration/Generated/*.swift
+!Sources/TypesyncIntegration/Generated/.gitkeep

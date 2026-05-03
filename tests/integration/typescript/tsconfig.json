@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "esModuleInterop": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "noEmit": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["generated/**/*.ts", "tests/**/*.ts", "vitest.config.ts"]
+}

@@ -1,4 +1,9 @@
-# yaml-language-server: $schema=../../../schema.local.json
+# yaml-language-server: $schema=../../../../schema.local.json
+#
+# Shared integration-test fixture. Consumed by every per-platform integration
+# suite under tests/integration/<platform>/. The schema deliberately mixes a
+# string enum alias and a single document model with a string, an enum and a
+# timestamp so we exercise the most common type plumbing across generators.
 
 UserRole:
   model: alias
