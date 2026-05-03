@@ -1,16 +1,11 @@
 ```ts app.ts (frontend)
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  type CollectionReference,
-} from "firebase/firestore";
-import type { User } from "./models";
+import { type CollectionReference, collection, doc, getDoc, getFirestore } from 'firebase/firestore';
+
+import type { User } from './models';
 
 const firestore = getFirestore();
-const usersColRef = collection(firestore, "users") as CollectionReference<User>;
-const userDocRef = doc(usersColRef, "adam");
+const usersColRef = collection(firestore, 'users') as CollectionReference<User>;
+const userDocRef = doc(usersColRef, 'adam');
 const userSnap = await getDoc(userDocRef);
 const user = userSnap.data(); // is a User object
 ```

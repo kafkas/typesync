@@ -1,6 +1,6 @@
 ---
-title: "Types"
-icon: "cube"
+title: 'Types'
+icon: 'cube'
 ---
 
 Here, you'll find a comprehensive list of all types supported by the Typesync specification. Typesync's powerful type system is designed to support a wide array of complex and useful types.
@@ -268,7 +268,8 @@ function isValidExample(data) {
 Represents a literal type.
 
 <Info>
-  Literal types are not supported in Swift. Typesync currently compiles literal types to the type of the literal value in Swift.
+  Literal types are not supported in Swift. Typesync currently compiles literal types to the type of the literal value
+  in Swift.
 </Info>
 
 <CodeGroup>
@@ -325,7 +326,7 @@ UserRole:
 ```
 
 ```ts models.ts
-export type UserRole = "owner" | "admin" | "member";
+export type UserRole = 'owner' | 'admin' | 'member';
 ```
 
 ```swift models.swift
@@ -347,7 +348,7 @@ class UserRole(enum.Enum):
 
 ```javascript firestore.rules
 function isValidUserRole(data) {
-  return data == "owner" || data == "admin" || data == "member";
+  return data == 'owner' || data == 'admin' || data == 'member';
 }
 ```
 
@@ -526,6 +527,33 @@ function isValidExample(data) {
 
 </CodeGroup>
 
+### Swift-specific options
+
+Use `swift.name` on an object field to override only the generated Swift property
+name. The Firestore field name stays the same.
+
+```yaml
+Example:
+  model: alias
+  type:
+    type: object
+    fields:
+      class:
+        type: string
+        swift:
+          name: userClass
+```
+
+```swift
+struct Example: Codable {
+  var userClass: String
+
+  private enum CodingKeys: String, CodingKey {
+    case userClass = "class"
+  }
+}
+```
+
 ## `union`
 
 Represents a union of multiple types. Typesync supports two types of unions: _simple union_ and _discriminated union_. Both are defined in the same way using `variants`, except a discriminated union definition has a `discriminant` key and requires every variant to be of `object` (or `alias` resolving to `object`) type.
@@ -639,13 +667,13 @@ Pet:
 
 ```ts models.ts
 export type Cat = {
-  type: "cat";
+  type: 'cat';
   name: string;
   lives_left: number;
 };
 
 export type Dog = {
-  type: "dog";
+  type: 'dog';
   name: string;
   breed: string;
 };

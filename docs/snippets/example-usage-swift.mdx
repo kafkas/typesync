@@ -5,7 +5,7 @@ let db = Firestore.firestore()
 
 db.document("users/adam").getDocument { snapshot, err in
   if let user = try! snapshot?.data(as: User.self) {
-    print(user) // is a User instance
+    print(user.id) // "adam"
   }
 }
 ```

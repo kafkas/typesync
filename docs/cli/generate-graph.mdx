@@ -1,15 +1,15 @@
 ---
-title: "generate-graph"
-icon: "rectangle-terminal"
+title: 'generate-graph'
+icon: 'rectangle-terminal'
 ---
 
-import DefinitionOption from "/snippets/cli-option-definition.mdx";
-import OutFileOption from "/snippets/cli-option-out-file.mdx";
-import IndentationOption from "/snippets/cli-option-indentation.mdx";
-import DebugOption from "/snippets/cli-option-debug.mdx";
-import ExampleDefinitionGraph from "/snippets/example-definition-graph.mdx";
-import ExampleGenerationGraphBefore from "/snippets/example-generation-graph-before.mdx";
-import ExampleGenerationGraph from "/snippets/example-generation-graph.mdx";
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+import IndentationOption from '/snippets/cli-option-indentation.mdx';
+import OutFileOption from '/snippets/cli-option-out-file.mdx';
+import ExampleDefinitionGraph from '/snippets/example-definition-graph.mdx';
+import ExampleGenerationGraphBefore from '/snippets/example-generation-graph-before.mdx';
+import ExampleGenerationGraph from '/snippets/example-generation-graph.mdx';
 
 Generates a [Mermaid](https://mermaid.js.org) graph for the specified schema and injects it into the specified Markdown file. The generated graph is the visual representation of the database architecture inferred from your schema. You can specify where the graph is inserted within the file using the `--startMarker` and `--endMarker` options. For a detailed guide, see the full [example](#example) below.
 
@@ -39,14 +39,9 @@ typesync generate-graph --definition <filePathOrPattern> --outFile <filePath> --
   the `<!--` (see [example](#example)).
 </ParamField>
 
-<ParamField
-  type='"vertical" | "horizontal"'
-  path="orientation"
-  default="horizontal"
->
-  The orientation of the generated Mermaid graph. Can be either `"vertical"` or
-  `"horizontal"` which correspond to the `"TB"` and `"LR"` Mermaid options,
-  respectively.
+<ParamField type='"vertical" | "horizontal"' path="orientation" default="horizontal">
+  The orientation of the generated Mermaid graph. Can be either `"vertical"` or `"horizontal"` which correspond to the
+  `"TB"` and `"LR"` Mermaid options, respectively.
 </ParamField>
 
 <DebugOption />

@@ -1,5 +1,6 @@
 ```swift models.swift
 import Foundation
+import FirebaseFirestore
 
 /// Represents a user's role within a project.
 enum UserRole: String, Codable {
@@ -10,6 +11,7 @@ enum UserRole: String, Codable {
 
 /// Represents a user that belongs to a project.
 struct User: Codable {
+  @DocumentID var id: String?
   /// A string that uniquely identifies the user within a project.
   var username: String
   var role: UserRole

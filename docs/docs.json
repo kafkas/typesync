@@ -61,6 +61,7 @@
           "cli/generate-py",
           "cli/generate-rules",
           "cli/generate-graph",
+          "cli/validate-data",
           "cli/validate"
         ]
       }
