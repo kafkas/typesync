@@ -1,8 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`SwiftRendererImpl correctly renders a Swift generation 1`] = `
-{
-  "content": "import Foundation
+import Foundation
 
 /// A string that uniquely identifies the user.
 typealias Username = String
@@ -16,6 +12,3 @@ struct Project: Codable {
     var completed: Bool
 }
 
-",
-}
-`;

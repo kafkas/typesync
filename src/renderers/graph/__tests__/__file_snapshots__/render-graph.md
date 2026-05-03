@@ -1,13 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`MermaidGraph correctly renders a MermaidGraph 1`] = `
-{
-  "content": "# Architecture
+# Architecture
 
 This graph explains how our database is structured.
 
 <!-- typesync-start -->
-\`\`\`mermaid
+```mermaid
 graph LR
     node1["books"] --> node2["{bookId}"]
     node2["{bookId}"] --> node3["reviews"]
@@ -17,10 +13,7 @@ graph LR
     node2["{bookId}"] --> node7["translations"]
     node7["translations"] --> node8["{translationId}"]
     node9["authors"] --> node10["{authorId}"]
-\`\`\`
+```
 <!-- typesync-end -->
 
 This graph is automatically generated.
-",
-}
-`;

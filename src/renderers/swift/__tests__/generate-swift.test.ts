@@ -55,6 +55,6 @@ describe('SwiftRendererImpl', () => {
 
     const result = await renderer.render(generation);
 
-    expect(result).toMatchSnapshot();
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/generate-swift.swift');
   });
 });

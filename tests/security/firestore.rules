@@ -64,7 +64,7 @@ service cloud.firestore {
     (
     (data.metadata is map) &&
     (data.metadata.keys().hasOnly(['field1', 'field2', 'field3'])) &&
-    (data.metadata.field1 is float) &&
+    (data.metadata.field1 is number) &&
     (
     (data.metadata.field2 is map) &&
     (data.metadata.field2.keys().hasOnly(['nestedField1', 'nestedField2'])) &&
@@ -74,52 +74,6 @@ service cloud.firestore {
     (data.metadata.field3 is string)
     ) &&
     (data.created_at is timestamp)
-    );
-  }
-
-  function isReadonlyFieldAffectedForDog(prevData, nextData) {
-    return (
-    nextData.diff(prevData).affectedKeys().hasAny(['type', 'name'])
-    );
-  }
-
-  function isReadonlyFieldAffectedForPet(prevData, nextData) {
-    return (
-    () ||
-    ((
-    (prevData is map) &&
-    (prevData.keys().hasOnly(['type', 'name', 'lives_left'])) &&
-    (prevData.type == 'cat') &&
-    (prevData.name is string) &&
-    (prevData.lives_left is int)
-    )) ||
-    ()
-    );
-  }
-
-  function isReadonlyFieldAffectedForWorkspaceInfo(prevData, nextData) {
-    return (
-    nextData.diff(prevData).affectedKeys().hasAny(['name'])
-    );
-  }
-
-  function isReadonlyFieldAffectedForUser(prevData, nextData) {
-    return (
-    nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']) ||
-    isReadonlyFieldAffectedForPet(prevData.pet, nextData.pet)
-    );
-  }
-
-  function isReadonlyFieldAffectedForWorkspace(prevData, nextData) {
-    return (
-    nextData.diff(prevData).affectedKeys().hasAny(['created_at']) ||
-    isReadonlyFieldAffectedForWorkspaceInfo(prevData.info, nextData.info) ||
-    (
-    nextData.metadata.diff(prevData.metadata).affectedKeys().hasAny(['field1']) ||
-    (
-    nextData.metadata.field2.diff(prevData.metadata.field2).affectedKeys().hasAny(['nestedField2'])
-    )
-    )
     );
   }
   // typesync-end

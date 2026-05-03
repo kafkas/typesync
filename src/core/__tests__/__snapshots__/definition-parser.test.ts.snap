@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`definition-parser correctly parses definition from JSON files 1`] = `
+exports[`definition-parser > correctly parses definition from JSON files 1`] = `
 {
   "Address": {
     "model": "alias",
@@ -174,7 +174,7 @@ exports[`definition-parser correctly parses definition from JSON files 1`] = `
 }
 `;
 
-exports[`definition-parser correctly parses definition from YAML files 1`] = `
+exports[`definition-parser > correctly parses definition from YAML files 1`] = `
 {
   "Address": {
     "model": "alias",
@@ -348,7 +348,7 @@ exports[`definition-parser correctly parses definition from YAML files 1`] = `
 }
 `;
 
-exports[`definition-parser ignores the '$schema' field in definition files 1`] = `
+exports[`definition-parser > ignores the '$schema' field in definition files 1`] = `
 {
   "Username": {
     "model": "alias",

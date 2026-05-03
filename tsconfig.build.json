@@ -4,18 +4,20 @@
     "outDir": "lib",
     "rootDir": "src",
     "sourceMap": true,
-    "declaration": false
+    "declaration": false,
+    "types": ["node"]
   },
+  "include": ["src/**/*"],
   "exclude": [
     "client/**/*",
     "dist",
-    "jest.config.global.ts",
-    "jest.config.ts",
     "lib",
     "playground/**/*",
     "scripts",
     "src/**/__tests__/**/*",
     "tests/**/*",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "vitest.config.ts",
+    "vitest.security.config.ts"
   ]
 }
