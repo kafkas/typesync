@@ -48,21 +48,12 @@ class TypesyncModel(pydantic.BaseModel):
 
 # Model Definitions
 
-Username = str
-"""A string that uniquely identifies the user."""
+class Color(enum.Enum):
+    """Available colors"""
+    Red = "red"
+    Blue = "blue"
 
-UserMetadata = typing.Any
-
-class Project(TypesyncModel):
-    """A project within a workspace"""
-    name: str
-    completed: bool
-    """Whether the project is completed."""
-
-    class Config:
-        use_enum_values = True
-        extra = 'forbid'
-
-    def __setattr__(self, name: str, value: typing.Any) -> None:
-        super().__setattr__(name, value)
+class Priority(enum.Enum):
+    Low = 1
+    High = 2
 

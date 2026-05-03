@@ -1,8 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
   // t-start
+  function isReadonlyAffectedForUser(prevData, nextData) {
+    return (
+    nextData.diff(prevData).affectedKeys().hasAny(['role', 'created_at']) ||
+    isReadonlyAffectedForUserAddress(prevData.address, nextData.address)
+    );
+  }
   // t-end
-  
+
   match /databases/{database}/documents {
     function isSignedIn() {
       return request.auth != null;
