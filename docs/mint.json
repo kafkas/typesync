@@ -1,0 +1,72 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "typesync",
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#357470",
+    "light": "#48A77B",
+    "dark": "#357470",
+    "anchors": {
+      "from": "#357470",
+      "to": "#48A77B"
+    },
+    "background": {
+      "dark": "#030a08"
+    }
+  },
+  "logo": { "light": "images/logo-light.png", "dark": "images/logo-dark.png" },
+  "topbarLinks": [
+    {
+      "type": "link",
+      "name": "Discord",
+      "url": "https://discord.gg/Hb2HW98DvF"
+    }
+  ],
+  "topbarCtaButton": {
+    "type": "link",
+    "name": "GitHub",
+    "url": "https://github.com/kafkas/typesync"
+  },
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/kafkas/typesync"
+    },
+    {
+      "name": "Changelog",
+      "icon": "list-tree",
+      "url": "https://github.com/kafkas/typesync/blob/main/CHANGELOG.md"
+    },
+    {
+      "name": "Support",
+      "icon": "discord",
+      "url": "https://discord.gg/Hb2HW98DvF"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Overview",
+      "pages": ["introduction", "installation", "quickstart", "upgrading"]
+    },
+    {
+      "group": "Schema",
+      "pages": ["schema/definition", "schema/types"]
+    },
+    {
+      "group": "CLI Reference",
+      "pages": [
+        "cli/generate-ts",
+        "cli/generate-swift",
+        "cli/generate-py",
+        "cli/generate-rules",
+        "cli/generate-graph",
+        "cli/validate"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "discord": "https://discord.gg/Hb2HW98DvF",
+    "github": "https://github.com/kafkas/typesync"
+  }
+}

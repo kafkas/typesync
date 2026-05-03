@@ -1,0 +1,47 @@
+---
+title: "generate-py"
+icon: "rectangle-terminal"
+---
+
+import DefinitionOption from "/snippets/cli-option-definition.mdx";
+import OutFileOption from "/snippets/cli-option-out-file.mdx";
+import TargetOption from "/snippets/cli-option-target.mdx";
+import IndentationOption from "/snippets/cli-option-indentation.mdx";
+import DebugOption from "/snippets/cli-option-debug.mdx";
+
+Generates Python/Pydantic type definitions for the specified schema and writes them to the specified file. Typesync first “flattens” your schema, creating new aliases for inline types defined within. It then generates the classes, enums, aliases, etc. including serializers and deserializers.
+
+## Usage
+
+```bash
+typesync generate-py --definition <filePathOrPattern> --target <targetEnvironment> --outFile <filePath> --indentation <indentation> --customPydanticBase <classImportPath> --debug <debug>
+```
+
+## Options
+
+<DefinitionOption />
+<TargetOption />
+<OutFileOption />
+
+<ParamField type="string" path="customPydanticBase">
+The base class from which all the generated Python models will extend. The base class must extend `pydantic.BaseModel` and the option must be provided in the format `x.y.ModelName`. If this option is not provided, the generated models will extend from `pydantic.BaseModel`.
+
+Example values:
+
+- `custom.MyModel`
+- `a.b.c.MyCustomModel`
+
+</ParamField>
+
+<ParamField type="string" path="undefinedSentinelName" default="UNDEFINED">
+  The name of the sentinel value used to indicate that a field should be missing
+  from a given object. This is generated as a variable alongside your model
+  definitions.
+</ParamField>
+
+<IndentationOption />
+<DebugOption />
+
+## Targets
+
+- `firebase-admin@6`: For Python projects that rely on the [Firebase Admin Python SDK (v6)](https://github.com/firebase/firebase-admin-python).

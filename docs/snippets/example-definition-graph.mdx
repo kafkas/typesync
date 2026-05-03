@@ -1,0 +1,38 @@
+```yaml models.yml
+# yaml-language-server: $schema=https://schema.typesync.org/v0.13.json
+
+Author:
+  model: document
+  path: authors/{authorId}
+  type:
+    type: object
+    fields: {}
+
+Book:
+  model: document
+  path: books/{bookId}
+  type:
+    type: object
+    fields: {}
+
+Review:
+  model: document
+  path: books/{bookId}/reviews/{reviewId}
+  type:
+    type: object
+    fields: {}
+
+Chapter:
+  model: document
+  path: books/{bookId}/chapters/{chapterId}
+  type:
+    type: object
+    fields: {}
+
+Translation:
+  model: document
+  path: books/{bookId}/translations/{translationId}
+  type:
+    type: object
+    fields: {}
+

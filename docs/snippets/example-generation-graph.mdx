@@ -1,0 +1,21 @@
+```md graph.md
+# Architecture
+
+This graph explains how our database is structured.
+
+<!-- typesync-start -->
+```mermaid
+graph LR
+    node1["authors"] --> node2["{authorId}"]
+    node3["books"] --> node4["{bookId}"]
+    node4["{bookId}"] --> node5["chapters"]
+    node5["chapters"] --> node6["{chapterId}"]
+    node4["{bookId}"] --> node7["reviews"]
+    node7["reviews"] --> node8["{reviewId}"]
+    node4["{bookId}"] --> node9["translations"]
+    node9["translations"] --> node10["{translationId}"]
+``
+<!-- typesync-end -->
+
+This graph is automatically generated.
+```

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="images/logo.png" width="240px" alt="header" />
+  <img src="docs/images/icon.png" width="240px" alt="header" />
 </div>
 
 <h1 align="center">
@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-    Autogenerate Firestore model types for all platforms
+    Schema-first Firestore tooling for types, validation, and visualization
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ Typesync keeps your database and application code consistent and up-to-date at a
 [**View the full documentation (docs) ▸**](https://docs.typesync.org)
 
 <div align="center">
-  <img src="images/architecture-v3.png" width="600px" alt="header" />
+  <img src="docs/images/architecture-v3.png" width="600px" alt="header" />
 </div>
 
 # Documentation

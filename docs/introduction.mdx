@@ -1,0 +1,103 @@
+---
+title: Introduction
+---
+
+import ExampleDefinition from "/snippets/example-definition.mdx";
+import ExampleGenerationTSFrontend from "/snippets/example-generation-ts-frontend.mdx";
+import ExampleGenerationTSBackend from "/snippets/example-generation-ts-backend.mdx";
+import ExampleGenerationPython from "/snippets/example-generation-py.mdx";
+import ExampleGenerationSwift from "/snippets/example-generation-swift.mdx";
+import ExampleGenerationRules from "/snippets/example-generation-rules.mdx";
+
+import ExampleUsageTSFrontend from "/snippets/example-usage-ts-frontend.mdx";
+import ExampleUsageTSBackend from "/snippets/example-usage-ts-backend.mdx";
+import ExampleUsageSwift from "/snippets/example-usage-swift.mdx";
+import ExampleUsagePython from "/snippets/example-usage-py.mdx";
+
+Typesync is an open-source schema management toolkit that simplifies managing [Firestore](https://cloud.google.com/firestore) databases. Typesync allows you to maintain a single source of truth for your Firestore architecture in a special _schema_. With this schema in place, you can seamlessly auto-generate type definitions for multiple platforms like TypeScript, Swift, Python, and more using the CLI tool.
+
+Typesync keeps your database and application code consistent and up-to-date at all times. In addition to type definitions, it lets you generate other useful things like Security Rules, Mermaid graphs visualizing your database architecture and documentation for your data models.
+
+<Frame
+  type="glass"
+  caption="Single source of truth for your Firestore architecture"
+>
+  <img src="/images/architecture-v3.png" />
+</Frame>
+
+## Typesync in 30 seconds
+
+You define your Firestore schema in a collection of YAML/JSON files. The Typesync CLI reads these files and produces ready-to-use Firestore model definitions for all the languages and platforms you work with.
+
+In the example below, we define our models in `models.yml`.
+
+<ExampleDefinition />
+
+We then run the following commands to generate type definitions for four different environments and type validators for Security Rules:
+
+<CodeGroup>
+
+```bash TS (frontend)
+typesync generate-ts --target firebase@10 --definition models.yml # ... other options
+```
+
+```bash TS (backend)
+typesync generate-ts --target firebase-admin@11 --definition models.yml # ... other options
+```
+
+```bash Swift
+typesync generate-swift --target firebase@10 --definition models.yml # ... other options
+```
+
+```bash Python
+typesync generate-py --target firebase-admin@6 --definition models.yml # ... other options
+```
+
+```bash Security Rules
+typesync generate-rules --definition models.yml # ... other options
+```
+
+</CodeGroup>
+
+Typesync generates the following files:
+
+<CodeGroup>
+  <ExampleGenerationTSFrontend />
+  <ExampleGenerationTSBackend />
+  <ExampleGenerationSwift />
+  <ExampleGenerationPython />
+  <ExampleGenerationRules />
+</CodeGroup>
+
+Once we have the generated models, we can import and use them in our application code. As for Security Rules, we just need to deploy them to Firestore.
+
+<CodeGroup>
+  <ExampleUsageTSFrontend />
+  <ExampleUsageTSBackend />
+  <ExampleUsageSwift />
+  <ExampleUsagePython />
+</CodeGroup>
+
+## Design Goals
+
+Typesync is built on three core principles that guide its design and functionality.
+
+### 1. Predictability
+
+Typesync values straightforward operation over complexity. It doesn't try to outsmart you by making implicit assumptions. There are no "gotchas", no hidden configurations. When faced with bad input, Typesync prefers to issue an error rather than make assumptions and try to make the most of the situation.
+
+Our philosophy is straightforward: developer tools should consistently perform as expected, without any surprising behavior—even if such behavior might be seen as beneficial to some. Essentially, tools should remain "dumb" in their operations, even while performing complex tasks.
+
+The predictability that this behavior produces means that you always know what to expect from Typesync as it does only what it promises to do. Nothing more, nothing less.
+
+### 2. Ejectability
+
+Flexibility is central to Typesync's design. It's developed to be non-intrusive, with no lock-in effects. You can easily integrate Typesync into your projects without major changes to your codebase.
+
+Typesync _is not_ a library that tightly attaches itself to your code. You can eject at any time by simply copy-pasting the generated output into your source code without having to refactor your code. Moving away from Typesync is as simple as integrating it.
+
+### 3. Configurability
+
+Everything that can be reasonably expected to be configurable is made explicitly configurable by Typesync. Whether it's defining how your schema is structured or customizing the output for different programming languages, Typesync provides you with the flexibility to make those decisions.
+
+Typesync is designed to be as customizable as possible, allowing you to tailor the tool to your project's requirements.

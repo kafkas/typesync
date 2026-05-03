@@ -1,0 +1,29 @@
+```javascript firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  // typesync-start
+  function isValidUserRole(data) {
+    return ((data == 'owner') || (data == 'admin') || (data == 'member'));
+  }
+
+  function isValidUser(data) {
+    return (
+      (data is map) &&
+      (data.keys().hasOnly(['username', 'role', 'website_url', 'created_at'])) &&
+      (data.username is string) &&
+      isValidUserRole(data.role) &&
+      ((data.website_url is string) || !('website_url' in data)) &&
+      (data.created_at is timestamp)
+    );
+  }
+  // typesync-end
+
+  // Here you define your custom rules
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read;
+      allow write: if isValidUser(request.resource.data);
+    }
+  }
+}
+```
