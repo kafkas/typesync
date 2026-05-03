@@ -5,7 +5,7 @@
     "rootDir": "src",
     "sourceMap": true,
     "declaration": false,
-    "types": ["node"]
+    "types": ["node", "yargs"]
   },
   "include": ["src/**/*"],
   "exclude": [
@@ -14,6 +14,10 @@
     "lib",
     "playground/**/*",
     "scripts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.tsx",
     "src/**/__tests__/**/*",
     "tests/**/*",
     "tsup.config.ts",

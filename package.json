@@ -79,6 +79,7 @@
     "@types/node": "^20.11.24",
     "@types/pluralize": "^0.0.33",
     "@types/react": "^18.2.69",
+    "@types/yargs": "^17.0.35",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "@vitest/coverage-v8": "^4.1.5",
