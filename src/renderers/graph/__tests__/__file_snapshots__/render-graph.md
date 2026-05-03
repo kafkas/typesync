@@ -8,11 +8,7 @@ graph LR
     node1["books"] --> node2["{bookId}"]
     node2["{bookId}"] --> node3["reviews"]
     node3["reviews"] --> node4["{reviewId}"]
-    node2["{bookId}"] --> node5["chapters"]
-    node5["chapters"] --> node6["{chapterId}"]
-    node2["{bookId}"] --> node7["translations"]
-    node7["translations"] --> node8["{translationId}"]
-    node9["authors"] --> node10["{authorId}"]
+    node5["authors"] --> node6["{authorId}"]
 ```
 <!-- typesync-end -->
 

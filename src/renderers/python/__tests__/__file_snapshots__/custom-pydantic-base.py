@@ -49,5 +49,13 @@ class TypesyncModel(CustomModel):
 
 # Model Definitions
 
-Username = str
+class Profile(TypesyncModel):
+  id: str
+
+  class Config:
+    use_enum_values = True
+    extra = 'forbid'
+
+  def __setattr__(self, name: str, value: typing.Any) -> None:
+    super().__setattr__(name, value)
 

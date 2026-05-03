@@ -4,17 +4,18 @@ service cloud.firestore {
   function isUser(data) {
     return (
     (data is map) &&
-    (data.keys().hasOnly(['username', 'role', 'path', 'pets', 'website_url', 'created_at'])) &&
+    (data.keys().hasOnly(['username', 'role', 'website_url', 'created_at'])) &&
     (data.username is string) &&
-    ((data.role == 'owner') || (data.role == 'admin') || (data.role == 'member')) &&
-    ((data.path is string) || (data.path is list)) &&
-    (data.pets is list) &&
+    ((data.role == 'owner') || (data.role == 'admin')) &&
     ((data.website_url is string) || !('website_url' in data)) &&
-    (data.created_at is timestamp)
+    isTimestamp(data.created_at) &&
+    data.misc &&
+    true &&
+    true
     );
   }
   // t-end
-  
+
   match /databases/{database}/documents {
     function isSignedIn() {
       return request.auth != null;
