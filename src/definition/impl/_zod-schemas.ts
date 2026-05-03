@@ -221,7 +221,10 @@ export const swiftDocumentModelOptions = z
           ),
       })
       .strict()
-      .optional(),
+      .optional()
+      .describe(
+        "Configuration for the auto-generated `@DocumentID`-annotated property that the Swift generator emits on every document-model struct. The Firebase iOS SDK populates this property from the document's path on read and excludes it from the encoded body on write."
+      ),
   })
   .strict()
   .describe('Swift-specific overrides for a document model.');

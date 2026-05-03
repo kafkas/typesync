@@ -188,6 +188,35 @@ describe('SwiftRendererImpl', () => {
     await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/document-id-rename.swift');
   });
 
+  it('renders a struct with a renamed @DocumentID but no body-property renames, leaving CodingKeys synthesis to the Swift compiler', async () => {
+    // When no body property has a remap, we must NOT emit an explicit
+    // CodingKeys block: synthesized CodingKeys naturally include the
+    // @DocumentID-wrapped property under its declared Swift name, and the
+    // Firebase SDK still recognizes it via the property wrapper. Emitting an
+    // unnecessary explicit CodingKeys would just be noise.
+    const generation: SwiftGeneration = {
+      type: 'swift',
+      declarations: [
+        {
+          type: 'struct',
+          modelName: 'Org',
+          modelDocs: null,
+          modelType: {
+            type: 'struct',
+            documentIdProperty: { name: 'documentId' },
+            literalProperties: [],
+            regularProperties: [
+              { originalName: 'name', name: 'name', type: { type: 'string' }, optional: false, docs: null },
+            ],
+          },
+        },
+      ],
+    };
+
+    const result = await createRenderer().render(generation);
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/document-id-rename-no-body-rename.swift');
+  });
+
   it('renders a struct that combines a renamed regular property (swift.name) with a renamed @DocumentID property', async () => {
     const generation: SwiftGeneration = {
       type: 'swift',

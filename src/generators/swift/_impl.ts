@@ -153,7 +153,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
       ) {
         literalProperties.push({
           originalName: field.name,
-          name: camelCase(field.name),
+          name: resolveSwiftPropertyName(field),
           docs: field.docs,
           type: literalTypeToSwift(field.type),
           literalValue: `${typeof field.type.value === 'string' ? `"${field.type.value}"` : field.type.value}`,
@@ -172,7 +172,7 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     if (documentIdProperty !== null) {
       this.assertNoDocumentIdCollision({ modelName, documentIdProperty, literalProperties, regularProperties });
     }
-    this.assertUniquePropertyNames({ modelName, documentIdProperty, literalProperties, regularProperties });
+    this.assertUniqueSwiftPropertyNames({ modelName, documentIdProperty, literalProperties, regularProperties });
 
     const swiftType: swift.Struct = {
       type: 'struct',
@@ -212,23 +212,31 @@ class SwiftGeneratorImpl implements SwiftGenerator {
     }
   }
 
-  private assertUniquePropertyNames(args: {
+  private assertUniqueSwiftPropertyNames(args: {
     modelName: string;
     documentIdProperty: swift.DocumentIdProperty | null;
     literalProperties: readonly swift.LiteralStructProperty[];
     regularProperties: readonly swift.RegularStructProperty[];
   }): void {
-    const { modelName, literalProperties, regularProperties } = args;
-    const allBodyProperties = [...literalProperties, ...regularProperties];
-    const byName = new Map<string, string[]>();
-    allBodyProperties.forEach(p => {
-      const existing = byName.get(p.name) ?? [];
-      existing.push(p.originalName);
-      byName.set(p.name, existing);
-    });
-    for (const [name, originalNames] of byName) {
-      if (originalNames.length > 1) {
-        throw new SwiftPropertyNameCollisionError(modelName, name, originalNames);
+    const { modelName, documentIdProperty, literalProperties, regularProperties } = args;
+    // Tracks each candidate Swift property name back to a human-readable
+    // source: a body field's Firestore key, or the synthetic `@DocumentID`
+    // sentinel.
+    const sourcesByName = new Map<string, string[]>();
+    const record = (name: string, source: string) => {
+      const existing = sourcesByName.get(name) ?? [];
+      existing.push(source);
+      sourcesByName.set(name, existing);
+    };
+
+    [...literalProperties, ...regularProperties].forEach(p => record(p.name, p.originalName));
+    if (documentIdProperty !== null) {
+      record(documentIdProperty.name, '@DocumentID');
+    }
+
+    for (const [name, sources] of sourcesByName) {
+      if (sources.length > 1) {
+        throw new SwiftPropertyNameCollisionError(modelName, name, sources);
       }
     }
   }

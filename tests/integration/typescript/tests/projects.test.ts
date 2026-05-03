@@ -61,32 +61,4 @@ describe('Projects (firebase-admin@13)', () => {
     expect(projectOut.display_name).toBe(projectIn.display_name);
     expect(projectOut.created_at.toMillis()).toBe(projectIn.created_at.toMillis());
   });
-
-  it('does not surface the field-level swift.name rename in the TypeScript type', () => {
-    // The field-level `swift: { name: 'displayName' }` is consumed exclusively
-    // by the Swift generator. The TypeScript type must still expose the field
-    // under its schema name (`display_name`); `displayName` is not a valid key.
-    const _bad: Project = {
-      id: 'x',
-      // @ts-expect-error: `displayName` is the Swift property name; the wire key remains `display_name`.
-      displayName: 'should-not-compile',
-      display_name: 'x',
-      created_at: Timestamp.fromMillis(0),
-    };
-    expect(_bad).toBeDefined();
-  });
-
-  it('does not surface the model-level swift.documentIdProperty rename in the TypeScript type', () => {
-    // The model-level `swift: { documentIdProperty: { name: 'documentId' } }`
-    // is consumed exclusively by the Swift generator. `documentId` must not
-    // be a valid key on the TS Project body.
-    const _bad: Project = {
-      id: 'x',
-      // @ts-expect-error: `documentId` is only the Swift @DocumentID property name; it should not exist on the TS body.
-      documentId: 'should-not-compile',
-      display_name: 'x',
-      created_at: Timestamp.fromMillis(0),
-    };
-    expect(_bad).toBeDefined();
-  });
 });

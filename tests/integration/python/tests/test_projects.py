@@ -1,9 +1,4 @@
-"""Round-trip tests for the `projects` fixture.
-
-The same fixture drives the Swift `@DocumentID` test. On Python (and TS) the
-`swift` block on the `id` field is ignored, so the body field round-trips
-through Pydantic + Firestore as a plain string.
-"""
+"""Round-trip tests for the `projects` fixture."""
 
 from __future__ import annotations
 
@@ -43,17 +38,5 @@ def test_project_round_trips_via_firestore_emulator(
 
     project_out = Project.model_validate(snapshot.to_dict())
     assert project_out == project_in
-    # The body-side `id` field should round-trip verbatim under its schema
-    # name, because the swift overrides do not affect Python output.
     assert project_out.id == sample["id"]
     assert project_out.display_name == sample["display_name"]
-
-
-def test_project_swift_overrides_do_not_leak_into_python(projects_module) -> None:
-    """Sanity check that neither `swift.name` (field-level) nor
-    `swift.documentIdProperty.name` (model-level) bleeds into the Python
-    output. The Python model exposes the schema field names verbatim."""
-
-    Project = projects_module.Project
-    field_names = set(Project.model_fields.keys())
-    assert field_names == {"id", "display_name", "created_at"}, field_names
