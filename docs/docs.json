@@ -1,5 +1,5 @@
 {
-  "$schema": "https://mintlify.com/schema.json",
+  "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "typesync",
   "favicon": "/favicon.svg",
@@ -14,36 +14,32 @@
     }
   },
   "logo": { "light": "images/logo-light.png", "dark": "images/logo-dark.png" },
-  "topbarLinks": [
-    {
-      "type": "link",
-      "name": "Discord",
-      "url": "https://discord.gg/Hb2HW98DvF"
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/kafkas/typesync"
     }
-  ],
-  "topbarCtaButton": {
-    "type": "link",
-    "name": "GitHub",
-    "url": "https://github.com/kafkas/typesync"
   },
-  "anchors": [
-    {
-      "name": "GitHub",
-      "icon": "github",
-      "url": "https://github.com/kafkas/typesync"
-    },
-    {
-      "name": "Changelog",
-      "icon": "list-tree",
-      "url": "https://github.com/kafkas/typesync/blob/main/CHANGELOG.md"
-    },
-    {
-      "name": "Support",
-      "icon": "discord",
-      "url": "https://discord.gg/Hb2HW98DvF"
-    }
-  ],
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "icon": "github",
+          "href": "https://github.com/kafkas/typesync"
+        },
+        {
+          "anchor": "Changelog",
+          "icon": "list-tree",
+          "href": "https://github.com/kafkas/typesync/blob/main/CHANGELOG.md"
+        },
+        {
+          "anchor": "Support",
+          "icon": "discord",
+          "href": "https://discord.gg/Hb2HW98DvF"
+        }
+      ]
+    },
     "groups": [
       {
         "group": "Overview",
@@ -67,8 +63,10 @@
       }
     ]
   },
-  "footerSocials": {
-    "discord": "https://discord.gg/Hb2HW98DvF",
-    "github": "https://github.com/kafkas/typesync"
+  "footer": {
+    "socials": {
+      "discord": "https://discord.gg/Hb2HW98DvF",
+      "github": "https://github.com/kafkas/typesync"
+    }
   }
 }
