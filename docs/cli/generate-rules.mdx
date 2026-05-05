@@ -65,44 +65,6 @@ typesync generate-rules --definition <filePathOrPattern> --outFile <filePath> --
   The name of the parameter taken by each type validator.
 </ParamField>
 
-{/\* <ParamField
-type="string"
-path="readonlyFieldValidatorNamePattern"
-default="isReadonlyFieldAffectedFor{modelName}"
-
-> The pattern that specifies how the generated readonly field validators are named. The pattern must be a string that contains the `"{modelName}"` substring (this is a literal value).
-
-Example values:
-
-    - `"isReadonlyFieldAffectedFor{modelName}"` -> produces validators like `isReadonlyFieldAffectedForUser`, `isReadonlyFieldAffectedForProject`, `isReadonlyFieldAffectedForAccount` etc.
-    - `"affectsReadonlyFieldFor{modelName}"` -> produces validators like `affectsReadonlyFieldForUser`, `affectsReadonlyFieldForProject`, `affectsReadonlyFieldForAccount` etc.
-
-  </ParamField> */}
-
-{/\* <ParamField
-type="string"
-path="readonlyFieldValidatorPrevDataParamName"
-default="prevData"
-
-> The name of the first parameter taken by each readonly field validator
-> representing previous data. This parameter used when computing the diff
-> between next data and previous data to determine whether a readonly field has
-> been affected by a write.
-
-</ParamField> */}
-
-{/\* <ParamField
-type="string"
-path="readonlyFieldValidatorNextDataParamName"
-default="nextData"
-
-> The name of the second parameter taken by each readonly field validator
-> representing next data. This parameter used when computing the diff between
-> next data and previous data to determine whether a readonly field has been
-> affected by a write.
-
-</ParamField> */}
-
 <IndentationOption />
 <DebugOption />
 
