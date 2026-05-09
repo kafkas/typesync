@@ -63,6 +63,8 @@ Pi = float
 
 CreatedAt = datetime.datetime
 
+Avatar = bytes
+
 TheAnswer = typing.Literal[42]
 
 Coords = tuple[int, int]

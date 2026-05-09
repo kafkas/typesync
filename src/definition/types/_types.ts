@@ -14,7 +14,9 @@ export type Double = 'double';
 
 export type Timestamp = 'timestamp';
 
-export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp;
+export type Bytes = 'bytes';
+
+export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp | Bytes;
 
 export interface StringLiteral {
   type: 'literal';

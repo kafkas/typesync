@@ -26,7 +26,11 @@ export interface Timestamp {
   readonly type: 'timestamp';
 }
 
-export type Primitive = Any | Unknown | Null | String | Boolean | Number | Timestamp;
+export interface Bytes {
+  readonly type: 'bytes';
+}
+
+export type Primitive = Any | Unknown | Null | String | Boolean | Number | Timestamp | Bytes;
 
 export interface Literal {
   readonly type: 'literal';

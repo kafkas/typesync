@@ -66,6 +66,14 @@ describe('schema.validateType()', () => {
     });
   });
 
+  describe('bytes', () => {
+    it('does not throw if the type is valid', () => {
+      const schema = createSchema();
+      const t: types.Bytes = { type: 'bytes' };
+      expect(() => schema.validateType(t)).not.toThrow();
+    });
+  });
+
   describe('string-literal', () => {
     it('does not throw if the type is valid', () => {
       const schema = createSchema();

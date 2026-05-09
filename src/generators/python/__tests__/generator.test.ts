@@ -21,6 +21,7 @@ describe('PythonGeneratorImpl', () => {
       IntAlias: { model: 'alias', type: 'int' },
       DoubleAlias: { model: 'alias', type: 'double' },
       TimestampAlias: { model: 'alias', type: 'timestamp' },
+      BytesAlias: { model: 'alias', type: 'bytes' },
     });
 
     const generation = createGenerator().generate(s);
@@ -34,6 +35,7 @@ describe('PythonGeneratorImpl', () => {
       IntAlias: { type: 'int' },
       DoubleAlias: { type: 'float' },
       TimestampAlias: { type: 'datetime' },
+      BytesAlias: { type: 'bytes' },
     };
 
     expect(generation.declarations).toHaveLength(Object.keys(expectedPythonTypeByModelName).length);

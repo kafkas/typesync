@@ -29,6 +29,10 @@ export function typePredicateForTimestampType(t: rules.Timestamp, varName: strin
   return { type: 'type-equality', varName, varType: t };
 }
 
+export function typePredicateForBytesType(t: rules.Bytes, varName: string): rules.Predicate {
+  return { type: 'type-equality', varName, varType: t };
+}
+
 export function typePredicateForLiteralType(t: rules.Literal, varName: string): rules.Predicate {
   return { type: 'value-equality', varName, varValue: typeof t.value === 'string' ? `'${t.value}'` : `${t.value}` };
 }
@@ -168,6 +172,8 @@ export function typePredicateForType(t: rules.Type, varName: string, ctx: Contex
       return typePredicateForNumberType(t, varName);
     case 'timestamp':
       return typePredicateForTimestampType(t, varName);
+    case 'bytes':
+      return typePredicateForBytesType(t, varName);
     case 'literal':
       return typePredicateForLiteralType(t, varName);
     case 'enum':

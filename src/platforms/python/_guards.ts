@@ -9,6 +9,7 @@ export function isPrimitiveType(t: Type): t is Primitive {
     case 'str':
     case 'bool':
     case 'datetime':
+    case 'bytes':
     case 'int':
     case 'float':
       return true;

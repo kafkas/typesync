@@ -34,6 +34,10 @@ export function timestampTypeToTS(_t: schema.ts.types.Timestamp): ts.Timestamp {
   return { type: 'timestamp' };
 }
 
+export function bytesTypeToTS(_t: schema.ts.types.Bytes): ts.Bytes {
+  return { type: 'bytes' };
+}
+
 export function stringLiteralTypeToTS(t: schema.ts.types.StringLiteral): ts.Literal {
   return { type: 'literal', value: t.value };
 }
@@ -104,6 +108,8 @@ export function typeToTS(t: schema.ts.types.Type): ts.Type {
       return doubleTypeToTS(t);
     case 'timestamp':
       return timestampTypeToTS(t);
+    case 'bytes':
+      return bytesTypeToTS(t);
     case 'string-literal':
       return stringLiteralTypeToTS(t);
     case 'int-literal':

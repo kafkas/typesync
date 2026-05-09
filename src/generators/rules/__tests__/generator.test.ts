@@ -28,6 +28,7 @@ describe('RulesGeneratorImpl', () => {
       AInt: { model: 'alias', type: 'int' },
       ADouble: { model: 'alias', type: 'double' },
       ATs: { model: 'alias', type: 'timestamp' },
+      ABytes: { model: 'alias', type: 'bytes' },
     });
 
     const generation = createGenerator().generate(s);
@@ -38,6 +39,7 @@ describe('RulesGeneratorImpl', () => {
       AInt: { type: 'int' },
       ADouble: { type: 'number' },
       ATs: { type: 'timestamp' },
+      ABytes: { type: 'bytes' },
     };
 
     expect(generation.typeValidatorDeclarations).toHaveLength(Object.keys(expectedRulesTypeByModelName).length);

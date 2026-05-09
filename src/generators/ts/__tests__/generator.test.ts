@@ -22,6 +22,7 @@ describe('TSGeneratorImpl', () => {
       IntAlias: { model: 'alias', type: 'int' },
       DoubleAlias: { model: 'alias', type: 'double' },
       TimestampAlias: { model: 'alias', type: 'timestamp' },
+      BytesAlias: { model: 'alias', type: 'bytes' },
     });
 
     const generation = createGenerator().generate(s);
@@ -35,6 +36,7 @@ describe('TSGeneratorImpl', () => {
       IntAlias: { type: 'number' },
       DoubleAlias: { type: 'number' },
       TimestampAlias: { type: 'timestamp' },
+      BytesAlias: { type: 'bytes' },
     };
 
     expect(generation.declarations).toHaveLength(Object.keys(expectedTsTypeByModelName).length);

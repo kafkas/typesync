@@ -263,6 +263,39 @@ function isValidExample(data) {
 
 </CodeGroup>
 
+## `bytes`
+
+Represents a Firestore bytes value.
+
+<CodeGroup>
+
+```yaml definition.yml
+Example:
+  model: alias
+  type: bytes
+```
+
+```ts models.ts
+// Firebase Web targets emit firestore.Bytes; React Native Firebase emits firestore.Blob.
+export type Example = Buffer;
+```
+
+```swift models.swift
+typealias Example = Data
+```
+
+```python models.py
+Example = bytes
+```
+
+```javascript firestore.rules
+function isValidExample(data) {
+  return (data is bytes);
+}
+```
+
+</CodeGroup>
+
 ## `literal`
 
 Represents a literal type.

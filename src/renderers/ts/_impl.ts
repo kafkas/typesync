@@ -41,7 +41,7 @@ class TSRendererImpl implements TSRenderer {
     switch (declaration.type) {
       case 'alias': {
         const { modelName, modelType, modelDocs } = declaration;
-        const expression = ts.expressionForType(modelType);
+        const expression = ts.expressionForType(modelType, { target: this.config.target });
         if (modelDocs !== null) {
           output += `/** ${modelDocs} */\n`;
         }
@@ -50,7 +50,7 @@ class TSRendererImpl implements TSRenderer {
       }
       case 'interface': {
         const { modelName, modelType, modelDocs } = declaration;
-        const expression = ts.expressionForType(modelType);
+        const expression = ts.expressionForType(modelType, { target: this.config.target });
         if (modelDocs !== null) {
           output += `/** ${modelDocs} */\n`;
         }

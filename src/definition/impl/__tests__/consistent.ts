@@ -8,6 +8,7 @@ import {
   anyType,
   booleanLiteralType,
   booleanType,
+  bytesType,
   definition,
   discriminatedUnionType,
   documentModel,
@@ -83,6 +84,12 @@ type IsExact<T, U> = [Required<T>] extends [Required<U>] ? ([Required<U>] extend
 (() => {
   type DeclaredType = types.Timestamp;
   type InferredType = z.infer<typeof timestampType>;
+  assertEmpty<IsExact<DeclaredType, InferredType>>(true);
+})();
+
+(() => {
+  type DeclaredType = types.Bytes;
+  type InferredType = z.infer<typeof bytesType>;
   assertEmpty<IsExact<DeclaredType, InferredType>>(true);
 })();
 

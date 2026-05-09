@@ -26,7 +26,11 @@ export interface Date {
   readonly type: 'date';
 }
 
-export type Primitive = Any | Nil | String | Bool | Int | Double | Date;
+export interface Data {
+  readonly type: 'data';
+}
+
+export type Primitive = Any | Nil | String | Bool | Int | Double | Date | Data;
 
 export interface Tuple {
   readonly type: 'tuple';

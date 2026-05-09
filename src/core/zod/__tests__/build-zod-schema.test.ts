@@ -18,6 +18,7 @@ describe('buildZodSchemaMap()', () => {
       DoubleAlias: { model: 'alias', type: 'double' },
       BoolAlias: { model: 'alias', type: 'boolean' },
       TimestampAlias: { model: 'alias', type: 'timestamp' },
+      BytesAlias: { model: 'alias', type: 'bytes' },
       NilAlias: { model: 'alias', type: 'nil' },
       AnyAlias: { model: 'alias', type: 'any' },
       UnknownAlias: { model: 'alias', type: 'unknown' },
@@ -45,6 +46,12 @@ describe('buildZodSchemaMap()', () => {
       expect(getSchemaForModel(s, 'TimestampAlias').safeParse(ts).success).toBe(true);
       expect(getSchemaForModel(s, 'TimestampAlias').safeParse(new Date()).success).toBe(false);
       expect(getSchemaForModel(s, 'TimestampAlias').safeParse('2020-01-01').success).toBe(false);
+    });
+
+    it('accepts only Buffer instances for bytes', () => {
+      expect(getSchemaForModel(s, 'BytesAlias').safeParse(Buffer.from('hello')).success).toBe(true);
+      expect(getSchemaForModel(s, 'BytesAlias').safeParse(new Uint8Array([1, 2, 3])).success).toBe(false);
+      expect(getSchemaForModel(s, 'BytesAlias').safeParse('hello').success).toBe(false);
     });
   });
 

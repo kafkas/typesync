@@ -26,7 +26,11 @@ export interface Timestamp {
   readonly type: 'timestamp';
 }
 
-export type Primitive = Any | String | Bool | Float | Int | Number | Timestamp;
+export interface Bytes {
+  readonly type: 'bytes';
+}
+
+export type Primitive = Any | String | Bool | Float | Int | Number | Timestamp | Bytes;
 
 export interface Literal {
   readonly type: 'literal';
@@ -83,4 +87,4 @@ export interface Alias {
 
 export type Type = Primitive | Literal | Enum | Tuple | List | Map | Object | DiscriminatedUnion | SimpleUnion | Alias;
 
-export type RulesDataType = String | Bool | Float | Int | Number | Timestamp | List | Map;
+export type RulesDataType = String | Bool | Float | Int | Number | Timestamp | Bytes | List | Map;

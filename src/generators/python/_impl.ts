@@ -41,6 +41,7 @@ class PythonGeneratorImpl implements PythonGenerator {
       case 'int':
       case 'double':
       case 'timestamp':
+      case 'bytes':
       case 'string-literal':
       case 'int-literal':
       case 'boolean-literal':

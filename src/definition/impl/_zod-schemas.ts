@@ -18,8 +18,10 @@ export const doubleType = z.literal('double').describe('A double type.');
 
 export const timestampType = z.literal('timestamp').describe('A timestamp type.');
 
+export const bytesType = z.literal('bytes').describe('A bytes type.');
+
 export const primitiveType = z
-  .union([anyType, unknownType, nilType, stringType, booleanType, intType, doubleType, timestampType])
+  .union([anyType, unknownType, nilType, stringType, booleanType, intType, doubleType, timestampType, bytesType])
   .describe('A primitive type');
 
 export const stringLiteralType = z

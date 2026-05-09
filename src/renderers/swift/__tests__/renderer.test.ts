@@ -21,6 +21,7 @@ describe('SwiftRendererImpl', () => {
         { type: 'typealias', modelName: 'Age', modelType: { type: 'int' }, modelDocs: null },
         { type: 'typealias', modelName: 'Pi', modelType: { type: 'double' }, modelDocs: null },
         { type: 'typealias', modelName: 'CreatedAt', modelType: { type: 'date' }, modelDocs: null },
+        { type: 'typealias', modelName: 'Avatar', modelType: { type: 'data' }, modelDocs: null },
         {
           type: 'typealias',
           modelName: 'Coords',
