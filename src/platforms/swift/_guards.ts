@@ -10,6 +10,7 @@ export function isPrimitiveType(t: Type): t is Primitive {
     case 'int':
     case 'double':
     case 'date':
+    case 'data':
       return true;
     case 'tuple':
     case 'list':

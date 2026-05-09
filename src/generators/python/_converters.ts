@@ -34,6 +34,10 @@ export function timestampTypeToPython(_t: schema.python.types.Timestamp): python
   return { type: 'datetime' };
 }
 
+export function bytesTypeToPython(_t: schema.python.types.Bytes): python.Bytes {
+  return { type: 'bytes' };
+}
+
 export function literalTypeToPython(t: schema.python.types.Literal): python.Literal {
   return { type: 'literal', value: t.value };
 }
@@ -82,6 +86,8 @@ export function flatTypeToPython(t: schema.python.types.Type): python.Type {
       return doubleTypeToPython(t);
     case 'timestamp':
       return timestampTypeToPython(t);
+    case 'bytes':
+      return bytesTypeToPython(t);
     case 'string-literal':
     case 'int-literal':
     case 'boolean-literal':

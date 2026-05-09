@@ -39,6 +39,26 @@ interface PlatformConfig {
   generatedDir: string;
   generatedExtension: string;
   generate: (definitionPath: string, outFile: string) => Promise<void>;
+  /**
+   * Optional follow-up generation passes. Used by TypeScript to additionally
+   * emit code against alternative SDK targets (e.g. the web SDK) so that
+   * cross-target features like the `bytes` primitive can be round-tripped
+   * with each target's native representation.
+   */
+  extraGenerations?: {
+    /**
+     * Subdirectory under `generatedDir` that the extra pass writes to. The
+     * platform's `tsconfig.json` / `Package.swift` etc. must already include
+     * files in this directory.
+     */
+    subdir: string;
+    /**
+     * Restricts the pass to a subset of fixtures (matched by basename, e.g.
+     * `'secrets'`). Omit to apply to every fixture.
+     */
+    onlyFixtures?: string[];
+    generate: (definitionPath: string, outFile: string) => Promise<void>;
+  }[];
   runs: { description: string; cwd: string; cmd: string; args: string[]; underEmulator: boolean }[];
 }
 
@@ -94,6 +114,30 @@ const PLATFORMS: Record<Platform, PlatformConfig> = {
         objectTypeFormat: 'interface',
       });
     },
+    // The `bytes` scenario is the only place where the wire-level
+    // representation differs across TS targets (Buffer vs firestore.Bytes
+    // vs firestore.Blob), so we emit it against the web SDK in addition
+    // to the admin SDK. The admin pass above writes `generated/secrets.ts`;
+    // this pass writes `generated/web/secrets.ts`, which is imported by
+    // the dedicated `secrets.web.test.ts` round-trip suite. The
+    // react-native-firebase target is verified by the unit/snapshot tests
+    // under `src/renderers/ts/__tests__/`; we don't run it here because
+    // `@react-native-firebase/firestore` is RN-runtime-only and cannot
+    // execute under Node.
+    extraGenerations: [
+      {
+        subdir: 'web',
+        onlyFixtures: ['secrets'],
+        async generate(definition, outFile) {
+          await typesync.generateTs({
+            definition,
+            outFile,
+            target: 'firebase@10',
+            objectTypeFormat: 'interface',
+          });
+        },
+      },
+    ],
     runs: [
       {
         description: 'tsc --noEmit (compile-time check)',
@@ -129,9 +173,14 @@ function listSchemaFixtures(): { path: string; name: string }[] {
 
 function clearGeneratedDir(generatedDir: string, extension: string): void {
   if (!existsSync(generatedDir)) return;
-  for (const entry of readdirSync(generatedDir)) {
-    if (entry.endsWith(extension)) {
-      rmSync(resolve(generatedDir, entry));
+  for (const entry of readdirSync(generatedDir, { withFileTypes: true })) {
+    const entryPath = resolve(generatedDir, entry.name);
+    if (entry.isDirectory()) {
+      clearGeneratedDir(entryPath, extension);
+      continue;
+    }
+    if (entry.name.endsWith(extension)) {
+      rmSync(entryPath);
     }
   }
 }
@@ -139,10 +188,19 @@ function clearGeneratedDir(generatedDir: string, extension: string): void {
 async function generateAll(platform: Platform, config: PlatformConfig): Promise<void> {
   console.log(`\n[${platform}] generating fixtures…`);
   clearGeneratedDir(config.generatedDir, config.generatedExtension);
-  for (const fixture of listSchemaFixtures()) {
+  const fixtures = listSchemaFixtures();
+  for (const fixture of fixtures) {
     const outFile = resolve(config.generatedDir, `${fixture.name}${config.generatedExtension}`);
     await config.generate(fixture.path, outFile);
     console.log(`  → ${fixture.name} -> ${outFile}`);
+  }
+  for (const extra of config.extraGenerations ?? []) {
+    const targets = extra.onlyFixtures ? fixtures.filter(f => extra.onlyFixtures!.includes(f.name)) : fixtures;
+    for (const fixture of targets) {
+      const outFile = resolve(config.generatedDir, extra.subdir, `${fixture.name}${config.generatedExtension}`);
+      await extra.generate(fixture.path, outFile);
+      console.log(`  → [${extra.subdir}] ${fixture.name} -> ${outFile}`);
+    }
   }
 }
 

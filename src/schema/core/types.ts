@@ -21,6 +21,7 @@ export {
   Int,
   Double,
   Timestamp,
+  Bytes,
   Primitive,
   StringLiteral,
   IntLiteral,

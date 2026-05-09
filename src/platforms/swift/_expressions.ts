@@ -1,5 +1,19 @@
 import { assertNever } from '../../util/assert.js';
-import type { Alias, Any, Bool, Date, Dictionary, Double, Int, List, Nil, String, Tuple, Type } from './_types.js';
+import type {
+  Alias,
+  Any,
+  Bool,
+  Data,
+  Date,
+  Dictionary,
+  Double,
+  Int,
+  List,
+  Nil,
+  String,
+  Tuple,
+  Type,
+} from './_types.js';
 
 export interface Expression {
   content: string;
@@ -31,6 +45,10 @@ export function expressionForDoubleType(_t: Double): Expression {
 
 export function expressionForDateType(_t: Date): Expression {
   return { content: 'Date' };
+}
+
+export function expressionForDataType(_t: Data): Expression {
+  return { content: 'Data' };
 }
 
 export function expressionForTupleType(t: Tuple): Expression {
@@ -68,6 +86,8 @@ export function expressionForType(t: Type): Expression {
       return expressionForDoubleType(t);
     case 'date':
       return expressionForDateType(t);
+    case 'data':
+      return expressionForDataType(t);
     case 'tuple':
       return expressionForTupleType(t);
     case 'list':

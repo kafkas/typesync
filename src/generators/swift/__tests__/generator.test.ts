@@ -25,6 +25,7 @@ describe('SwiftGeneratorImpl', () => {
       IntAlias: { model: 'alias', type: 'int' },
       DoubleAlias: { model: 'alias', type: 'double' },
       TimestampAlias: { model: 'alias', type: 'timestamp' },
+      BytesAlias: { model: 'alias', type: 'bytes' },
     });
 
     const generation = createGenerator().generate(s);
@@ -38,6 +39,7 @@ describe('SwiftGeneratorImpl', () => {
       IntAlias: { type: 'int' },
       DoubleAlias: { type: 'double' },
       TimestampAlias: { type: 'date' },
+      BytesAlias: { type: 'data' },
     };
 
     expect(generation.declarations).toHaveLength(Object.keys(expectedSwiftTypeByModelName).length);

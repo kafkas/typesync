@@ -13,6 +13,8 @@ typealias Pi = Double
 
 typealias CreatedAt = Date
 
+typealias Avatar = Data
+
 typealias Coords = (Int, Int)
 
 typealias Tags = [String]

@@ -4,6 +4,7 @@ import type {
   Alias,
   Any,
   Bool,
+  Bytes,
   Datetime,
   Dict,
   DiscriminatedUnion,
@@ -53,6 +54,10 @@ export function expressionForFloatType(_t: Float): Expression {
 
 export function expressionForDatetimeType(_t: Datetime): Expression {
   return { content: 'datetime.datetime' };
+}
+
+export function expressionForBytesType(_t: Bytes): Expression {
+  return { content: 'bytes' };
 }
 
 export function expressionForLiteralType(t: Literal): Expression {
@@ -117,6 +122,8 @@ export function expressionForType(t: Type): Expression {
       return expressionForFloatType(t);
     case 'datetime':
       return expressionForDatetimeType(t);
+    case 'bytes':
+      return expressionForBytesType(t);
     case 'literal':
       return expressionForLiteralType(t);
     case 'tuple':

@@ -20,6 +20,8 @@ export function primitiveTypeToSchema(t: definition.types.Primitive): schema.typ
       return { type: 'double' };
     case 'timestamp':
       return { type: 'timestamp' };
+    case 'bytes':
+      return { type: 'bytes' };
     default:
       assertNever(t);
   }

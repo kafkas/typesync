@@ -29,6 +29,8 @@ export function buildZodFromType<TOut>(type: schema.types.Type, emitter: ZodEmit
       return emitter.double();
     case 'timestamp':
       return emitter.timestamp();
+    case 'bytes':
+      return emitter.bytes();
     case 'string-literal':
       return emitter.stringLiteral(type.value);
     case 'int-literal':

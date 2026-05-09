@@ -30,7 +30,11 @@ export interface Datetime {
   readonly type: 'datetime';
 }
 
-export type Primitive = Undefined | Any | None | Str | Bool | Int | Float | Datetime;
+export interface Bytes {
+  readonly type: 'bytes';
+}
+
+export type Primitive = Undefined | Any | None | Str | Bool | Int | Float | Datetime | Bytes;
 
 export interface Literal {
   readonly type: 'literal';

@@ -10,6 +10,7 @@ export function isPrimitiveType(t: Type): t is Primitive {
     case 'boolean':
     case 'number':
     case 'timestamp':
+    case 'bytes':
       return true;
     case 'literal':
     case 'enum':

@@ -23,6 +23,7 @@ export interface ZodEmitter<TOut> {
   int(): TOut;
   double(): TOut;
   timestamp(): TOut;
+  bytes(): TOut;
 
   stringLiteral(value: string): TOut;
   intLiteral(value: number): TOut;

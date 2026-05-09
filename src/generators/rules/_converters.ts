@@ -34,6 +34,10 @@ export function timestampTypeToRules(_t: schema.rules.types.Timestamp): rules.Ti
   return { type: 'timestamp' };
 }
 
+export function bytesTypeToRules(_t: schema.rules.types.Bytes): rules.Bytes {
+  return { type: 'bytes' };
+}
+
 export function stringLiteralTypeToRules(t: schema.rules.types.StringLiteral): rules.Literal {
   return { type: 'literal', value: t.value };
 }
@@ -121,6 +125,8 @@ export function flatTypeToRules(t: schema.rules.types.Type): rules.Type {
       return doubleTypeToRules(t);
     case 'timestamp':
       return timestampTypeToRules(t);
+    case 'bytes':
+      return bytesTypeToRules(t);
     case 'string-literal':
       return stringLiteralTypeToRules(t);
     case 'int-literal':

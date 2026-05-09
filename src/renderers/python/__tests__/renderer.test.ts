@@ -30,6 +30,7 @@ describe('PythonRendererImpl', () => {
         { type: 'alias', modelName: 'Age', modelType: { type: 'int' }, modelDocs: null },
         { type: 'alias', modelName: 'Pi', modelType: { type: 'float' }, modelDocs: null },
         { type: 'alias', modelName: 'CreatedAt', modelType: { type: 'datetime' }, modelDocs: null },
+        { type: 'alias', modelName: 'Avatar', modelType: { type: 'bytes' }, modelDocs: null },
         { type: 'alias', modelName: 'TheAnswer', modelType: { type: 'literal', value: 42 }, modelDocs: null },
         {
           type: 'alias',

@@ -12,6 +12,7 @@ export function isPrimitiveType(candidate: unknown): candidate is types.Primitiv
     case 'int':
     case 'double':
     case 'timestamp':
+    case 'bytes':
       return true;
     default:
       assertNeverNoThrow(c);

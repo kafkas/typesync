@@ -15,6 +15,8 @@ export type Age = number;
 
 export type CreatedAt = firestore.Timestamp;
 
+export type Avatar = Buffer;
+
 export type TheAnswer = 42;
 
 export type Color = 'red' | 'blue';

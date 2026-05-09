@@ -34,7 +34,11 @@ export interface Timestamp {
   type: 'timestamp';
 }
 
-export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp;
+export interface Bytes {
+  type: 'bytes';
+}
+
+export type Primitive = Any | Unknown | Nil | String | Boolean | Int | Double | Timestamp | Bytes;
 
 export interface StringLiteral {
   type: 'string-literal';

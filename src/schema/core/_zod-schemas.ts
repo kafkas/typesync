@@ -55,6 +55,12 @@ export function createZodSchemasForSchema(schema: Schema) {
     })
     .strict();
 
+  const bytesType = z
+    .object({
+      type: z.literal('bytes'),
+    })
+    .strict();
+
   const primitiveType = anyType
     .or(unknownType)
     .or(nilType)
@@ -62,7 +68,8 @@ export function createZodSchemasForSchema(schema: Schema) {
     .or(booleanType)
     .or(intType)
     .or(doubleType)
-    .or(timestampType);
+    .or(timestampType)
+    .or(bytesType);
 
   const stringLiteralType = z
     .object({
@@ -381,6 +388,7 @@ export function createZodSchemasForSchema(schema: Schema) {
     intType,
     doubleType,
     timestampType,
+    bytesType,
     primitiveType,
     stringLiteralType,
     intLiteralType,

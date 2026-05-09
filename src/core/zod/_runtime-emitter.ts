@@ -27,6 +27,7 @@ export function createRuntimeZodEmitter(registry: RuntimeZodRegistry): ZodEmitte
     int: () => z.number().int(),
     double: () => z.number(),
     timestamp: () => z.instanceof(Timestamp),
+    bytes: () => z.instanceof(Buffer),
 
     stringLiteral: value => z.literal(value),
     intLiteral: value => z.literal(value),

@@ -34,6 +34,10 @@ export function timestampTypeToSwift(_t: schema.swift.types.Timestamp): swift.Da
   return { type: 'date' };
 }
 
+export function bytesTypeToSwift(_t: schema.swift.types.Bytes): swift.Data {
+  return { type: 'data' };
+}
+
 export function stringLiteralTypeToSwift(_t: schema.swift.types.StringLiteral): swift.String {
   return { type: 'string' };
 }
@@ -93,6 +97,8 @@ export function flatTypeToSwift(t: schema.swift.types.Type): swift.Type {
       return doubleTypeToSwift(t);
     case 'timestamp':
       return timestampTypeToSwift(t);
+    case 'bytes':
+      return bytesTypeToSwift(t);
     case 'string-literal':
       return stringLiteralTypeToSwift(t);
     case 'int-literal':
