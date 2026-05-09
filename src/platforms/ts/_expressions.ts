@@ -1,10 +1,12 @@
 import { StringBuilder } from '@proficient/ds';
 
+import type { TSGenerationTarget } from '../../api/index.js';
 import { assertNever } from '../../util/assert.js';
 import type {
   Alias,
   Any,
   Boolean,
+  Bytes,
   Enum,
   List,
   Literal,
@@ -22,6 +24,19 @@ import type {
 
 export interface Expression {
   content: string;
+}
+
+/**
+ * Per-call context threaded through `expressionForType` and friends.
+ *
+ * The TypeScript output of a few primitive types depends on which Firebase
+ * SDK the caller is generating against (e.g. `bytes` becomes `Buffer` for
+ * the admin SDK, `firestore.Bytes` for the web SDK, and `firestore.Blob`
+ * for the React Native SDK), so each expression-emitter takes the active
+ * generation target rather than guessing a default.
+ */
+export interface ExpressionOptions {
+  target: TSGenerationTarget;
 }
 
 export function expressionForAnyType(_t: Any): Expression {
@@ -50,6 +65,26 @@ export function expressionForNumberType(_t: Number): Expression {
 
 export function expressionForTimestampType(_t: Timestamp): Expression {
   return { content: 'firestore.Timestamp' };
+}
+
+export function expressionForBytesType(_t: Bytes, options: ExpressionOptions): Expression {
+  switch (options.target) {
+    case 'firebase-admin@13':
+    case 'firebase-admin@12':
+    case 'firebase-admin@11':
+    case 'firebase-admin@10':
+      return { content: 'Buffer' };
+    case 'firebase@11':
+    case 'firebase@10':
+    case 'firebase@9':
+      return { content: 'firestore.Bytes' };
+    case 'react-native-firebase@21':
+    case 'react-native-firebase@20':
+    case 'react-native-firebase@19':
+      return { content: 'firestore.Blob' };
+    default:
+      assertNever(options.target);
+  }
 }
 
 export function expressionForLiteralType(t: Literal): Expression {
@@ -82,22 +117,22 @@ export function expressionForEnumType(t: Enum): Expression {
   return { content };
 }
 
-export function expressionForTupleType(t: Tuple): Expression {
-  const commaSeparatedExpressions = t.elements.map(vt => expressionForType(vt).content).join(', ');
+export function expressionForTupleType(t: Tuple, options: ExpressionOptions): Expression {
+  const commaSeparatedExpressions = t.elements.map(vt => expressionForType(vt, options).content).join(', ');
   return { content: `[${commaSeparatedExpressions}]` };
 }
 
-export function expressionForListType(t: List): Expression {
-  const expression = expressionForType(t.elementType);
+export function expressionForListType(t: List, options: ExpressionOptions): Expression {
+  const expression = expressionForType(t.elementType, options);
   return { content: `${expression.content}[]` };
 }
 
-export function expressionForRecordType(t: Record): Expression {
-  const expression = expressionForType(t.valueType);
+export function expressionForRecordType(t: Record, options: ExpressionOptions): Expression {
+  const expression = expressionForType(t.valueType, options);
   return { content: `Record<string, ${expression.content}>` };
 }
 
-export function expressionForObjectType(t: Object): Expression {
+export function expressionForObjectType(t: Object, options: ExpressionOptions): Expression {
   const { properties, additionalProperties } = t;
   const b = new StringBuilder();
 
@@ -106,7 +141,7 @@ export function expressionForObjectType(t: Object): Expression {
     if (prop.docs !== null) {
       b.append(`/** ${prop.docs} */\n`);
     }
-    const expression = expressionForType(prop.type);
+    const expression = expressionForType(prop.type, options);
     b.append(`${prop.name}${prop.optional ? '?' : ''}: ${expression.content};\n`);
   });
   if (additionalProperties) {
@@ -116,8 +151,8 @@ export function expressionForObjectType(t: Object): Expression {
   return { content: b.toString() };
 }
 
-export function expressionForUnionType(t: Union): Expression {
-  const separatedExpressions = t.variants.map(vt => expressionForType(vt).content).join(' | ');
+export function expressionForUnionType(t: Union, options: ExpressionOptions): Expression {
+  const separatedExpressions = t.variants.map(vt => expressionForType(vt, options).content).join(' | ');
   return { content: `${separatedExpressions}` };
 }
 
@@ -125,7 +160,7 @@ export function expressionForAliasType(t: Alias): Expression {
   return { content: t.name };
 }
 
-export function expressionForType(t: Type): Expression {
+export function expressionForType(t: Type, options: ExpressionOptions): Expression {
   switch (t.type) {
     case 'any':
       return expressionForAnyType(t);
@@ -141,20 +176,22 @@ export function expressionForType(t: Type): Expression {
       return expressionForNumberType(t);
     case 'timestamp':
       return expressionForTimestampType(t);
+    case 'bytes':
+      return expressionForBytesType(t, options);
     case 'literal':
       return expressionForLiteralType(t);
     case 'enum':
       return expressionForEnumType(t);
     case 'tuple':
-      return expressionForTupleType(t);
+      return expressionForTupleType(t, options);
     case 'list':
-      return expressionForListType(t);
+      return expressionForListType(t, options);
     case 'record':
-      return expressionForRecordType(t);
+      return expressionForRecordType(t, options);
     case 'object':
-      return expressionForObjectType(t);
+      return expressionForObjectType(t, options);
     case 'union':
-      return expressionForUnionType(t);
+      return expressionForUnionType(t, options);
     case 'alias':
       return expressionForAliasType(t);
     default:

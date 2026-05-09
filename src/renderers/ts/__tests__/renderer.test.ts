@@ -26,6 +26,7 @@ describe('TSRendererImpl', () => {
         { type: 'alias', modelName: 'Active', modelType: { type: 'boolean' }, modelDocs: null },
         { type: 'alias', modelName: 'Age', modelType: { type: 'number' }, modelDocs: null },
         { type: 'alias', modelName: 'CreatedAt', modelType: { type: 'timestamp' }, modelDocs: null },
+        { type: 'alias', modelName: 'Avatar', modelType: { type: 'bytes' }, modelDocs: null },
         { type: 'alias', modelName: 'TheAnswer', modelType: { type: 'literal', value: 42 }, modelDocs: null },
         {
           type: 'alias',
@@ -161,5 +162,22 @@ describe('TSRendererImpl', () => {
         expect(result.content.split('\n')[0]).toBe(expectedImport);
       }
     }
+  });
+
+  it('renders bytes using the Firestore byte type for each target family', async () => {
+    const generation: TSGeneration = {
+      type: 'ts',
+      declarations: [{ type: 'alias', modelName: 'Payload', modelType: { type: 'bytes' }, modelDocs: null }],
+    };
+
+    await expect((await createRenderer({ target: 'firebase-admin@13' }).render(generation)).content).toContain(
+      'export type Payload = Buffer;'
+    );
+    await expect((await createRenderer({ target: 'firebase@10' }).render(generation)).content).toContain(
+      'export type Payload = firestore.Bytes;'
+    );
+    await expect((await createRenderer({ target: 'react-native-firebase@21' }).render(generation)).content).toContain(
+      'export type Payload = firestore.Blob;'
+    );
   });
 });

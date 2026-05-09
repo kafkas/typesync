@@ -94,6 +94,19 @@ WorkspaceInfo:
       description:
         type: string
 
+Secret:
+  model: document
+  path: secrets/{secretId}
+  type:
+    type: object
+    fields:
+      label:
+        type: string
+      payload:
+        type: bytes
+      checksum:
+        type: bytes
+
 Workspace:
   model: document
   path: workspaces/{workspaceId}

@@ -44,6 +44,16 @@ service cloud.firestore {
     );
   }
 
+  function isValidSecret(data) {
+    return (
+    (data is map) &&
+    (data.keys().hasOnly(['label', 'payload', 'checksum'])) &&
+    (data.label is string) &&
+    (data.payload is bytes) &&
+    (data.checksum is bytes)
+    );
+  }
+
   function isValidUser(data) {
     return (
     (data is map) &&
@@ -92,6 +102,13 @@ service cloud.firestore {
 
     match /projects/{projectId} {
       allow read, create, update, delete;
+    }
+
+    match /secrets/{secretId} {
+      allow read;
+      allow create: if isValidSecret(request.resource.data);
+      allow update: if isValidSecret(request.resource.data);
+      allow delete: if false;
     }
   }
 }
