@@ -20,7 +20,7 @@ field's value schema.
 ## Usage
 
 ```bash
-typesync generate-zod --definition <filePathOrPattern> --target <targetEnvironment> --outFile <filePath> --variant <v3|v4> --schemaNamePattern <schemaNamePattern> --indentation <indentation> --debug <debug>
+typesync generate-zod --definition <filePathOrPattern> --target <targetEnvironment> --outFile <filePath> --variant <v3|v4> --schemaNamePattern <schemaNamePattern> --emitInferredTypes --inferredTypeNamePattern <inferredTypeNamePattern> --indentation <indentation> --debug <debug>
 ```
 
 ## Options
@@ -46,6 +46,37 @@ Example values:
 
 - `"{modelName}Schema"` &rarr; produces exports like `UserSchema`, `PostSchema`, `AccountSchema` etc.
 - `"z{modelName}"` &rarr; produces exports like `zUser`, `zPost`, `zAccount` etc.
+
+</ParamField>
+
+<ParamField type="boolean" path="emitInferredTypes" default={false}>
+
+When enabled, the generator emits an inferred TypeScript type alongside each Zod schema. For a model named `User` with
+the default patterns, the output becomes:
+
+```ts
+export const UserSchema = z.strictObject({
+  /* ... */
+});
+export type User = z.infer<typeof UserSchema>;
+```
+
+Disabled by default to avoid name conflicts with types produced by `generate-ts` (which would also export `User`). Turn
+this on if you only run `generate-zod` and want the inferred TS types alongside the schemas.
+
+</ParamField>
+
+<ParamField type="string" path="inferredTypeNamePattern" default="{modelName}">
+
+The pattern that controls how the inferred TypeScript types are named when `--emitInferredTypes` is set. The pattern
+must contain the literal substring `"{modelName}"`. Ignored when `--emitInferredTypes` is not set.
+
+Example values:
+
+- `"{modelName}"` &rarr; produces types like `User`, `Post`, `Account` etc. (canonical Zod convention; collides with
+  `generate-ts` if both run against the same scope).
+- `"{modelName}Type"` &rarr; produces types like `UserType`, `PostType`, `AccountType` etc.
+- `"I{modelName}"` &rarr; produces types like `IUser`, `IPost`, `IAccount` etc.
 
 </ParamField>
 
