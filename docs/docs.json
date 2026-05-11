@@ -55,6 +55,7 @@
           "cli/generate-ts",
           "cli/generate-swift",
           "cli/generate-py",
+          "cli/generate-zod",
           "cli/generate-rules",
           "cli/generate-graph",
           "cli/validate-data",
