@@ -21,6 +21,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'Username',
           schemaName: 'UsernameSchema',
+          inferredTypeName: null,
           modelDocs: 'A unique handle.',
           modelKind: 'alias',
           expression: `z.string().describe("A unique handle.")`,
@@ -29,6 +30,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'User',
           schemaName: 'UserSchema',
+          inferredTypeName: null,
           modelDocs: 'A user document.',
           modelKind: 'document',
           expression: `z.strictObject({ name: z.lazy(() => UsernameSchema).describe("The user name"), createdAt: z.instanceof(firestore.Timestamp) }).describe("A user document.")`,
@@ -38,6 +40,37 @@ describe('ZodRendererImpl', () => {
 
     const result = await createRenderer().render(generation);
     await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/v4-with-docs.ts');
+  });
+
+  it('emits an inferred TS type after each schema export when inferredTypeName is set', async () => {
+    const generation: ZodGeneration = {
+      type: 'zod',
+      usesTimestamp: false,
+      usesBytes: false,
+      declarations: [
+        {
+          type: 'schema',
+          modelName: 'Username',
+          schemaName: 'UsernameSchema',
+          inferredTypeName: 'Username',
+          modelDocs: 'A unique handle.',
+          modelKind: 'alias',
+          expression: `z.string().describe("A unique handle.")`,
+        },
+        {
+          type: 'schema',
+          modelName: 'User',
+          schemaName: 'UserSchema',
+          inferredTypeName: 'User',
+          modelDocs: null,
+          modelKind: 'document',
+          expression: `z.strictObject({ name: z.lazy(() => UsernameSchema) })`,
+        },
+      ],
+    };
+
+    const result = await createRenderer().render(generation);
+    await expect(result.content).toMatchFileSnapshot('./__file_snapshots__/with-inferred-types.ts');
   });
 
   it('omits the Firestore SDK import when no model uses timestamp or bytes', async () => {
@@ -50,6 +83,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'Username',
           schemaName: 'UsernameSchema',
+          inferredTypeName: null,
           modelDocs: null,
           modelKind: 'alias',
           expression: 'z.string()',
@@ -72,6 +106,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'Avatar',
           schemaName: 'AvatarSchema',
+          inferredTypeName: null,
           modelDocs: null,
           modelKind: 'alias',
           expression: 'z.instanceof(Buffer)',
@@ -104,6 +139,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'Stamp',
           schemaName: 'StampSchema',
+          inferredTypeName: null,
           modelDocs: null,
           modelKind: 'alias',
           expression: 'z.instanceof(firestore.Timestamp)',
@@ -129,6 +165,7 @@ describe('ZodRendererImpl', () => {
           type: 'schema',
           modelName: 'Profile',
           schemaName: 'ProfileSchema',
+          inferredTypeName: null,
           modelDocs: null,
           modelKind: 'alias',
           // Long expression to force prettier to wrap it across multiple lines.

@@ -45,11 +45,14 @@ import {
   DEFAULT_VALIDATE_DATA_MAX_RETRIES,
   DEFAULT_VALIDATE_DEBUG,
   DEFAULT_ZOD_DEBUG,
+  DEFAULT_ZOD_EMIT_INFERRED_TYPES,
   DEFAULT_ZOD_INDENTATION,
+  DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN,
   DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
   DEFAULT_ZOD_VARIANT,
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM,
   ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
@@ -295,6 +298,19 @@ await yargs(hideBin(process.argv))
           demandOption: false,
           default: DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
         })
+        .option('emitInferredTypes', {
+          describe:
+            'When enabled, the generator emits an inferred TypeScript type alongside each Zod schema (e.g. `export type User = z.infer<typeof UserSchema>;`). Disabled by default to avoid colliding with type names produced by `generate-ts`.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_ZOD_EMIT_INFERRED_TYPES,
+        })
+        .option('inferredTypeNamePattern', {
+          describe: `The pattern that controls how the inferred TypeScript types are named when '--emitInferredTypes' is set. The pattern must contain the literal substring '${ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM}'. For example, providing '${ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM}' (the default) emits 'User', 'Post', etc.; providing '${ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM}Type' emits 'UserType', 'PostType', etc.`,
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN,
+        })
         .option('indentation', {
           describe: 'Indentation or tab width for the generated code.',
           type: 'number',
@@ -308,7 +324,17 @@ await yargs(hideBin(process.argv))
           default: DEFAULT_ZOD_DEBUG,
         }),
     async args => {
-      const { definition, target, outFile, variant, schemaNamePattern, indentation, debug } = args;
+      const {
+        definition,
+        target,
+        outFile,
+        variant,
+        schemaNamePattern,
+        emitInferredTypes,
+        inferredTypeNamePattern,
+        indentation,
+        debug,
+      } = args;
 
       const pathToOutputFile = resolve(process.cwd(), outFile);
       try {
@@ -318,6 +344,8 @@ await yargs(hideBin(process.argv))
           outFile: pathToOutputFile,
           variant,
           schemaNamePattern,
+          emitInferredTypes,
+          inferredTypeNamePattern,
           indentation,
           debug,
         });

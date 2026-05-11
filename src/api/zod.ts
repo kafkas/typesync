@@ -54,6 +54,20 @@ export interface GenerateZodRepresentationOptions {
    * default `'{modelName}Schema'` a model named `User` becomes `UserSchema`.
    */
   schemaNamePattern?: string;
+  /**
+   * When `true`, the generator emits an inferred TypeScript type alongside
+   * each Zod schema, e.g. `export type User = z.infer<typeof UserSchema>;`.
+   * Defaults to `false` because users who also run `generate-ts` would
+   * otherwise see duplicate `User` declarations.
+   */
+  emitInferredTypes?: boolean;
+  /**
+   * Pattern that controls how the inferred TypeScript types are named when
+   * `emitInferredTypes` is `true`. Must contain the literal substring
+   * `{modelName}`. For example, with the default `'{modelName}'` a model
+   * named `User` becomes `User`. Ignored when `emitInferredTypes` is `false`.
+   */
+  inferredTypeNamePattern?: string;
   debug?: boolean;
 }
 

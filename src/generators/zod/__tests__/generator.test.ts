@@ -3,12 +3,20 @@ import { schema } from '../../../schema/index.js';
 import { createZodGenerator } from '../_impl.js';
 
 function createGenerator(
-  overrides: { target?: ZodGenerationTarget; variant?: ZodVariant; schemaNamePattern?: string } = {}
+  overrides: {
+    target?: ZodGenerationTarget;
+    variant?: ZodVariant;
+    schemaNamePattern?: string;
+    emitInferredTypes?: boolean;
+    inferredTypeNamePattern?: string;
+  } = {}
 ) {
   return createZodGenerator({
     target: overrides.target ?? 'firebase-admin@13',
     variant: overrides.variant ?? 'v4',
     schemaNamePattern: overrides.schemaNamePattern ?? '{modelName}Schema',
+    emitInferredTypes: overrides.emitInferredTypes ?? false,
+    inferredTypeNamePattern: overrides.inferredTypeNamePattern ?? '{modelName}',
   });
 }
 
@@ -40,12 +48,68 @@ describe('ZodGeneratorImpl', () => {
     expect(username).toMatchObject({
       type: 'schema',
       schemaName: 'UsernameSchema',
+      inferredTypeName: null,
       modelKind: 'alias',
       modelDocs: null,
     });
 
     const user = generation.declarations.find(d => d.modelName === 'User');
-    expect(user).toMatchObject({ schemaName: 'UserSchema', modelKind: 'document' });
+    expect(user).toMatchObject({
+      schemaName: 'UserSchema',
+      inferredTypeName: null,
+      modelKind: 'document',
+    });
+  });
+
+  describe('inferred types', () => {
+    it('leaves inferredTypeName null for every declaration when emitInferredTypes is false', () => {
+      const s = schema.createSchemaFromDefinition({
+        Username: { model: 'alias', type: 'string' },
+        User: {
+          model: 'document',
+          path: 'users/{userId}',
+          type: { type: 'object', fields: { name: { type: 'Username' } } },
+        },
+      });
+
+      const generation = createGenerator({ emitInferredTypes: false }).generate(s);
+      generation.declarations.forEach(d => {
+        expect(d.inferredTypeName).toBeNull();
+      });
+    });
+
+    it('populates inferredTypeName using the default pattern when emitInferredTypes is true', () => {
+      const s = schema.createSchemaFromDefinition({
+        Username: { model: 'alias', type: 'string' },
+        User: {
+          model: 'document',
+          path: 'users/{userId}',
+          type: { type: 'object', fields: { name: { type: 'Username' } } },
+        },
+      });
+
+      const generation = createGenerator({ emitInferredTypes: true }).generate(s);
+
+      expect(generation.declarations.find(d => d.modelName === 'Username')?.inferredTypeName).toBe('Username');
+      expect(generation.declarations.find(d => d.modelName === 'User')?.inferredTypeName).toBe('User');
+    });
+
+    it('honours a custom inferredTypeNamePattern', () => {
+      const s = schema.createSchemaFromDefinition({
+        User: {
+          model: 'document',
+          path: 'users/{userId}',
+          type: { type: 'object', fields: { name: { type: 'string' } } },
+        },
+      });
+
+      const generation = createGenerator({
+        emitInferredTypes: true,
+        inferredTypeNamePattern: 'I{modelName}',
+      }).generate(s);
+
+      expect(generation.declarations.find(d => d.modelName === 'User')?.inferredTypeName).toBe('IUser');
+    });
   });
 
   it('honours a custom schemaNamePattern when generating identifiers and reference expressions', () => {

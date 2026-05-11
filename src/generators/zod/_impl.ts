@@ -1,4 +1,4 @@
-import { ZOD_SCHEMA_NAME_PATTERN_PARAM } from '../../constants.js';
+import { ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM, ZOD_SCHEMA_NAME_PATTERN_PARAM } from '../../constants.js';
 import { buildZodFromType, createCodegenZodEmitter } from '../../core/zod/index.js';
 import { schema } from '../../schema/index.js';
 import { typeUsesBytes, typeUsesTimestamp } from './_type-traversal.js';
@@ -17,27 +17,11 @@ class ZodGeneratorImpl implements ZodGenerator {
     const declarations: ZodSchemaDeclaration[] = [];
 
     s.aliasModels.forEach(model => {
-      const expression = this.attachModelDocs(buildZodFromType(model.type, emitter), model.docs);
-      declarations.push({
-        type: 'schema',
-        modelName: model.name,
-        schemaName: this.getSchemaIdentifierForModel(model.name),
-        modelDocs: model.docs,
-        expression,
-        modelKind: 'alias',
-      });
+      declarations.push(this.createDeclaration(model, 'alias', emitter));
     });
 
     s.documentModels.forEach(model => {
-      const expression = this.attachModelDocs(buildZodFromType(model.type, emitter), model.docs);
-      declarations.push({
-        type: 'schema',
-        modelName: model.name,
-        schemaName: this.getSchemaIdentifierForModel(model.name),
-        modelDocs: model.docs,
-        expression,
-        modelKind: 'document',
-      });
+      declarations.push(this.createDeclaration(model, 'document', emitter));
     });
 
     const usesTimestamp = this.schemaUses(s, typeUsesTimestamp);
@@ -51,6 +35,23 @@ class ZodGeneratorImpl implements ZodGenerator {
     };
   }
 
+  private createDeclaration(
+    model: { name: string; docs: string | null; type: schema.types.Type },
+    modelKind: 'alias' | 'document',
+    emitter: ReturnType<typeof createCodegenZodEmitter>
+  ): ZodSchemaDeclaration {
+    const expression = this.attachModelDocs(buildZodFromType(model.type, emitter), model.docs);
+    return {
+      type: 'schema',
+      modelName: model.name,
+      schemaName: this.getSchemaIdentifierForModel(model.name),
+      inferredTypeName: this.config.emitInferredTypes ? this.getInferredTypeIdentifierForModel(model.name) : null,
+      modelDocs: model.docs,
+      expression,
+      modelKind,
+    };
+  }
+
   private attachModelDocs(expression: string, docs: string | null): string {
     if (docs === null || docs.length === 0) return expression;
     return `${expression}.describe(${JSON.stringify(docs)})`;
@@ -58,6 +59,10 @@ class ZodGeneratorImpl implements ZodGenerator {
 
   private getSchemaIdentifierForModel(modelName: string): string {
     return this.config.schemaNamePattern.replace(ZOD_SCHEMA_NAME_PATTERN_PARAM, modelName);
+  }
+
+  private getInferredTypeIdentifierForModel(modelName: string): string {
+    return this.config.inferredTypeNamePattern.replace(ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM, modelName);
   }
 
   private schemaUses(s: schema.Schema, predicate: (t: schema.types.Type) => boolean): boolean {

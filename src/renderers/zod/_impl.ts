@@ -40,6 +40,9 @@ class ZodRendererImpl implements ZodRenderer {
       output += `/** ${declaration.modelDocs} */\n`;
     }
     output += `export const ${declaration.schemaName} = ${declaration.expression};`;
+    if (declaration.inferredTypeName !== null) {
+      output += `\nexport type ${declaration.inferredTypeName} = z.infer<typeof ${declaration.schemaName}>;`;
+    }
     return output;
   }
 

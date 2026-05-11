@@ -6,6 +6,7 @@ export const PYTHON_UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 export const RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
 export const RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
 export const ZOD_SCHEMA_NAME_PATTERN_PARAM = '{modelName}';
+export const ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM = '{modelName}';
 
 /*
  * Default values
@@ -19,6 +20,8 @@ export const DEFAULT_SWIFT_DEBUG = false;
 
 export const DEFAULT_ZOD_VARIANT: ZodVariant = 'v4';
 export const DEFAULT_ZOD_SCHEMA_NAME_PATTERN = `${ZOD_SCHEMA_NAME_PATTERN_PARAM}Schema`;
+export const DEFAULT_ZOD_EMIT_INFERRED_TYPES = false;
+export const DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN = ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM;
 export const DEFAULT_ZOD_INDENTATION = 2;
 export const DEFAULT_ZOD_DEBUG = false;
 

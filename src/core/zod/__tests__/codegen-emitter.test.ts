@@ -32,9 +32,9 @@ describe('createCodegenZodEmitter()', () => {
       expect(emit({ type: 'boolean-literal', value: true })).toBe('z.literal(true)');
     });
 
-    it('collapses single-member enums to z.literal and folds multi-member enums into a union', () => {
+    it('always folds enum members into a z.union to mirror the runtime emitter shape', () => {
       const single = emit({ type: 'string-enum', members: [{ label: 'A', value: 'a' }] });
-      expect(single).toBe(`z.literal("a")`);
+      expect(single).toBe(`z.union([z.literal("a")])`);
 
       const multi = emit({
         type: 'string-enum',

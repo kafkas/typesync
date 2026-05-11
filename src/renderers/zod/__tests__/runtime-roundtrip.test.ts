@@ -14,9 +14,12 @@ import { createZodRenderer } from '../_impl.js';
  * actually compose into a valid Zod schema at runtime.
  */
 function loadGeneratedSchema(source: string, schemaName: string): z.ZodTypeAny {
+  // The generator may emit `import` statements (we already have `z` and
+  // `firestore` in scope) and TypeScript-only `export type` aliases (not valid
+  // JS). Strip both so the rest can be eval'd as plain JS.
   const stripped = source
     .split('\n')
-    .filter(line => !line.startsWith('import '))
+    .filter(line => !line.startsWith('import ') && !line.startsWith('export type '))
     .join('\n')
     .replace(/^export const /gm, 'const ');
 
@@ -51,6 +54,8 @@ describe('runtime round-trip of generated Zod source', () => {
       target: 'firebase-admin@13',
       variant: 'v4',
       schemaNamePattern: '{modelName}Schema',
+      emitInferredTypes: false,
+      inferredTypeNamePattern: '{modelName}',
     }).generate(s);
     const file = await createZodRenderer({
       target: 'firebase-admin@13',
@@ -76,6 +81,8 @@ describe('runtime round-trip of generated Zod source', () => {
       target: 'firebase-admin@13',
       variant: 'v4',
       schemaNamePattern: '{modelName}Schema',
+      emitInferredTypes: false,
+      inferredTypeNamePattern: '{modelName}',
     }).generate(s);
     const file = await createZodRenderer({
       target: 'firebase-admin@13',
@@ -85,5 +92,31 @@ describe('runtime round-trip of generated Zod source', () => {
 
     const UsernameSchema = loadGeneratedSchema(file.content, 'UsernameSchema');
     expect(UsernameSchema.description).toBe('Unique handle.');
+  });
+
+  it('emits a `type` export that strips at runtime but keeps the schema parseable when emitInferredTypes is true', async () => {
+    const s = schema.createSchemaFromDefinition({
+      Username: { model: 'alias', type: 'string' },
+    });
+    const generation = createZodGenerator({
+      target: 'firebase-admin@13',
+      variant: 'v4',
+      schemaNamePattern: '{modelName}Schema',
+      emitInferredTypes: true,
+      inferredTypeNamePattern: '{modelName}',
+    }).generate(s);
+    const file = await createZodRenderer({
+      target: 'firebase-admin@13',
+      variant: 'v4',
+      indentation: 2,
+    }).render(generation);
+
+    // Sanity check: the rendered source contains both the schema const and the type alias.
+    expect(file.content).toContain('export const UsernameSchema =');
+    expect(file.content).toContain('export type Username = z.infer<typeof UsernameSchema>;');
+
+    const UsernameSchema = loadGeneratedSchema(file.content, 'UsernameSchema');
+    expect(UsernameSchema.safeParse('alice').success).toBe(true);
+    expect(UsernameSchema.safeParse(42).success).toBe(false);
   });
 });

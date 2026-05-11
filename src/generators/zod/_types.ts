@@ -10,6 +10,12 @@ export interface ZodSchemaDeclaration {
    * (e.g. `UserSchema`). Derived from the schema name pattern.
    */
   schemaName: string;
+  /**
+   * Identifier under which the inferred TypeScript type is exported, if any
+   * (e.g. `User`). `null` when `emitInferredTypes` is disabled — in that case
+   * the renderer skips the inferred-type export entirely.
+   */
+  inferredTypeName: string | null;
   /** Documentation attached to the model in the source schema, if any. */
   modelDocs: string | null;
   /**
@@ -44,6 +50,8 @@ export interface ZodGeneratorConfig {
   target: ZodGenerationTarget;
   variant: ZodVariant;
   schemaNamePattern: string;
+  emitInferredTypes: boolean;
+  inferredTypeNamePattern: string;
 }
 
 export interface ZodGenerator {

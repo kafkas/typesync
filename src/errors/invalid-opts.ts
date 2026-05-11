@@ -10,6 +10,7 @@ import type {
 import {
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM,
   ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 
@@ -52,6 +53,15 @@ export class InvalidZodSchemaNamePatternOptionError extends InvalidOptionsError 
     const option: GenerateZodOption = 'schemaNamePattern';
     super(
       `Expected '${option}' to be a string that contains a '${ZOD_SCHEMA_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
+    );
+  }
+}
+
+export class InvalidZodInferredTypeNamePatternOptionError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const option: GenerateZodOption = 'inferredTypeNamePattern';
+    super(
+      `Expected '${option}' to be a string that contains a '${ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
     );
   }
 }

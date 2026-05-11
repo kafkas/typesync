@@ -71,15 +71,15 @@ export function createCodegenZodEmitter(config: ZodCodegenEmitterConfig): ZodEmi
     intLiteral: value => `z.literal(${value})`,
     booleanLiteral: value => `z.literal(${value})`,
 
+    // Enums always emit a `z.union(...)` regardless of member count. Schema
+    // validation already guarantees at least one member, and `z.union([single])`
+    // is accepted by both Zod v3 and v4. This keeps the codegen and runtime
+    // emitters in lockstep so users see the same shape on both sides.
     stringEnum: values => {
-      if (values.length === 0) return 'z.never()';
-      if (values.length === 1) return `z.literal(${JSON.stringify(values[0])})`;
       const variants = values.map(v => `z.literal(${JSON.stringify(v)})`);
       return `z.union([${variants.join(', ')}])`;
     },
     intEnum: values => {
-      if (values.length === 0) return 'z.never()';
-      if (values.length === 1) return `z.literal(${values[0]})`;
       const variants = values.map(v => `z.literal(${v})`);
       return `z.union([${variants.join(', ')}])`;
     },
@@ -103,16 +103,20 @@ export function createCodegenZodEmitter(config: ZodCodegenEmitterConfig): ZodEmi
       return objectFactoryExpression(variant, additionalFields, objectLiteral);
     },
 
-    simpleUnion: variants => {
-      if (variants.length === 0) return 'z.never()';
-      if (variants.length === 1) return variants[0]!;
-      return `z.union([${variants.join(', ')}])`;
+    // Mirrors the runtime emitter: a degenerate 0/1-variant union collapses to
+    // its sole variant (or `z.never()` if empty) rather than emitting a literal
+    // `z.union([single])`. Reasons: (1) it keeps both emitters semantically
+    // equivalent; (2) it sidesteps Zod v3's `[A, A, ...A[]]` tuple type for
+    // `z.union`, which would otherwise require an `as`-cast in the generated
+    // file; (3) the output is cleaner.
+    simpleUnion: unionVariants => {
+      if (unionVariants.length < 2) return unionVariants[0] ?? 'z.never()';
+      return `z.union([${unionVariants.join(', ')}])`;
     },
 
-    discriminatedUnion: (discriminant, variants) => {
-      if (variants.length === 0) return 'z.never()';
-      if (variants.length === 1) return variants[0]!;
-      return `z.discriminatedUnion(${JSON.stringify(discriminant)}, [${variants.join(', ')}])`;
+    discriminatedUnion: (discriminant, unionVariants) => {
+      if (unionVariants.length < 2) return unionVariants[0] ?? 'z.never()';
+      return `z.discriminatedUnion(${JSON.stringify(discriminant)}, [${unionVariants.join(', ')}])`;
     },
 
     reference: modelName => {

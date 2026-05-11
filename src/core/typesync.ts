@@ -63,11 +63,14 @@ import {
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
   DEFAULT_ZOD_DEBUG,
+  DEFAULT_ZOD_EMIT_INFERRED_TYPES,
   DEFAULT_ZOD_INDENTATION,
+  DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN,
   DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
   DEFAULT_ZOD_VARIANT,
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM,
   ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
@@ -89,6 +92,7 @@ import {
   InvalidTypeValidatorParamNameOptionError,
   InvalidUndefinedSentinelNameOptionError,
   InvalidZodIndentationOptionError,
+  InvalidZodInferredTypeNamePatternOptionError,
   InvalidZodSchemaNamePatternOptionError,
   RulesMarkerOptionsNotDistinctError,
   ValidatorNamePatternsNotDistinctError,
@@ -137,6 +141,8 @@ interface NormalizedGenerateZodRepresentationOptions {
   target: ZodGenerationTarget;
   variant: ZodVariant;
   schemaNamePattern: string;
+  emitInferredTypes: boolean;
+  inferredTypeNamePattern: string;
   debug: boolean;
 }
 
@@ -291,9 +297,23 @@ class TypesyncImpl implements Typesync {
     rawOpts: GenerateZodRepresentationOptions
   ): Promise<GenerateZodRepresentationResult> {
     const opts = this.normalizeGenerateZodRepresentationOpts(rawOpts);
-    const { definitionGlobPattern, target, variant, schemaNamePattern, debug } = opts;
+    const {
+      definitionGlobPattern,
+      target,
+      variant,
+      schemaNamePattern,
+      emitInferredTypes,
+      inferredTypeNamePattern,
+      debug,
+    } = opts;
     const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
-    const generator = createZodGenerator({ target, variant, schemaNamePattern });
+    const generator = createZodGenerator({
+      target,
+      variant,
+      schemaNamePattern,
+      emitInferredTypes,
+      inferredTypeNamePattern,
+    });
     const generation = generator.generate(s);
     return { type: 'zod', schema: s, generation };
   }
@@ -318,6 +338,8 @@ class TypesyncImpl implements Typesync {
       target,
       variant = DEFAULT_ZOD_VARIANT,
       schemaNamePattern = DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
+      emitInferredTypes = DEFAULT_ZOD_EMIT_INFERRED_TYPES,
+      inferredTypeNamePattern = DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN,
       debug = DEFAULT_ZOD_DEBUG,
     } = opts;
 
@@ -325,11 +347,17 @@ class TypesyncImpl implements Typesync {
       throw new InvalidZodSchemaNamePatternOptionError(schemaNamePattern);
     }
 
+    if (!inferredTypeNamePattern.includes(ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM)) {
+      throw new InvalidZodInferredTypeNamePatternOptionError(inferredTypeNamePattern);
+    }
+
     return {
       definitionGlobPattern: definition,
       target,
       variant,
       schemaNamePattern,
+      emitInferredTypes,
+      inferredTypeNamePattern,
       debug,
     };
   }

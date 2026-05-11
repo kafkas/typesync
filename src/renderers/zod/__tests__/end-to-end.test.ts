@@ -5,12 +5,24 @@ import { createZodRenderer } from '../_impl.js';
 
 async function generateAndRender(
   s: schema.Schema,
-  config: { target?: ZodGenerationTarget; variant?: ZodVariant; indentation?: number } = {}
+  config: {
+    target?: ZodGenerationTarget;
+    variant?: ZodVariant;
+    indentation?: number;
+    emitInferredTypes?: boolean;
+    inferredTypeNamePattern?: string;
+  } = {}
 ) {
   const target = config.target ?? 'firebase-admin@13';
   const variant = config.variant ?? 'v4';
   const indentation = config.indentation ?? 2;
-  const generation = createZodGenerator({ target, variant, schemaNamePattern: '{modelName}Schema' }).generate(s);
+  const generation = createZodGenerator({
+    target,
+    variant,
+    schemaNamePattern: '{modelName}Schema',
+    emitInferredTypes: config.emitInferredTypes ?? false,
+    inferredTypeNamePattern: config.inferredTypeNamePattern ?? '{modelName}',
+  }).generate(s);
   const file = await createZodRenderer({ target, variant, indentation }).render(generation);
   return file.content;
 }
@@ -88,5 +100,19 @@ describe('Zod generator + renderer end-to-end', () => {
 
     const content = await generateAndRender(s, { variant: 'v3' });
     await expect(content).toMatchFileSnapshot('./__file_snapshots__/end-to-end-v3.ts');
+  });
+
+  it('emits `export type X = z.infer<typeof XSchema>;` after each schema when emitInferredTypes is true', async () => {
+    const s = schema.createSchemaFromDefinition({
+      Username: { model: 'alias', type: 'string', docs: 'Unique handle.' },
+      User: {
+        model: 'document',
+        path: 'users/{userId}',
+        type: { type: 'object', fields: { name: { type: 'Username' }, age: { type: 'int', optional: true } } },
+      },
+    });
+
+    const content = await generateAndRender(s, { emitInferredTypes: true });
+    await expect(content).toMatchFileSnapshot('./__file_snapshots__/end-to-end-inferred-types.ts');
   });
 });
