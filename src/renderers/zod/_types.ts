@@ -1,9 +1,9 @@
-import type { ZodGenerationTarget, ZodVariant } from '../../api/index.js';
+import type { TSGenerationTarget, ZodVariant } from '../../api/index.js';
 import type { ZodGeneration } from '../../generators/zod/index.js';
 import type { RenderedFile } from '../_types.js';
 
 export interface ZodRendererConfig {
-  target: ZodGenerationTarget;
+  target: TSGenerationTarget;
   variant: ZodVariant;
   indentation: number;
 }

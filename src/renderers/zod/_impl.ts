@@ -1,7 +1,7 @@
 import { StringBuilder } from '@proficient/ds';
 import { format } from 'prettier';
 
-import type { ZodGenerationTarget } from '../../api/index.js';
+import type { TSGenerationTarget } from '../../api/index.js';
 import type { ZodGeneration, ZodSchemaDeclaration } from '../../generators/zod/index.js';
 import { assertNever } from '../../util/assert.js';
 import type { RenderedFile } from '../_types.js';
@@ -74,7 +74,7 @@ class ZodRendererImpl implements ZodRenderer {
   }
 }
 
-function bytesRequiresFirestoreImport(target: ZodGenerationTarget): boolean {
+function bytesRequiresFirestoreImport(target: TSGenerationTarget): boolean {
   switch (target) {
     case 'firebase-admin@13':
     case 'firebase-admin@12':
@@ -94,7 +94,7 @@ function bytesRequiresFirestoreImport(target: ZodGenerationTarget): boolean {
   }
 }
 
-function getFirestoreImportForTarget(target: ZodGenerationTarget): string {
+function getFirestoreImportForTarget(target: TSGenerationTarget): string {
   switch (target) {
     case 'firebase-admin@13':
     case 'firebase-admin@12':

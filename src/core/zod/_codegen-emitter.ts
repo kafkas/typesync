@@ -1,3 +1,4 @@
+import type { TSGenerationTarget } from '../../api/ts.js';
 import { assertNever } from '../../util/assert.js';
 import type { ZodEmitter } from './_emitter.js';
 
@@ -13,27 +14,16 @@ import type { ZodEmitter } from './_emitter.js';
  */
 export type ZodVariant = 'v3' | 'v4';
 
-/**
- * Identifies the Firestore SDK that the generated Zod schemas will be
- * validating data against. The emitter only uses this to pick the correct
- * runtime classes for `timestamp` and `bytes` (e.g. `Buffer` vs
- * `firestore.Bytes` vs `firestore.Blob`).
- */
-export type ZodCodegenTarget =
-  | 'firebase-admin@13'
-  | 'firebase-admin@12'
-  | 'firebase-admin@11'
-  | 'firebase-admin@10'
-  | 'firebase@11'
-  | 'firebase@10'
-  | 'firebase@9'
-  | 'react-native-firebase@21'
-  | 'react-native-firebase@20'
-  | 'react-native-firebase@19';
-
 export interface ZodCodegenEmitterConfig {
   variant: ZodVariant;
-  target: ZodCodegenTarget;
+  /**
+   * Identifies the Firestore SDK that the generated Zod schemas will be
+   * validating data against. Shares the `generate-ts` target list — the SDK
+   * identity only matters for picking the right runtime class for the
+   * `timestamp` and `bytes` primitives (e.g. `Buffer` vs `firestore.Bytes`
+   * vs `firestore.Blob`).
+   */
+  target: TSGenerationTarget;
   /**
    * Maps a Typesync model name (e.g. `User`) to the identifier under which the
    * corresponding Zod schema will be exported in the generated file
@@ -141,7 +131,7 @@ function propertyKey(name: string): string {
   return VALID_IDENTIFIER_REGEX.test(name) ? name : JSON.stringify(name);
 }
 
-function expressionForTimestampInstanceCheck(target: ZodCodegenTarget): string {
+function expressionForTimestampInstanceCheck(target: TSGenerationTarget): string {
   switch (target) {
     case 'firebase-admin@13':
     case 'firebase-admin@12':
@@ -159,7 +149,7 @@ function expressionForTimestampInstanceCheck(target: ZodCodegenTarget): string {
   }
 }
 
-function expressionForBytesInstanceCheck(target: ZodCodegenTarget): string {
+function expressionForBytesInstanceCheck(target: TSGenerationTarget): string {
   switch (target) {
     case 'firebase-admin@13':
     case 'firebase-admin@12':

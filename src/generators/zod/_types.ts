@@ -1,4 +1,4 @@
-import type { ZodGenerationTarget, ZodVariant } from '../../api/index.js';
+import type { TSGenerationTarget, ZodVariant } from '../../api/index.js';
 import type { schema } from '../../schema/index.js';
 
 export interface ZodSchemaDeclaration {
@@ -47,7 +47,7 @@ export interface ZodGeneration {
 }
 
 export interface ZodGeneratorConfig {
-  target: ZodGenerationTarget;
+  target: TSGenerationTarget;
   variant: ZodVariant;
   schemaNamePattern: string;
   emitInferredTypes: boolean;

@@ -1,10 +1,10 @@
-import type { ZodGenerationTarget, ZodVariant } from '../../../api/index.js';
+import type { TSGenerationTarget, ZodVariant } from '../../../api/index.js';
 import { schema } from '../../../schema/index.js';
 import { createZodGenerator } from '../_impl.js';
 
 function createGenerator(
   overrides: {
-    target?: ZodGenerationTarget;
+    target?: TSGenerationTarget;
     variant?: ZodVariant;
     schemaNamePattern?: string;
     emitInferredTypes?: boolean;

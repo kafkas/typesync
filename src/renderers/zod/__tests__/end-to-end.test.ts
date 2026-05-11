@@ -1,4 +1,4 @@
-import type { ZodGenerationTarget, ZodVariant } from '../../../api/index.js';
+import type { TSGenerationTarget, ZodVariant } from '../../../api/index.js';
 import { createZodGenerator } from '../../../generators/zod/index.js';
 import { schema } from '../../../schema/index.js';
 import { createZodRenderer } from '../_impl.js';
@@ -6,7 +6,7 @@ import { createZodRenderer } from '../_impl.js';
 async function generateAndRender(
   s: schema.Schema,
   config: {
-    target?: ZodGenerationTarget;
+    target?: TSGenerationTarget;
     variant?: ZodVariant;
     indentation?: number;
     emitInferredTypes?: boolean;

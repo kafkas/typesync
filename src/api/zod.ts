@@ -1,32 +1,7 @@
 import { ZodGeneration } from '../generators/zod/index.js';
 import { objectKeys } from '../util/object-keys.js';
 import { GenerateRepresentationResult } from './_common.js';
-
-/**
- * Targets supported by `generate-zod`. They mirror the `generate-ts` targets
- * because the only place the SDK identity matters for Zod is the runtime class
- * that backs the `timestamp` and `bytes` schema types (e.g. `Buffer` for the
- * Node admin SDK, `firestore.Bytes` for the web SDK, `firestore.Blob` for
- * `react-native-firebase`).
- */
-const ZOD_TARGETS = {
-  'firebase-admin@13': true,
-  'firebase-admin@12': true,
-  'firebase-admin@11': true,
-  'firebase-admin@10': true,
-  'firebase@11': true,
-  'firebase@10': true,
-  'firebase@9': true,
-  'react-native-firebase@21': true,
-  'react-native-firebase@20': true,
-  'react-native-firebase@19': true,
-};
-
-export type ZodGenerationTarget = keyof typeof ZOD_TARGETS;
-
-export function getZodTargets() {
-  return objectKeys(ZOD_TARGETS);
-}
+import type { TSGenerationTarget } from './ts.js';
 
 const ZOD_VARIANTS = {
   v3: true,
@@ -46,7 +21,14 @@ export function getZodVariants() {
 
 export interface GenerateZodRepresentationOptions {
   definition: string;
-  target: ZodGenerationTarget;
+  /**
+   * Which Firestore SDK the generated Zod schemas validate values against.
+   * Reuses the `generate-ts` target list — the SDK choice only affects the
+   * runtime class checked by `z.instanceof(...)` for the `timestamp` and
+   * `bytes` primitives (e.g. `Buffer` for the Node admin SDK, `firestore.Bytes`
+   * for the web SDK, `firestore.Blob` for `react-native-firebase`).
+   */
+  target: TSGenerationTarget;
   variant?: ZodVariant;
   /**
    * Pattern that controls how the generated Zod schema constants are named.

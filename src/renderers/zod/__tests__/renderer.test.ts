@@ -1,8 +1,8 @@
-import type { ZodGenerationTarget, ZodVariant } from '../../../api/index.js';
+import type { TSGenerationTarget, ZodVariant } from '../../../api/index.js';
 import type { ZodGeneration } from '../../../generators/zod/index.js';
 import { createZodRenderer } from '../_impl.js';
 
-function createRenderer(overrides: { indentation?: number; target?: ZodGenerationTarget; variant?: ZodVariant } = {}) {
+function createRenderer(overrides: { indentation?: number; target?: TSGenerationTarget; variant?: ZodVariant } = {}) {
   return createZodRenderer({
     indentation: overrides.indentation ?? 2,
     target: overrides.target ?? 'firebase-admin@13',
@@ -119,7 +119,7 @@ describe('ZodRendererImpl', () => {
   });
 
   it('emits the right Firestore SDK import for each target family', async () => {
-    const targetsByExpectedImport: Record<string, ZodGenerationTarget[]> = {
+    const targetsByExpectedImport: Record<string, TSGenerationTarget[]> = {
       [`import * as firestore from 'firebase-admin/firestore';`]: ['firebase-admin@13', 'firebase-admin@12'],
       [`import { firestore } from 'firebase-admin';`]: ['firebase-admin@11', 'firebase-admin@10'],
       [`import * as firestore from 'firebase/firestore';`]: ['firebase@11', 'firebase@10', 'firebase@9'],

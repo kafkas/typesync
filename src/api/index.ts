@@ -48,9 +48,7 @@ export {
   type GenerateZodRepresentationOptions,
   type GenerateZodRepresentationResult,
   type GenerateZodResult,
-  type ZodGenerationTarget,
   type ZodVariant,
-  getZodTargets,
   getZodVariants,
 } from './zod.js';
 export type {

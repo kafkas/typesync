@@ -10,7 +10,6 @@ import {
   getSchemaGraphOrientations,
   getSwiftTargets,
   getTSTargets,
-  getZodTargets,
   getZodVariants,
   typesync,
 } from '../api/index.js';
@@ -274,10 +273,10 @@ await yargs(hideBin(process.argv))
         })
         .option('target', {
           describe:
-            'The target Firestore SDK that the generated Zod schemas will validate data against. This determines the runtime classes used for `timestamp` and `bytes` (e.g. `Buffer` for the Node admin SDK, `firestore.Bytes` for the web SDK).',
+            'The target Firestore SDK that the generated Zod schemas will validate data against. This determines the runtime classes used for `timestamp` and `bytes` (e.g. `Buffer` for the Node admin SDK, `firestore.Bytes` for the web SDK). Shares the `generate-ts` target list.',
           type: 'string',
           demandOption: true,
-          choices: getZodTargets(),
+          choices: getTSTargets(),
         })
         .option('outFile', {
           describe: 'The path to the output file.',

@@ -35,7 +35,6 @@ import type {
   ValidateDataResult,
   ValidateOptions,
   ValidateResult,
-  ZodGenerationTarget,
   ZodVariant,
 } from '../api/index.js';
 import { GenerateRepresentationOptions, GenerateRepresentationResult } from '../api/typesync.js';
@@ -138,7 +137,7 @@ interface NormalizedGenerateSwiftOptions extends NormalizedGenerateSwiftRepresen
 
 interface NormalizedGenerateZodRepresentationOptions {
   definitionGlobPattern: string;
-  target: ZodGenerationTarget;
+  target: TSGenerationTarget;
   variant: ZodVariant;
   schemaNamePattern: string;
   emitInferredTypes: boolean;
