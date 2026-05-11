@@ -61,9 +61,6 @@ export const UserSchema = z.strictObject({
 export type User = z.infer<typeof UserSchema>;
 ```
 
-Disabled by default to avoid name conflicts with types produced by `generate-ts` (which would also export `User`). Turn
-this on if you only run `generate-zod` and want the inferred TS types alongside the schemas.
-
 </ParamField>
 
 <ParamField type="string" path="inferredTypeNamePattern" default="{modelName}">
@@ -73,8 +70,7 @@ must contain the literal substring `"{modelName}"`. Ignored when `--emitInferred
 
 Example values:
 
-- `"{modelName}"` &rarr; produces types like `User`, `Post`, `Account` etc. (canonical Zod convention; collides with
-  `generate-ts` if both run against the same scope).
+- `"{modelName}"` &rarr; produces types like `User`, `Post`, `Account` etc.
 - `"{modelName}Type"` &rarr; produces types like `UserType`, `PostType`, `AccountType` etc.
 - `"I{modelName}"` &rarr; produces types like `IUser`, `IPost`, `IAccount` etc.
 

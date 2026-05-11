@@ -57,8 +57,7 @@ export interface GenerateZodRepresentationOptions {
   /**
    * When `true`, the generator emits an inferred TypeScript type alongside
    * each Zod schema, e.g. `export type User = z.infer<typeof UserSchema>;`.
-   * Defaults to `false` because users who also run `generate-ts` would
-   * otherwise see duplicate `User` declarations.
+   * Defaults to `false`.
    */
   emitInferredTypes?: boolean;
   /**

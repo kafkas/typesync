@@ -9,7 +9,7 @@ export const EventSchema = z
   ])
   .describe('A user-interaction event.');
 
-export const RoleSchema = z.union([z.literal('admin'), z.literal('user')]);
+export const RoleSchema = z.enum(['admin', 'user']);
 
 export const TagSchema = z.array(z.string());
 

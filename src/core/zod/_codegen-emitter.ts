@@ -71,18 +71,13 @@ export function createCodegenZodEmitter(config: ZodCodegenEmitterConfig): ZodEmi
     intLiteral: value => `z.literal(${value})`,
     booleanLiteral: value => `z.literal(${value})`,
 
-    // Enums always emit a `z.union(...)` regardless of member count. Schema
-    // validation already guarantees at least one member, and `z.union([single])`
-    // is accepted by both Zod v3 and v4. This keeps the codegen and runtime
-    // emitters in lockstep so users see the same shape on both sides.
-    stringEnum: values => {
-      const variants = values.map(v => `z.literal(${JSON.stringify(v)})`);
-      return `z.union([${variants.join(', ')}])`;
-    },
-    intEnum: values => {
-      const variants = values.map(v => `z.literal(${v})`);
-      return `z.union([${variants.join(', ')}])`;
-    },
+    // String enums use the canonical `z.enum([...])` form. It works in Zod
+    // v3 and v4 alike (including with a single member) and gives much better
+    // error messages than a literal union. Int enums fall back to a literal
+    // union because `z.enum([...])` is string-only in Zod and the v4-only
+    // `z.literal([1, 2])` form does not accept single-member arrays.
+    stringEnum: values => `z.enum([${values.map(v => JSON.stringify(v)).join(', ')}])`,
+    intEnum: values => `z.union([${values.map(v => `z.literal(${v})`).join(', ')}])`,
 
     tuple: elements => `z.tuple([${elements.join(', ')}])`,
     array: element => `z.array(${element})`,
@@ -170,16 +165,25 @@ function expressionForBytesInstanceCheck(target: ZodCodegenTarget): string {
     case 'firebase-admin@12':
     case 'firebase-admin@11':
     case 'firebase-admin@10':
-      // Firestore bytes are represented as Node `Buffer` in admin.
+      // Firestore bytes are represented as Node `Buffer` in admin. Buffer
+      // has a public constructor so it satisfies `z.instanceof` directly.
       return 'Buffer';
     case 'firebase@11':
     case 'firebase@10':
     case 'firebase@9':
-      return 'firestore.Bytes';
+      // `firestore.Bytes` declares a private constructor, which violates the
+      // `new (...args: any[]) => any` constraint enforced by `z.instanceof`.
+      // The cast has to go through `unknown` because TypeScript otherwise
+      // refuses the conversion ("private vs public constructor"). The cast
+      // is erased at runtime; the actual instance check still runs against
+      // the real class object.
+      return 'firestore.Bytes as unknown as new (...args: never[]) => firestore.Bytes';
     case 'react-native-firebase@21':
     case 'react-native-firebase@20':
     case 'react-native-firebase@19':
-      return 'firestore.Blob';
+      // Same reason as `firestore.Bytes` above — `firestore.Blob` has a
+      // private constructor in the `@react-native-firebase/firestore` types.
+      return 'firestore.Blob as unknown as new (...args: never[]) => firestore.Blob';
     default:
       assertNever(target);
   }

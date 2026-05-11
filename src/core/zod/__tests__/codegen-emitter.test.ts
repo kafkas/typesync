@@ -32,9 +32,9 @@ describe('createCodegenZodEmitter()', () => {
       expect(emit({ type: 'boolean-literal', value: true })).toBe('z.literal(true)');
     });
 
-    it('always folds enum members into a z.union to mirror the runtime emitter shape', () => {
+    it('emits string enums as z.enum([...]) regardless of member count', () => {
       const single = emit({ type: 'string-enum', members: [{ label: 'A', value: 'a' }] });
-      expect(single).toBe(`z.union([z.literal("a")])`);
+      expect(single).toBe(`z.enum(["a"])`);
 
       const multi = emit({
         type: 'string-enum',
@@ -43,15 +43,37 @@ describe('createCodegenZodEmitter()', () => {
           { label: 'Blue', value: 'blue' },
         ],
       });
-      expect(multi).toBe(`z.union([z.literal("red"), z.literal("blue")])`);
+      expect(multi).toBe(`z.enum(["red", "blue"])`);
+    });
+
+    it('emits int enums as a literal union (z.enum is string-only in Zod)', () => {
+      const single = emit({ type: 'int-enum', members: [{ label: 'One', value: 1 }] });
+      expect(single).toBe('z.union([z.literal(1)])');
+
+      const multi = emit({
+        type: 'int-enum',
+        members: [
+          { label: 'Lo', value: 1 },
+          { label: 'Hi', value: 2 },
+        ],
+      });
+      expect(multi).toBe('z.union([z.literal(1), z.literal(2)])');
     });
   });
 
   describe('Firestore-bound primitives', () => {
-    it('uses Buffer for bytes on the admin target and firestore.Bytes/Blob for the others', () => {
+    it('uses Buffer for bytes on the admin target and casts firestore.Bytes/Blob (private constructors) for the others', () => {
       expect(emit({ type: 'bytes' }, { target: 'firebase-admin@13' })).toBe('z.instanceof(Buffer)');
-      expect(emit({ type: 'bytes' }, { target: 'firebase@10' })).toBe('z.instanceof(firestore.Bytes)');
-      expect(emit({ type: 'bytes' }, { target: 'react-native-firebase@21' })).toBe('z.instanceof(firestore.Blob)');
+      // The web SDK's `firestore.Bytes` declares a private constructor, which
+      // does not satisfy `z.instanceof`'s `new (...args: any[]) => any`
+      // constraint. The codegen emits a constructor-shape cast so the
+      // generated source type-checks under strict TypeScript.
+      expect(emit({ type: 'bytes' }, { target: 'firebase@10' })).toBe(
+        'z.instanceof(firestore.Bytes as unknown as new (...args: never[]) => firestore.Bytes)'
+      );
+      expect(emit({ type: 'bytes' }, { target: 'react-native-firebase@21' })).toBe(
+        'z.instanceof(firestore.Blob as unknown as new (...args: never[]) => firestore.Blob)'
+      );
     });
 
     it('uses firestore.Timestamp regardless of target so the runtime check matches the SDK class', () => {
