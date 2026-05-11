@@ -1,9 +1,12 @@
 import type { SchemaGraphOrientation } from './api/graph.js';
 import type { TSObjectTypeFormat } from './api/ts.js';
+import type { ZodVariant } from './api/zod.js';
 
 export const PYTHON_UNDEFINED_SENTINEL_CLASS = 'TypesyncUndefined';
 export const RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
 export const RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM = '{modelName}';
+export const ZOD_SCHEMA_NAME_PATTERN_PARAM = '{modelName}';
+export const ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM = '{modelName}';
 
 /*
  * Default values
@@ -14,6 +17,13 @@ export const DEFAULT_TS_DEBUG = false;
 
 export const DEFAULT_SWIFT_INDENTATION = 2;
 export const DEFAULT_SWIFT_DEBUG = false;
+
+export const DEFAULT_ZOD_VARIANT: ZodVariant = 'v4';
+export const DEFAULT_ZOD_SCHEMA_NAME_PATTERN = `${ZOD_SCHEMA_NAME_PATTERN_PARAM}Schema`;
+export const DEFAULT_ZOD_EMIT_INFERRED_TYPES = false;
+export const DEFAULT_ZOD_INFERRED_TYPE_NAME_PATTERN = ZOD_INFERRED_TYPE_NAME_PATTERN_PARAM;
+export const DEFAULT_ZOD_INDENTATION = 2;
+export const DEFAULT_ZOD_DEBUG = false;
 
 export const DEFAULT_PY_CUSTOM_PYDANTIC_BASE = undefined;
 export const DEFAULT_PY_UNDEFINED_SENTINEL_NAME = 'UNDEFINED';

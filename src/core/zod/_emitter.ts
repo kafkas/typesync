@@ -41,6 +41,13 @@ export interface ZodEmitter<TOut> {
       name: string;
       value: TOut;
       optional: boolean;
+      /**
+       * Documentation attached to the field in the source schema, if any.
+       * The runtime emitter ignores this; the codegen emitter folds it into
+       * a `.describe(...)` call so the generated Zod schema preserves the
+       * field-level docs from the original definition.
+       */
+      docs: string | null;
     }>,
     additionalFields: boolean
   ): TOut;

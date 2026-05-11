@@ -55,6 +55,7 @@
     "test:integration:python": "tsx scripts/integration-test.ts python",
     "test:integration:swift": "tsx scripts/integration-test.ts swift",
     "test:integration:typescript": "tsx scripts/integration-test.ts typescript",
+    "test:integration:zod": "tsx scripts/integration-test.ts zod",
     "test:rules": "tsx src/cli/index.tsx generate-rules --definition tests/security/definition.yml --outFile tests/security/firestore.rules && firebase emulators:exec --project demo-rules --only firestore 'vitest run --config vitest.security.config.ts'",
     "test:src": "vitest run",
     "test:watch": "vitest"
@@ -99,6 +100,8 @@
     "tsup": "^8.0.2",
     "tsx": "^4.7.2",
     "typescript": "5.7.2",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "zod-v3": "npm:zod@^3.23.8",
+    "zod-v4": "npm:zod@^4.3.6"
   }
 }

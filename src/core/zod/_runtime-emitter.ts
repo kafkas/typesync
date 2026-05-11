@@ -33,7 +33,7 @@ export function createRuntimeZodEmitter(registry: RuntimeZodRegistry): ZodEmitte
     intLiteral: value => z.literal(value),
     booleanLiteral: value => z.literal(value),
 
-    stringEnum: values => z.union(values.map(v => z.literal(v)) as [z.ZodLiteral<string>, ...z.ZodLiteral<string>[]]),
+    stringEnum: values => z.enum(values as [string, ...string[]]),
     intEnum: values => z.union(values.map(v => z.literal(v)) as [z.ZodLiteral<number>, ...z.ZodLiteral<number>[]]),
 
     tuple: elements => {

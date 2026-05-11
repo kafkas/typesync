@@ -1,0 +1,99 @@
+---
+title: 'generate-zod'
+icon: 'rectangle-terminal'
+---
+
+import DebugOption from '/snippets/cli-option-debug.mdx';
+import DefinitionOption from '/snippets/cli-option-definition.mdx';
+import IndentationOption from '/snippets/cli-option-indentation.mdx';
+import OutFileOption from '/snippets/cli-option-out-file.mdx';
+import TargetOption from '/snippets/cli-option-target.mdx';
+import TSTargetsList from '/snippets/ts-targets-list.mdx';
+
+Generates [Zod](https://zod.dev) schemas for the specified Typesync schema and writes them to the specified file. The
+generated schemas mirror the same mapping rules used internally by `typesync validate-data`, so the structure and
+constraints stay in lockstep across runtime validation and code generation.
+
+Documentation captured in your schema definition is preserved in the output: model-level docs are emitted as JSDoc
+comments and as `.describe(...)` calls on the schema, and field-level docs are emitted as `.describe(...)` calls on the
+field's value schema.
+
+## Usage
+
+```bash
+typesync generate-zod --definition <filePathOrPattern> --target <targetEnvironment> --outFile <filePath> --variant <v3|v4> --schemaNamePattern <schemaNamePattern> --emitInferredTypes --inferredTypeNamePattern <inferredTypeNamePattern> --indentation <indentation> --debug <debug>
+```
+
+## Options
+
+<DefinitionOption />
+<TargetOption />
+<OutFileOption />
+
+<ParamField type='"v3" | "v4"' path="variant" default="v4">
+
+Which Zod major release the generated code should target. Pick the variant that matches the `zod` version installed in
+the consuming project. The two majors differ in a couple of API surface points (the `z.record` key argument and the
+strict / loose object factories) and the generator emits the right shape for each.
+
+</ParamField>
+
+<ParamField type="string" path="schemaNamePattern" default="{modelName}Schema">
+
+The pattern that controls how the generated Zod schema constants are named. The pattern must be a string that contains
+the `"{modelName}"` substring (this is a literal value).
+
+Example values:
+
+- `"{modelName}Schema"` &rarr; produces exports like `UserSchema`, `PostSchema`, `AccountSchema` etc.
+- `"z{modelName}"` &rarr; produces exports like `zUser`, `zPost`, `zAccount` etc.
+
+</ParamField>
+
+<ParamField type="boolean" path="emitInferredTypes" default={false}>
+
+When enabled, the generator emits an inferred TypeScript type alongside each Zod schema. For a model named `User` with
+the default patterns, the output becomes:
+
+```ts
+export const UserSchema = z.strictObject({
+  /* ... */
+});
+export type User = z.infer<typeof UserSchema>;
+```
+
+</ParamField>
+
+<ParamField type="string" path="inferredTypeNamePattern" default="{modelName}">
+
+The pattern that controls how the inferred TypeScript types are named when `--emitInferredTypes` is set. The pattern
+must contain the literal substring `"{modelName}"`. Ignored when `--emitInferredTypes` is not set.
+
+Example values:
+
+- `"{modelName}"` &rarr; produces types like `User`, `Post`, `Account` etc.
+- `"{modelName}Type"` &rarr; produces types like `UserType`, `PostType`, `AccountType` etc.
+- `"I{modelName}"` &rarr; produces types like `IUser`, `IPost`, `IAccount` etc.
+
+</ParamField>
+
+<IndentationOption />
+<DebugOption />
+
+## Targets
+
+`generate-zod` reuses the `generate-ts` target list. The `--target` option determines the runtime classes that the
+generated `z.instanceof(...)` checks resolve to — pick the target that matches the Firestore SDK you decode documents
+with.
+
+<TSTargetsList />
+
+## Notes
+
+- References between models are emitted as `z.lazy(() => OtherSchema)`. Using `z.lazy` defers identifier resolution until
+  validation time, which keeps mutually recursive schemas working regardless of declaration order in the generated file.
+- Strict / loose objects map to `z.strictObject` / `z.looseObject` for v4 and to `z.object(...).strict()` /
+  `z.object(...).passthrough()` for v3. Whether an object accepts additional fields is controlled by the
+  `additionalFields` flag in the schema definition.
+- The Firestore SDK is only imported when at least one model uses `timestamp` or `bytes`. For the admin targets, `bytes`
+  resolves to the Node global `Buffer` and does not trigger an SDK import on its own.
