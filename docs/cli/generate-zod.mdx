@@ -8,6 +8,7 @@ import DefinitionOption from '/snippets/cli-option-definition.mdx';
 import IndentationOption from '/snippets/cli-option-indentation.mdx';
 import OutFileOption from '/snippets/cli-option-out-file.mdx';
 import TargetOption from '/snippets/cli-option-target.mdx';
+import TSTargetsList from '/snippets/ts-targets-list.mdx';
 
 Generates [Zod](https://zod.dev) schemas for the specified Typesync schema and writes them to the specified file. The
 generated schemas mirror the same mapping rules used internally by `typesync validate-data`, so the structure and
@@ -81,19 +82,11 @@ Example values:
 
 ## Targets
 
-The `--target` option determines the runtime classes that the generated `z.instanceof(...)` checks resolve to. Pick the
-target that matches the Firestore SDK you decode documents with.
+`generate-zod` reuses the `generate-ts` target list. The `--target` option determines the runtime classes that the
+generated `z.instanceof(...)` checks resolve to — pick the target that matches the Firestore SDK you decode documents
+with.
 
-- `firebase-admin@13`: For backend projects that use [Firebase Admin Node.js SDK (v13)](https://www.npmjs.com/package/firebase-admin).
-- `firebase-admin@12`: For backend projects that use [Firebase Admin Node.js SDK (v12)](https://www.npmjs.com/package/firebase-admin).
-- `firebase-admin@11`: For backend projects that use [Firebase Admin Node.js SDK (v11)](https://www.npmjs.com/package/firebase-admin).
-- `firebase-admin@10`: For backend projects that use [Firebase Admin Node.js SDK (v10)](https://www.npmjs.com/package/firebase-admin).
-- `firebase@11`: For frontend projects that use [Firebase Javascript SDK (v11)](https://www.npmjs.com/package/firebase).
-- `firebase@10`: For frontend projects that use [Firebase Javascript SDK (v10)](https://www.npmjs.com/package/firebase).
-- `firebase@9`: For frontend projects that use [Firebase Javascript SDK (v9)](https://www.npmjs.com/package/firebase).
-- `react-native-firebase@21`: For React Native projects that use [React Native Firebase (v21)](https://www.npmjs.com/package/@react-native-firebase/firestore).
-- `react-native-firebase@20`: For React Native projects that use [React Native Firebase (v20)](https://www.npmjs.com/package/@react-native-firebase/firestore).
-- `react-native-firebase@19`: For React Native projects that use [React Native Firebase (v19)](https://www.npmjs.com/package/@react-native-firebase/firestore).
+<TSTargetsList />
 
 ## Notes
 
