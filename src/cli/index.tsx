@@ -5,7 +5,15 @@ import React from 'react';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { getPythonTargets, getSchemaGraphOrientations, getSwiftTargets, getTSTargets, typesync } from '../api/index.js';
+import {
+  getPythonTargets,
+  getSchemaGraphOrientations,
+  getSwiftTargets,
+  getTSTargets,
+  getZodTargets,
+  getZodVariants,
+  typesync,
+} from '../api/index.js';
 import type { ValidateDataProgressEvent } from '../api/index.js';
 import { getObjectTypeFormats } from '../api/ts.js';
 import {
@@ -36,8 +44,13 @@ import {
   DEFAULT_VALIDATE_DATA_JSON,
   DEFAULT_VALIDATE_DATA_MAX_RETRIES,
   DEFAULT_VALIDATE_DEBUG,
+  DEFAULT_ZOD_DEBUG,
+  DEFAULT_ZOD_INDENTATION,
+  DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
+  DEFAULT_ZOD_VARIANT,
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { extractErrorMessage } from '../util/extract-error-message.js';
 import { extractPackageJsonVersion } from '../util/extract-package-json-version.js';
@@ -234,6 +247,78 @@ await yargs(hideBin(process.argv))
           indentation,
           customPydanticBase,
           undefinedSentinelName,
+          debug,
+        });
+
+        render(<GenerationSuccessful result={result} pathToOutputFile={pathToOutputFile} />);
+      } catch (e) {
+        const message = extractErrorMessage(e);
+        render(<GenerationFailed message={message} />);
+        yargs().exit(1, new Error(message));
+      }
+    }
+  )
+  .command(
+    'generate-zod',
+    'Generates Zod schemas for the specified schema and writes them to the specified file.',
+    y =>
+      y
+        .option('definition', {
+          describe:
+            'The exact path or a Glob pattern to the schema definition file or files. Each definition file must be a YAML file containing model definitions.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('target', {
+          describe:
+            'The target Firestore SDK that the generated Zod schemas will validate data against. This determines the runtime classes used for `timestamp` and `bytes` (e.g. `Buffer` for the Node admin SDK, `firestore.Bytes` for the web SDK).',
+          type: 'string',
+          demandOption: true,
+          choices: getZodTargets(),
+        })
+        .option('outFile', {
+          describe: 'The path to the output file.',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('variant', {
+          describe:
+            'Which Zod major release the generated code should target. Pick the variant that matches the `zod` version installed in the consuming project.',
+          type: 'string',
+          demandOption: false,
+          choices: getZodVariants(),
+          default: DEFAULT_ZOD_VARIANT,
+        })
+        .option('schemaNamePattern', {
+          describe: `The pattern that controls how the generated Zod schema constants are named. The pattern must contain the literal substring '${ZOD_SCHEMA_NAME_PATTERN_PARAM}'. For example, providing '${ZOD_SCHEMA_NAME_PATTERN_PARAM}Schema' (the default) ensures that schemas are exported as 'UserSchema', 'PostSchema', etc.`,
+          type: 'string',
+          demandOption: false,
+          default: DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
+        })
+        .option('indentation', {
+          describe: 'Indentation or tab width for the generated code.',
+          type: 'number',
+          demandOption: false,
+          default: DEFAULT_ZOD_INDENTATION,
+        })
+        .option('debug', {
+          describe: 'Whether to enable debug logs.',
+          type: 'boolean',
+          demandOption: false,
+          default: DEFAULT_ZOD_DEBUG,
+        }),
+    async args => {
+      const { definition, target, outFile, variant, schemaNamePattern, indentation, debug } = args;
+
+      const pathToOutputFile = resolve(process.cwd(), outFile);
+      try {
+        const result = await typesync.generateZod({
+          definition: resolve(process.cwd(), definition),
+          target,
+          outFile: pathToOutputFile,
+          variant,
+          schemaNamePattern,
+          indentation,
           debug,
         });
 

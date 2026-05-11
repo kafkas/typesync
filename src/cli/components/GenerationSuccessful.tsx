@@ -18,6 +18,8 @@ function getMessageForResult(result: GenerationResult) {
       return 'Successfully generated Swift type definitions for the specified schema.';
     case 'python':
       return 'Successfully generated Python/Pydantic type definitions for the specified schema.';
+    case 'zod':
+      return 'Successfully generated Zod schemas for the specified schema.';
     case 'rules':
       return 'Successfully generated validator functions for Firestore Security Rules.';
     case 'graph':

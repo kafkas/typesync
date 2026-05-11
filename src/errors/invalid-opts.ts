@@ -4,11 +4,13 @@ import type {
   GenerateRulesOption,
   GenerateSwiftOption,
   GenerateTsOption,
+  GenerateZodOption,
   ValidateDataOption,
 } from '../api/index.js';
 import {
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 
 export class InvalidOptionsError extends Error {
@@ -35,6 +37,22 @@ export class InvalidPyIndentationOptionError extends InvalidOptionsError {
   public constructor(indentation: number) {
     const option: GeneratePythonOption = 'indentation';
     super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidZodIndentationOptionError extends InvalidOptionsError {
+  public constructor(indentation: number) {
+    const option: GenerateZodOption = 'indentation';
+    super(`Expected '${option}' to be a positive integer. Received ${indentation}`);
+  }
+}
+
+export class InvalidZodSchemaNamePatternOptionError extends InvalidOptionsError {
+  public constructor(pattern: string) {
+    const option: GenerateZodOption = 'schemaNamePattern';
+    super(
+      `Expected '${option}' to be a string that contains a '${ZOD_SCHEMA_NAME_PATTERN_PARAM}' substring. Received '${pattern}'`
+    );
   }
 }
 

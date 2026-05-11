@@ -21,6 +21,10 @@ import type {
   GenerateTsRepresentationOptions,
   GenerateTsRepresentationResult,
   GenerateTsResult,
+  GenerateZodOptions,
+  GenerateZodRepresentationOptions,
+  GenerateZodRepresentationResult,
+  GenerateZodResult,
   PythonGenerationTarget,
   SchemaGraphOrientation,
   SwiftGenerationTarget,
@@ -31,6 +35,8 @@ import type {
   ValidateDataResult,
   ValidateOptions,
   ValidateResult,
+  ZodGenerationTarget,
+  ZodVariant,
 } from '../api/index.js';
 import { GenerateRepresentationOptions, GenerateRepresentationResult } from '../api/typesync.js';
 import {
@@ -56,8 +62,13 @@ import {
   DEFAULT_TS_DEBUG,
   DEFAULT_TS_INDENTATION,
   DEFAULT_VALIDATE_DEBUG,
+  DEFAULT_ZOD_DEBUG,
+  DEFAULT_ZOD_INDENTATION,
+  DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
+  DEFAULT_ZOD_VARIANT,
   RULES_READONLY_FIELD_VALIDATOR_NAME_PATTERN_PARAM,
   RULES_TYPE_VALIDATOR_NAME_PATTERN_PARAM,
+  ZOD_SCHEMA_NAME_PATTERN_PARAM,
 } from '../constants.js';
 import { DefinitionFilesNotFoundError } from '../errors/invalid-def.js';
 import {
@@ -77,6 +88,8 @@ import {
   InvalidTypeValidatorNamePatternOptionError,
   InvalidTypeValidatorParamNameOptionError,
   InvalidUndefinedSentinelNameOptionError,
+  InvalidZodIndentationOptionError,
+  InvalidZodSchemaNamePatternOptionError,
   RulesMarkerOptionsNotDistinctError,
   ValidatorNamePatternsNotDistinctError,
 } from '../errors/invalid-opts.js';
@@ -85,6 +98,7 @@ import { createPythonGenerator } from '../generators/python/index.js';
 import { createRulesGenerator } from '../generators/rules/index.js';
 import { createSwiftGenerator } from '../generators/swift/index.js';
 import { createTSGenerator } from '../generators/ts/index.js';
+import { createZodGenerator } from '../generators/zod/index.js';
 import { renderers } from '../renderers/index.js';
 import { createSchemaGraphFromSchema } from '../schema-graph/create-from-schema.js';
 import { schema } from '../schema/index.js';
@@ -114,6 +128,19 @@ interface NormalizedGenerateSwiftRepresentationOptions {
 }
 
 interface NormalizedGenerateSwiftOptions extends NormalizedGenerateSwiftRepresentationOptions {
+  pathToOutputFile: string;
+  indentation: number;
+}
+
+interface NormalizedGenerateZodRepresentationOptions {
+  definitionGlobPattern: string;
+  target: ZodGenerationTarget;
+  variant: ZodVariant;
+  schemaNamePattern: string;
+  debug: boolean;
+}
+
+interface NormalizedGenerateZodOptions extends NormalizedGenerateZodRepresentationOptions {
   pathToOutputFile: string;
   indentation: number;
 }
@@ -243,6 +270,66 @@ class TypesyncImpl implements Typesync {
     return {
       definitionGlobPattern: definition,
       target,
+      debug,
+    };
+  }
+
+  public async generateZod(rawOpts: GenerateZodOptions): Promise<GenerateZodResult> {
+    const opts = this.normalizeGenerateZodOpts(rawOpts);
+    const { schema: s, generation } = await this.generateZodRepresentation(rawOpts);
+    const renderer = renderers.createZodRenderer({
+      target: opts.target,
+      variant: opts.variant,
+      indentation: opts.indentation,
+    });
+    const file = await renderer.render(generation);
+    await writeFile(opts.pathToOutputFile, file.content);
+    return { type: 'zod', schema: s, generation };
+  }
+
+  public async generateZodRepresentation(
+    rawOpts: GenerateZodRepresentationOptions
+  ): Promise<GenerateZodRepresentationResult> {
+    const opts = this.normalizeGenerateZodRepresentationOpts(rawOpts);
+    const { definitionGlobPattern, target, variant, schemaNamePattern, debug } = opts;
+    const { schema: s } = this.createCoreObjects(definitionGlobPattern, debug);
+    const generator = createZodGenerator({ target, variant, schemaNamePattern });
+    const generation = generator.generate(s);
+    return { type: 'zod', schema: s, generation };
+  }
+
+  private normalizeGenerateZodOpts(opts: GenerateZodOptions): NormalizedGenerateZodOptions {
+    const { outFile, indentation = DEFAULT_ZOD_INDENTATION, ...rest } = opts;
+    if (!Number.isSafeInteger(indentation) || indentation < 1) {
+      throw new InvalidZodIndentationOptionError(indentation);
+    }
+    return {
+      ...this.normalizeGenerateZodRepresentationOpts(rest),
+      pathToOutputFile: outFile,
+      indentation,
+    };
+  }
+
+  private normalizeGenerateZodRepresentationOpts(
+    opts: GenerateZodRepresentationOptions
+  ): NormalizedGenerateZodRepresentationOptions {
+    const {
+      definition,
+      target,
+      variant = DEFAULT_ZOD_VARIANT,
+      schemaNamePattern = DEFAULT_ZOD_SCHEMA_NAME_PATTERN,
+      debug = DEFAULT_ZOD_DEBUG,
+    } = opts;
+
+    if (!schemaNamePattern.includes(ZOD_SCHEMA_NAME_PATTERN_PARAM)) {
+      throw new InvalidZodSchemaNamePatternOptionError(schemaNamePattern);
+    }
+
+    return {
+      definitionGlobPattern: definition,
+      target,
+      variant,
+      schemaNamePattern,
       debug,
     };
   }

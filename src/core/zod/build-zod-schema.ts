@@ -53,6 +53,7 @@ export function buildZodFromType<TOut>(type: schema.types.Type, emitter: ZodEmit
           name: field.name,
           value: buildZodFromType(field.type, emitter),
           optional: field.optional,
+          docs: field.docs,
         })),
         type.additionalFields
       );

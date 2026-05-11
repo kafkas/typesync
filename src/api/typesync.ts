@@ -32,6 +32,12 @@ import type {
   GenerateTsResult,
 } from './ts.js';
 import type { ValidateDataOptions, ValidateDataResult } from './validate-data.js';
+import type {
+  GenerateZodOptions,
+  GenerateZodRepresentationOptions,
+  GenerateZodRepresentationResult,
+  GenerateZodResult,
+} from './zod.js';
 
 export interface GenerateRepresentationOptions {
   definition: string;
@@ -102,6 +108,20 @@ export interface Typesync {
   generatePyRepresentation(opts: GeneratePythonRepresentationOptions): Promise<GeneratePythonRepresentationResult>;
 
   /**
+   * Generates Zod schemas for the specified schema and writes them to the specified file.
+   *
+   * @remarks
+   *
+   * This is the programmatic API for the `typesync generate-zod` command.
+   */
+  generateZod(opts: GenerateZodOptions): Promise<GenerateZodResult>;
+
+  /**
+   * Generates Zod schemas for the specified schema and returns the generation and the internal representation of the schema without writing anything to the filesystem.
+   */
+  generateZodRepresentation(opts: GenerateZodRepresentationOptions): Promise<GenerateZodRepresentationResult>;
+
+  /**
    * Generates type validator functions for Firestore Security Rules and injects them into the specified file.
    *
    * @remarks
@@ -160,6 +180,7 @@ export type GenerationResult =
   | GenerateTsResult
   | GenerateSwiftResult
   | GeneratePythonResult
+  | GenerateZodResult
   | GenerateRulesResult
   | GenerateGraphResult;
 

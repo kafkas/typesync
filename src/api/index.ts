@@ -42,6 +42,17 @@ export {
   type TSObjectTypeFormat,
   getTSTargets,
 } from './ts.js';
+export {
+  type GenerateZodOption,
+  type GenerateZodOptions,
+  type GenerateZodRepresentationOptions,
+  type GenerateZodRepresentationResult,
+  type GenerateZodResult,
+  type ZodGenerationTarget,
+  type ZodVariant,
+  getZodTargets,
+  getZodVariants,
+} from './zod.js';
 export type {
   ValidateDataFailure,
   ValidateDataModelReport,
