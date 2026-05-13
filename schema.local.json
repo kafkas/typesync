@@ -72,6 +72,11 @@
                                           "type": "string",
                                           "const": "timestamp",
                                           "description": "A timestamp type."
+                                        },
+                                        {
+                                          "type": "string",
+                                          "const": "bytes",
+                                          "description": "A bytes type."
                                         }
                                       ],
                                       "description": "A primitive type"
