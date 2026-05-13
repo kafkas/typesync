@@ -10,13 +10,7 @@ import OutFileOption from '/snippets/cli-option-out-file.mdx';
 import TargetOption from '/snippets/cli-option-target.mdx';
 import TSTargetsList from '/snippets/ts-targets-list.mdx';
 
-Generates [Zod](https://zod.dev) schemas for the specified Typesync schema and writes them to the specified file. The
-generated schemas mirror the same mapping rules used internally by `typesync validate-data`, so the structure and
-constraints stay in lockstep across runtime validation and code generation.
-
-Documentation captured in your schema definition is preserved in the output: model-level docs are emitted as JSDoc
-comments and as `.describe(...)` calls on the schema, and field-level docs are emitted as `.describe(...)` calls on the
-field's value schema.
+Generates [Zod](https://zod.dev) schemas for the specified Typesync schema and writes them to the specified file. The generator can produce code for either Zod v3 or v4, and can optionally emit inferred TypeScript types alongside the schemas.
 
 ## Usage
 
